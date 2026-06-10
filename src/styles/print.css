@@ -1,0 +1,51 @@
+/**
+ * styles/print.css — Reglas que solo aplican al imprimir
+ *
+ * En pantalla, #printArea está oculto (display:none inline).
+ * Al imprimir (window.print()), si body tiene .print-pos o .print-carta,
+ * ocultamos TODO menos #printArea y mostramos el ticket fullscreen.
+ *
+ * El printer.js inyecta dinámicamente @page con el ancho (58/76/80mm)
+ * antes de disparar window.print() — eso vive en otro <style>.
+ */
+
+@media print {
+  /* Limpiar fondo y márgenes globales */
+  html, body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  /* Ocultar TODO durante impresión */
+  body.print-pos > *,
+  body.print-carta > * {
+    display: none !important;
+  }
+
+  /* …excepto el área de impresión */
+  body.print-pos #printArea,
+  body.print-carta #printArea {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: #000 !important;
+  }
+
+  /* No mostrar elementos típicos de UI dentro del print */
+  #toast-container,
+  #modal-root {
+    display: none !important;
+  }
+
+  /* Evitar cortes raros */
+  table, tr, td, th, div {
+    page-break-inside: avoid;
+  }
+}

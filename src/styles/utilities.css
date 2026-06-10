@@ -1,0 +1,88 @@
+/**
+ * utilities.css — Clases utilitarias (helpers)
+ *
+ * Clases chicas y específicas que aplicás a CUALQUIER elemento cuando
+ * necesitás ese efecto puntual. NO son componentes.
+ *
+ * Ejemplos de uso:
+ *   <div class="hide">…</div>             ← oculto
+ *   <span class="muted">…</span>          ← color secundario
+ *   <div class="text-center">…</div>      ← centrado
+ *   <div class="total-display-xl">$1.500.000</div>  ← total de venta gigante
+ */
+
+/* ============================================================
+   VISIBILIDAD
+   ============================================================ */
+.hide {
+  display: none !important;
+}
+
+/* ============================================================
+   TEXTO
+   ============================================================ */
+.text-center { text-align: center }
+.text-right  { text-align: right }
+.text-left   { text-align: left }
+
+.text-muted,
+.muted {
+  color: var(--muted) !important;
+  font-weight: 500;
+}
+
+/* ============================================================
+   CURSOR — Marcar elementos clickeables
+   ============================================================ */
+button,
+.btn,
+.chip,
+.nav-btn,
+.btn-action,
+.key,
+.result-item,
+.card[onclick] {
+  cursor: pointer;
+}
+
+/* ============================================================
+   DINERO — Números monetarios con tabular-nums (no "bailan")
+   ============================================================ */
+.money,
+.amount,
+[data-money] {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* ============================================================
+   TOTAL DESTACADO — Jerarquía visual fuerte para totales de venta
+   Tres tamaños: regular, grande, extra-grande.
+   ============================================================ */
+.total-display {
+  font-family: 'Inter';
+  font-variant-numeric: tabular-nums;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.total-display-lg { font-size: 42px }
+.total-display-xl { font-size: 52px }
+
+/* ============================================================
+   ANIMACIONES DE ENTRADA — Aplicables a cualquier elemento
+   ============================================================ */
+.view {
+  animation: fade .22s var(--ease-out) both;
+}
+.stagger > * {
+  animation: fade .28s var(--ease-out) both;
+}
+.stagger > *:nth-child(1) { animation-delay: .02s }
+.stagger > *:nth-child(2) { animation-delay: .05s }
+.stagger > *:nth-child(3) { animation-delay: .08s }
+.stagger > *:nth-child(4) { animation-delay: .11s }
+.stagger > *:nth-child(5) { animation-delay: .14s }
+.stagger > *:nth-child(6) { animation-delay: .17s }

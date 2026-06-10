@@ -1,0 +1,479 @@
+/**
+ * services/sync.js — Sincronización entre IndexedDB (local) y Supabase (nube)
+ *
+ * Estrategia offline-first:
+ *   1. Toda escritura va PRIMERO al local (IndexedDB) — instantáneo, siempre
+ *      funciona aunque no haya internet.
+ *   2. En paralelo, se intenta subir a Supabase.
+ *   3. Si la nube falla (sin internet, error del servidor), el sistema NO
+ *      rompe. Sigue funcionando con los datos locales.
+ *   4. Cuando vuelve la conexión, se puede llamar a `flushPendientes()`
+ *      para subir lo que faltó.
+ *
+ * Uso típico:
+ *   import { Sync } from '../services/index.js';
+ *
+ *   // Guardar un producto (escribe local + intenta nube)
+ *   await Sync.guardar('productos', producto);
+ *
+ *   // Bajar todo lo que hay en la nube al local
+ *   await Sync.descargar('productos');
+ *
+ *   // Reintentar lo que quedó pendiente
+ *   await Sync.flushPendientes();
+ */
+
+import * as db from './db.js';
+import * as Supa from './supabase.js';
+import { isFeatureEnabled, config } from './config.js';
+
+// ============================================================
+//  ESTADO INTERNO
+// ============================================================
+
+/** Cola simple de items que no se pudieron subir a la nube */
+const _pendientes = [];
+
+/** Listeners que escuchan cambios de estado (online/offline, sync activo) */
+const _listeners = [];
+
+/** Canales de realtime activos por tabla: { 'productos': RealtimeChannel } */
+const _canales = new Map();
+
+/** Listeners por tabla: { 'productos': Set<Function> } */
+const _realtimeListeners = new Map();
+
+/** Tenant id (se filtra realtime para no recibir cambios de otros tenants) */
+const TENANT_ID = config.supabase.tenantId || 'default';
+
+// ============================================================
+//  HELPERS INTERNOS
+// ============================================================
+
+/**
+ * Indica si la sincronización está habilitada en la configuración.
+ * Si el cliente desactivó `sincronizacionNube`, el sistema trabaja
+ * solo en modo local sin intentar conexión.
+ */
+function sincronizacionActiva() {
+  return isFeatureEnabled('sincronizacionNube') && Supa.isReady();
+}
+
+/**
+ * Notifica a los listeners sobre un evento de sync.
+ *
+ * @param {Object} evento - { tipo, tabla, item, error }
+ */
+function emit(evento) {
+  for (const listener of _listeners) {
+    try {
+      listener(evento);
+    } catch (e) {
+      console.error('Error en listener de sync:', e);
+    }
+  }
+}
+
+// ============================================================
+//  API PÚBLICA
+// ============================================================
+
+/**
+ * Suscribirse a eventos de sincronización.
+ * Útil para mostrar al usuario indicadores visuales ("sincronizando…").
+ *
+ * @param {Function} listener - Callback que recibe { tipo, tabla, item, error }
+ * @returns {Function} - Función para desuscribirse
+ *
+ * @example
+ *   const off = Sync.onChange((e) => console.log('Sync evento:', e));
+ *   // luego...
+ *   off(); // desuscribirse
+ */
+export function onChange(listener) {
+  _listeners.push(listener);
+  return () => {
+    const idx = _listeners.indexOf(listener);
+    if (idx >= 0) _listeners.splice(idx, 1);
+  };
+}
+
+/**
+ * Guarda un item: SIEMPRE en local + (si hay nube) sube a Supabase.
+ *
+ * Esta es la función estrella. La mayoría del sistema va a llamar a esta
+ * en lugar de tocar db o Supa directamente.
+ *
+ * @param {string} tabla - Nombre de la tabla ('productos', 'ventas', etc.)
+ * @param {Object} item - Item a guardar (debe tener `id`)
+ * @returns {Promise<{local: boolean, nube: boolean}>} - Estado de cada destino
+ *
+ * @example
+ *   const r = await Sync.guardar('productos', {
+ *     id: uid(), nombre: 'Alimento', precio: 50000
+ *   });
+ *   if (!r.nube) console.warn('Queda pendiente subir a la nube');
+ */
+export async function guardar(tabla, item) {
+  if (!item || !item.id) {
+    throw new Error(`Sync.guardar: el item debe tener un campo 'id'`);
+  }
+
+  const resultado = { local: false, nube: false };
+
+  // 1) Escribir en local SIEMPRE (offline-first)
+  try {
+    await db.put(tabla, item);
+    resultado.local = true;
+    emit({ tipo: 'local-ok', tabla, item });
+  } catch (err) {
+    emit({ tipo: 'local-error', tabla, item, error: err });
+    throw err; // Si falla el local, es grave: relanzamos
+  }
+
+  // 2) Intentar subir a la nube SI la sync está activa
+  if (sincronizacionActiva()) {
+    try {
+      emit({ tipo: 'nube-intentando', tabla, item });
+      await Supa.upsert(tabla, item);
+      resultado.nube = true;
+      emit({ tipo: 'nube-ok', tabla, item });
+    } catch (err) {
+      // No-throw: el local ya quedó guardado, no rompemos el flujo
+      console.warn(`⚠️ Sync: fallo al subir ${tabla}/${item.id} a la nube. Queda pendiente.`);
+      _pendientes.push({ tabla, item, intentos: 1 });
+      emit({ tipo: 'nube-error', tabla, item, error: err });
+    }
+  }
+
+  return resultado;
+}
+
+/**
+ * Borra un item: en local + (si hay nube) en Supabase.
+ *
+ * @param {string} tabla - Nombre de la tabla
+ * @param {string} id - ID del item a borrar
+ * @returns {Promise<{local: boolean, nube: boolean}>}
+ *
+ * @example
+ *   await Sync.borrar('productos', 'p1');
+ */
+export async function borrar(tabla, id) {
+  const resultado = { local: false, nube: false };
+
+  try {
+    await db.remove(tabla, id);
+    resultado.local = true;
+  } catch (err) {
+    console.error(`❌ Error borrando ${tabla}/${id} en local:`, err);
+    throw err;
+  }
+
+  if (sincronizacionActiva()) {
+    try {
+      await Supa.remove(tabla, id);
+      resultado.nube = true;
+    } catch (err) {
+      console.warn(`⚠️ Sync: fallo al borrar ${tabla}/${id} en la nube.`);
+    }
+  }
+
+  return resultado;
+}
+
+/**
+ * Descarga TODOS los items de una tabla desde la nube y los guarda en local.
+ *
+ * Útil cuando un dispositivo se conecta por primera vez o se necesita
+ * forzar una resincronización.
+ *
+ * @param {string} tabla - Nombre de la tabla
+ * @returns {Promise<number>} - Cantidad de items descargados
+ *
+ * @example
+ *   const n = await Sync.descargar('productos');
+ *   console.log(`${n} productos descargados`);
+ */
+export async function descargar(tabla) {
+  if (!sincronizacionActiva()) {
+    console.warn('⚠️ Sync no activa. No se puede descargar de la nube.');
+    return 0;
+  }
+
+  emit({ tipo: 'descargando', tabla });
+
+  try {
+    const items = await Supa.selectAll(tabla);
+    for (const item of items) {
+      await db.put(tabla, item);
+    }
+    emit({ tipo: 'descargado', tabla, total: items.length });
+    return items.length;
+  } catch (err) {
+    emit({ tipo: 'descarga-error', tabla, error: err });
+    console.error(`❌ Error descargando ${tabla}:`, err);
+    return 0;
+  }
+}
+
+/**
+ * Reintenta subir todos los items que quedaron pendientes (sin nube).
+ * Llamala cuando detectes que volvió la conexión.
+ *
+ * @returns {Promise<{exitos: number, fallos: number}>}
+ *
+ * @example
+ *   const r = await Sync.flushPendientes();
+ *   console.log(`✅ ${r.exitos} subidos, ❌ ${r.fallos} aún pendientes`);
+ */
+export async function flushPendientes() {
+  if (!sincronizacionActiva()) {
+    return { exitos: 0, fallos: _pendientes.length };
+  }
+  if (_pendientes.length === 0) {
+    return { exitos: 0, fallos: 0 };
+  }
+
+  let exitos = 0;
+  let fallos = 0;
+  const cola = [..._pendientes];
+  _pendientes.length = 0; // Vaciar la cola
+
+  for (const p of cola) {
+    try {
+      await Supa.upsert(p.tabla, p.item);
+      exitos++;
+    } catch (err) {
+      p.intentos = (p.intentos || 0) + 1;
+      _pendientes.push(p); // Volver a la cola
+      fallos++;
+    }
+  }
+
+  console.log(`🔄 Flush: ✅ ${exitos} subidos, ❌ ${fallos} aún pendientes`);
+  return { exitos, fallos };
+}
+
+/**
+ * Cuántos items quedaron pendientes de subir a la nube.
+ *
+ * @returns {number}
+ */
+export function pendientes() {
+  return _pendientes.length;
+}
+
+/**
+ * Indica si el sistema actualmente está sincronizando con la nube.
+ *
+ * @returns {boolean}
+ */
+export function estaActiva() {
+  return sincronizacionActiva();
+}
+
+// ============================================================
+//  REALTIME (suscripciones a cambios desde la nube)
+// ============================================================
+
+/**
+ * Maneja un evento de postgres_changes recibido desde Supabase Realtime.
+ * Aplica el cambio al IndexedDB local y notifica a los listeners.
+ */
+async function procesarCambioRemoto(tabla, payload) {
+  try {
+    const evento = payload.eventType;  // 'INSERT' | 'UPDATE' | 'DELETE'
+    const nuevo = payload.new;
+    const viejo = payload.old;
+
+    // Si tenemos un objeto, validar que sea de este tenant
+    const item = nuevo || viejo;
+    if (item && item.tenant_id && item.tenant_id !== TENANT_ID) {
+      return; // Otro tenant: ignorar
+    }
+
+    if (evento === 'INSERT' || evento === 'UPDATE') {
+      if (nuevo && nuevo.id) {
+        await db.put(tabla, nuevo);
+      }
+    } else if (evento === 'DELETE') {
+      if (viejo && viejo.id) {
+        try { await db.remove(tabla, viejo.id); } catch (e) { /* puede no existir */ }
+      }
+    }
+
+    // Notificar a los listeners de esta tabla
+    const set = _realtimeListeners.get(tabla);
+    if (set) {
+      for (const cb of set) {
+        try { cb({ tabla, evento, item, viejo }); } catch (e) { console.warn('Error en listener realtime:', e); }
+      }
+    }
+  } catch (err) {
+    console.error(`Error procesando cambio realtime de ${tabla}:`, err);
+  }
+}
+
+/**
+ * Suscribe el listener a cambios remotos de una tabla específica.
+ * Si todavía no había un canal abierto para esa tabla, lo crea automáticamente.
+ *
+ * El listener recibe { tabla, evento, item, viejo } cuando hay un cambio.
+ *
+ * @param {string} tabla - Nombre de la tabla (ej: 'productos')
+ * @param {Function} callback - Se ejecuta en cada cambio
+ * @returns {Function} - Función para desuscribirse
+ *
+ * @example
+ *   const off = Sync.suscribir('productos', () => recargarLista());
+ *   // luego, al desmontar la vista:
+ *   off();
+ */
+export function suscribir(tabla, callback) {
+  if (!sincronizacionActiva()) {
+    console.warn(`⚠️ Realtime no disponible para ${tabla} (sync no activa).`);
+    return () => {};
+  }
+
+  // Registrar el listener
+  if (!_realtimeListeners.has(tabla)) _realtimeListeners.set(tabla, new Set());
+  _realtimeListeners.get(tabla).add(callback);
+
+  // Si no hay canal abierto para esa tabla, abrirlo
+  if (!_canales.has(tabla)) {
+    abrirCanal(tabla);
+  }
+
+  // Devolver función para desuscribir
+  return () => {
+    const set = _realtimeListeners.get(tabla);
+    if (set) {
+      set.delete(callback);
+      // Si ya no quedan listeners, cerrar el canal
+      if (set.size === 0) {
+        cerrarCanal(tabla);
+      }
+    }
+  };
+}
+
+/**
+ * Abre el canal de Supabase Realtime para una tabla.
+ */
+function abrirCanal(tabla) {
+  const client = Supa.getClient();
+  if (!client) {
+    console.warn(`Supabase no inicializado, no se puede suscribir a ${tabla}`);
+    return;
+  }
+
+  const canalNombre = `pospunto:${TENANT_ID}:${tabla}`;
+  const canal = client
+    .channel(canalNombre)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',  // INSERT, UPDATE, DELETE
+        schema: 'public',
+        table: tabla,
+        filter: `tenant_id=eq.${TENANT_ID}`,
+      },
+      (payload) => procesarCambioRemoto(tabla, payload),
+    )
+    .subscribe((status, err) => {
+      if (status === 'SUBSCRIBED') {
+        console.log(`📡 Realtime ${tabla}: conectado`);
+        emit({ tipo: 'realtime-conectado', tabla });
+      } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
+        console.warn(`📡 Realtime ${tabla}: ${status}`, err || '');
+        emit({ tipo: 'realtime-desconectado', tabla, error: err });
+      }
+    });
+
+  _canales.set(tabla, canal);
+}
+
+/**
+ * Cierra el canal de una tabla.
+ */
+function cerrarCanal(tabla) {
+  const canal = _canales.get(tabla);
+  if (!canal) return;
+  try {
+    const client = Supa.getClient();
+    if (client) client.removeChannel(canal);
+  } catch (e) { /**/ }
+  _canales.delete(tabla);
+  _realtimeListeners.delete(tabla);
+  console.log(`📡 Realtime ${tabla}: desconectado`);
+}
+
+/**
+ * Cierra TODOS los canales activos.
+ */
+export function cerrarTodosCanales() {
+  for (const tabla of Array.from(_canales.keys())) {
+    cerrarCanal(tabla);
+  }
+}
+
+/**
+ * Indica si hay al menos un canal de realtime conectado.
+ */
+export function realtimeActivo() {
+  return _canales.size > 0 && sincronizacionActiva();
+}
+
+/**
+ * Devuelve la lista de tablas con realtime activo.
+ */
+export function tablasEnVivo() {
+  return Array.from(_canales.keys());
+}
+
+// ============================================================
+//  BORRADO MASIVO (local + nube)
+// ============================================================
+
+/**
+ * Borra TODOS los registros del tenant actual en una tabla, tanto en
+ * IndexedDB local como en Supabase.
+ *
+ * @param {string} tabla
+ * @returns {Promise<{ local: number, nube: number, error?: any }>}
+ */
+export async function vaciarTabla(tabla) {
+  const resultado = { local: 0, nube: 0 };
+
+  // 1) Contar y borrar local
+  try {
+    const todos = await db.getAll(tabla);
+    resultado.local = todos.length;
+    await db.clear(tabla);
+  } catch (err) {
+    console.error(`Error vaciando local ${tabla}:`, err);
+    resultado.error = err;
+    return resultado;
+  }
+
+  // 2) Borrar todo en la nube si está activa (DELETE WHERE tenant_id = X)
+  if (sincronizacionActiva()) {
+    try {
+      const client = Supa.getClient();
+      const tenantId = config.supabase.tenantId || 'default';
+      const { count, error } = await client
+        .from(tabla)
+        .delete({ count: 'exact' })
+        .eq('tenant_id', tenantId);
+      if (error) throw error;
+      resultado.nube = count || 0;
+      emit({ tipo: 'tabla-vaciada', tabla, ...resultado });
+    } catch (err) {
+      console.error(`Error vaciando nube ${tabla}:`, err);
+      resultado.error = err;
+    }
+  }
+
+  return resultado;
+}

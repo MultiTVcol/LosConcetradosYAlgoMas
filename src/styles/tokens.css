@@ -1,0 +1,140 @@
+/**
+ * tokens.css — Sistema de design tokens
+ *
+ * Acá viven los "ladrillos" del diseño. Cuando quieras personalizar el sistema
+ * para un cliente nuevo (white-label), este es el ÚNICO archivo que tocás.
+ *
+ * Cambiar `--primary` cambia el color del sistema entero, en todos lados,
+ * sin que tengas que buscar y reemplazar nada.
+ *
+ * REGLA: este archivo NO debe contener estilos aplicados a ningún selector.
+ * Solo variables (custom properties) dentro de `:root` y `html.dark`.
+ */
+
+:root {
+  /* ============================================================
+     PALETA — Neutros zinc con acentos refinados (estilo Stripe/Linear)
+     ============================================================ */
+
+  /* Fondos */
+  --bg:           #f8fafc;
+  --surface:      #ffffff;
+  --surface-2:    #f1f5f9;
+  --surface-3:    #e2e8f0;
+
+  /* Texto */
+  --text:         #0f172a;     /* Casi negro — alto contraste para legibilidad */
+  --text-soft:    #1e293b;     /* Texto secundario aún legible */
+  --muted:        #475569;     /* Subido de #71717a → ya no es "gris fantasma" */
+  --muted-soft:   #64748b;
+
+  /* Primario — Indigo profesional (Stripe-style) */
+  --primary:      #4f46e5;
+  --primary-d:    #4338ca;
+  --primary-soft: #eef2ff;
+  --primary-ring: rgba(79, 70, 229, .15);
+
+  /* Acento secundario — Cyan */
+  --accent:       #0ea5e9;
+  --accent-d:     #0284c7;
+  --accent-soft:  #f0f9ff;
+
+  /* Bordes con presencia (no fantasmas) */
+  --border:        #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* ============================================================
+     ESTADOS SEMÁNTICOS
+     ============================================================ */
+  --success:      #16a34a;
+  --success-soft: #f0fdf4;
+  --success-ring: rgba(22, 163, 74, .15);
+
+  --danger:       #dc2626;
+  --danger-soft:  #fef2f2;
+  --danger-ring:  rgba(220, 38, 38, .15);
+
+  --warn:         #d97706;
+  --warn-soft:    #fffbeb;
+
+  --info:         #2563eb;
+  --info-soft:    #eff6ff;
+
+  --edit:         #ca8a04;
+  --edit-soft:    #fefce8;
+
+  /* ============================================================
+     SOMBRAS — Layered, estilo Stripe/Notion (no minimalismo extremo)
+     ============================================================ */
+  --shadow-xs:    0 1px 2px rgba(15, 23, 42, .06);
+  --shadow-sm:    0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .05);
+  --shadow-md:    0 4px 6px -1px rgba(15, 23, 42, .08), 0 2px 4px -2px rgba(15, 23, 42, .06);
+  --shadow-lg:    0 10px 15px -3px rgba(15, 23, 42, .10), 0 4px 6px -4px rgba(15, 23, 42, .08);
+  --shadow-xl:    0 20px 25px -5px rgba(15, 23, 42, .12), 0 8px 10px -6px rgba(15, 23, 42, .08);
+  --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, .30);
+
+  /* ============================================================
+     RADIOS — Modernos pero no caricaturescos
+     ============================================================ */
+  --radius-xs:    4px;
+  --radius-sm:    6px;
+  --radius:       8px;
+  --radius-md:    10px;
+  --radius-lg:    12px;
+  --radius-xl:    16px;
+
+  /* ============================================================
+     EASING — Curvas premium
+     ============================================================ */
+  --ease:         cubic-bezier(.4, 0, .2, 1);
+  --ease-out:     cubic-bezier(.16, 1, .3, 1);
+}
+
+/* ============================================================
+   DARK MODE — Estilo GitHub/Linear (zinc 900-950, sin negros puros)
+   Se activa cuando <html> tiene la clase "dark".
+   ============================================================ */
+html.dark {
+  --bg:           #0a0a0b;
+  --surface:      #18181b;
+  --surface-2:    #27272a;
+  --surface-3:    #3f3f46;
+  --text:         #fafafa;
+  --text-soft:    #e4e4e7;
+  --muted:        #d4d4d8;
+  --muted-soft:   #a1a1aa;
+
+  --primary:      #818cf8;
+  --primary-d:    #6366f1;
+  --primary-soft: rgba(99, 102, 241, .16);
+  --primary-ring: rgba(129, 140, 248, .22);
+
+  --accent:       #38bdf8;
+  --accent-d:     #0ea5e9;
+  --accent-soft:  rgba(56, 189, 248, .14);
+
+  --border:        #27272a;
+  --border-strong: #3f3f46;
+
+  --success:      #4ade80;
+  --success-soft: rgba(74, 222, 128, .12);
+
+  --danger:       #f87171;
+  --danger-soft:  rgba(248, 113, 113, .12);
+
+  --warn:         #fbbf24;
+  --warn-soft:    rgba(251, 191, 36, .12);
+
+  --info:         #60a5fa;
+  --info-soft:    rgba(96, 165, 250, .12);
+
+  --edit:         #facc15;
+  --edit-soft:    rgba(250, 204, 21, .12);
+
+  --shadow-xs:    0 1px 2px rgba(0, 0, 0, .45);
+  --shadow-sm:    0 1px 3px rgba(0, 0, 0, .50), 0 1px 2px rgba(0, 0, 0, .40);
+  --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, .55), 0 2px 4px -2px rgba(0, 0, 0, .45);
+  --shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, .60), 0 4px 6px -4px rgba(0, 0, 0, .50);
+  --shadow-xl:    0 20px 25px -5px rgba(0, 0, 0, .70), 0 8px 10px -6px rgba(0, 0, 0, .60);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, .80);
+}

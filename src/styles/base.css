@@ -1,0 +1,121 @@
+/**
+ * base.css — Estilos del HTML crudo
+ *
+ * Acá definimos cómo se ven los elementos básicos del HTML SIN aplicarles
+ * ninguna clase. Es el "reset + tipografía base + scrollbar".
+ *
+ * Si querés cambiar la tipografía general, el color de fondo o el tamaño
+ * del texto, este es el archivo.
+ *
+ * Lo que NO va acá:
+ *   - Clases (.btn, .card, etc.)  → eso va en components.css
+ *   - Helpers (.hide, .text-center) → eso va en utilities.css
+ */
+
+/* ============================================================
+   RESET BÁSICO — Quita los márgenes raros del navegador
+   ============================================================ */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   BODY — El "lienzo" de toda la aplicación
+   ============================================================ */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.003em;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  transition: background .25s var(--ease), color .25s var(--ease);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   TÍTULOS — Jerarquía tipográfica clara
+   ============================================================ */
+h1, h2, h3, h4 {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  margin: 0;
+  color: var(--text);
+}
+h1 { font-size: 28px; line-height: 1.2 }
+h2 { font-size: 22px; line-height: 1.25 }
+h3 { font-size: 18px; line-height: 1.3 }
+h4 { font-size: 16px; line-height: 1.4 }
+
+/* Marca: clase opcional para resaltar el nombre del negocio */
+.brandfont {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.028em;
+  font-weight: 700;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* ============================================================
+   SCROLLBAR — Estilo macOS/Linear (aparece solo al hover)
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background .15s;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-soft);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+* {
+  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+/* ============================================================
+   FOCO ACCESIBLE — Para personas que navegan con teclado
+   ============================================================ */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary-ring);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   ICONOS LUCIDE — Tamaño base
+   ============================================================ */
+[data-lucide] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  stroke-width: 1.75;
+  display: inline-block;
+  vertical-align: middle;
+}

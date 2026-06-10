@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4f46e5">
+  <title>PosPunto</title>
+
+  <!-- Fuentes: Inter (UI) + JetBrains Mono (datos numéricos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Iconos Lucide (los iconitos de la app) -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- Tailwind CDN: clases utilitarias como flex, gap, p-3, etc. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JS client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Contenedor raíz de la app. El JS inyecta todo el contenido acá. -->
+  <div id="app">
+    <!-- Splash inicial: lo que se ve los primeros milisegundos
+         mientras carga el JavaScript. Inline a propósito para que
+         aparezca de inmediato sin esperar CSS externo. -->
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,system-ui,sans-serif;color:#475569;font-size:15px">
+      <div style="text-align:center">
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#4338ca);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:700;font-size:22px">P</div>
+        <div>Cargando PosPunto…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Punto de entrada del JavaScript. Vite resuelve la ruta /src/main.js -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

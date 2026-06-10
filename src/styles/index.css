@@ -1,0 +1,21 @@
+/**
+ * styles/index.css — Archivo maestro de estilos
+ *
+ * Este archivo NO contiene reglas propias. Solo importa los 4 archivos
+ * CSS modulares en el ORDEN correcto (cada uno depende del anterior).
+ *
+ * main.js importa SOLO este archivo. Si en el futuro agregás un módulo
+ * de estilos nuevo (ej: print.css), lo agregás acá, no en main.js.
+ *
+ * ORDEN OBLIGATORIO:
+ *   1. tokens     → define variables (--bg, --primary, etc.)
+ *   2. base       → usa variables, estiliza body/h1/scrollbar
+ *   3. components → usa variables, estiliza .btn/.card/.input/...
+ *   4. utilities  → al final, para poder sobrescribir si hace falta
+ */
+
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './utilities.css';
+@import './print.css';

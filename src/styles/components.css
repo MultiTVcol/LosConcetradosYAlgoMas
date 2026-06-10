@@ -1,0 +1,606 @@
+/**
+ * components.css — Clases reutilizables de UI
+ *
+ * Acá vive el "vocabulario" de tu interfaz. Cada clase representa una pieza
+ * concreta de UI que vas a usar en todo el sistema:
+ *   - .btn (con variantes -primary, -ghost, -danger, etc.)
+ *   - .input, label.lbl
+ *   - .card
+ *   - .badge (con variantes -ok, -warn, -danger, -info)
+ *   - .kpi (para tarjetas de métricas)
+ *   - .tbl (tablas)
+ *   - .chip, .btn-action, .key, .result-item
+ *   - .nav-btn (sidebar)
+ *   - .modal-box, .toast
+ *   - .user-chip (avatar del header)
+ *
+ * Todo usa los tokens de tokens.css mediante var(--xxx).
+ */
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s var(--ease), border-color .2s var(--ease);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+/* ============================================================
+   INPUTS — 44px de alto, cómodos para tocar
+   ============================================================ */
+.input {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  font-size: 15px;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 500;
+  min-height: 44px;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease);
+}
+.input:hover { border-color: var(--muted-soft) }
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-ring);
+}
+.input::placeholder { color: var(--muted); font-weight: 400 }
+.input[disabled] {
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+html.dark .input { background: var(--surface) }
+
+/* Select con flecha custom (la del navegador es fea) */
+select.input {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+}
+
+label.lbl {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  margin-bottom: 7px;
+  display: block;
+  letter-spacing: -0.005em;
+}
+
+/* ============================================================
+   BUTTONS — 44px de alto, variantes semánticas
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 11px 18px;
+  min-height: 44px;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background .15s var(--ease),
+    border-color .15s var(--ease),
+    color .15s var(--ease),
+    box-shadow .15s var(--ease),
+    transform .1s var(--ease);
+}
+.btn:active { transform: translateY(1px) }
+.btn [data-lucide] { width: 17px; height: 17px }
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    var(--shadow-sm),
+    0 1px 2px rgba(79,70,229,.25);
+}
+.btn-primary:hover {
+  background: var(--primary-d);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.14),
+    var(--shadow-md),
+    0 2px 4px rgba(79,70,229,.30);
+}
+
+.btn-accent {
+  background: var(--text);
+  color: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+html.dark .btn-accent { background: var(--surface-3); color: var(--text) }
+.btn-accent:hover { filter: brightness(1.15); box-shadow: var(--shadow-md) }
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--text);
+  border: 1.5px solid var(--border-strong);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+.btn-ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--muted-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    var(--shadow-sm),
+    0 1px 2px rgba(220,38,38,.25);
+}
+.btn-danger:hover {
+  background: #b91c1c;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.14),
+    var(--shadow-md),
+    0 2px 4px rgba(220,38,38,.30);
+}
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    var(--shadow-sm),
+    0 1px 2px rgba(22,163,74,.25);
+}
+.btn-success:hover {
+  background: #15803d;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.14),
+    var(--shadow-md),
+    0 2px 4px rgba(22,163,74,.30);
+}
+
+.btn-warn {
+  background: var(--edit);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.btn-warn:hover { background: #a16207; box-shadow: var(--shadow-md) }
+
+.btn-lg {
+  font-size: 16px;
+  padding: 14px 22px;
+  min-height: 52px;
+  font-weight: 600;
+}
+.btn-lg [data-lucide] { width: 19px; height: 19px }
+.btn-block { width: 100% }
+
+/* ============================================================
+   SIDEBAR NAV — Items del menú lateral
+   ============================================================ */
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 14.5px;
+  color: var(--text-soft);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  letter-spacing: -0.005em;
+  min-height: 42px;
+  position: relative;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.nav-btn:hover { background: var(--surface-2); color: var(--text) }
+.nav-btn.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+.nav-btn [data-lucide] { width: 19px; height: 19px; stroke-width: 2 }
+.nav-btn .ico {
+  width: 19px;
+  height: 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: color .15s var(--ease);
+}
+.nav-btn.active .ico,
+.nav-btn:hover .ico { color: var(--primary) }
+
+/* ============================================================
+   BADGES — Píldoras semánticas
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  border: 1px solid;
+  background: var(--surface-2);
+  color: var(--text-soft);
+  border-color: var(--border);
+}
+.badge-ok     { background: var(--success-soft); color: var(--success); border-color: transparent }
+.badge-warn   { background: var(--warn-soft);    color: var(--warn);    border-color: transparent }
+.badge-danger { background: var(--danger-soft);  color: var(--danger);  border-color: transparent }
+.badge-info   { background: var(--info-soft);    color: var(--info);    border-color: transparent }
+
+html.dark .badge-ok     { color: #86efac; background: rgba(74,222,128,.14) }
+html.dark .badge-warn   { color: #fcd34d; background: rgba(251,191,36,.14) }
+html.dark .badge-danger { color: #fca5a5; background: rgba(248,113,113,.14) }
+html.dark .badge-info   { color: #93c5fd; background: rgba(96,165,250,.14) }
+
+/* ============================================================
+   KPIs — Tarjetas de métricas (dashboard)
+   ============================================================ */
+.kpi {
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
+}
+.kpi:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong) }
+.kpi .v {
+  font-family: 'Inter', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.028em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.kpi .l {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  margin-bottom: 10px;
+  text-transform: none;
+}
+
+/* ============================================================
+   TABLAS — Filas confortables tipo Stripe admin
+   ============================================================ */
+table.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+table.tbl th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  padding: 14px 16px;
+  font-weight: 700;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+table.tbl td {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 14.5px;
+  color: var(--text);
+  font-weight: 500;
+  vertical-align: middle;
+}
+table.tbl tr { transition: background .12s var(--ease) }
+table.tbl tr:hover td { background: var(--surface-2) }
+table.tbl tr:first-child td { border-top: none }
+html.dark table.tbl th { background: var(--surface-2); color: var(--muted) }
+
+/* ============================================================
+   CHIPS — Filtros redondeados
+   ============================================================ */
+.chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  transition: all .15s var(--ease);
+}
+.chip:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--muted-soft);
+}
+.chip.on {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   ACTION BUTTONS — Acciones de fila (ver/editar/borrar)
+   ============================================================ */
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1;
+  box-shadow: var(--shadow-xs);
+  transition: all .15s var(--ease);
+}
+.btn-action:hover {
+  background: var(--surface-2);
+  border-color: var(--muted-soft);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.btn-action [data-lucide] { width: 18px; height: 18px; stroke-width: 2 }
+.btn-action.ba-view  { color: var(--info) }
+.btn-action.ba-view:hover  { background: var(--info-soft);  border-color: var(--info);  color: var(--info) }
+.btn-action.ba-edit  { color: var(--edit) }
+.btn-action.ba-edit:hover  { background: var(--edit-soft);  border-color: var(--edit);  color: var(--edit) }
+.btn-action.ba-del   { color: var(--danger) }
+.btn-action.ba-del:hover   { background: var(--danger-soft); border-color: var(--danger); color: var(--danger) }
+.btn-action.ba-print { background: var(--text); color: var(--surface); border-color: var(--text) }
+.btn-action.ba-print:hover { filter: brightness(1.15) }
+.btn-action.ba-primary       { background: var(--primary); color: #fff; border-color: var(--primary) }
+.btn-action.ba-primary:hover { background: var(--primary-d) }
+
+html.dark .btn-action.ba-view { background: var(--info-soft) }
+html.dark .btn-action.ba-edit { background: var(--edit-soft) }
+html.dark .btn-action.ba-del  { background: var(--danger-soft) }
+html.dark .btn-ghost          { border-color: var(--border-strong); color: var(--text) }
+
+.row-actions {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+/* ============================================================
+   RESULT ITEMS — Resultados de búsqueda / autocomplete
+   ============================================================ */
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  font-size: 14.5px;
+  font-weight: 500;
+  background: var(--surface);
+  transition: all .15s var(--ease);
+}
+.result-item:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ============================================================
+   KEYPAD — Botones del teclado numérico
+   ============================================================ */
+.key {
+  font-family: 'Inter';
+  font-size: 24px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 18px 0;
+  cursor: pointer;
+  color: var(--text);
+  min-height: 56px;
+  box-shadow: var(--shadow-xs);
+  transition: all .12s var(--ease);
+}
+.key:hover {
+  background: var(--surface-2);
+  border-color: var(--muted-soft);
+  box-shadow: var(--shadow-sm);
+}
+.key:active {
+  transform: scale(.96);
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ============================================================
+   TOAST — Notificaciones flotantes
+   ============================================================ */
+#toast-root {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  font-weight: 500;
+  font-size: 14.5px;
+  max-width: 400px;
+  color: var(--text);
+  animation: slideR .22s var(--ease-out) both;
+}
+.toast .ti { font-size: 20px; flex-shrink: 0 }
+.toast.ok   { border-left: 4px solid var(--success) }
+.toast.err  { border-left: 4px solid var(--danger) }
+.toast.warn { border-left: 4px solid var(--warn) }
+
+/* ============================================================
+   MODAL — Backdrop con blur + sombra premium
+   ============================================================ */
+#modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, .55);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+}
+#modal-root.show {
+  display: flex;
+  animation: fade .18s var(--ease-out) both;
+}
+.modal-box {
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  animation: pop .24s var(--ease-out) both;
+}
+
+/* ============================================================
+   USER CHIP — Avatar del header
+   ============================================================ */
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  cursor: default;
+  border: 1px solid var(--border);
+  transition: background .15s var(--ease), border-color .15s var(--ease);
+}
+.user-chip:hover {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+}
+.user-chip .avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-d));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12.5px;
+  position: relative;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-sm);
+}
+.user-chip .avatar::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 2px solid var(--surface-2);
+  box-shadow: 0 0 0 1px var(--success);
+}
+.user-chip:hover .avatar::after { border-color: var(--surface-3) }
+.user-chip .info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  padding-right: 4px;
+}
+.user-chip .info b {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.005em;
+}
+.user-chip .info span {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ============================================================
+   ANIMACIONES — Keyframes usados por modal/toast
+   ============================================================ */
+@keyframes fade {
+  from { opacity: 0; transform: translateY(4px) }
+  to   { opacity: 1; transform: none }
+}
+@keyframes pop {
+  0%   { transform: scale(.96); opacity: 0 }
+  100% { transform: scale(1);   opacity: 1 }
+}
+@keyframes slideR {
+  from { opacity: 0; transform: translateX(12px) }
+  to   { opacity: 1; transform: none }
+}
