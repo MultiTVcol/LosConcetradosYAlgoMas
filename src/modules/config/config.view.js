@@ -407,10 +407,12 @@ async function importarProductosExcel(e) {
       filas, ignoradas,
       columnas: ImpExp.COLUMNAS_PRODUCTOS,
       onConfirmar: async () => {
-        const r = await ImpExp.importarProductos(filas);
-        Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
-        // Refrescar conteos
-        render(_contenedor);
+        const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} productos…`);
+        try {
+          const r = await ImpExp.importarProductos(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} productos…`, n, total));
+          Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+          render(_contenedor);
+        } finally { overlay.cerrar(); }
       },
     });
   } catch (err) {
@@ -436,9 +438,12 @@ async function importarClientesExcel(e) {
       filas, ignoradas,
       columnas: ImpExp.COLUMNAS_CLIENTES,
       onConfirmar: async () => {
-        const r = await ImpExp.importarClientes(filas);
-        Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
-        render(_contenedor);
+        const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} clientes…`);
+        try {
+          const r = await ImpExp.importarClientes(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} clientes…`, n, total));
+          Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+          render(_contenedor);
+        } finally { overlay.cerrar(); }
       },
     });
   } catch (err) {
@@ -540,43 +545,102 @@ async function borrarSeleccionado() {
   );
   if (!ok) return;
 
+  // Overlay de progreso (para que el usuario sepa que está trabajando)
+  const overlay = abrirOverlayProgreso('Borrando datos…');
+
   try {
     const resumen = [];
     for (const tipo of seleccionados) {
       if (tipo === 'stock') {
-        // Resetear stock = 0 en cada producto (local + sube cada uno a nube)
+        // Resetear stock = 0 — ahora en paralelo por lotes
         const productos = await db.getAll('productos');
-        for (const p of productos) {
-          await Sync.guardar('productos', { ...p, stock: 0 });
-        }
-        resumen.push(`Stock reseteado a 0 en ${productos.length} productos`);
+        overlay.actualizar(`Reseteando stock de ${fmt(productos.length)} productos…`, 0, productos.length);
+        const items = productos.map((p) => ({ ...p, stock: 0 }));
+        const r = await Sync.guardarVarios('productos', items, {
+          batchSize: 30,
+          onProgress: (n, total) => overlay.actualizar(`Reseteando stock de ${fmt(total)} productos…`, n, total),
+        });
+        resumen.push(`Stock reseteado en ${r.ok} productos${r.fail ? ` (⚠ ${r.fail} fallaron)` : ''}`);
       } else if (tipo === 'productos') {
+        overlay.actualizar('Borrando productos…');
         const r = await Sync.vaciarTabla('productos');
         resumen.push(`Productos: ${r.local} local · ${r.nube} nube`);
       } else if (tipo === 'clientes') {
+        overlay.actualizar('Borrando clientes…');
         const r = await Sync.vaciarTabla('clientes');
         resumen.push(`Clientes: ${r.local} local · ${r.nube} nube`);
       } else if (tipo === 'ventas') {
+        overlay.actualizar('Borrando ventas…');
         const r = await Sync.vaciarTabla('ventas');
         resumen.push(`Ventas: ${r.local} local · ${r.nube} nube`);
       } else if (tipo === 'compras') {
+        overlay.actualizar('Borrando compras…');
         const r = await Sync.vaciarTabla('compras');
         resumen.push(`Compras: ${r.local} local · ${r.nube} nube`);
       } else if (tipo === 'gastos') {
+        overlay.actualizar('Borrando gastos…');
         const r = await Sync.vaciarTabla('gastos');
         resumen.push(`Gastos: ${r.local} local · ${r.nube} nube`);
       } else if (tipo === 'proveedores') {
+        overlay.actualizar('Borrando proveedores…');
         const r = await Sync.vaciarTabla('proveedores');
         resumen.push(`Proveedores: ${r.local} local · ${r.nube} nube`);
       }
     }
+    overlay.cerrar();
     console.log('🗑️ Borrado completado:\n  • ' + resumen.join('\n  • '));
     Toast.ok('Datos borrados (local + nube)');
     render(_contenedor);
   } catch (err) {
+    overlay.cerrar();
     console.error(err);
     Toast.error('No se pudo borrar todo: ' + (err.message || err));
   }
+}
+
+/**
+ * Muestra un overlay fixed con spinner + barra de progreso.
+ * Devuelve { actualizar(texto, n?, total?), cerrar() }.
+ */
+function abrirOverlayProgreso(textoInicial) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);
+    z-index:11000;display:flex;align-items:center;justify-content:center;
+  `;
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:14px;padding:24px 28px;min-width:300px;max-width:380px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);font-family:Inter,system-ui,sans-serif">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="op-spinner" style="width:24px;height:24px;border-radius:50%;border:3px solid #e0e7ff;border-top-color:#4f46e5;animation:opspin 0.8s linear infinite"></div>
+        <div id="op-texto" style="flex:1;font-weight:600;color:#0f172a;font-size:14px">${textoInicial || 'Procesando…'}</div>
+      </div>
+      <div id="op-barra-wrap" style="display:none;background:#f1f5f9;border-radius:999px;height:8px;overflow:hidden">
+        <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .2s ease;border-radius:999px"></div>
+      </div>
+      <div id="op-conteo" style="display:none;font-size:11.5px;color:#64748b;text-align:right;margin-top:5px;font-family:'JetBrains Mono',ui-monospace,monospace"></div>
+    </div>
+    <style>@keyframes opspin{to{transform:rotate(360deg)}}</style>
+  `;
+  document.body.appendChild(overlay);
+
+  return {
+    actualizar(texto, n, total) {
+      const elT = overlay.querySelector('#op-texto');
+      if (elT && texto) elT.textContent = texto;
+      const wrap = overlay.querySelector('#op-barra-wrap');
+      const barra = overlay.querySelector('#op-barra');
+      const conteo = overlay.querySelector('#op-conteo');
+      if (n != null && total != null && total > 0) {
+        wrap.style.display = 'block';
+        conteo.style.display = 'block';
+        barra.style.width = ((n / total) * 100).toFixed(1) + '%';
+        conteo.textContent = `${n} / ${total}`;
+      }
+    },
+    cerrar() {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    },
+  };
 }
 
 // ============================================================

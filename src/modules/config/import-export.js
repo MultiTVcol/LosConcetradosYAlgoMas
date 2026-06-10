@@ -154,9 +154,10 @@ export async function previewImportClientes(file) {
  * @param {Array} filas - resultado de previewImportProductos
  * @returns {Promise<{ creados: number, actualizados: number, errores: number }>}
  */
-export async function importarProductos(filas) {
+export async function importarProductos(filas, onProgress) {
   const existentes = await ProductosRepo.listar();
   let creados = 0, actualizados = 0, errores = 0;
+  let procesados = 0;
 
   for (const f of filas) {
     try {
@@ -188,14 +189,17 @@ export async function importarProductos(filas) {
       console.warn('Error importando producto:', f, err);
       errores++;
     }
+    procesados++;
+    if (onProgress) onProgress(procesados, filas.length);
   }
 
   return { creados, actualizados, errores };
 }
 
-export async function importarClientes(filas) {
+export async function importarClientes(filas, onProgress) {
   const existentes = await ClientesRepo.listar();
   let creados = 0, actualizados = 0, errores = 0;
+  let procesados = 0;
 
   for (const f of filas) {
     try {
@@ -224,6 +228,8 @@ export async function importarClientes(filas) {
       console.warn('Error importando cliente:', f, err);
       errores++;
     }
+    procesados++;
+    if (onProgress) onProgress(procesados, filas.length);
   }
 
   return { creados, actualizados, errores };

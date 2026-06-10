@@ -437,6 +437,33 @@ export function tablasEnVivo() {
 // ============================================================
 
 /**
+ * Guarda muchos items en paralelo por lotes — mucho más rápido que un
+ * await por cada uno. Ideal para imports y resets masivos.
+ *
+ * @param {string} tabla
+ * @param {Array} items
+ * @param {Object} opts - { batchSize?: 20, onProgress?: (n, total) => void }
+ * @returns {Promise<{ok: number, fail: number}>}
+ */
+export async function guardarVarios(tabla, items, opts = {}) {
+  const batchSize = opts.batchSize || 20;
+  const onProgress = opts.onProgress || (() => {});
+  let ok = 0, fail = 0;
+
+  for (let i = 0; i < items.length; i += batchSize) {
+    const lote = items.slice(i, i + batchSize);
+    const resultados = await Promise.allSettled(
+      lote.map((item) => guardar(tabla, item))
+    );
+    for (const r of resultados) {
+      if (r.status === 'fulfilled') ok++; else fail++;
+    }
+    onProgress(Math.min(i + batchSize, items.length), items.length);
+  }
+  return { ok, fail };
+}
+
+/**
  * Borra TODOS los registros del tenant actual en una tabla, tanto en
  * IndexedDB local como en Supabase.
  *
