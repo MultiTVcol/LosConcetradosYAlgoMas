@@ -358,8 +358,66 @@ export function suscribir(tabla, callback) {
   };
 }
 
+/** Reintentos por tabla (para backoff exponencial). */
+const _reintentos = new Map();
+
+/** Timers de reconexión por tabla (para poder cancelarlos). */
+const _timersReconexion = new Map();
+
+/**
+ * Programa la reapertura de un canal caído. Backoff exponencial:
+ * 2s, 4s, 8s, 16s, 30s, 30s, 30s... (tope 30s).
+ */
+function programarReconexion(tabla) {
+  // Si ya hay un timer programado, no encolar otro
+  if (_timersReconexion.has(tabla)) return;
+
+  const intento = (_reintentos.get(tabla) || 0) + 1;
+  _reintentos.set(tabla, intento);
+
+  // Backoff: 2s × 2^(n-1), tope 30s
+  const delayMs = Math.min(30000, 2000 * Math.pow(2, intento - 1));
+
+  // No spamear la consola con el intento: log solo cada 3
+  if (intento === 1 || intento % 3 === 0) {
+    console.warn(`📡 Realtime ${tabla}: reintento ${intento} en ${Math.round(delayMs / 1000)}s`);
+  }
+
+  const timer = setTimeout(() => {
+    _timersReconexion.delete(tabla);
+    // Solo reabrir si todavía hay listeners para esa tabla
+    if (_realtimeListeners.has(tabla) && _realtimeListeners.get(tabla).size > 0) {
+      // Cerrar canal viejo si quedó pegado
+      const canalViejo = _canales.get(tabla);
+      if (canalViejo) {
+        try { Supa.getClient()?.removeChannel(canalViejo); } catch (e) { /**/ }
+        _canales.delete(tabla);
+      }
+      abrirCanal(tabla);
+    } else {
+      // Ya nadie escucha, no reabrir
+      _reintentos.delete(tabla);
+    }
+  }, delayMs);
+
+  _timersReconexion.set(tabla, timer);
+}
+
+/**
+ * Cancela un reintento programado de una tabla (cuando se reconectó manualmente).
+ */
+function cancelarReconexion(tabla) {
+  const t = _timersReconexion.get(tabla);
+  if (t) {
+    clearTimeout(t);
+    _timersReconexion.delete(tabla);
+  }
+  _reintentos.delete(tabla);
+}
+
 /**
  * Abre el canal de Supabase Realtime para una tabla.
+ * Con auto-reconexión cuando se cae el WebSocket.
  */
 function abrirCanal(tabla) {
   const client = Supa.getClient();
@@ -383,11 +441,20 @@ function abrirCanal(tabla) {
     )
     .subscribe((status, err) => {
       if (status === 'SUBSCRIBED') {
-        console.log(`📡 Realtime ${tabla}: conectado`);
+        const habiaCaido = _reintentos.has(tabla);
+        if (habiaCaido) {
+          console.log(`📡 Realtime ${tabla}: ✅ reconectado tras ${_reintentos.get(tabla)} intento(s)`);
+        } else {
+          console.log(`📡 Realtime ${tabla}: conectado`);
+        }
+        // Limpiar reintentos
+        cancelarReconexion(tabla);
         emit({ tipo: 'realtime-conectado', tabla });
-      } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
-        console.warn(`📡 Realtime ${tabla}: ${status}`, err || '');
+      } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || status === 'TIMED_OUT') {
+        // No spammear cada caída — el reintento ya tiene su propio log
         emit({ tipo: 'realtime-desconectado', tabla, error: err });
+        // Programar reconexión
+        programarReconexion(tabla);
       }
     });
 
@@ -395,15 +462,57 @@ function abrirCanal(tabla) {
 }
 
 /**
- * Cierra el canal de una tabla.
+ * Forzar reconexión de TODOS los canales caídos (al volver foco/internet).
+ */
+function reconectarTodos() {
+  for (const tabla of _realtimeListeners.keys()) {
+    // Si el canal no está activo, programar reconexión inmediata
+    if (!_canales.has(tabla) || _reintentos.has(tabla)) {
+      cancelarReconexion(tabla);
+      // Reapertura inmediata
+      const canalViejo = _canales.get(tabla);
+      if (canalViejo) {
+        try { Supa.getClient()?.removeChannel(canalViejo); } catch (e) { /**/ }
+        _canales.delete(tabla);
+      }
+      abrirCanal(tabla);
+    }
+  }
+}
+
+// Reconectar cuando vuelve el foco a la pestaña o vuelve la red
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log('🌐 Conexión recuperada, reconectando Realtime…');
+    reconectarTodos();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      // Al volver a la pestaña, dar 500ms y revisar canales
+      setTimeout(() => {
+        // Solo reconectar si hay listeners y algún canal cayó
+        let necesitaReconectar = false;
+        for (const tabla of _realtimeListeners.keys()) {
+          if (!_canales.has(tabla)) { necesitaReconectar = true; break; }
+        }
+        if (necesitaReconectar) reconectarTodos();
+      }, 500);
+    }
+  });
+}
+
+/**
+ * Cierra el canal de una tabla (definitivo — cancela reconexiones también).
  */
 function cerrarCanal(tabla) {
+  cancelarReconexion(tabla);
   const canal = _canales.get(tabla);
-  if (!canal) return;
-  try {
-    const client = Supa.getClient();
-    if (client) client.removeChannel(canal);
-  } catch (e) { /**/ }
+  if (canal) {
+    try {
+      const client = Supa.getClient();
+      if (client) client.removeChannel(canal);
+    } catch (e) { /**/ }
+  }
   _canales.delete(tabla);
   _realtimeListeners.delete(tabla);
   console.log(`📡 Realtime ${tabla}: desconectado`);
