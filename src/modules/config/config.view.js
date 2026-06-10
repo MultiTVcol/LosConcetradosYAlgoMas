@@ -15,13 +15,15 @@ import * as PlantillaRepo from '../factura/plantilla.repo.js';
 import { html as facturaHTML } from '../factura/factura.html.js';
 import { imprimirPOS } from '../../services/printer.js';
 import * as ProductosRepo from '../productos/productos.repo.js';
+import * as ClientesRepo from '../clientes/clientes.repo.js';
+import * as ImpExp from './import-export.js';
 import * as db from '../../services/db.js';
 import * as Sync from '../../services/sync.js';
 import * as Supa from '../../services/supabase.js';
 import { config as defaultConfig } from '../../services/config.js';
 import { fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
-import { Toast, Confirm } from '../../components/index.js';
+import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 
 let _contenedor = null;
@@ -100,6 +102,22 @@ function adjuntarEventos(contenedor) {
   // Respaldo
   contenedor.querySelector('#cfg-export-json')?.addEventListener('click', exportarJSON);
   contenedor.querySelector('#cfg-import-json')?.addEventListener('change', importarJSON);
+
+  // Excel — Productos
+  contenedor.querySelector('#cfg-exp-productos')?.addEventListener('click', exportarProductosExcel);
+  contenedor.querySelector('#cfg-tpl-productos')?.addEventListener('click', () => {
+    ImpExp.plantillaProductos();
+    Toast.ok('Plantilla descargada');
+  });
+  contenedor.querySelector('#cfg-imp-productos')?.addEventListener('change', importarProductosExcel);
+
+  // Excel — Clientes
+  contenedor.querySelector('#cfg-exp-clientes')?.addEventListener('click', exportarClientesExcel);
+  contenedor.querySelector('#cfg-tpl-clientes')?.addEventListener('click', () => {
+    ImpExp.plantillaClientes();
+    Toast.ok('Plantilla descargada');
+  });
+  contenedor.querySelector('#cfg-imp-clientes')?.addEventListener('change', importarClientesExcel);
 
   // Borrar datos
   contenedor.querySelector('#cfg-borrar-confirmar')?.addEventListener('click', borrarSeleccionado);
@@ -350,6 +368,154 @@ async function importarJSON(e) {
 //  BORRAR DATOS
 // ============================================================
 
+// ============================================================
+//  IMPORT / EXPORT EXCEL
+// ============================================================
+
+async function exportarProductosExcel() {
+  try {
+    const n = await ImpExp.exportarProductos();
+    Toast.ok(`${n} producto(s) exportado(s)`);
+  } catch (err) {
+    console.error(err);
+    Toast.error('No se pudo exportar productos');
+  }
+}
+
+async function exportarClientesExcel() {
+  try {
+    const n = await ImpExp.exportarClientes();
+    Toast.ok(`${n} cliente(s) exportado(s)`);
+  } catch (err) {
+    console.error(err);
+    Toast.error('No se pudo exportar clientes');
+  }
+}
+
+async function importarProductosExcel(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  try {
+    const { filas, ignoradas } = await ImpExp.previewImportProductos(file);
+    if (filas.length === 0) {
+      Toast.warn('El archivo no tiene productos válidos (filas sin nombre)');
+      e.target.value = '';
+      return;
+    }
+    await abrirPreviewImport({
+      titulo: 'Importar productos',
+      filas, ignoradas,
+      columnas: ImpExp.COLUMNAS_PRODUCTOS,
+      onConfirmar: async () => {
+        const r = await ImpExp.importarProductos(filas);
+        Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+        // Refrescar conteos
+        render(_contenedor);
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    Toast.error('No se pudo leer el archivo: ' + (err.message || err));
+  } finally {
+    e.target.value = '';
+  }
+}
+
+async function importarClientesExcel(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  try {
+    const { filas, ignoradas } = await ImpExp.previewImportClientes(file);
+    if (filas.length === 0) {
+      Toast.warn('El archivo no tiene clientes válidos (filas sin nombre)');
+      e.target.value = '';
+      return;
+    }
+    await abrirPreviewImport({
+      titulo: 'Importar clientes',
+      filas, ignoradas,
+      columnas: ImpExp.COLUMNAS_CLIENTES,
+      onConfirmar: async () => {
+        const r = await ImpExp.importarClientes(filas);
+        Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+        render(_contenedor);
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    Toast.error('No se pudo leer el archivo: ' + (err.message || err));
+  } finally {
+    e.target.value = '';
+  }
+}
+
+/**
+ * Modal de vista previa de la importación.
+ */
+function abrirPreviewImport({ titulo, filas, ignoradas, columnas, onConfirmar }) {
+  return new Promise((resolve) => {
+    const filasMostrar = filas.slice(0, 15);  // primeras 15 para preview
+
+    const contenido = `
+      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#4338ca">
+        📊 <b>${fmt(filas.length)}</b> fila(s) leídas correctamente${ignoradas > 0 ? ` · ⚠ ${ignoradas} ignoradas (sin nombre)` : ''}
+      </div>
+      <div style="font-size:12.5px;color:#64748b;margin-bottom:8px">
+        Vista previa de las primeras ${filasMostrar.length} filas. Al confirmar se importarán las <b>${fmt(filas.length)}</b> filas válidas y se sincronizarán con la nube.
+      </div>
+      <div style="border:1px solid #e2e8f0;border-radius:9px;overflow:auto;max-height:45vh">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="background:#f8fafc;color:#475569;font-weight:700;text-align:left;border-bottom:1px solid #e2e8f0">
+              ${columnas.map((c) => `<th style="padding:7px 8px;white-space:nowrap">${esc(c.etiqueta)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${filasMostrar.map((f) => `
+              <tr style="border-bottom:1px solid #f1f5f9">
+                ${columnas.map((c) => {
+                  const v = f[c.clave];
+                  const str = v == null || v === '' ? '<span style="color:#cbd5e1">—</span>' : esc(String(v));
+                  return `<td style="padding:6px 8px;color:#475569">${str}</td>`;
+                }).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${filas.length > filasMostrar.length ? `<div style="font-size:11.5px;color:#94a3b8;margin-top:6px;text-align:center">… y ${fmt(filas.length - filasMostrar.length)} más</div>` : ''}
+
+      <div style="margin-top:14px;background:#fef3c7;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#92400e">
+        ⚠ Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán.
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button id="prev-cancel"
+          style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        <button id="prev-confirmar" data-primary
+          style="flex:1.2;padding:11px;background:#15803d;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">✅ Importar ${fmt(filas.length)} filas</button>
+      </div>
+    `;
+
+    const m = Modal.abrir({ titulo, contenido, ancho: 'lg' });
+    m.body.querySelector('#prev-cancel').onclick = () => { m.cerrar(); resolve(false); };
+    m.body.querySelector('#prev-confirmar').onclick = async () => {
+      m.body.querySelector('#prev-confirmar').textContent = 'Importando…';
+      m.body.querySelector('#prev-confirmar').disabled = true;
+      try {
+        await onConfirmar();
+        m.cerrar();
+        resolve(true);
+      } catch (err) {
+        console.error(err);
+        Toast.error('Error al importar: ' + (err.message || err));
+        m.cerrar();
+        resolve(false);
+      }
+    };
+  });
+}
+
 async function borrarSeleccionado() {
   const seleccionados = Array.from(_contenedor.querySelectorAll('.cfg-bd:checked')).map((c) => c.dataset.tipo);
   if (seleccionados.length === 0) {
@@ -439,6 +605,7 @@ function htmlLayout(cfg, plantilla, stats) {
           ${htmlLector(cfg)}
           ${htmlImpresora(cfg)}
           ${htmlSync()}
+          ${htmlExcel(stats)}
           ${htmlRespaldo()}
           ${htmlDatosSistema(stats)}
         </div>
@@ -670,6 +837,46 @@ function htmlSync() {
         🔁 Reintentar pendientes
       </button>
       <p style="color:#94a3b8;font-size:12.5px;margin:0">El POS sigue funcionando aunque la nube esté caída. Los registros locales se subirán cuando vuelva la conexión.</p>
+    </div>
+  `;
+}
+
+function htmlExcel(stats) {
+  const cardLado = (titulo, icono, count, idExp, idTpl, idImp) => `
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px;padding:14px">
+      <div style="font-weight:700;font-size:14.5px;color:#0f172a;margin-bottom:10px">${icono} ${esc(titulo)}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button id="${idExp}"
+          style="padding:10px 12px;background:#0f172a;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+          ⬇️ Exportar (${fmt(count)})
+        </button>
+        <button id="${idTpl}"
+          style="padding:10px 12px;background:white;border:1px solid #e2e8f0;color:#475569;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+          📋 Descargar plantilla
+        </button>
+        <label
+          style="padding:10px 12px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+          ⬆️ Importar Excel/CSV
+          <input id="${idImp}" type="file" accept=".xlsx,.xls,.csv,.txt" style="display:none" />
+        </label>
+      </div>
+    </div>
+  `;
+
+  return `
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📊 Productos y clientes en Excel</h3>
+      <p style="color:#64748b;font-size:13.5px;margin:0">
+        Exporta tus datos, descarga una <b>plantilla lista para llenar</b>, o importa desde Excel/CSV.
+        Al importar se sincronizará automáticamente en la nube y en las otras terminales conectadas.
+      </p>
+      <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr">
+        ${cardLado('Productos', '📦', stats.productos, 'cfg-exp-productos', 'cfg-tpl-productos', 'cfg-imp-productos')}
+        ${cardLado('Clientes', '👥', stats.clientes, 'cfg-exp-clientes', 'cfg-tpl-clientes', 'cfg-imp-clientes')}
+      </div>
+      <p style="color:#94a3b8;font-size:12px;margin:4px 0 0">
+        💡 Descarga la plantilla, llénala en Excel y vuelve a importarla. También puedes exportar lo que ya tienes, editarlo y reimportarlo.
+      </p>
     </div>
   `;
 }
