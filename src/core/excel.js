@@ -208,10 +208,143 @@ function descargarTexto(filename, contenido) {
 }
 
 /**
- * Coerciona valores: si la columna espera number, parsea con num().
+ * Parser numérico FLEXIBLE — entiende cualquier formato de Excel.
+ *
+ * Acepta:
+ *   - Números nativos: 1500.5  ✓
+ *   - Formato es-CO (Colombia/España): "1.500" → 1500 · "1.500,50" → 1500.5 · "1.500.000" → 1500000
+ *   - Formato en-US (USA/UK):           "1,500" → 1500 · "1,500.50" → 1500.5 · "1,500,000" → 1500000
+ *   - Mezcla: "$1.500,50" → 1500.5 · "-2.500,75" → -2500.75
+ *   - Vacíos: "" / null / undefined → 0
+ *
+ * @param {string|number} valor
+ * @param {'auto'|'es-CO'|'en-US'} formato - formato preferido (default 'auto')
  */
-export function coerce(valor, tipo) {
-  if (tipo === 'number') return num(valor);
+export function parseNumeroFlex(valor, formato = 'auto') {
+  if (typeof valor === 'number' && !isNaN(valor)) return valor;
+  if (valor == null) return 0;
+
+  let s = String(valor).trim();
+  if (!s) return 0;
+
+  // Limpiar símbolos comunes ($, COP, USD, espacios)
+  s = s.replace(/[\s$]/g, '').replace(/(cop|usd|eur|mxn|ars)/gi, '');
+  if (!s) return 0;
+
+  // Capturar y limpiar signo
+  let signo = 1;
+  if (s.startsWith('-') || s.startsWith('−')) { signo = -1; s = s.slice(1); }
+  else if (s.startsWith('+')) { s = s.slice(1); }
+
+  // Solo dígitos, puntos y comas
+  s = s.replace(/[^\d.,]/g, '');
+  if (!s) return 0;
+
+  const hayPunto = s.includes('.');
+  const hayComa  = s.includes(',');
+
+  if (hayPunto && hayComa) {
+    // Ambos: el más a la DERECHA es el decimal
+    const ultPunto = s.lastIndexOf('.');
+    const ultComa  = s.lastIndexOf(',');
+    if (ultPunto > ultComa) {
+      // "1,500.50" → en-US: punto decimal, coma miles
+      s = s.replace(/,/g, '');
+    } else {
+      // "1.500,50" → es-CO: coma decimal, punto miles
+      s = s.replace(/\./g, '').replace(',', '.');
+    }
+  } else if (hayPunto) {
+    // Solo punto: ambiguo. Resolver según contexto.
+    const partes = s.split('.');
+    if (formato === 'en-US') {
+      // En en-US el punto SIEMPRE es decimal (aunque puede haber varios → tratar el último)
+      if (partes.length > 2) s = partes.slice(0, -1).join('') + '.' + partes[partes.length - 1];
+    } else if (formato === 'es-CO') {
+      // En es-CO el punto SIEMPRE es separador de miles
+      s = s.replace(/\./g, '');
+    } else {
+      // Auto: heurística
+      if (partes.length > 2) {
+        // "1.500.000" → claramente miles
+        s = s.replace(/\./g, '');
+      } else if (partes.length === 2 && partes[1].length === 3 && partes[0].length <= 3) {
+        // "1.500" → ambiguo; en POS Colombia favorecer miles
+        s = s.replace('.', '');
+      }
+      // Resto ("12.50", "1500.5") → queda como decimal
+    }
+  } else if (hayComa) {
+    // Solo coma: ambiguo
+    const partes = s.split(',');
+    if (formato === 'es-CO') {
+      // En es-CO la coma SIEMPRE es decimal
+      if (partes.length > 2) s = partes.slice(0, -1).join('') + '.' + partes[partes.length - 1];
+      else s = s.replace(',', '.');
+    } else if (formato === 'en-US') {
+      // En en-US la coma SIEMPRE es miles
+      s = s.replace(/,/g, '');
+    } else {
+      // Auto
+      if (partes.length > 2) {
+        // "1,500,000" → miles
+        s = s.replace(/,/g, '');
+      } else if (partes.length === 2 && partes[1].length === 3 && partes[0].length <= 3) {
+        // "1,500" → ambiguo; favorecer miles
+        s = s.replace(',', '');
+      } else {
+        // "12,50" → decimal es-CO
+        s = s.replace(',', '.');
+      }
+    }
+  }
+
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : signo * n;
+}
+
+/**
+ * Mira una muestra de strings y detecta el formato numérico predominante.
+ * Devuelve 'es-CO' o 'en-US' o 'auto' (si no hay evidencia clara).
+ *
+ * @param {Array<string>} muestra
+ * @returns {'es-CO'|'en-US'|'auto'}
+ */
+export function detectarFormatoNumerico(muestra) {
+  let esCO = 0, enUS = 0;
+  for (const raw of muestra) {
+    const s = String(raw || '').trim();
+    if (!s) continue;
+    const hayPunto = s.includes('.');
+    const hayComa  = s.includes(',');
+
+    if (hayPunto && hayComa) {
+      const ultPunto = s.lastIndexOf('.');
+      const ultComa  = s.lastIndexOf(',');
+      if (ultPunto > ultComa) enUS++; else esCO++;
+    } else if (hayPunto) {
+      const partes = s.split('.');
+      if (partes.length > 2) esCO++;            // múltiples puntos = miles es-CO
+      else if (partes[1] && partes[1].length === 3) esCO++; // "1.500"
+      else enUS++;                              // "12.50" decimal en-US
+    } else if (hayComa) {
+      const partes = s.split(',');
+      if (partes.length > 2) enUS++;            // múltiples comas = miles en-US
+      else if (partes[1] && partes[1].length === 3) enUS++; // "1,500"
+      else esCO++;                              // "12,50" decimal es-CO
+    }
+  }
+  // Necesitamos al menos 3 muestras de diferencia para estar seguros
+  if (esCO > enUS + 2) return 'es-CO';
+  if (enUS > esCO + 2) return 'en-US';
+  return 'auto';
+}
+
+/**
+ * Coerciona valores: si la columna espera number, usa el parser flexible.
+ */
+export function coerce(valor, tipo, formato = 'auto') {
+  if (tipo === 'number') return parseNumeroFlex(valor, formato);
   if (tipo === 'boolean') {
     const v = String(valor || '').toLowerCase().trim();
     return v === 'true' || v === 'si' || v === 'sí' || v === '1' || v === 'x';

@@ -396,17 +396,20 @@ async function importarProductosExcel(e) {
   const file = e.target.files?.[0];
   if (!file) return;
   try {
-    const { filas, ignoradas } = await ImpExp.previewImportProductos(file);
-    if (filas.length === 0) {
-      Toast.warn('El archivo no tiene productos válidos (filas sin nombre)');
-      e.target.value = '';
+    const info = await ImpExp.analizarArchivo(file, 'productos');
+    if (info.filasRaw.length === 0) {
+      Toast.warn('El archivo está vacío');
       return;
     }
-    await abrirPreviewImport({
+    await abrirMapeoYPreview({
       titulo: 'Importar productos',
-      filas, ignoradas,
-      columnas: ImpExp.COLUMNAS_PRODUCTOS,
-      onConfirmar: async () => {
+      filasRaw: info.filasRaw,
+      columnasArchivo: info.columnas,
+      mapeoSugerido: info.mapeoSugerido,
+      formatoDetectado: info.formatoDetectado,
+      columnasModelo: ImpExp.COLUMNAS_PRODUCTOS,
+      tipo: 'productos',
+      onConfirmar: async (filas) => {
         const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} productos…`);
         try {
           const r = await ImpExp.importarProductos(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} productos…`, n, total));
@@ -427,17 +430,20 @@ async function importarClientesExcel(e) {
   const file = e.target.files?.[0];
   if (!file) return;
   try {
-    const { filas, ignoradas } = await ImpExp.previewImportClientes(file);
-    if (filas.length === 0) {
-      Toast.warn('El archivo no tiene clientes válidos (filas sin nombre)');
-      e.target.value = '';
+    const info = await ImpExp.analizarArchivo(file, 'clientes');
+    if (info.filasRaw.length === 0) {
+      Toast.warn('El archivo está vacío');
       return;
     }
-    await abrirPreviewImport({
+    await abrirMapeoYPreview({
       titulo: 'Importar clientes',
-      filas, ignoradas,
-      columnas: ImpExp.COLUMNAS_CLIENTES,
-      onConfirmar: async () => {
+      filasRaw: info.filasRaw,
+      columnasArchivo: info.columnas,
+      mapeoSugerido: info.mapeoSugerido,
+      formatoDetectado: info.formatoDetectado,
+      columnasModelo: ImpExp.COLUMNAS_CLIENTES,
+      tipo: 'clientes',
+      onConfirmar: async (filas) => {
         const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} clientes…`);
         try {
           const r = await ImpExp.importarClientes(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} clientes…`, n, total));
@@ -455,70 +461,221 @@ async function importarClientesExcel(e) {
 }
 
 /**
- * Modal de vista previa de la importación.
+ * Modal de import con MAPEO MANUAL de columnas + selector de formato numérico.
+ * El usuario elige qué columna del Excel corresponde a cada campo, y el preview
+ * se actualiza en vivo al cambiar el mapeo o el formato.
  */
-function abrirPreviewImport({ titulo, filas, ignoradas, columnas, onConfirmar }) {
+function abrirMapeoYPreview({ titulo, filasRaw, columnasArchivo, mapeoSugerido, formatoDetectado, columnasModelo, tipo, onConfirmar }) {
   return new Promise((resolve) => {
-    const filasMostrar = filas.slice(0, 15);  // primeras 15 para preview
+    // Estado del modal
+    let mapeo = { ...mapeoSugerido };
+    let formato = formatoDetectado || 'auto';
 
-    const contenido = `
-      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#4338ca">
-        📊 <b>${fmt(filas.length)}</b> fila(s) leídas correctamente${ignoradas > 0 ? ` · ⚠ ${ignoradas} ignoradas (sin nombre)` : ''}
-      </div>
-      <div style="font-size:12.5px;color:#64748b;margin-bottom:8px">
-        Vista previa de las primeras ${filasMostrar.length} filas. Al confirmar se importarán las <b>${fmt(filas.length)}</b> filas válidas y se sincronizarán con la nube.
-      </div>
-      <div style="border:1px solid #e2e8f0;border-radius:9px;overflow:auto;max-height:45vh">
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead>
-            <tr style="background:#f8fafc;color:#475569;font-weight:700;text-align:left;border-bottom:1px solid #e2e8f0">
-              ${columnas.map((c) => `<th style="padding:7px 8px;white-space:nowrap">${esc(c.etiqueta)}</th>`).join('')}
-            </tr>
-          </thead>
-          <tbody>
-            ${filasMostrar.map((f) => `
-              <tr style="border-bottom:1px solid #f1f5f9">
-                ${columnas.map((c) => {
-                  const v = f[c.clave];
-                  const str = v == null || v === '' ? '<span style="color:#cbd5e1">—</span>' : esc(String(v));
-                  return `<td style="padding:6px 8px;color:#475569">${str}</td>`;
-                }).join('')}
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-      ${filas.length > filasMostrar.length ? `<div style="font-size:11.5px;color:#94a3b8;margin-top:6px;text-align:center">… y ${fmt(filas.length - filasMostrar.length)} más</div>` : ''}
+    const m = Modal.abrir({ titulo, contenido: '<div id="imp-root">Cargando…</div>', ancho: 'xl' });
 
-      <div style="margin-top:14px;background:#fef3c7;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#92400e">
-        ⚠ Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán.
-      </div>
+    const render = () => {
+      const { filas, ignoradas, errores } = ImpExp.procesarFilas(filasRaw, mapeo, tipo, formato);
+      const filasMostrar = filas.slice(0, 12);
 
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button id="prev-cancel"
-          style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="prev-confirmar" data-primary
-          style="flex:1.2;padding:11px;background:#15803d;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">✅ Importar ${fmt(filas.length)} filas</button>
-      </div>
-    `;
+      // Reconstruir el contenido del modal
+      m.body.querySelector('#imp-root').innerHTML = htmlImport({
+        filasRaw, filasProc: filas, filasMostrar, ignoradas, errores,
+        columnasArchivo, columnasModelo, mapeo, formato, formatoDetectado,
+      });
 
-    const m = Modal.abrir({ titulo, contenido, ancho: 'lg' });
-    m.body.querySelector('#prev-cancel').onclick = () => { m.cerrar(); resolve(false); };
-    m.body.querySelector('#prev-confirmar').onclick = async () => {
-      m.body.querySelector('#prev-confirmar').textContent = 'Importando…';
-      m.body.querySelector('#prev-confirmar').disabled = true;
-      try {
-        await onConfirmar();
-        m.cerrar();
-        resolve(true);
-      } catch (err) {
-        console.error(err);
-        Toast.error('Error al importar: ' + (err.message || err));
-        m.cerrar();
-        resolve(false);
-      }
+      // Cablear cambios en los selects de mapeo
+      m.body.querySelectorAll('.imp-map-sel').forEach((sel) => {
+        sel.addEventListener('change', (e) => {
+          const campo = e.target.dataset.campo;
+          mapeo[campo] = e.target.value || undefined;
+          if (!e.target.value) delete mapeo[campo];
+          render();
+        });
+      });
+
+      // Cambio del formato numérico
+      m.body.querySelectorAll('.imp-fmt-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          formato = btn.dataset.fmt;
+          render();
+        });
+      });
+
+      // Cancelar
+      m.body.querySelector('#imp-cancel').onclick = () => { m.cerrar(); resolve(false); };
+
+      // Confirmar
+      m.body.querySelector('#imp-confirmar').onclick = async () => {
+        const btn = m.body.querySelector('#imp-confirmar');
+        btn.textContent = 'Importando…';
+        btn.disabled = true;
+        try {
+          await onConfirmar(filas);
+          m.cerrar();
+          resolve(true);
+        } catch (err) {
+          console.error(err);
+          Toast.error('Error al importar: ' + (err.message || err));
+          m.cerrar();
+          resolve(false);
+        }
+      };
     };
+
+    render();
   });
+}
+
+/**
+ * HTML del modal de import (se vuelve a generar en cada cambio de mapeo).
+ */
+function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, columnasArchivo, columnasModelo, mapeo, formato, formatoDetectado }) {
+  const totalUtil = filasProc.length;
+  const sample = (col) => {
+    // Devuelve una muestra de los valores de esa columna (primeros 3 no vacíos)
+    if (!col) return '';
+    const vals = [];
+    for (const f of filasRaw.slice(0, 20)) {
+      const v = f[col];
+      if (v != null && String(v).trim() !== '') {
+        vals.push(String(v));
+        if (vals.length >= 2) break;
+      }
+    }
+    return vals.length ? `<span style="color:#94a3b8;font-size:10.5px"> · ej: ${esc(vals.join(', '))}</span>` : '';
+  };
+
+  // Detectar campos obligatorios sin mapear
+  const sinMapear = ['nombre'].filter((k) => !mapeo[k]);
+
+  return `
+    <!-- Banner: archivo leído -->
+    <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#4338ca">
+      📊 <b>${fmt(filasRaw.length)}</b> fila(s) detectadas en el archivo · <b>${fmt(columnasArchivo.length)}</b> columna(s) encontradas
+    </div>
+
+    <!-- PASO 1: Mapeo de columnas -->
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-weight:700;font-size:14px;color:#0f172a">1️⃣ Asigna las columnas del archivo a cada campo</div>
+        <div style="font-size:11.5px;color:#64748b">Elige qué columna del Excel va a qué campo del POS</div>
+      </div>
+      <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+        ${columnasModelo.map((cm) => {
+          const obligatorio = cm.clave === 'nombre';
+          const valActual = mapeo[cm.clave] || '';
+          return `
+            <div>
+              <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">
+                ${esc(cm.etiqueta)}${obligatorio ? ' <span style="color:#dc2626">*</span>' : ''}
+                ${sample(valActual)}
+              </div>
+              <select class="imp-map-sel" data-campo="${esc(cm.clave)}"
+                style="width:100%;padding:8px 10px;border:1px solid ${obligatorio && !valActual ? '#fecaca' : '#cbd5e1'};border-radius:7px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;background:${obligatorio && !valActual ? '#fef2f2' : 'white'}">
+                <option value="">— No importar —</option>
+                ${columnasArchivo.map((col) => `<option value="${esc(col)}" ${col === valActual ? 'selected' : ''}>${esc(col)}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      ${sinMapear.length > 0 ? `
+        <div style="margin-top:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#991b1b">
+          ⚠ Campo obligatorio sin mapear: <b>${sinMapear.join(', ')}</b>. Sin esto no se podrá importar.
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- PASO 2: Formato numérico -->
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+        <div style="font-weight:700;font-size:14px;color:#0f172a">2️⃣ Formato de los números</div>
+        ${formatoDetectado !== 'auto' ? `<div style="font-size:11px;color:#15803d;font-weight:600">🤖 Auto-detectado: <b>${esc(formatoDetectado)}</b></div>` : ''}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${[
+          ['auto',  '🤖 Auto', 'Detecta automáticamente cada valor'],
+          ['es-CO', '🇨🇴 1.500.000 / 1.500,50', 'Punto = miles · Coma = decimal'],
+          ['en-US', '🇺🇸 1,500,000 / 1,500.50', 'Coma = miles · Punto = decimal'],
+        ].map(([id, label, hint]) => `
+          <button class="imp-fmt-btn" data-fmt="${id}"
+            style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#4f46e5' : '#e2e8f0'};background:${formato === id ? '#eef2ff' : 'white'};color:${formato === id ? '#4338ca' : '#475569'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+            <div style="font-weight:700;font-size:12.5px;font-family:'JetBrains Mono',ui-monospace,monospace">${label}</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px">${hint}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- PASO 3: Preview con datos mapeados -->
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-weight:700;font-size:14px;color:#0f172a">3️⃣ Vista previa (primeras ${filasMostrar.length})</div>
+        <div style="font-size:12px;color:#64748b">
+          <b style="color:#15803d">${fmt(totalUtil)}</b> válidas · ${ignoradas > 0 ? `<b style="color:#a16207">${fmt(ignoradas)}</b> ignoradas` : '0 ignoradas'}
+        </div>
+      </div>
+      ${filasMostrar.length === 0 ? `
+        <div style="text-align:center;padding:24px;color:#94a3b8;font-size:13.5px">
+          Sin datos para mostrar. Verifica el mapeo de la columna "Nombre".
+        </div>
+      ` : `
+        <div style="border:1px solid #e2e8f0;border-radius:8px;overflow:auto;max-height:32vh">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:#f8fafc;color:#475569;font-weight:700;text-align:left;border-bottom:1px solid #e2e8f0;position:sticky;top:0">
+                ${columnasModelo.map((c) => `<th style="padding:7px 8px;white-space:nowrap">${esc(c.etiqueta)}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${filasMostrar.map((f) => `
+                <tr style="border-bottom:1px solid #f1f5f9">
+                  ${columnasModelo.map((c) => {
+                    const v = f[c.clave];
+                    const esNum = ['precio', 'costo', 'stock', 'stock_min', 'impuesto_pct'].includes(c.clave);
+                    let str;
+                    if (v == null || v === '') {
+                      str = '<span style="color:#cbd5e1">—</span>';
+                    } else if (esNum) {
+                      str = `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#4338ca">${Number(v).toLocaleString('es-CO')}</span>`;
+                    } else {
+                      str = esc(String(v));
+                    }
+                    return `<td style="padding:6px 8px;color:#475569;white-space:nowrap">${str}</td>`;
+                  }).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${filasProc.length > filasMostrar.length ? `<div style="font-size:11.5px;color:#94a3b8;margin-top:6px;text-align:center">… y ${fmt(filasProc.length - filasMostrar.length)} más se importarán</div>` : ''}
+      `}
+
+      ${errores.length > 0 ? `
+        <div style="margin-top:10px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e">
+          ⚠ <b>${errores.length} advertencia(s)</b>:
+          <ul style="margin:4px 0 0 18px;padding:0">
+            ${errores.slice(0, 5).map((e) => `<li>Fila ${e.fila}: ${esc(e.msg)}</li>`).join('')}
+            ${errores.length > 5 ? `<li>… y ${errores.length - 5} más</li>` : ''}
+          </ul>
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- Aviso -->
+    <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#4338ca;margin-bottom:14px">
+      ℹ Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán. Todo se sincronizará automáticamente con la nube.
+    </div>
+
+    <!-- Botones -->
+    <div style="display:flex;gap:10px">
+      <button id="imp-cancel"
+        style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+      <button id="imp-confirmar" data-primary
+        ${(totalUtil === 0 || sinMapear.length > 0) ? 'disabled' : ''}
+        style="flex:1.4;padding:11px;background:${totalUtil > 0 && sinMapear.length === 0 ? '#15803d' : '#cbd5e1'};color:white;border:0;border-radius:10px;cursor:${totalUtil > 0 && sinMapear.length === 0 ? 'pointer' : 'not-allowed'};font-size:14px;font-weight:700;font-family:inherit;${totalUtil > 0 && sinMapear.length === 0 ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''}">✅ Importar ${fmt(totalUtil)} fila${totalUtil === 1 ? '' : 's'}</button>
+    </div>
+  `;
 }
 
 async function borrarSeleccionado() {

@@ -10,7 +10,7 @@
 
 import * as ProductosRepo from '../productos/productos.repo.js';
 import * as ClientesRepo from '../clientes/clientes.repo.js';
-import { exportarExcel, descargarPlantilla, leerArchivo, mapearFilas, coerce } from '../../core/excel.js';
+import { exportarExcel, descargarPlantilla, leerArchivo, mapearFilas, coerce, detectarFormatoNumerico, normalizarClave } from '../../core/excel.js';
 import { uid } from '../../core/strings.js';
 
 // ============================================================
@@ -101,49 +101,117 @@ export function plantillaClientes() {
 }
 
 // ============================================================
-//  IMPORTAR
+//  IMPORTAR — flujo en dos pasos
+//  1) leerArchivoRaw(file) → devuelve filas crudas + lista de columnas
+//  2) procesarFilas(...)   → aplica el mapeo elegido y devuelve filas listas
 // ============================================================
 
 /**
- * Lee el archivo y devuelve la vista previa de las filas mapeadas
- * (no guarda nada todavía).
+ * Lee el archivo y devuelve sus filas crudas + lista de columnas detectadas
+ * + un mapeo sugerido inicial.
  *
- * @returns {Promise<{ filas: Array, ignoradas: number }>}
+ * @param {File} file
+ * @param {'productos'|'clientes'} tipo
+ * @returns {Promise<{
+ *   filasRaw: Array<Object>,
+ *   columnas: Array<string>,
+ *   mapeoSugerido: Object,
+ *   formatoDetectado: 'es-CO'|'en-US'|'auto'
+ * }>}
  */
-export async function previewImportProductos(file) {
+export async function analizarArchivo(file, tipo) {
   const filasRaw = await leerArchivo(file);
-  const filas = mapearFilas(filasRaw, ALIASES_PRODUCTOS);
-  // Coercionar tipos
-  const tipos = { precio: 'number', costo: 'number', stock: 'number', stock_min: 'number', impuesto_pct: 'number' };
-  const limpias = [];
-  let ignoradas = 0;
-  for (const f of filas) {
-    if (!f.nombre || String(f.nombre).trim() === '') { ignoradas++; continue; }
-    const limpia = { ...f };
-    for (const [k, tipo] of Object.entries(tipos)) {
-      limpia[k] = coerce(limpia[k], tipo);
-    }
-    limpia.nombre = String(limpia.nombre).trim();
-    limpia.codigo = String(limpia.codigo || '').trim();
-    limpias.push(limpia);
+  if (filasRaw.length === 0) {
+    return { filasRaw: [], columnas: [], mapeoSugerido: {}, formatoDetectado: 'auto' };
   }
-  return { filas: limpias, ignoradas };
+
+  // Detectar columnas únicas (juntar todas las claves de las primeras 50 filas)
+  const colsSet = new Set();
+  for (const f of filasRaw.slice(0, 50)) {
+    for (const k of Object.keys(f)) colsSet.add(k);
+  }
+  const columnas = Array.from(colsSet);
+
+  // Mapeo sugerido por aliases
+  const aliases = tipo === 'productos' ? ALIASES_PRODUCTOS : ALIASES_CLIENTES;
+  const mapeoSugerido = {};
+  for (const campo of Object.keys(aliases)) {
+    const aliasesNorm = aliases[campo].map(normalizarClave);
+    const match = columnas.find((c) => aliasesNorm.includes(normalizarClave(c)));
+    if (match) mapeoSugerido[campo] = match;
+  }
+
+  // Detectar formato numérico (solo para productos, donde hay precios/costos)
+  let formatoDetectado = 'auto';
+  if (tipo === 'productos') {
+    const camposNum = ['precio', 'costo'];
+    const muestra = [];
+    for (const campo of camposNum) {
+      const col = mapeoSugerido[campo];
+      if (!col) continue;
+      for (const f of filasRaw.slice(0, 30)) {
+        const v = f[col];
+        if (v != null && v !== '') muestra.push(String(v));
+      }
+    }
+    if (muestra.length > 0) formatoDetectado = detectarFormatoNumerico(muestra);
+  }
+
+  return { filasRaw, columnas, mapeoSugerido, formatoDetectado };
 }
 
-export async function previewImportClientes(file) {
-  const filasRaw = await leerArchivo(file);
-  const filas = mapearFilas(filasRaw, ALIASES_CLIENTES);
+/**
+ * Aplica el mapeo elegido por el usuario y devuelve las filas listas
+ * para importar (con tipos coercionados según el formato elegido).
+ *
+ * @param {Array<Object>} filasRaw
+ * @param {Object} mapeo - { campoModelo: 'columnaExcel' }
+ * @param {'productos'|'clientes'} tipo
+ * @param {'es-CO'|'en-US'|'auto'} formato
+ * @returns {{ filas: Array, ignoradas: number, errores: Array }}
+ */
+export function procesarFilas(filasRaw, mapeo, tipo, formato = 'auto') {
+  const tipos = tipo === 'productos'
+    ? { precio: 'number', costo: 'number', stock: 'number', stock_min: 'number', impuesto_pct: 'number' }
+    : {};
+
   const limpias = [];
+  const errores = [];
   let ignoradas = 0;
-  for (const f of filas) {
-    if (!f.nombre || String(f.nombre).trim() === '') { ignoradas++; continue; }
-    const limpia = { ...f };
-    for (const k of Object.keys(limpia)) {
-      limpia[k] = String(limpia[k] || '').trim();
+
+  filasRaw.forEach((raw, idx) => {
+    // Aplicar el mapeo elegido por el usuario
+    const fila = {};
+    for (const [campo, col] of Object.entries(mapeo)) {
+      if (!col) continue;
+      fila[campo] = raw[col];
     }
-    limpias.push(limpia);
-  }
-  return { filas: limpias, ignoradas };
+
+    // Validar mínimo: nombre obligatorio
+    if (!fila.nombre || String(fila.nombre).trim() === '') {
+      ignoradas++;
+      return;
+    }
+
+    // Coercionar tipos
+    for (const [k, t] of Object.entries(tipos)) {
+      fila[k] = coerce(fila[k], t, formato);
+    }
+    // Strings: trim
+    for (const k of Object.keys(fila)) {
+      if (typeof fila[k] === 'string') fila[k] = fila[k].trim();
+    }
+
+    // Validaciones por campo (solo producir advertencias, no bloquear)
+    if (tipo === 'productos') {
+      if (fila.precio < 0) errores.push({ fila: idx + 2, msg: `Precio negativo en "${fila.nombre}"` });
+      if (fila.costo < 0) errores.push({ fila: idx + 2, msg: `Costo negativo en "${fila.nombre}"` });
+    }
+
+    limpias.push(fila);
+  });
+
+  return { filas: limpias, ignoradas, errores };
 }
 
 /**
