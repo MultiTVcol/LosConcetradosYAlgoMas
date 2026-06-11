@@ -1906,18 +1906,28 @@ async function confirmarVenta() {
   // Imprimir ticket POS según preferencia de impresora
   try {
     const cfg = await ConfigRepo.leer();
-    const plantilla = await PlantillaRepo.leer();
+    const plantilla = await PlantillaRepo.leer('venta');
     const preferencia = cfg.impresoraDefault || 'preguntar';
 
     const tituloPrint = `Factura ${venta.numero || ''}`;
+    const lanzarPOS = () => {
+      const ticket = facturaHTML(venta, plantilla, cfg);
+      imprimirPOS(ticket, { anchoMm: plantilla.anchoMm || 80, titulo: tituloPrint });
+    };
+
     if (preferencia === 'pos') {
-      const ticket = facturaHTML(venta, plantilla, cfg);
-      imprimirPOS(ticket, { anchoMm: plantilla.anchoMm || 80, titulo: tituloPrint });
+      // Preferencia explicita: imprimir directo sin preguntar.
+      lanzarPOS();
     } else if (preferencia === 'preguntar') {
-      // Se imprime de todas formas: lo más común en POS es imprimir siempre.
-      // El diálogo nativo del navegador deja al usuario cancelar si no quiere.
-      const ticket = facturaHTML(venta, plantilla, cfg);
-      imprimirPOS(ticket, { anchoMm: plantilla.anchoMm || 80, titulo: tituloPrint });
+      // Preguntar al usuario antes de abrir el dialogo de impresion.
+      // Asi no aparece el preview del navegador automaticamente: solo
+      // si el usuario lo pide.
+      const quiere = await Confirm.preguntar(`¿Desea imprimir el ticket de la venta ${venta.numero}?`, {
+        titulo: '🧾 Imprimir ticket',
+        textoConfirmar: 'Sí, imprimir',
+        textoCancelar: 'No, gracias',
+      });
+      if (quiere) lanzarPOS();
     }
     // Si preferencia === 'carta', no imprime POS (futura implementación carta)
   } catch (err) {
