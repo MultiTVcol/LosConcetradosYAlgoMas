@@ -82,15 +82,11 @@ export async function registrar(datos) {
     creado: nowISO(),
   };
 
-  // Sumar stock + actualizar costo
+  // Sumar stock + actualizar costo (delta atómico en la nube)
   for (const it of items) {
     if (!it.producto_id) continue;
     try {
-      const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
-      if (p) {
-        const stockNuevo = (Number(p.stock) || 0) + it.cantidad;
-        await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockNuevo, costo: it.costo });
-      }
+      await Sync.ajustarStock(it.producto_id, it.cantidad, { costo: it.costo });
     } catch (e) {
       console.warn('Error sumando stock de compra:', e);
     }
@@ -145,13 +141,9 @@ export async function eliminar(id) {
   for (const it of compra.items || []) {
     if (!it.producto_id) continue;
     try {
-      const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
-      if (p) {
-        // Permitir negativo (igual que Ventas): si ya se vendió parte de
-        // esta mercancía, recortar a 0 inflaría el inventario en silencio.
-        const stockNuevo = (Number(p.stock) || 0) - (Number(it.cantidad) || 0);
-        await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockNuevo });
-      }
+      // Permitir negativo (igual que Ventas): si ya se vendió parte de
+      // esta mercancía, recortar a 0 inflaría el inventario en silencio.
+      await Sync.ajustarStock(it.producto_id, -(Number(it.cantidad) || 0));
     } catch (e) {
       console.warn('Error revirtiendo stock:', e);
     }

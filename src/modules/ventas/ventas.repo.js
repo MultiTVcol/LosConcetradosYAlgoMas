@@ -325,20 +325,13 @@ async function descontarStock(items) {
       continue;
     }
     try {
-      const producto = await db.get(TABLA_PRODUCTOS, item.producto_id);
-      if (!producto) {
-        console.warn(`🛑 Producto ${item.producto_id} (${item.nombre}) no encontrado en IndexedDB. Stock NO descontado.`);
-        continue;
-      }
-
-      const stockAnterior = Number(producto.stock) || 0;
       const cantidad = Number(item.cantidad) || 0;
-      // Permitir stock negativo (sobreventa) — refleja la realidad del inventario
-      const stockNuevo = stockAnterior - cantidad;
-      const actualizado = { ...producto, stock: stockNuevo };
-
-      await Sync.guardar(TABLA_PRODUCTOS, actualizado);
-      resumen.push(`${producto.nombre}: ${stockAnterior} → ${stockNuevo} (−${cantidad})`);
+      if (cantidad <= 0) continue;
+      // Delta atómico: la nube hace la resta dentro de la base de datos,
+      // así dos cajas vendiendo a la vez no se pisan. Permite negativo
+      // (sobreventa) — refleja la realidad del inventario.
+      const r = await Sync.ajustarStock(item.producto_id, -cantidad);
+      resumen.push(`${item.nombre}: −${cantidad}${r.stock != null ? ` → ${r.stock}` : ''}`);
     } catch (e) {
       console.error(`❌ Error descontando stock de ${item.producto_id}:`, e);
     }
@@ -363,12 +356,9 @@ export async function eliminar(id) {
   for (const item of venta.items || []) {
     if (!item.producto_id) continue;
     try {
-      const producto = await db.get(TABLA_PRODUCTOS, item.producto_id);
-      if (!producto) continue;
       const cantidad = Number(item.cantidad) || 0;
-      const stockNuevo = (Number(producto.stock) || 0) + cantidad;
-      const actualizado = { ...producto, stock: stockNuevo };
-      await Sync.guardar(TABLA_PRODUCTOS, actualizado);
+      if (cantidad <= 0) continue;
+      await Sync.ajustarStock(item.producto_id, cantidad);
       devueltas += cantidad;
     } catch (e) {
       console.warn(`No se pudo devolver stock de ${item.producto_id}:`, e);
@@ -426,11 +416,7 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
 
     if (delta !== 0 && it.producto_id) {
       try {
-        const producto = await db.get(TABLA_PRODUCTOS, it.producto_id);
-        if (producto) {
-          const stockNuevo = (Number(producto.stock) || 0) - delta;
-          await Sync.guardar(TABLA_PRODUCTOS, { ...producto, stock: stockNuevo });
-        }
+        await Sync.ajustarStock(it.producto_id, -delta);
       } catch (e) {
         console.warn(`No se pudo ajustar stock de ${it.producto_id}:`, e);
       }

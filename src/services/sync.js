@@ -291,6 +291,23 @@ export async function flushPendientes() {
       if (p.tipo === 'delete') {
         const ok = await Supa.remove(p.tabla, p.id);
         if (!ok) throw new Error('remove devolvió false');
+      } else if (p.tipo === 'stock') {
+        // Delta de stock pendiente: aplicarlo atómico en la nube
+        try {
+          const stockNube = await rpcAjustarStock(p.id, p.delta, p.costo ?? null);
+          if (stockNube == null) {
+            // Producto no existe en la nube: subir fila local completa
+            const prod = await db.get('productos', p.id);
+            if (prod) await Supa.upsert('productos', prod);
+          } else {
+            await alinearStockLocal(p.id, stockNube);
+          }
+        } catch (errStock) {
+          if (!esFuncionFaltante(errStock)) throw errStock;
+          // Función no instalada: fallback no atómico con la fila local
+          const prod = await db.get('productos', p.id);
+          if (prod) await Supa.upsert('productos', prod);
+        }
       } else {
         await Supa.upsert(p.tabla, p.item);
       }
@@ -323,6 +340,123 @@ export function pendientes() {
  */
 export function estaActiva() {
   return sincronizacionActiva();
+}
+
+// ============================================================
+//  STOCK ATÓMICO
+// ============================================================
+//
+// El stock NO se actualiza con "leer → calcular → guardar fila completa"
+// (dos cajas vendiendo a la vez se pisaban la resta). En su lugar se
+// envía el DELTA (+5, -2) a la función `ajustar_stock` de Postgres,
+// que suma/resta de forma atómica dentro de la base de datos.
+//
+// Requiere ejecutar supabase-stock-atomico.sql en el proyecto.
+// Si la función aún no existe, cae al método viejo (no atómico) para
+// no romper el flujo, avisando por consola.
+
+/** Llama la función atómica en Postgres. Devuelve el stock resultante o null si el producto no existe en la nube. */
+async function rpcAjustarStock(productoId, delta, costo) {
+  const client = Supa.getClient();
+  const { data, error } = await client.rpc('ajustar_stock', {
+    p_id: productoId,
+    p_tenant: TENANT_ID,
+    p_delta: delta,
+    p_costo: costo == null ? null : costo,
+  });
+  if (error) throw error;
+  return data; // stock nuevo (numeric) o null si no afectó filas
+}
+
+function esFuncionFaltante(err) {
+  return !!err && (err.code === 'PGRST202' || /could not find the function/i.test(err.message || ''));
+}
+
+/** Re-lee el producto local y fija el stock al valor autoritativo de la nube. */
+async function alinearStockLocal(productoId, stockNube) {
+  if (stockNube == null) return;
+  try {
+    const p = await db.get('productos', productoId);
+    if (p && Number(p.stock) !== Number(stockNube)) {
+      await db.put('productos', { ...p, stock: Number(stockNube) });
+    }
+  } catch (e) { /**/ }
+}
+
+/**
+ * Ajusta el stock de un producto con un DELTA (positivo suma, negativo
+ * resta), de forma atómica en la nube y aplicado también en local.
+ *
+ * @param {string} productoId
+ * @param {number} delta - unidades a sumar (+) o restar (−)
+ * @param {Object} [opts] - { costo?: number } actualizar también el costo (compras)
+ * @returns {Promise<{local: boolean, nube: boolean, stock: number|null}>}
+ *
+ * @example
+ *   await Sync.ajustarStock('p1', -2);              // venta de 2 unidades
+ *   await Sync.ajustarStock('p1', 10, { costo: 5000 }); // compra
+ */
+export async function ajustarStock(productoId, delta, opts = {}) {
+  const d = Number(delta) || 0;
+  const costo = opts.costo != null ? Number(opts.costo) : null;
+  const resultado = { local: false, nube: false, stock: null };
+  if (!productoId || (d === 0 && costo == null)) return resultado;
+
+  // 1) Aplicar el delta en LOCAL (offline-first, feedback inmediato)
+  let prodLocal = null;
+  try {
+    prodLocal = await db.get('productos', productoId);
+    if (prodLocal) {
+      prodLocal = { ...prodLocal, stock: (Number(prodLocal.stock) || 0) + d };
+      if (costo != null) prodLocal.costo = costo;
+      await db.put('productos', prodLocal);
+      resultado.local = true;
+    }
+  } catch (err) {
+    console.warn(`ajustarStock local (${productoId}):`, err);
+  }
+
+  // 2) Aplicar el delta ATÓMICO en la nube
+  if (sincronizacionActiva()) {
+    try {
+      const stockNube = await rpcAjustarStock(productoId, d, costo);
+      if (stockNube == null && prodLocal) {
+        // El producto aún no existe en la nube (ej: creado offline):
+        // subir la fila local completa, que ya trae el stock ajustado.
+        await Supa.upsert('productos', prodLocal);
+        resultado.stock = Number(prodLocal.stock);
+      } else {
+        resultado.stock = stockNube == null ? null : Number(stockNube);
+        await alinearStockLocal(productoId, stockNube);
+      }
+      resultado.nube = true;
+    } catch (err) {
+      if (esFuncionFaltante(err)) {
+        // La función no está instalada todavía: método viejo (no atómico)
+        console.warn('⚠️ Falta la función ajustar_stock en Supabase. Ejecuta supabase-stock-atomico.sql. Usando método NO atómico.');
+        try {
+          if (prodLocal) {
+            await Supa.upsert('productos', prodLocal);
+            resultado.nube = true;
+          }
+        } catch (e2) {
+          _pendientes.push({ tipo: 'stock', tabla: 'productos', id: productoId, delta: d, costo, intentos: 1 });
+          persistirPendientes();
+        }
+      } else {
+        console.warn(`⚠️ ajustar_stock(${productoId}) falló. Queda pendiente.`, err.message || err);
+        _pendientes.push({ tipo: 'stock', tabla: 'productos', id: productoId, delta: d, costo, intentos: 1 });
+        persistirPendientes();
+      }
+    }
+  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+    // Offline: encolar el delta — al volver internet se aplica atómico.
+    // (Los deltas se acumulan sin pisarse: el orden no importa en sumas.)
+    _pendientes.push({ tipo: 'stock', tabla: 'productos', id: productoId, delta: d, costo, intentos: 0 });
+    persistirPendientes();
+  }
+
+  return resultado;
 }
 
 // ============================================================

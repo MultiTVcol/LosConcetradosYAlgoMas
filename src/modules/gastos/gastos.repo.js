@@ -70,17 +70,13 @@ export async function guardarBajaProductos(datos) {
   const items = datos.items || [];
   if (items.length === 0) throw new Error('No hay productos en la baja');
 
-  // Si es edición, revertir stock del gasto original
+  // Si es edición, revertir stock del gasto original (delta atómico)
   if (datos.id) {
     const original = await db.get(TABLA, datos.id);
     if (original && original.categoria === 'Productos' && Array.isArray(original.items)) {
       for (const it of original.items) {
         try {
-          const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
-          if (p) {
-            const stockRev = (Number(p.stock) || 0) + (Number(it.cantidad) || 0);
-            await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockRev });
-          }
+          await Sync.ajustarStock(it.producto_id, Number(it.cantidad) || 0);
         } catch (e) {
           console.warn('Error revirtiendo stock:', e);
         }
@@ -88,14 +84,11 @@ export async function guardarBajaProductos(datos) {
     }
   }
 
-  // Descontar stock de los productos de la nueva baja
+  // Descontar stock de los productos de la nueva baja (delta atómico;
+  // permite negativo, consistente con Ventas y Compras)
   for (const it of items) {
     try {
-      const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
-      if (p) {
-        const stockNuevo = Math.max(0, (Number(p.stock) || 0) - (Number(it.cantidad) || 0));
-        await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockNuevo });
-      }
+      await Sync.ajustarStock(it.producto_id, -(Number(it.cantidad) || 0));
     } catch (e) {
       console.warn('Error descontando stock:', e);
     }
@@ -138,11 +131,7 @@ export async function eliminar(id) {
   if (gasto.categoria === 'Productos' && Array.isArray(gasto.items)) {
     for (const it of gasto.items) {
       try {
-        const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
-        if (p) {
-          const stockNuevo = (Number(p.stock) || 0) + (Number(it.cantidad) || 0);
-          await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockNuevo });
-        }
+        await Sync.ajustarStock(it.producto_id, Number(it.cantidad) || 0);
       } catch (e) {
         console.warn('Error devolviendo stock:', e);
       }
