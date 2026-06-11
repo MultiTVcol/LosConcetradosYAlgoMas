@@ -158,15 +158,17 @@ export function html(venta, plantilla, negocio) {
     partes.push(wrap(cliBlock.join('')));
   }
 
-  // ─── TABLA DE PRODUCTOS (estilo moderno) ──────────────────────
+  // ─── TABLA DE PRODUCTOS (CANT · PRODUCTO · VLR/UNI · VALOR) ───
   if (p.mostrarItems && Array.isArray(venta.items) && venta.items.length) {
     const filas = [];
 
-    // Encabezado de la sección
+    // Encabezado de columnas
     filas.push(`
       <tr>
-        <td style="text-align:left;padding:4px 0 3px;font-size:${base - 2.5}px;font-weight:bold;letter-spacing:.08em;border-bottom:1px solid ${col}">DESCRIPCIÓN</td>
-        <td style="text-align:right;padding:4px 0 3px;font-size:${base - 2.5}px;font-weight:bold;letter-spacing:.08em;border-bottom:1px solid ${col}">VALOR</td>
+        <td style="text-align:left;padding:4px 3px 3px 0;font-size:${base - 3}px;font-weight:bold;letter-spacing:.05em;border-bottom:1px solid ${col};white-space:nowrap">CANT</td>
+        <td style="text-align:left;padding:4px 3px 3px;font-size:${base - 3}px;font-weight:bold;letter-spacing:.05em;border-bottom:1px solid ${col}">PRODUCTO</td>
+        <td style="text-align:right;padding:4px 3px 3px;font-size:${base - 3}px;font-weight:bold;letter-spacing:.05em;border-bottom:1px solid ${col};white-space:nowrap">VLR/UNI</td>
+        <td style="text-align:right;padding:4px 0 3px 3px;font-size:${base - 3}px;font-weight:bold;letter-spacing:.05em;border-bottom:1px solid ${col};white-space:nowrap">VALOR</td>
       </tr>
     `);
 
@@ -176,24 +178,28 @@ export function html(venta, plantilla, negocio) {
       const desc = Number(it.descuento) || 0;
       const valorTotal = (precio - desc) * cant;
 
-      // Línea 1: nombre del producto (negrita, ocupa todo el ancho)
       filas.push(`
-        <tr>
-          <td colspan="2" style="text-align:left;padding:5px 0 0;font-weight:bold;word-break:break-word;line-height:1.25">${esc(cp(it.nombre))}</td>
+        <tr style="vertical-align:top">
+          <td style="text-align:left;padding:4px 3px 2px 0;font-weight:bold">${fmt(cant)}</td>
+          <td style="text-align:left;padding:4px 3px 2px;word-break:break-word;line-height:1.25;font-weight:bold">${esc(cp(it.nombre))}</td>
+          <td style="text-align:right;padding:4px 3px 2px;white-space:nowrap">${money(precio - desc)}</td>
+          <td style="text-align:right;padding:4px 0 2px 3px;white-space:nowrap;font-weight:bold">${money(valorTotal)}</td>
         </tr>
       `);
-      // Línea 2: cantidad x precio unitario | valor total
-      filas.push(`
-        <tr>
-          <td style="text-align:left;padding:1px 0 4px;font-size:${base - 1.5}px">${fmt(cant)} x ${money(precio - desc)}${desc > 0 ? ` <span style="font-size:${base - 2.5}px">(desc ${money(desc)})</span>` : ''}</td>
-          <td style="text-align:right;padding:1px 0 4px;white-space:nowrap;font-weight:bold;vertical-align:bottom">${money(valorTotal)}</td>
-        </tr>
-      `);
+
+      if (desc > 0) {
+        filas.push(`
+          <tr>
+            <td></td>
+            <td colspan="3" style="text-align:left;padding:0 0 3px 3px;font-size:${base - 2.5}px">(desc. ${money(desc)} c/u)</td>
+          </tr>
+        `);
+      }
     }
 
     partes.push(`<div style="margin-top:6px"></div>`);
     partes.push(`
-      <table style="width:100%;border-collapse:collapse;font-size:${base}px"><tbody>
+      <table style="width:100%;border-collapse:collapse;font-size:${base - 1}px"><tbody>
         ${filas.join('')}
       </tbody></table>
     `);
