@@ -1650,38 +1650,46 @@ function abrirModalCobro() {
   const totales = Repo.calcularTotales(_carrito, _descuento);
 
   const contenido = `
-    <div style="text-align:center;margin-bottom:6px">
-      <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px">Total a pagar</div>
-      <div style="background:#eef2ff;border-radius:12px;padding:18px 14px;margin-bottom:16px">
-        <div style="font-size:34px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
-          ${money(totales.total)}
+    <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:22px;align-items:start">
+
+      <!-- COLUMNA IZQUIERDA: total + métodos de pago -->
+      <div>
+        <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
+        <div style="background:#eef2ff;border-radius:12px;padding:20px 14px;margin-bottom:16px;text-align:center">
+          <div style="font-size:32px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
+            ${money(totales.total)}
+          </div>
         </div>
+
+        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">
+          Método de pago
+        </div>
+        <div id="cobro-chips" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${METODOS_PAGO.map(m => `
+            <button
+              class="pm-chip"
+              data-pm="${m.id}"
+              style="padding:11px 6px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569"
+            >${m.label}</button>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: detalle del pago -->
+      <div style="border-left:1px solid #e2e8f0;padding-left:22px;min-height:230px;display:flex;flex-direction:column">
+        <div id="cobro-area" style="flex:1"></div>
       </div>
     </div>
 
-    <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">
-      Método de pago
-    </div>
-    <div id="cobro-chips" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-      ${METODOS_PAGO.map(m => `
-        <button
-          class="pm-chip"
-          data-pm="${m.id}"
-          style="padding:10px 6px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569"
-        >${m.label}</button>
-      `).join('')}
-    </div>
-
-    <div id="cobro-area"></div>
-
-    <div style="display:flex;gap:10px;margin-top:18px">
+    <!-- BOTONES (ancho completo, abajo) -->
+    <div style="display:flex;gap:10px;margin-top:20px;border-top:1px solid #e2e8f0;padding-top:16px">
       <button
         id="cobro-btn-cancelar"
-        style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
+        style="flex:1;padding:13px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
       >Cancelar</button>
       <button
         id="cobro-btn-confirmar"
-        style="flex:1;padding:12px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)"
+        style="flex:1.4;padding:13px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)"
       >✅ Confirmar</button>
     </div>
   `;
@@ -1689,7 +1697,7 @@ function abrirModalCobro() {
   _cobroModal = Modal.abrir({
     titulo: '💵 Cobrar venta',
     contenido,
-    ancho: 'sm',
+    ancho: 'lg',
     onClose: () => { _cobroModal = null; },
   });
 
@@ -1765,22 +1773,24 @@ function seleccionarMetodoPago(metodo) {
 
     if (metodo === 'efectivo') {
       area.innerHTML = `
-        <div style="font-size:13px;color:#475569;font-weight:600;margin-bottom:6px">¿Con cuánto paga el cliente?</div>
-        <input
-          id="cobro-recibido"
-          data-miles
-          type="text"
-          inputmode="numeric"
-          placeholder="Ej: 50.000"
-          style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:20px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;font-weight:700"
-        />
-        <button
-          id="cobro-btn-exacto"
-          style="width:100%;margin-top:10px;padding:14px;border:2px solid #4f46e5;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit"
-        >💰 Exacto · ${money(totales.total)}</button>
+        <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:8px">¿Con cuánto paga el cliente?</div>
+        <div style="display:flex;gap:10px;align-items:stretch">
+          <input
+            id="cobro-recibido"
+            data-miles
+            type="text"
+            inputmode="numeric"
+            placeholder="Ej: 50.000"
+            style="flex:1;min-width:0;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:20px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;font-weight:700"
+          />
+          <button
+            id="cobro-btn-exacto"
+            style="flex-shrink:0;padding:0 18px;border:2px solid #4f46e5;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;white-space:nowrap"
+          >💰 Exacto · ${money(totales.total)}</button>
+        </div>
         <div
           id="cobro-cambio-box"
-          style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:center;font-size:14px;margin-top:12px"
+          style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;font-size:14px;margin-top:14px"
         ><b>Cambio:</b> ${money(0)}</div>
       `;
 
