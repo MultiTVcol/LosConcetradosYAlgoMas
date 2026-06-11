@@ -1650,13 +1650,13 @@ function abrirModalCobro() {
   const totales = Repo.calcularTotales(_carrito, _descuento);
 
   const contenido = `
-    <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:22px;align-items:start">
+    <div style="display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:stretch">
 
       <!-- COLUMNA IZQUIERDA: total + métodos de pago -->
       <div>
         <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
-        <div style="background:#eef2ff;border-radius:12px;padding:20px 14px;margin-bottom:16px;text-align:center">
-          <div style="font-size:32px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
+        <div style="background:#eef2ff;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#4338ca;letter-spacing:-0.025em">
             ${money(totales.total)}
           </div>
         </div>
@@ -1664,19 +1664,19 @@ function abrirModalCobro() {
         <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">
           Método de pago
         </div>
-        <div id="cobro-chips" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div id="cobro-chips" style="display:flex;flex-direction:column;gap:7px">
           ${METODOS_PAGO.map(m => `
             <button
               class="pm-chip"
               data-pm="${m.id}"
-              style="padding:11px 6px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569"
+              style="padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;text-align:left"
             >${m.label}</button>
           `).join('')}
         </div>
       </div>
 
       <!-- COLUMNA DERECHA: detalle del pago -->
-      <div style="border-left:1px solid #e2e8f0;padding-left:22px;min-height:230px;display:flex;flex-direction:column">
+      <div style="border-left:1px solid #e2e8f0;padding-left:24px;min-width:0;display:flex;flex-direction:column">
         <div id="cobro-area" style="flex:1"></div>
       </div>
     </div>
@@ -1751,7 +1751,7 @@ function seleccionarMetodoPago(metodo) {
               inputmode="numeric"
               placeholder="0"
               value="${_payments[k] || ''}"
-              style="width:140px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace;text-align:right;outline:none"
+              style="width:150px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14.5px;font-weight:600;text-align:right;outline:none;font-family:inherit"
             />
           </div>
         `).join('')}
@@ -1774,23 +1774,21 @@ function seleccionarMetodoPago(metodo) {
     if (metodo === 'efectivo') {
       area.innerHTML = `
         <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:8px">¿Con cuánto paga el cliente?</div>
-        <div style="display:flex;gap:10px;align-items:stretch">
-          <input
-            id="cobro-recibido"
-            data-miles
-            type="text"
-            inputmode="numeric"
-            placeholder="Ej: 50.000"
-            style="flex:1;min-width:0;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:20px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;font-weight:700"
-          />
-          <button
-            id="cobro-btn-exacto"
-            style="flex-shrink:0;padding:0 18px;border:2px solid #4f46e5;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;white-space:nowrap"
-          >💰 Exacto · ${money(totales.total)}</button>
-        </div>
+        <input
+          id="cobro-recibido"
+          data-miles
+          type="text"
+          inputmode="numeric"
+          placeholder="Ej: 50.000"
+          style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:19px;outline:none;box-sizing:border-box;font-weight:700;font-family:inherit"
+        />
+        <button
+          id="cobro-btn-exacto"
+          style="width:100%;margin-top:10px;padding:13px;border:2px solid #4f46e5;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
+        >💰 Exacto · ${money(totales.total)}</button>
         <div
           id="cobro-cambio-box"
-          style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;font-size:14px;margin-top:14px"
+          style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:15px;text-align:center;font-size:14px;margin-top:12px"
         ><b>Cambio:</b> ${money(0)}</div>
       `;
 
@@ -1827,7 +1825,7 @@ function actualizarCambio() {
 
   box.innerHTML = `
     <b>Cambio:</b>
-    <span style="font-size:20px;font-weight:800;color:${color};font-family:'JetBrains Mono',ui-monospace,monospace">
+    <span style="font-size:20px;font-weight:800;color:${color};letter-spacing:-0.02em">
       ${money(Math.max(0, cambio))}
     </span>
     ${cambio < 0 ? `<div style="color:#dc2626;font-weight:700;margin-top:4px">Faltan ${money(-cambio)}</div>` : ''}
@@ -1847,11 +1845,11 @@ function actualizarMixto() {
   info.innerHTML = `
     <div style="display:flex;justify-content:space-between;margin-bottom:4px">
       <span>Recibido</span>
-      <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(sum)}</b>
+      <b>${money(sum)}</b>
     </div>
     <div style="display:flex;justify-content:space-between;color:${negativo ? '#dc2626' : '#15803d'}">
       <span>${negativo ? 'Falta' : 'Cambio/Sobra'}</span>
-      <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(Math.abs(falta))}</b>
+      <b>${money(Math.abs(falta))}</b>
     </div>
   `;
 }
