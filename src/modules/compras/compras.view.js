@@ -289,12 +289,21 @@ function cablearSelectorLector(contenedor) {
 }
 
 function filtrarProductos(q) {
-  q = (q || '').trim().toLowerCase();
-  if (!q) return _productos.slice(0, 20);
-  return _productos.filter((p) => {
-    return [p.nombre, p.codigo, p.barras, p.categoria].filter(Boolean)
-      .some((x) => String(x).toLowerCase().includes(q));
-  });
+  // Usar el MISMO ranking que Ventas: codigo exacto > codigo empieza con >
+  // barras > codigo incluye > nombre empieza con > nombre incluye > ...
+  return ProductosRepo.filtrarConPrioridad(_productos, q);
+}
+
+function _qActual() {
+  return (_contenedor?.querySelector('#comp-buscar')?.value || '').trim().toLowerCase();
+}
+
+function _hl(s, q) {
+  if (!q) return esc(s || '');
+  const txt = String(s || '');
+  const ix = txt.toLowerCase().indexOf(q);
+  if (ix < 0) return esc(txt);
+  return `${esc(txt.slice(0, ix))}<mark style="background:rgba(74,222,128,.40);padding:0 2px;border-radius:3px;font-weight:800">${esc(txt.slice(ix, ix + q.length))}</mark>${esc(txt.slice(ix + q.length))}`;
 }
 
 function pintarResultadosBusqueda() {
@@ -304,16 +313,23 @@ function pintarResultadosBusqueda() {
     box.innerHTML = '';
     return;
   }
-  box.innerHTML = _resultadosBusqueda.slice(0, 30).map((p, i) => `
-    <button class="comp-res" data-id="${esc(p.id)}"
-      style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid ${i === _indiceActivo ? '#4f46e5' : '#e2e8f0'};background:${i === _indiceActivo ? '#eef2ff' : 'white'};border-radius:8px;cursor:pointer;font-family:inherit;text-align:left">
-      <div style="min-width:0;flex:1">
-        <b style="font-size:13.5px;color:#0f172a;display:block">${esc(p.nombre)}</b>
-        <span style="color:#64748b;font-size:11.5px">${esc(p.codigo || '')} · Stock: ${fmt(p.stock || 0)} · Costo: ${money(p.costo || 0)}</span>
-      </div>
-      <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">＋ Añadir</span>
-    </button>
-  `).join('');
+  const q = _qActual();
+  box.innerHTML = _resultadosBusqueda.slice(0, 30).map((p, i) => {
+    const activo = i === _indiceActivo;
+    return `
+      <button class="comp-res" data-id="${esc(p.id)}"
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#4f46e5' : '#e2e8f0'};background:${activo ? '#eef2ff' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:13px;background:#f1f5f9;color:#0f172a;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
+            <b style="font-size:13.5px;color:#0f172a">${_hl(p.nombre, q)}</b>
+          </div>
+          <div style="color:#64748b;font-size:11.5px;margin-top:3px">Stock: ${fmt(p.stock || 0)} · Último costo: ${money(p.costo || 0)}${p.categoria ? ' · ' + esc(p.categoria) : ''}</div>
+        </div>
+        <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">＋ Añadir</span>
+      </button>
+    `;
+  }).join('');
   box.querySelectorAll('.comp-res').forEach((b) => {
     b.onclick = () => abrirModalCantidadCompra(b.dataset.id);
   });
