@@ -78,15 +78,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('No se pudo iniciar Realtime:', err);
   }
 
-  // Subir operaciones que quedaron pendientes de sesiones anteriores
-  // (ventas/cambios hechos sin internet que aún no llegaron a la nube)
+  // SINCRONIZACIÓN INICIAL con la nube. Realtime solo trae cambios EN
+  // VIVO: sin esta bajada completa, lo vendido en otra terminal mientras
+  // esta estaba cerrada nunca aparecía aquí.
   try {
-    if (Services.Sync.pendientes() > 0) {
-      Services.Sync.flushPendientes()
-        .then((r) => { if (r.exitos > 0) console.log(`☁️ ${r.exitos} operación(es) pendiente(s) sincronizadas`); })
-        .catch((e) => console.warn('Flush inicial falló:', e));
+    if (Services.Supa.isReady()) {
+      app.innerHTML = `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;font-family:Inter,system-ui,sans-serif">
+          <div style="text-align:center">
+            <div style="width:54px;height:54px;border:4px solid #e2e8f0;border-top-color:#4f46e5;border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite"></div>
+            <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+            <div style="font-size:15px;font-weight:700;color:#0f172a">Sincronizando con la nube…</div>
+            <div style="font-size:12.5px;color:#64748b;margin-top:4px">Bajando ventas y cambios de otras terminales</div>
+          </div>
+        </div>
+      `;
+
+      // 1) Primero SUBIR lo pendiente de esta terminal (para que la
+      //    bajada no pise cambios locales que aún no estaban en la nube)
+      if (Services.Sync.pendientes() > 0) {
+        try {
+          const r = await Services.Sync.flushPendientes();
+          if (r.exitos > 0) console.log(`☁️ ${r.exitos} operación(es) pendiente(s) sincronizadas`);
+        } catch (e) { console.warn('Flush inicial falló:', e); }
+      }
+
+      // 2) Después BAJAR el estado completo de todas las tablas.
+      //    Con tope de 12s para que una red lenta no bloquee el POS.
+      const TABLAS_SYNC = ['productos', 'clientes', 'ventas', 'compras', 'proveedores', 'gastos', 'kvs'];
+      await Promise.race([
+        Promise.allSettled(TABLAS_SYNC.map((t) => Services.Sync.descargar(t))),
+        new Promise((resolve) => setTimeout(resolve, 12000)),
+      ]);
+      console.log('☁️ Sincronización inicial completa');
     }
-  } catch (err) { console.warn('No se pudo hacer flush inicial:', err); }
+  } catch (err) { console.warn('Sincronización inicial falló:', err); }
 
   montarShell(app);
 
