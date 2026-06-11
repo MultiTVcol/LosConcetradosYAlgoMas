@@ -160,15 +160,36 @@ function htmlFormCompra() {
 
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:4px 0">
 
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Agregar producto al pedido</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Agregar producto al pedido</div>
+        ${htmlSelectorLectorCompra()}
+      </div>
       <div style="position:relative">
         <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:12px;padding:12px">
           <input id="comp-buscar" type="text" placeholder="Buscar por código, barras, nombre o categoría..." autocomplete="off"
             style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit" />
-          <div style="color:#64748b;font-size:12px;margin-top:6px">↑↓ navegar · Enter agregar · Esc cerrar</div>
+          <div style="color:#64748b;font-size:12px;margin-top:6px">↑↓ navegar · Enter agregar · Esc cerrar · los códigos salen primero</div>
         </div>
         <div id="comp-resultados" style="margin-top:4px;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto"></div>
+        ${getLectorModeCompra() === 'pistola' ? `
+          <div style="color:#64748b;font-size:12.5px;margin-top:10px;display:flex;align-items:center;gap:6px">
+            🔫 <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al pedido.</span>
+          </div>
+        ` : ''}
       </div>
+    </div>
+  `;
+}
+
+function htmlSelectorLectorCompra() {
+  const modo = getLectorModeCompra();
+  const esPistola = modo === 'pistola';
+  return `
+    <div style="display:flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:8px;padding:3px">
+      <button class="lm-btn-comp" data-modo="pistola"
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#4f46e5' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">🔫 Pistola</button>
+      <button class="lm-btn-comp" data-modo="manual"
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#4f46e5' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">⌨️ Manual</button>
     </div>
   `;
 }
@@ -200,18 +221,36 @@ function adjuntarEventos(contenedor) {
 
   contenedor.querySelector('#comp-btn-registrar').onclick = () => abrirRegistroPago();
 
+  cablearBuscador(contenedor);
+  cablearSelectorLector(contenedor);
+
+  pintarCuentasPorPagar();
+  pintarHistorial();
+}
+
+function cablearBuscador(contenedor) {
   const inp = contenedor.querySelector('#comp-buscar');
+  if (!inp) return;
   let debounce;
-  inp?.addEventListener('input', (e) => {
+  inp.addEventListener('input', (e) => {
     if (debounce) clearTimeout(debounce);
+    const query = e.target.value;
     debounce = setTimeout(() => {
-      _resultadosBusqueda = filtrarProductos(e.target.value);
+      // Modo pistola: intentar match exacto y agregar directo al pedido
+      if (getLectorModeCompra() === 'pistola') {
+        const exact = tryScannerExactCompra(query);
+        if (exact) {
+          procesarEscaneoCompra(exact, query, inp);
+          return;
+        }
+      }
+      _resultadosBusqueda = filtrarProductos(query);
       _indiceActivo = _resultadosBusqueda.length > 0 ? 0 : -1;
       _dropdownAbierto = true;
       pintarResultadosBusqueda();
     }, 80);
   });
-  inp?.addEventListener('keydown', (e) => {
+  inp.addEventListener('keydown', (e) => {
     if (!_dropdownAbierto && e.key !== 'Escape') return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -234,9 +273,19 @@ function adjuntarEventos(contenedor) {
       pintarResultadosBusqueda();
     }
   });
+  setTimeout(() => inp.focus(), 80);
+}
 
-  pintarCuentasPorPagar();
-  pintarHistorial();
+function cablearSelectorLector(contenedor) {
+  contenedor.querySelectorAll('.lm-btn-comp').forEach((btn) => {
+    btn.onclick = () => {
+      const modo = btn.dataset.modo;
+      if (modo === getLectorModeCompra()) return;
+      setLectorModeCompra(modo);
+      Toast.ok(modo === 'pistola' ? '🔫 Modo lector USB' : '⌨️ Modo manual');
+      actualizarFormCompra();
+    };
+  });
 }
 
 function filtrarProductos(q) {
@@ -442,6 +491,75 @@ function abrirModalCantidadCompra(prodId) {
 }
 
 // ============================================================
+//  LECTOR USB (pistola / manual) — mismo comportamiento que Ventas
+// ============================================================
+
+const LECTOR_KEY_COMPRA = 'pospunto:lector-compra';
+
+function getLectorModeCompra() {
+  try {
+    const v = localStorage.getItem(LECTOR_KEY_COMPRA);
+    return v === 'manual' ? 'manual' : 'pistola';
+  } catch { return 'pistola'; }
+}
+
+function setLectorModeCompra(modo) {
+  try { localStorage.setItem(LECTOR_KEY_COMPRA, modo); } catch {}
+}
+
+/**
+ * Devuelve el producto si la query coincide EXACTAMENTE con un
+ * código o un código de barras. Pensado para la pistola.
+ */
+function tryScannerExactCompra(query) {
+  const q = String(query || '').trim();
+  if (q.length < 2) return null;
+  return _productos.find((p) => {
+    const c = String(p.codigo || '').trim();
+    const b = String(p.barras || '').trim();
+    return (c && c === q) || (b && b === q);
+  }) || null;
+}
+
+/**
+ * Procesa un escaneo: agrega +1 al pedido y limpia el buscador.
+ * Si el producto ya está en el pedido, suma 1 a su cantidad.
+ */
+function procesarEscaneoCompra(producto, codigoOriginal, inputBuscar) {
+  agregarItemDirecto(producto, 1);
+  Toast.ok(`✓ ${producto.nombre} agregado (${codigoOriginal})`);
+  if (inputBuscar) {
+    inputBuscar.value = '';
+    _dropdownAbierto = false;
+    pintarResultadosBusqueda();
+    setTimeout(() => inputBuscar.focus(), 30);
+  }
+}
+
+/**
+ * Agrega un producto al pedido SIN abrir el modal. Si ya está,
+ * le suma `cantidad` a la línea existente.
+ */
+function agregarItemDirecto(producto, cantidad = 1) {
+  const cant = Math.max(0, num(cantidad));
+  if (cant <= 0) return;
+  const costo = Number(producto.costo) || 0;
+  const yaEn = _items.find((it) => it.producto_id === producto.id);
+  if (yaEn) {
+    yaEn.cantidad = num(yaEn.cantidad) + cant;
+  } else {
+    _items.push({
+      producto_id: producto.id,
+      codigo: producto.codigo || '',
+      nombre: producto.nombre,
+      cantidad: cant,
+      costo,
+    });
+  }
+  pintarItemsCompra();
+}
+
+// ============================================================
 //  PROVEEDORES
 // ============================================================
 
@@ -584,22 +702,12 @@ function actualizarFormCompra() {
   if (izquierda) {
     izquierda.outerHTML = htmlFormCompra();
     refrescarIconos(_contenedor);
-    // Re-cablear eventos
+    // Re-cablear eventos del panel izquierdo
     _contenedor.querySelector('#comp-prov-box').onclick = () => abrirSelectorProveedor();
     const cambiar = _contenedor.querySelector('#comp-prov-cambiar');
     if (cambiar) cambiar.onclick = (e) => { e.stopPropagation(); abrirSelectorProveedor(); };
-
-    const inp = _contenedor.querySelector('#comp-buscar');
-    let debounce;
-    inp?.addEventListener('input', (e) => {
-      if (debounce) clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        _resultadosBusqueda = filtrarProductos(e.target.value);
-        _indiceActivo = _resultadosBusqueda.length > 0 ? 0 : -1;
-        _dropdownAbierto = true;
-        pintarResultadosBusqueda();
-      }, 80);
-    });
+    cablearBuscador(_contenedor);
+    cablearSelectorLector(_contenedor);
   }
 }
 
