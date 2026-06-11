@@ -14,6 +14,7 @@ import * as GastosRepo from '../gastos/gastos.repo.js';
 import * as ProductosRepo from '../productos/productos.repo.js';
 import * as ComprasRepo from '../compras/compras.repo.js';
 import * as ConfigRepo from '../config/config.repo.js';
+import * as PlantillaRepo from '../factura/plantilla.repo.js';
 import { money, fmt, num } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { todayISO } from '../../core/dates.js';
@@ -471,6 +472,18 @@ async function imprimirInforme(r) {
   try { cfg = await ConfigRepo.leer(); } catch (e) { cfg = { negocio: {} }; }
   const neg = cfg.negocio || {};
 
+  let pl;
+  try { pl = await PlantillaRepo.leer('cierre'); } catch (e) { pl = PlantillaRepo.defaultPara('cierre'); }
+  const fuente = pl.fuente || "'Courier New', monospace";
+  const tamBase = Number(pl.tamBase) || 12;
+  const interlineado = Number(pl.interlineado) || 1.4;
+  const upper = pl.mayusculas ? 'text-transform:uppercase;' : '';
+  const tituloDoc = (pl.tituloDocumento || 'CIERRE DE CAJA').trim();
+  const tipoSep = pl.separador === 'solid' ? '1px solid #000'
+                : pl.separador === 'none' ? '0' : '1px dashed #000';
+  const msg1 = pl.mensaje1 || '';
+  const msg2 = pl.mensaje2 || '';
+
   const tkt = r.nFac > 0 ? r.ventas / r.nFac : 0;
   const margenPct = r.ventas > 0 ? (r.utilidadBruta / r.ventas * 100) : 0;
   const cats = Object.entries(r.gastosPorCat).sort((a, b) => b[1] - a[1]);
@@ -479,7 +492,9 @@ async function imprimirInforme(r) {
   const fechaImp = ahora.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const hora = ahora.toLocaleString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-  const sep = `<div style="border-top:1px dashed #000;margin:4px 0"></div>`;
+  const sep = pl.separador === 'none'
+    ? `<div style="margin:5px 0"></div>`
+    : `<div style="border-top:${tipoSep};margin:4px 0"></div>`;
   const dblSep = `<div style="border-top:3px double #000;margin:5px 0"></div>`;
   const kv = (k, v, bold = false) => `<tr style="${bold ? 'font-weight:bold;' : ''}"><td style="text-align:left;padding:1px 0">${k}</td><td style="text-align:right;padding:1px 0;white-space:nowrap">${v}</td></tr>`;
   const titulo = (t) => `<div style="text-align:center;font-weight:bold;font-size:13.5px;margin:5px 0 2px 0;letter-spacing:.04em;background:#000;color:#fff;padding:2px 0">${esc(t)}</div>`;
@@ -487,16 +502,17 @@ async function imprimirInforme(r) {
   const trunc = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
 
   const html = `
-    <div style="font-family:'Courier New', monospace;color:#000;font-size:12px;line-height:1.4;padding:4px">
+    <div style="font-family:${fuente};color:#000;font-size:${tamBase}px;line-height:${interlineado};padding:4px;${upper}">
 
       <!-- Encabezado del negocio -->
-      ${neg.nombre ? `<div style="text-align:center;font-weight:bold;font-size:14px">${esc(neg.nombre)}</div>` : ''}
-      ${neg.direccion ? `<div style="text-align:center;font-size:11px">${esc(neg.direccion)}</div>` : ''}
-      ${neg.ciudad ? `<div style="text-align:center;font-size:11px">${esc(neg.ciudad)}</div>` : ''}
-      ${neg.telefono ? `<div style="text-align:center;font-size:11px">Tel: ${esc(neg.telefono)}</div>` : ''}
+      ${pl.mostrarNombre !== false && neg.nombre ? `<div style="text-align:center;font-weight:bold;font-size:${tamBase + 2}px">${esc(neg.nombre)}</div>` : ''}
+      ${pl.mostrarNit !== false && neg.nit ? `<div style="text-align:center;font-size:${tamBase - 1}px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
+      ${pl.mostrarDireccion !== false && neg.direccion ? `<div style="text-align:center;font-size:${tamBase - 1}px">${esc(neg.direccion)}</div>` : ''}
+      ${pl.mostrarCiudad !== false && neg.ciudad ? `<div style="text-align:center;font-size:${tamBase - 1}px">${esc(neg.ciudad)}</div>` : ''}
+      ${pl.mostrarTelefono !== false && neg.telefono ? `<div style="text-align:center;font-size:${tamBase - 1}px">Tel: ${esc(neg.telefono)}</div>` : ''}
 
       ${dblSep}
-      <div style="text-align:center;font-weight:bold;font-size:14px;letter-spacing:.05em">CIERRE DE CAJA</div>
+      <div style="text-align:center;font-weight:bold;font-size:${tamBase + 2}px;letter-spacing:.05em">${esc(tituloDoc)}</div>
       ${dblSep}
 
       <div style="text-align:center;font-size:11.5px;margin-bottom:2px">
@@ -587,18 +603,18 @@ async function imprimirInforme(r) {
       )}
 
       ${dblSep}
-      <div style="text-align:center;font-size:10.5px;color:#555;margin-top:4px">
-        — Cierre realizado —
-      </div>
-      <div style="margin-top:18px;padding-top:6px;border-top:1px dashed #999;text-align:center;font-size:10px;color:#777">
+      ${msg1 ? `<div style="text-align:center;font-size:${tamBase - 1.5}px;color:#333;margin-top:4px">${esc(msg1)}</div>` : ''}
+      ${msg2 ? `<div style="text-align:center;font-size:${tamBase - 2}px;color:#555;margin-top:2px">${esc(msg2)}</div>` : ''}
+      <div style="margin-top:18px;padding-top:6px;border-top:1px dashed #999;text-align:center;font-size:${tamBase - 2}px;color:#777">
         Firma del responsable
       </div>
+      ${pl.mostrarPieRepetido !== false && neg.nombre ? `<div style="text-align:center;font-size:${tamBase - 2.5}px;color:#777;margin-top:4px">${esc(neg.nombre)}</div>` : ''}
       <div style="height:16px"></div>
     </div>
   `;
 
   try {
-    imprimirPOS(html, { titulo: `Cierre ${r.desde}` });
+    imprimirPOS(html, { anchoMm: pl.anchoMm || 80, titulo: `Cierre ${r.desde}` });
     Toast.ok('Enviando cierre a impresora…');
   } catch (err) {
     console.error('Error imprimiendo:', err);

@@ -11,9 +11,6 @@
  */
 
 import * as Repo from './config.repo.js';
-import * as PlantillaRepo from '../factura/plantilla.repo.js';
-import { html as facturaHTML } from '../factura/factura.html.js';
-import { imprimirPOS } from '../../services/printer.js';
 import * as ProductosRepo from '../productos/productos.repo.js';
 import * as ClientesRepo from '../clientes/clientes.repo.js';
 import * as ImpExp from './import-export.js';
@@ -28,7 +25,6 @@ import { refrescarIconos } from '../../app/shell.js';
 
 let _contenedor = null;
 let _cfg = null;
-let _plantilla = null;
 
 // ============================================================
 //  RENDER
@@ -39,14 +35,12 @@ export async function render(contenedor) {
   contenedor.innerHTML = htmlCargando();
 
   _cfg = await Repo.leer();
-  _plantilla = await PlantillaRepo.leer();
   const stats = await contarTodo();
 
-  contenedor.innerHTML = htmlLayout(_cfg, _plantilla, stats);
+  contenedor.innerHTML = htmlLayout(_cfg, stats);
   refrescarIconos(contenedor);
   adjuntarEventos(contenedor);
   actualizarEstadoSync();
-  actualizarVistaPreviaTicket();
 }
 
 async function contarTodo() {
@@ -121,117 +115,6 @@ function adjuntarEventos(contenedor) {
 
   // Borrar datos
   contenedor.querySelector('#cfg-borrar-confirmar')?.addEventListener('click', borrarSeleccionado);
-
-  // Plantilla de factura
-  cablearEditorPlantilla(contenedor);
-}
-
-// ============================================================
-//  EDITOR DE PLANTILLA DE FACTURA
-// ============================================================
-
-const PL_INPUTS = ['pl-fuente', 'pl-tam', 'pl-line', 'pl-sep', 'pl-ancho', 'pl-mayus', 'pl-neg', 'pl-tituloDoc', 'pl-msg1', 'pl-msg2'];
-
-function cablearEditorPlantilla(contenedor) {
-  const refrescar = () => {
-    actualizarPlantillaDesdeForm();
-    actualizarVistaPreviaTicket();
-  };
-
-  PL_INPUTS.forEach((id) => {
-    const el = contenedor.querySelector(`#${id}`);
-    if (el) el.addEventListener('input', refrescar);
-    if (el) el.addEventListener('change', refrescar);
-  });
-  contenedor.querySelectorAll('.pl-toggle').forEach((el) => {
-    el.addEventListener('change', refrescar);
-  });
-
-  contenedor.querySelector('#cfg-pl-guardar')?.addEventListener('click', guardarPlantilla);
-  contenedor.querySelector('#cfg-pl-prueba')?.addEventListener('click', imprimirPrueba);
-  contenedor.querySelector('#cfg-pl-restablecer')?.addEventListener('click', restablecerPlantilla);
-}
-
-function actualizarPlantillaDesdeForm() {
-  if (!_contenedor || !_plantilla) return;
-  const q = (id) => _contenedor.querySelector(`#${id}`);
-
-  _plantilla.fuente = q('pl-fuente')?.value || _plantilla.fuente;
-  _plantilla.tamBase = Number(q('pl-tam')?.value) || _plantilla.tamBase;
-  _plantilla.interlineado = Number(q('pl-line')?.value) || _plantilla.interlineado;
-  _plantilla.separador = q('pl-sep')?.value || 'dashed';
-  _plantilla.anchoMm = Number(q('pl-ancho')?.value) || 80;
-  _plantilla.mayusculas = !!q('pl-mayus')?.checked;
-  _plantilla.encNegrita = !!q('pl-neg')?.checked;
-  _plantilla.tituloDocumento = q('pl-tituloDoc')?.value || 'FACTURA';
-  _plantilla.mensaje1 = q('pl-msg1')?.value || '';
-  _plantilla.mensaje2 = q('pl-msg2')?.value || '';
-
-  _contenedor.querySelectorAll('.pl-toggle').forEach((el) => {
-    _plantilla[el.dataset.key] = !!el.checked;
-  });
-}
-
-function actualizarVistaPreviaTicket() {
-  if (!_contenedor || !_plantilla || !_cfg) return;
-  const box = _contenedor.querySelector('#cfg-pl-preview');
-  if (!box) return;
-  const ticket = facturaHTML(ventaDemo(), _plantilla, _cfg);
-  box.innerHTML = ticket;
-}
-
-function ventaDemo() {
-  return {
-    numero: '0001',
-    fecha: new Date().toISOString().slice(0, 10),
-    cliente_nombre: 'Cliente de Ejemplo',
-    cliente: {
-      id: 'demo',
-      nombre: 'Cliente de Ejemplo',
-      negocio: 'Veterinaria El Roble',
-      telefono: '315 444 1122',
-    },
-    items: [
-      { producto_id: 'p1', nombre: 'Concentrado Perro 15kg', precio: 124900, cantidad: 1, descuento: 0 },
-      { producto_id: 'p2', nombre: 'Snacks Dentales x12', precio: 16900, cantidad: 2, descuento: 1000 },
-    ],
-    subtotal: 158700,
-    impuesto: 0,
-    descuento: 0,
-    descuentoLineas: 2000,
-    total: 156700,
-    metodo_pago: 'Efectivo',
-    data: { timestamp: new Date().toISOString(), recibido: 160000, cambio: 3300 },
-  };
-}
-
-async function guardarPlantilla() {
-  actualizarPlantillaDesdeForm();
-  try {
-    await PlantillaRepo.guardar(_plantilla);
-    Toast.ok('Diseño de factura guardado');
-  } catch (err) {
-    console.error(err);
-    Toast.error('No se pudo guardar el diseño');
-  }
-}
-
-async function imprimirPrueba() {
-  actualizarPlantillaDesdeForm();
-  const ticket = facturaHTML(ventaDemo(), _plantilla, _cfg);
-  imprimirPOS(ticket, { anchoMm: _plantilla.anchoMm || 80, titulo: 'Vista previa factura' });
-}
-
-async function restablecerPlantilla() {
-  const ok = await Confirm.peligro('¿Restablecer el diseño de la factura a los valores por defecto?', {
-    titulo: 'Restablecer diseño',
-    textoConfirmar: '↺ Restablecer',
-  });
-  if (!ok) return;
-  _plantilla = await PlantillaRepo.restablecer();
-  // Re-renderizar la vista entera para reflejar valores
-  render(_contenedor);
-  Toast.ok('Diseño restablecido');
 }
 
 async function guardarDatosNegocio() {
@@ -808,7 +691,7 @@ function htmlCargando() {
   return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando configuración…</div>`;
 }
 
-function htmlLayout(cfg, plantilla, stats) {
+function htmlLayout(cfg, stats) {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
@@ -816,8 +699,13 @@ function htmlLayout(cfg, plantilla, stats) {
         <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Configuración</h1>
       </div>
 
-      <div style="margin-bottom:16px">
-        ${htmlPlantillaFactura(plantilla)}
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">💡</span>
+        <div style="font-size:13.5px;color:#1e40af;line-height:1.5">
+          <b>La personalización del ticket POS 80mm</b> ya no vive aquí.
+          Edita el ticket de venta desde <b>Ventas → 🎨 Personaliza tu ticket</b>,
+          y los tickets de cierre y reporte desde <b>Reportes</b>.
+        </div>
       </div>
 
       <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr;align-items:start">
@@ -835,143 +723,6 @@ function htmlLayout(cfg, plantilla, stats) {
   `;
 }
 
-function htmlPlantillaFactura(p) {
-  return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-        <div>
-          <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🎨 Diseño de la factura POS 80mm</h3>
-          <div style="font-size:12.5px;color:#64748b;margin-top:2px">Personaliza tipografía, secciones y mensajes de tu ticket térmico.</div>
-        </div>
-        <button id="cfg-pl-restablecer"
-          style="padding:8px 14px;border:1px solid #e2e8f0;background:white;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#475569;font-family:inherit">
-          ↺ Restablecer
-        </button>
-      </div>
-
-      <div style="display:grid;gap:18px;grid-template-columns:1.4fr 1fr;align-items:start">
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tipografía</div>
-              <select id="pl-fuente"
-                style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
-                <option value="'Courier New','Roboto Mono',monospace" ${p.fuente.includes('Courier') ? 'selected' : ''}>Courier (clásica)</option>
-                <option value="'Roboto Mono',monospace" ${p.fuente.includes('Roboto') && !p.fuente.includes('Courier') ? 'selected' : ''}>Roboto Mono</option>
-                <option value="'JetBrains Mono',monospace" ${p.fuente.includes('JetBrains') ? 'selected' : ''}>JetBrains Mono</option>
-                <option value="Inter,system-ui,sans-serif" ${p.fuente.includes('Inter') ? 'selected' : ''}>Inter (sin serifa)</option>
-                <option value="Arial,sans-serif" ${p.fuente.includes('Arial') ? 'selected' : ''}>Arial</option>
-              </select>
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tamaño base (px)</div>
-              <input id="pl-tam" type="number" min="9" max="20" value="${p.tamBase}"
-                style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Interlineado</div>
-              <input id="pl-line" type="number" step="0.1" min="1" max="2.5" value="${p.interlineado}"
-                style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Separador entre secciones</div>
-              <select id="pl-sep"
-                style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
-                <option value="dashed" ${p.separador === 'dashed' ? 'selected' : ''}>Línea punteada — — —</option>
-                <option value="solid" ${p.separador === 'solid' ? 'selected' : ''}>Línea continua ───</option>
-                <option value="none" ${p.separador === 'none' ? 'selected' : ''}>Sin línea (solo espacio)</option>
-              </select>
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Ancho del papel</div>
-              <select id="pl-ancho"
-                style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
-                <option value="58" ${p.anchoMm === 58 ? 'selected' : ''}>58 mm</option>
-                <option value="76" ${p.anchoMm === 76 ? 'selected' : ''}>76 mm</option>
-                <option value="80" ${p.anchoMm === 80 ? 'selected' : ''}>80 mm (estándar)</option>
-              </select>
-            </div>
-            <div style="display:flex;align-items:center;gap:18px;padding-top:18px;flex-wrap:wrap">
-              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;font-weight:600;cursor:pointer">
-                <input id="pl-mayus" type="checkbox" ${p.mayusculas ? 'checked' : ''} style="width:16px;height:16px"> Mayúsculas
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;font-weight:600;cursor:pointer">
-                <input id="pl-neg" type="checkbox" ${p.encNegrita ? 'checked' : ''} style="width:16px;height:16px"> Títulos en negrita
-              </label>
-            </div>
-          </div>
-
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px">
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Secciones visibles</div>
-            <div style="display:grid;gap:6px;grid-template-columns:1fr 1fr">
-              ${[
-                ['pl-mNombre', 'mostrarNombre', 'Nombre del negocio'],
-                ['pl-mNit', 'mostrarNit', 'NIT'],
-                ['pl-mTel', 'mostrarTelefono', 'Teléfono'],
-                ['pl-mDir', 'mostrarDireccion', 'Dirección'],
-                ['pl-mCiudad', 'mostrarCiudad', 'Ciudad'],
-                ['pl-mFolio', 'mostrarFolio', 'N° factura'],
-                ['pl-mFecha', 'mostrarFecha', 'Fecha y hora'],
-                ['pl-mCli', 'mostrarCliente', 'Cliente'],
-                ['pl-mNegCli', 'mostrarNegocioCliente', 'Negocio del cliente'],
-                ['pl-mTelCli', 'mostrarTelefonoCliente', 'Tel. del cliente'],
-                ['pl-mItems', 'mostrarItems', 'Lista de productos'],
-                ['pl-mSub', 'mostrarSubtotal', 'Subtotal'],
-                ['pl-mImp', 'mostrarImpuestos', 'Impuestos'],
-                ['pl-mDesc', 'mostrarDescuento', 'Descuento'],
-                ['pl-mTot', 'mostrarTotal', 'Total'],
-                ['pl-mMet', 'mostrarMetodoPago', 'Método de pago'],
-                ['pl-mRec', 'mostrarRecibidoCambio', 'Recibido / Cambio'],
-                ['pl-mPie', 'mostrarPieRepetido', 'Pie con N° factura'],
-              ].map(([id, key, label]) => `
-                <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:#475569;cursor:pointer">
-                  <input class="pl-toggle" id="${id}" data-key="${key}" type="checkbox" ${p[key] ? 'checked' : ''} style="width:15px;height:15px">
-                  ${label}
-                </label>
-              `).join('')}
-            </div>
-          </div>
-
-          <div style="display:grid;gap:10px">
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Título del documento</div>
-              <input id="pl-tituloDoc" type="text" value="${esc(p.tituloDocumento || 'FACTURA')}" placeholder="FACTURA, REMISIÓN, RECIBO..."
-                style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;font-weight:700;letter-spacing:.04em" />
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 1 (pie)</div>
-              <input id="pl-msg1" type="text" value="${esc(p.mensaje1 || '')}"
-                style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
-            </div>
-            <div>
-              <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 2</div>
-              <input id="pl-msg2" type="text" value="${esc(p.mensaje2 || '')}"
-                style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
-            </div>
-          </div>
-
-          <div style="display:flex;gap:10px">
-            <button id="cfg-pl-guardar"
-              style="flex:1;padding:12px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
-              💾 Guardar diseño
-            </button>
-            <button id="cfg-pl-prueba"
-              style="flex:1;padding:12px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
-              🧾 Imprimir prueba
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Vista previa</div>
-          <div style="background:#f1f5f9;border-radius:10px;padding:14px;display:flex;justify-content:center">
-            <div id="cfg-pl-preview" style="background:white;width:280px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08);max-height:600px;overflow:auto"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
 
 function htmlDatosNegocio(cfg) {
   const neg = cfg.negocio;

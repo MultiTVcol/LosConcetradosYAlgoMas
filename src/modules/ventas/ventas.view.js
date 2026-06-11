@@ -32,6 +32,7 @@ import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import { imprimirPOS } from '../../services/printer.js';
 import * as PlantillaRepo from '../factura/plantilla.repo.js';
+import * as EditorPlantilla from '../factura/editor-plantilla.view.js';
 import * as ConfigRepo from '../config/config.repo.js';
 import { html as facturaHTML } from '../factura/factura.html.js';
 import { bindMilesInputs } from '../../core/inputs.js';
@@ -329,16 +330,23 @@ function htmlPanelIzquierdo() {
 
 function htmlHeaderVentas() {
   return `
-    <div style="margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-        <i data-lucide="shopping-cart" style="width:28px;height:28px;color:#4f46e5;stroke-width:1.75"></i>
-        <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
-          Punto de Venta
-        </h1>
+    <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+          <i data-lucide="shopping-cart" style="width:28px;height:28px;color:#4f46e5;stroke-width:1.75"></i>
+          <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
+            Punto de Venta
+          </h1>
+        </div>
+        <div style="color:#64748b;font-size:13.5px">
+          Seguí los 3 pasos para registrar una venta
+        </div>
       </div>
-      <div style="color:#64748b;font-size:13.5px">
-        Seguí los 3 pasos para registrar una venta
-      </div>
+      <button id="venta-btn-personalizar-ticket"
+        title="Personaliza tu ticket POS 80mm"
+        style="padding:10px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
+        🎨 Personaliza tu ticket
+      </button>
     </div>
   `;
 }
@@ -788,6 +796,10 @@ function adjuntarEventos(contenedor) {
 
   adjuntarEventosPaso2(contenedor);
   adjuntarEventosCarrito(contenedor);
+
+  // Personaliza tu ticket POS 80mm
+  const btnPlt = contenedor.querySelector('#venta-btn-personalizar-ticket');
+  if (btnPlt) btnPlt.onclick = () => EditorPlantilla.abrir('venta');
 }
 
 function cerrarDropdownSiClickFuera(e) {

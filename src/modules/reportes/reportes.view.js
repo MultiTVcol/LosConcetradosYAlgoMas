@@ -17,8 +17,10 @@ import * as GastosRepo from '../gastos/gastos.repo.js';
 import * as ProductosRepo from '../productos/productos.repo.js';
 import * as ClientesRepo from '../clientes/clientes.repo.js';
 import * as ConfigRepo from '../config/config.repo.js';
+import * as PlantillaRepo from '../factura/plantilla.repo.js';
 import { Toast } from '../../components/index.js';
 import { imprimirCarta, imprimirPOS } from '../../services/printer.js';
+import * as EditorPlantilla from '../factura/editor-plantilla.view.js';
 import * as Realtime from '../../services/realtime.js';
 import { money, fmt, num } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
@@ -218,9 +220,23 @@ function htmlLayout() {
 
   return `
     <div style="padding:32px 40px;max-width:1280px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
-        <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Reportes</h1>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+          <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Reportes</h1>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="rep-btn-pers-reporte"
+            title="Personaliza tu ticket de reporte POS 80mm"
+            style="padding:9px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+            🎨 Ticket de reporte
+          </button>
+          <button id="rep-btn-pers-cierre"
+            title="Personaliza tu ticket de cierre de caja POS 80mm"
+            style="padding:9px 14px;border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+            🎨 Ticket de cierre
+          </button>
+        </div>
       </div>
 
       <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px">
@@ -332,6 +348,8 @@ function adjuntarEventos(contenedor) {
   contenedor.querySelector('#rep-btn-pdf')?.addEventListener('click', generarInformePDF);
   contenedor.querySelector('#rep-btn-pos')?.addEventListener('click', generarInformePOS);
   contenedor.querySelector('#rep-btn-csv')?.addEventListener('click', exportarCSV);
+  contenedor.querySelector('#rep-btn-pers-reporte')?.addEventListener('click', () => EditorPlantilla.abrir('reporte'));
+  contenedor.querySelector('#rep-btn-pers-cierre')?.addEventListener('click', () => EditorPlantilla.abrir('cierre'));
 }
 
 function aplicarPreset(p) {
@@ -990,12 +1008,15 @@ async function generarInformePOS() {
   let cfg;
   try { cfg = await ConfigRepo.leer(); } catch (e) { cfg = { negocio: {}, mensajes: {} }; }
 
+  let plantilla;
+  try { plantilla = await PlantillaRepo.leer('reporte'); } catch (e) { plantilla = PlantillaRepo.defaultPara('reporte'); }
+
   const r = reporteRango(_estado.desde, _estado.hasta);
-  const html = htmlInformePOS80mm(r, cfg);
+  const html = htmlInformePOS80mm(r, cfg, plantilla);
   const titulo = `Informe POS ${r.desde}_a_${r.hasta}`;
 
   try {
-    imprimirPOS(html, { anchoMm: 80, titulo });
+    imprimirPOS(html, { anchoMm: plantilla.anchoMm || 80, titulo });
     Toast.ok('Enviando informe a la impresora térmica…');
   } catch (err) {
     console.error(err);
@@ -1003,7 +1024,18 @@ async function generarInformePOS() {
   }
 }
 
-function htmlInformePOS80mm(r, cfg) {
+function htmlInformePOS80mm(r, cfg, plantilla) {
+  // Aplicar valores configurables de la plantilla (con defaults seguros)
+  const pl = plantilla || PlantillaRepo.defaultPara('reporte');
+  const fuente = pl.fuente || "'Courier New','Roboto Mono',monospace";
+  const tamBase = Number(pl.tamBase) || 12.5;
+  const interlineado = Number(pl.interlineado) || 1.4;
+  const upper = pl.mayusculas ? 'text-transform:uppercase;' : '';
+  const tituloDoc = (pl.tituloDocumento || 'INFORME FINANCIERO').trim();
+  const tipoSep = pl.separador === 'solid' ? '1px solid #000'
+                : pl.separador === 'none' ? '0' : '1px dashed #000';
+  const msg1 = pl.mensaje1 || '';
+  const msg2 = pl.mensaje2 || '';
   const neg = cfg.negocio || {};
   const fechaGen = new Date().toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
   const cats = Object.entries(r.gastosPorCat).sort((a, b) => b[1] - a[1]);
@@ -1035,8 +1067,10 @@ function htmlInformePOS80mm(r, cfg) {
   }
   const provs = Object.entries(cxpPorProveedor).sort((a, b) => b[1] - a[1]);
 
-  // Helpers
-  const sep = '<div style="border-top:1px dashed #000;margin:5px 0"></div>';
+  // Helpers — el separador respeta la configuracion de la plantilla
+  const sep = pl.separador === 'none'
+    ? '<div style="margin:6px 0"></div>'
+    : `<div style="border-top:${tipoSep};margin:5px 0"></div>`;
   const sepDoble = '<div style="border-top:3px double #000;margin:6px 0"></div>';
   const titulo = (t) => `
     <div style="text-align:center;font-weight:bold;font-size:14px;margin:6px 0 3px;letter-spacing:.05em">${esc(t)}</div>
@@ -1054,17 +1088,17 @@ function htmlInformePOS80mm(r, cfg) {
   };
 
   return `
-    <div style="font-family:'Courier New','Roboto Mono',monospace;color:#000;font-size:12.5px;line-height:1.4;padding:4px;width:100%;box-sizing:border-box">
+    <div style="font-family:${fuente};color:#000;font-size:${tamBase}px;line-height:${interlineado};padding:4px;width:100%;box-sizing:border-box;${upper}">
 
       <!-- ENCABEZADO -->
-      <div style="text-align:center;font-weight:bold;font-size:15px;margin-bottom:2px">${esc(neg.nombre || 'PosPunto')}</div>
-      ${neg.nit ? `<div style="text-align:center;font-size:11px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
-      ${neg.direccion ? `<div style="text-align:center;font-size:11px">${esc(neg.direccion)}</div>` : ''}
-      ${neg.ciudad ? `<div style="text-align:center;font-size:11px">${esc(neg.ciudad)}</div>` : ''}
-      ${neg.telefono ? `<div style="text-align:center;font-size:11px">Tel: ${esc(neg.telefono)}</div>` : ''}
+      ${pl.mostrarNombre !== false ? `<div style="text-align:center;font-weight:bold;font-size:${tamBase + 2.5}px;margin-bottom:2px">${esc(neg.nombre || 'PosPunto')}</div>` : ''}
+      ${pl.mostrarNit !== false && neg.nit ? `<div style="text-align:center;font-size:${tamBase - 1.5}px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
+      ${pl.mostrarDireccion !== false && neg.direccion ? `<div style="text-align:center;font-size:${tamBase - 1.5}px">${esc(neg.direccion)}</div>` : ''}
+      ${pl.mostrarCiudad !== false && neg.ciudad ? `<div style="text-align:center;font-size:${tamBase - 1.5}px">${esc(neg.ciudad)}</div>` : ''}
+      ${pl.mostrarTelefono !== false && neg.telefono ? `<div style="text-align:center;font-size:${tamBase - 1.5}px">Tel: ${esc(neg.telefono)}</div>` : ''}
 
       ${sepDoble}
-      <div style="text-align:center;font-weight:bold;font-size:13.5px;letter-spacing:.05em">INFORME FINANCIERO</div>
+      <div style="text-align:center;font-weight:bold;font-size:${tamBase + 1}px;letter-spacing:.05em">${esc(tituloDoc)}</div>
       ${sepDoble}
 
       <!-- PERIODO -->
@@ -1172,12 +1206,9 @@ function htmlInformePOS80mm(r, cfg) {
       ` : ''}
 
       ${sepDoble}
-      <div style="text-align:center;font-size:10.5px;color:#555;margin-top:4px">
-        — Fin del informe —
-      </div>
-      <div style="text-align:center;font-size:10px;color:#777;margin-top:2px">
-        PosPunto
-      </div>
+      ${msg1 ? `<div style="text-align:center;font-size:${tamBase - 1.5}px;color:#333;margin-top:4px">${esc(msg1)}</div>` : ''}
+      ${msg2 ? `<div style="text-align:center;font-size:${tamBase - 2}px;color:#555;margin-top:2px">${esc(msg2)}</div>` : ''}
+      ${pl.mostrarPieRepetido !== false ? `<div style="text-align:center;font-size:${tamBase - 2.5}px;color:#777;margin-top:4px">${esc(neg.nombre || 'PosPunto')}</div>` : ''}
 
       <div style="height:14px"></div>
     </div>
