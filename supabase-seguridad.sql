@@ -64,7 +64,27 @@ alter table if exists kvs         enable row level security;
 alter table if exists cierres     enable row level security;
 
 -- ------------------------------------------------------------
--- 3) Políticas: acceso total SOLO para dispositivos activados
+-- 3) Eliminar TODAS las políticas viejas de estas tablas.
+--    IMPORTANTE: configuraciones anteriores pudieron dejar políticas
+--    de "acceso libre" (unrestricted) — si quedan, la anon key sigue
+--    entrando aunque RLS esté activado.
+-- ------------------------------------------------------------
+do $$
+declare
+  pol record;
+begin
+  for pol in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and tablename in ('productos','ventas','clientes','compras','proveedores','gastos','usuarios','kvs','cierres')
+  loop
+    execute format('drop policy %I on %I.%I', pol.policyname, pol.schemaname, pol.tablename);
+  end loop;
+end $$;
+
+-- ------------------------------------------------------------
+-- 4) Políticas: acceso total SOLO para dispositivos activados
 --    (rol "authenticated" = sesión iniciada con la cuenta del
 --    comercio). La anon key sin sesión no puede ver ni tocar nada.
 -- ------------------------------------------------------------
@@ -75,8 +95,6 @@ begin
   foreach t in array array['productos','ventas','clientes','compras','proveedores','gastos','usuarios','kvs','cierres']
   loop
     if exists (select 1 from information_schema.tables where table_name = t) then
-      -- borrar políticas previas con el mismo nombre (idempotente)
-      execute format('drop policy if exists terminal_activada on %I', t);
       execute format(
         'create policy terminal_activada on %I for all to authenticated using (true) with check (true)',
         t
@@ -86,10 +104,21 @@ begin
 end $$;
 
 -- ------------------------------------------------------------
--- 4) Verificación (debería mostrar todas las tablas con RLS = true)
+-- 5) Verificación A: todas las tablas con RLS = true
 -- ------------------------------------------------------------
 select tablename, rowsecurity as rls_activado
 from pg_tables
 where schemaname = 'public'
   and tablename in ('productos','ventas','clientes','compras','proveedores','gastos','usuarios','kvs','cierres')
 order by tablename;
+
+-- ------------------------------------------------------------
+-- 6) Verificación B: cada tabla debe tener UNA sola política
+--    llamada "terminal_activada" con roles = {authenticated}.
+--    Si aparece cualquier otra política, algo quedó viejo.
+-- ------------------------------------------------------------
+select tablename, policyname, roles
+from pg_policies
+where schemaname = 'public'
+  and tablename in ('productos','ventas','clientes','compras','proveedores','gastos','usuarios','kvs','cierres')
+order by tablename, policyname;
