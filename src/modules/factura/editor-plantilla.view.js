@@ -190,6 +190,7 @@ function htmlEditor(p) {
               ['pl-mCli', 'mostrarCliente', 'Cliente'],
               ['pl-mNegCli', 'mostrarNegocioCliente', 'Negocio del cliente'],
               ['pl-mTelCli', 'mostrarTelefonoCliente', 'Tel. del cliente'],
+              ['pl-mDirCli', 'mostrarDireccionCliente', 'Dirección del cliente'],
               ['pl-mItems', 'mostrarItems', 'Lista de productos / detalle'],
               ['pl-mSub', 'mostrarSubtotal', 'Subtotal'],
               ['pl-mImp', 'mostrarImpuestos', 'Impuestos'],
@@ -312,6 +313,8 @@ function ventaDemo(tipo) {
       nombre: 'Cliente de Ejemplo',
       negocio: 'Veterinaria El Roble',
       telefono: '315 444 1122',
+      direccion: 'Calle 10 # 14-25',
+      ciudad: 'Armenia',
     },
     items: [
       { producto_id: 'p1', nombre: 'Concentrado Perro 15kg', precio: 124900, cantidad: 1, descuento: 0 },

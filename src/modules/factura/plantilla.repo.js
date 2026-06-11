@@ -62,6 +62,7 @@ const DEFAULT_BASE = {
   mostrarCliente: true,
   mostrarNegocioCliente: true,
   mostrarTelefonoCliente: true,
+  mostrarDireccionCliente: true,
   mostrarItems: true,
   mostrarSubtotal: true,
   mostrarImpuestos: true,
