@@ -67,7 +67,9 @@ export function mostrarLogin(appRoot) {
       try {
         const UsuariosRepo = await import('../modules/usuarios/usuarios.repo.js');
         const admin = await UsuariosRepo.buscarPorUsuario('admin');
-        if (admin && admin.activo && String(admin.password) === 'admin123') {
+        // Funciona tanto con contraseña en texto plano (formato viejo)
+        // como con hash (formato nuevo)
+        if (admin && admin.activo && await UsuariosRepo.verificarPassword(admin, 'admin123')) {
           const hint = appRoot.querySelector('#login-hint');
           if (hint) hint.style.display = 'block';
         }

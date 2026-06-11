@@ -67,7 +67,10 @@ function initClient() {
       config.supabase.url,
       config.supabase.anonKey,
       {
-        auth: { persistSession: false },
+        // persistSession: la "activación de terminal" (login de dispositivo
+        // con Supabase Auth) se guarda en el navegador y se renueva sola.
+        // Así cada terminal se activa UNA vez y queda autorizada.
+        auth: { persistSession: true, autoRefreshToken: true },
       }
     );
     _ready = true;
@@ -249,6 +252,82 @@ export async function remove(tabla, id) {
     return false;
   }
   return true;
+}
+
+// ============================================================
+//  ACTIVACIÓN DE TERMINAL (Supabase Auth)
+// ============================================================
+//
+// Cuando la base tiene RLS activado (ver supabase-seguridad.sql), la
+// anon key sola NO puede leer ni escribir nada. Cada terminal debe
+// "activarse" una vez iniciando sesión con la cuenta del comercio
+// (un usuario de Supabase Auth creado en el dashboard). La sesión se
+// guarda en el navegador y se renueva sola.
+
+/**
+ * Indica si esta terminal tiene una sesión de dispositivo activa.
+ *
+ * @returns {Promise<boolean>}
+ */
+export async function sesionDispositivo() {
+  if (!_client) return false;
+  try {
+    const { data } = await _client.auth.getSession();
+    return !!data?.session;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Activa esta terminal iniciando sesión con la cuenta del comercio.
+ *
+ * @param {string} email - correo de la cuenta del comercio (Supabase Auth)
+ * @param {string} password - clave de esa cuenta
+ * @returns {Promise<{ok: boolean, mensaje: string}>}
+ */
+export async function activarDispositivo(email, password) {
+  if (!_client) return { ok: false, mensaje: 'Supabase no inicializado' };
+  try {
+    const { error } = await _client.auth.signInWithPassword({ email, password });
+    if (error) return { ok: false, mensaje: error.message };
+    return { ok: true, mensaje: 'Terminal activada' };
+  } catch (err) {
+    return { ok: false, mensaje: err.message || 'Error de conexión' };
+  }
+}
+
+/**
+ * Desactiva esta terminal (cierra la sesión del dispositivo).
+ */
+export async function desactivarDispositivo() {
+  if (!_client) return;
+  try { await _client.auth.signOut(); } catch (e) { /**/ }
+}
+
+/**
+ * Detecta si la nube está protegida con RLS y esta terminal NO tiene
+ * acceso. Hace una escritura de prueba en `kvs`: si el servidor la
+ * rechaza por políticas de seguridad, hay que activar la terminal.
+ *
+ * @returns {Promise<'ok'|'bloqueado'|'sin-conexion'>}
+ */
+export async function probarAcceso() {
+  if (!_ready) return 'sin-conexion';
+  try {
+    const { error } = await _client
+      .from('kvs')
+      .upsert({ id: '__probe_terminal', tenant_id: TENANT_ID, datos: { t: Date.now() } });
+    if (!error) return 'ok';
+    // 42501 = insufficient_privilege (RLS rechazó la operación)
+    if (error.code === '42501' || /row-level security/i.test(error.message || '')) {
+      return 'bloqueado';
+    }
+    console.warn('probarAcceso: error inesperado:', error.message);
+    return 'ok'; // otros errores (columna, red...) no son de permisos
+  } catch (err) {
+    return 'sin-conexion';
+  }
 }
 
 /**

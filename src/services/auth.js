@@ -21,7 +21,10 @@ export async function login(usuario, password) {
   const u = await UsuariosRepo.buscarPorUsuario(usuario);
   if (!u) throw new Error('Usuario no encontrado');
   if (!u.activo) throw new Error('Este usuario está desactivado');
-  if (String(u.password || '') !== String(password || '')) {
+  // Verificación por hash (PBKDF2). Si el usuario aún tiene contraseña
+  // en texto plano (formato viejo), la valida y la migra a hash.
+  const ok = await UsuariosRepo.verificarPassword(u, password);
+  if (!ok) {
     throw new Error('Contraseña incorrecta');
   }
   const sesion = {

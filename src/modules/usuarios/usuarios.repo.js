@@ -19,6 +19,7 @@ import * as Sync from '../../services/sync.js';
 import * as Supa from '../../services/supabase.js';
 import { uid } from '../../core/strings.js';
 import { nowISO } from '../../core/dates.js';
+import { hashPassword, verifyPassword } from '../../core/crypto.js';
 
 const TABLA = 'usuarios';
 const TABLA_KV = 'kvs';
@@ -137,6 +138,40 @@ export async function init() {
     await Sync.guardar(TABLA, admin);
     console.log('🔐 Admin por defecto creado: admin / admin123');
   }
+
+  // 3) MIGRACIÓN DE SEGURIDAD: convertir contraseñas en texto plano a
+  //    hash PBKDF2. Corre una sola vez por usuario (cuando aún tiene
+  //    el campo `password`); después solo existe `pass_hash`.
+  try {
+    await migrarPasswordsAHash();
+  } catch (e) {
+    console.warn('No se pudo migrar contraseñas a hash:', e);
+  }
+}
+
+/**
+ * Convierte cualquier contraseña guardada en texto plano a hash y
+ * elimina el texto plano (local + nube). Idempotente.
+ */
+async function migrarPasswordsAHash() {
+  const todos = await db.getAll(TABLA);
+  for (const u of todos) {
+    if (u.password && !u.pass_hash) {
+      const pass_hash = await hashPassword(u.password);
+      const migrado = { ...u, pass_hash, password: null };
+      await Sync.guardar(TABLA, migrado);
+      console.log(`🔐 Contraseña de "${u.usuario}" migrada a hash`);
+    }
+  }
+  // También el código de autorización del admin
+  try {
+    const row = await db.get(TABLA_KV, KEY_CODIGO_ADMIN);
+    if (row && row.valor && !row.datos?.hash) {
+      const h = await hashPassword(row.valor);
+      await Sync.guardar(TABLA_KV, { id: KEY_CODIGO_ADMIN, valor: null, datos: h });
+      console.log('🔐 Código de autorización migrado a hash');
+    }
+  } catch (e) { /**/ }
 }
 
 export async function listar() {
@@ -161,19 +196,36 @@ export async function buscarPorUsuario(usuario) {
 }
 
 export async function guardar(datos) {
+  const passwordNueva = String(datos.password || '').trim();
+  const existentePorId = datos.id ? await obtener(datos.id) : null;
+
   const item = {
     id: datos.id || uid(),
     usuario: String(datos.usuario || '').trim().toLowerCase(),
     nombre: String(datos.nombre || '').trim(),
-    password: String(datos.password || '').trim(),
+    // Las contraseñas SOLO se guardan como hash. El campo password
+    // queda en null (y al subir a la nube borra cualquier texto plano viejo).
+    password: null,
+    pass_hash: existentePorId?.pass_hash || null,
     rol: datos.rol === 'admin' ? 'admin' : 'cajero',
     permisos: datos.permisos || {},
     activo: datos.activo !== false,
-    creado: datos.creado || nowISO(),
+    creado: datos.creado || existentePorId?.creado || nowISO(),
   };
   if (!item.usuario) throw new Error('El nombre de usuario es obligatorio');
   if (!item.nombre) throw new Error('El nombre completo es obligatorio');
-  if (!item.password || item.password.length < 4) throw new Error('La contraseña debe tener al menos 4 caracteres');
+
+  if (passwordNueva) {
+    if (passwordNueva.length < 4) throw new Error('La contraseña debe tener al menos 4 caracteres');
+    item.pass_hash = await hashPassword(passwordNueva);
+  } else if (!item.pass_hash && existentePorId?.password) {
+    // Usuario viejo aún con texto plano: migrar su contraseña actual
+    item.pass_hash = await hashPassword(existentePorId.password);
+  } else if (!item.pass_hash) {
+    // Usuario nuevo sin contraseña
+    throw new Error('La contraseña es obligatoria (mínimo 4 caracteres)');
+  }
+  // Si passwordNueva está vacía y ya hay hash → conserva la contraseña actual
 
   // Validar que no exista otro usuario con el mismo nombre de usuario
   const existente = await buscarPorUsuario(item.usuario);
@@ -184,6 +236,31 @@ export async function guardar(datos) {
   // Guardar local + sincronizar a la nube
   await Sync.guardar(TABLA, item);
   return item;
+}
+
+/**
+ * Verifica la contraseña de un usuario. Soporta tanto el formato nuevo
+ * (pass_hash) como el legado (password en texto plano); si valida con
+ * el legado, lo migra a hash en el momento.
+ *
+ * @param {Object} u - registro de usuario
+ * @param {string} password - lo que el usuario escribió
+ * @returns {Promise<boolean>}
+ */
+export async function verificarPassword(u, password) {
+  if (!u) return false;
+  if (u.pass_hash) {
+    return await verifyPassword(password, u.pass_hash);
+  }
+  // Formato legado: comparación directa + migración inmediata
+  if (String(u.password || '') === String(password || '')) {
+    try {
+      const pass_hash = await hashPassword(password);
+      await Sync.guardar(TABLA, { ...u, pass_hash, password: null });
+    } catch (e) { /* la migración corre de nuevo en el próximo init */ }
+    return true;
+  }
+  return false;
 }
 
 export async function eliminar(id) {
@@ -204,24 +281,48 @@ export async function eliminar(id) {
 //  CÓDIGO DE AUTORIZACIÓN DEL ADMIN
 // ============================================================
 
-export async function leerCodigoAdmin() {
+/**
+ * Indica si ya hay un código personalizado guardado (en hash).
+ * El código en sí NO se puede leer — solo verificar.
+ */
+export async function hayCodigoPersonalizado() {
   try {
-    const v = await db.get(TABLA_KV, KEY_CODIGO_ADMIN);
-    return v?.valor || DEFAULT_CODIGO;
+    const row = await db.get(TABLA_KV, KEY_CODIGO_ADMIN);
+    return !!(row && (row.datos?.hash || row.valor));
   } catch (e) {
-    return DEFAULT_CODIGO;
+    return false;
   }
 }
 
 export async function guardarCodigoAdmin(codigo) {
   const v = String(codigo || '').trim();
   if (!v || v.length < 3) throw new Error('El código debe tener al menos 3 caracteres');
-  // Sincronizar con la nube para que se propague a otras terminales
-  await Sync.guardar(TABLA_KV, { id: KEY_CODIGO_ADMIN, valor: v });
-  return v;
+  // Guardar SOLO el hash (valor: null borra el texto plano viejo en la nube)
+  const h = await hashPassword(v);
+  await Sync.guardar(TABLA_KV, { id: KEY_CODIGO_ADMIN, valor: null, datos: h });
+  return true;
 }
 
 export async function verificarCodigoAdmin(codigo) {
-  const real = await leerCodigoAdmin();
-  return String(codigo || '').trim() === String(real).trim();
+  const ingresado = String(codigo || '').trim();
+  if (!ingresado) return false;
+  try {
+    const row = await db.get(TABLA_KV, KEY_CODIGO_ADMIN);
+    if (row?.datos?.hash) {
+      return await verifyPassword(ingresado, row.datos);
+    }
+    if (row?.valor) {
+      // Legado en texto plano: comparar + migrar a hash
+      const ok = ingresado === String(row.valor).trim();
+      if (ok) {
+        try {
+          const h = await hashPassword(ingresado);
+          await Sync.guardar(TABLA_KV, { id: KEY_CODIGO_ADMIN, valor: null, datos: h });
+        } catch (e) { /**/ }
+      }
+      return ok;
+    }
+  } catch (e) { /**/ }
+  // Sin código guardado: aplica el de fábrica
+  return ingresado === DEFAULT_CODIGO;
 }

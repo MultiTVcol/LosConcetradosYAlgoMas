@@ -14,7 +14,9 @@ import { refrescarIconos } from '../../app/shell.js';
 
 let _contenedor = null;
 let _usuarios = [];
-let _codigoAdmin = '';
+// true si el admin ya definió un código propio (solo existe el hash;
+// el código en sí no se puede leer ni mostrar)
+let _codigoAdmin = false;
 let _offRealtime = null;
 
 export async function render(contenedor) {
@@ -37,7 +39,7 @@ export async function render(contenedor) {
   contenedor.innerHTML = `<div style="padding:40px 48px;color:#64748b">Cargando usuarios…</div>`;
 
   try { _usuarios = await Repo.listar(); } catch (e) { _usuarios = []; }
-  try { _codigoAdmin = await Repo.leerCodigoAdmin(); } catch (e) { _codigoAdmin = ''; }
+  try { _codigoAdmin = await Repo.hayCodigoPersonalizado(); } catch (e) { _codigoAdmin = false; }
 
   contenedor.innerHTML = htmlLayout();
   refrescarIconos(contenedor);
@@ -48,7 +50,7 @@ export async function render(contenedor) {
   _offRealtime = Realtime.escucharVarias(['usuarios', 'kvs'], async () => {
     try {
       _usuarios = await Repo.listar();
-      _codigoAdmin = await Repo.leerCodigoAdmin();
+      _codigoAdmin = await Repo.hayCodigoPersonalizado();
       // Re-renderizar manteniendo el contenedor
       contenedor.innerHTML = htmlLayout();
       refrescarIconos(contenedor);
@@ -72,7 +74,7 @@ function htmlLayout() {
           <div style="color:#92400e;font-size:13px;margin-top:3px">Los cajeros lo necesitan para editar o eliminar ventas (y otras acciones restringidas).</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="background:white;border:1.5px solid #fde68a;padding:9px 16px;border-radius:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:18px;color:#92400e;letter-spacing:.2em" id="codigo-actual">${esc(_codigoAdmin)}</span>
+          <span style="background:white;border:1.5px solid #fde68a;padding:9px 16px;border-radius:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:18px;color:#92400e;letter-spacing:.2em" id="codigo-actual" title="${_codigoAdmin ? 'Código personalizado (guardado cifrado, no se puede mostrar)' : 'Código de fábrica — cámbialo'}">${_codigoAdmin ? '••••' : '1094'}</span>
           <button id="btn-cambiar-codigo"
             style="padding:9px 14px;background:#a16207;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">✏️ Cambiar código</button>
         </div>
@@ -189,8 +191,8 @@ async function abrirFormUsuario(id) {
             style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace;${id ? 'background:#f1f5f9;color:#64748b' : ''}" />
         </div>
         <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Contraseña *</div>
-          <input id="uf-password" type="password" value="${esc(datos.password)}" placeholder="Mínimo 4 caracteres" autocomplete="new-password"
+          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Contraseña ${usuario ? '' : '*'}</div>
+          <input id="uf-password" type="password" value="" placeholder="${usuario ? 'Dejar vacío para no cambiarla' : 'Mínimo 4 caracteres'}" autocomplete="new-password"
             style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
         </div>
       </div>
@@ -362,7 +364,7 @@ function cambiarCodigo() {
     <div style="text-align:center;margin-bottom:14px;color:#64748b;font-size:13px">
       Define el nuevo código que el admin entregará a los cajeros para autorizar acciones restringidas.
     </div>
-    <input id="codigo-nuevo" type="text" inputmode="numeric" placeholder="Ej: 1094" value="${esc(_codigoAdmin)}" maxlength="10"
+    <input id="codigo-nuevo" type="text" inputmode="numeric" placeholder="Nuevo código (mín. 3)" value="" maxlength="10"
       style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
     <div id="codigo-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;color:#991b1b;font-size:12.5px;margin-top:8px;text-align:center"></div>
     <div style="display:flex;gap:10px;margin-top:16px">
@@ -379,10 +381,11 @@ function cambiarCodigo() {
   m.body.querySelector('#codigo-cancelar').onclick = () => m.cerrar();
   m.body.querySelector('#codigo-guardar').onclick = async () => {
     try {
-      const nuevo = await Repo.guardarCodigoAdmin(inp.value);
-      _codigoAdmin = nuevo;
-      _contenedor.querySelector('#codigo-actual').textContent = nuevo;
-      Toast.ok('Código actualizado');
+      await Repo.guardarCodigoAdmin(inp.value);
+      _codigoAdmin = true;
+      const span = _contenedor.querySelector('#codigo-actual');
+      if (span) span.textContent = '••••';
+      Toast.ok('Código actualizado (guardado cifrado)');
       m.cerrar();
     } catch (e) {
       err.textContent = e.message || 'Error al guardar';

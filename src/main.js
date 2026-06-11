@@ -6,6 +6,7 @@ import * as Auth from './services/auth.js';
 import * as Realtime from './services/realtime.js';
 import * as UsuariosRepo from './modules/usuarios/usuarios.repo.js';
 import { mostrarLogin } from './app/login.js';
+import { mostrarActivacion } from './app/activacion.js';
 import { montarShell, setContenido, marcarActivo } from './app/shell.js';
 
 console.log('🐾 PosPunto arrancando…');
@@ -27,6 +28,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (supaListo) console.log('☁️ Supabase listo, iniciando sync de usuarios…');
     else console.warn('⚠️ Supabase no respondió en 3s, iniciando solo en modo local');
   } catch (e) { console.warn('waitForReady error:', e); }
+
+  // ACTIVACIÓN DE TERMINAL: si la nube está protegida con RLS y este
+  // computador aún no está autorizado, pedir la cuenta del comercio.
+  // Solo ocurre una vez por terminal (la sesión queda guardada).
+  try {
+    if (Services.Supa.isReady()) {
+      const yaActivada = await Services.Supa.sesionDispositivo();
+      if (!yaActivada) {
+        const acceso = await Services.Supa.probarAcceso();
+        if (acceso === 'bloqueado') {
+          await mostrarActivacion(app);
+        } else if (acceso === 'ok') {
+          console.warn('⚠️ La nube acepta conexiones sin activar (RLS desactivado). ' +
+            'Para producción ejecuta supabase-seguridad.sql.');
+        }
+      } else {
+        console.log('🔐 Terminal activada (sesión de dispositivo válida)');
+      }
+    }
+  } catch (e) { console.warn('Chequeo de activación falló:', e); }
 
   // Asegurar que exista al menos un admin (admin / admin123 por defecto)
   try {
