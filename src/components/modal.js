@@ -96,6 +96,13 @@ function ensureRoot() {
         const body = ultimo.body || ultimo.elemento;
         if (!body) return;
 
+        // FIX: solo procesar Enter si el foco/origen del evento está
+        // DENTRO del modal. Sin esto, un Enter en un buscador externo
+        // que recién ABRE el modal (ej: buscador de productos en Ventas)
+        // dispara el botón primario del modal antes de que el usuario
+        // pueda ver nada — el modal se abre y cierra al instante.
+        if (target && !body.contains(target)) return;
+
         const btn = body.querySelector(
           '[data-primary],' +
           '#mc-aceptar,#mc-confirmar,#cobro-btn-confirmar,' +
