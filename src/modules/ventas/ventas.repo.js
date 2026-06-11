@@ -158,14 +158,25 @@ export function validar(v) {
 
 /**
  * Genera el próximo número de venta secuencial (V-0001, V-0002, ...).
- * Se basa en la cantidad de ventas locales actuales.
+ *
+ * Se basa en el MAYOR número existente, no en el conteo de ventas.
+ * Con count+1, borrar una venta hacía que el siguiente folio repitiera
+ * uno ya usado (5 ventas, borras 1 → count=4 → siguiente "V-0005"
+ * duplicado). Con max+1 los folios nunca se repiten.
  *
  * @returns {Promise<string>}
  */
 export async function siguienteNumero() {
-  const total = await db.count(TABLA);
-  const n = (total || 0) + 1;
-  return 'V-' + String(n).padStart(4, '0');
+  const todas = await db.getAll(TABLA);
+  let max = 0;
+  for (const v of todas) {
+    const m = String(v.numero || '').match(/(\d+)\s*$/);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (n > max) max = n;
+    }
+  }
+  return 'V-' + String(max + 1).padStart(4, '0');
 }
 
 // ============================================================

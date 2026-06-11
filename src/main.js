@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('No se pudo iniciar Realtime:', err);
   }
 
+  // Subir operaciones que quedaron pendientes de sesiones anteriores
+  // (ventas/cambios hechos sin internet que aún no llegaron a la nube)
+  try {
+    if (Services.Sync.pendientes() > 0) {
+      Services.Sync.flushPendientes()
+        .then((r) => { if (r.exitos > 0) console.log(`☁️ ${r.exitos} operación(es) pendiente(s) sincronizadas`); })
+        .catch((e) => console.warn('Flush inicial falló:', e));
+    }
+  } catch (err) { console.warn('No se pudo hacer flush inicial:', err); }
+
   montarShell(app);
 
   // Registrar rutas
@@ -169,7 +179,3 @@ function mostrarPlaceholder(titulo, icono, descripcion) {
   `);
 }
 
-window.Core = Core;
-window.Services = Services;
-window.Components = Components;
-console.log('🧪 Core, Services y Components expuestos en window para pruebas (temporal)');

@@ -298,12 +298,16 @@ export function montarShell(contenedor) {
   const u = Auth.usuarioActual();
   const inicial = u?.nombre ? u.nombre.trim().charAt(0).toUpperCase() : '?';
   const colorRol = u?.rol === 'admin' ? { bg: '#eef2ff', fg: '#4338ca' } : { bg: '#fef3c7', fg: '#92400e' };
+  // Escapar el nombre antes de inyectarlo en innerHTML
+  const escHtml = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const nombreSeguro = escHtml(u?.nombre);
+  const inicialSegura = escHtml(inicial);
   footer.innerHTML = `
     ${u ? `
       <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px">
-        <div style="width:36px;height:36px;border-radius:9px;background:${colorRol.bg};color:${colorRol.fg};display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:15px;flex-shrink:0">${inicial}</div>
+        <div style="width:36px;height:36px;border-radius:9px;background:${colorRol.bg};color:${colorRol.fg};display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:15px;flex-shrink:0">${inicialSegura}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.nombre}</div>
+          <div style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombreSeguro}</div>
           <div style="font-family:Inter,sans-serif;font-size:11px;color:${colorRol.fg};font-weight:600;text-transform:uppercase;letter-spacing:.04em">${u.rol === 'admin' ? '👑 Admin' : '💼 Cajero'}</div>
         </div>
         <button id="btn-logout" title="Cerrar sesión"

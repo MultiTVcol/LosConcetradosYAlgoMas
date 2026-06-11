@@ -308,7 +308,12 @@ export async function importarClientes(filas, onProgress) {
 // ============================================================
 
 function hoy() {
-  return new Date().toISOString().slice(0, 10);
+  // Fecha LOCAL (no UTC): con toISOString, después de las 7 p.m. en
+  // Colombia (UTC-5) el archivo salía fechado "mañana".
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
 // Para usar en la UI (los nombres de columnas para mostrar en la vista previa)

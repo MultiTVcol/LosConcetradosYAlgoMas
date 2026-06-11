@@ -147,7 +147,9 @@ export async function eliminar(id) {
     try {
       const p = await db.get(TABLA_PRODUCTOS, it.producto_id);
       if (p) {
-        const stockNuevo = Math.max(0, (Number(p.stock) || 0) - (Number(it.cantidad) || 0));
+        // Permitir negativo (igual que Ventas): si ya se vendió parte de
+        // esta mercancía, recortar a 0 inflaría el inventario en silencio.
+        const stockNuevo = (Number(p.stock) || 0) - (Number(it.cantidad) || 0);
         await Sync.guardar(TABLA_PRODUCTOS, { ...p, stock: stockNuevo });
       }
     } catch (e) {

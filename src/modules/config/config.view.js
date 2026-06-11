@@ -22,6 +22,7 @@ import { fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
+import * as Auth from '../../services/auth.js';
 
 let _contenedor = null;
 let _cfg = null;
@@ -31,6 +32,20 @@ let _cfg = null;
 // ============================================================
 
 export async function render(contenedor) {
+  // Guard: la Configuración incluye acciones destructivas (borrar datos
+  // del sistema local + nube). Solo el admin puede entrar, incluso si
+  // un cajero navega directo por URL (#/config).
+  if (!Auth.esAdmin()) {
+    contenedor.innerHTML = `
+      <div style="padding:40px 48px;max-width:560px;margin:40px auto;text-align:center;background:white;border:1px solid #e2e8f0;border-radius:12px">
+        <div style="font-size:48px">🔒</div>
+        <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin:10px 0 6px">Acceso restringido</h1>
+        <div style="color:#64748b;font-size:14px">Solo el administrador puede acceder a la Configuración.</div>
+      </div>
+    `;
+    return;
+  }
+
   _contenedor = contenedor;
   contenedor.innerHTML = htmlCargando();
 

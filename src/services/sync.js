@@ -25,14 +25,48 @@
 
 import * as db from './db.js';
 import * as Supa from './supabase.js';
-import { isFeatureEnabled, config } from './config.js';
+import { isFeatureEnabled, config, isSupabaseConfigured } from './config.js';
 
 // ============================================================
 //  ESTADO INTERNO
 // ============================================================
 
-/** Cola simple de items que no se pudieron subir a la nube */
+/** Cola de operaciones que no se pudieron aplicar en la nube.
+ *  Cada entrada: { tipo: 'upsert'|'delete', tabla, item?, id?, intentos }.
+ *  Se persiste en localStorage para sobrevivir recargas/cierres de la
+ *  pestaña — sin esto, lo vendido offline nunca llegaba a la nube. */
 const _pendientes = [];
+
+const PENDIENTES_KEY = 'pospunto:sync-pendientes';
+
+function persistirPendientes() {
+  try {
+    localStorage.setItem(PENDIENTES_KEY, JSON.stringify(_pendientes));
+  } catch (e) {
+    // localStorage lleno o no disponible: la cola sigue en memoria
+    console.warn('No se pudo persistir la cola de sync:', e);
+  }
+}
+
+function restaurarPendientes() {
+  try {
+    const raw = localStorage.getItem(PENDIENTES_KEY);
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr)) {
+      // Compatibilidad: entradas viejas sin 'tipo' eran upserts
+      for (const p of arr) {
+        if (!p.tipo) p.tipo = 'upsert';
+        _pendientes.push(p);
+      }
+      if (_pendientes.length > 0) {
+        console.log(`🔄 Sync: ${_pendientes.length} operación(es) pendiente(s) restauradas de la sesión anterior`);
+      }
+    }
+  } catch (e) { /* JSON corrupto: ignorar */ }
+}
+
+restaurarPendientes();
 
 /** Listeners que escuchan cambios de estado (online/offline, sync activo) */
 const _listeners = [];
@@ -141,9 +175,15 @@ export async function guardar(tabla, item) {
     } catch (err) {
       // No-throw: el local ya quedó guardado, no rompemos el flujo
       console.warn(`⚠️ Sync: fallo al subir ${tabla}/${item.id} a la nube. Queda pendiente.`);
-      _pendientes.push({ tabla, item, intentos: 1 });
+      _pendientes.push({ tipo: 'upsert', tabla, item, intentos: 1 });
+      persistirPendientes();
       emit({ tipo: 'nube-error', tabla, item, error: err });
     }
+  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+    // La nube está configurada pero no disponible ahora (offline o SDK
+    // cargando): encolar para subir cuando vuelva la conexión.
+    _pendientes.push({ tipo: 'upsert', tabla, item, intentos: 0 });
+    persistirPendientes();
   }
 
   return resultado;
@@ -172,11 +212,17 @@ export async function borrar(tabla, id) {
 
   if (sincronizacionActiva()) {
     try {
-      await Supa.remove(tabla, id);
+      const ok = await Supa.remove(tabla, id);
+      if (!ok) throw new Error('remove devolvió false');
       resultado.nube = true;
     } catch (err) {
-      console.warn(`⚠️ Sync: fallo al borrar ${tabla}/${id} en la nube.`);
+      console.warn(`⚠️ Sync: fallo al borrar ${tabla}/${id} en la nube. Queda pendiente.`);
+      _pendientes.push({ tipo: 'delete', tabla, id, intentos: 1 });
+      persistirPendientes();
     }
+  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+    _pendientes.push({ tipo: 'delete', tabla, id, intentos: 0 });
+    persistirPendientes();
   }
 
   return resultado;
@@ -242,7 +288,12 @@ export async function flushPendientes() {
 
   for (const p of cola) {
     try {
-      await Supa.upsert(p.tabla, p.item);
+      if (p.tipo === 'delete') {
+        const ok = await Supa.remove(p.tabla, p.id);
+        if (!ok) throw new Error('remove devolvió false');
+      } else {
+        await Supa.upsert(p.tabla, p.item);
+      }
       exitos++;
     } catch (err) {
       p.intentos = (p.intentos || 0) + 1;
@@ -251,6 +302,7 @@ export async function flushPendientes() {
     }
   }
 
+  persistirPendientes();
   console.log(`🔄 Flush: ✅ ${exitos} subidos, ❌ ${fallos} aún pendientes`);
   return { exitos, fallos };
 }
@@ -485,6 +537,11 @@ if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
     console.log('🌐 Conexión recuperada, reconectando Realtime…');
     reconectarTodos();
+    // Subir lo que quedó pendiente mientras no había internet.
+    // Pequeño delay para que la conexión termine de estabilizarse.
+    setTimeout(() => {
+      flushPendientes().catch((e) => console.warn('Flush al reconectar falló:', e));
+    }, 1500);
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
