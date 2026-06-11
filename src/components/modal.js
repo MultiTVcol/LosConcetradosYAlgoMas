@@ -88,6 +88,12 @@ function ensureRoot() {
       // SALVO que el foco esté en un textarea (allí Enter inserta salto de línea)
       // o si el modal lo deshabilita con cerrarConEnter: false
       if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+        // FIX: si algún handler manual ya procesó el Enter (con
+        // preventDefault), no procesar de nuevo. Sin esto, los modales
+        // que tienen sus propios listeners de Enter en inputs duplican
+        // el click del botón primario.
+        if (e.defaultPrevented) return;
+
         const target = e.target;
         if (target && target.tagName === 'TEXTAREA') return;
         if (ultimo.opciones.enterPrimario === false) return;
