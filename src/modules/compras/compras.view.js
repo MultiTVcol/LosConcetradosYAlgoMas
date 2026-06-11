@@ -511,12 +511,19 @@ function abrirModalCantidadCompra(prodId) {
 // ============================================================
 
 const LECTOR_KEY_COMPRA = 'pospunto:lector-compra';
+// Longitud minima del query para que en modo Pistola se considere
+// un escaneo. Los codigos de barras EAN/UPC son siempre largos
+// (>= 8 chars). Asi evitamos que al escribir "10" o "12" a mano
+// el sistema crea que es una pistola y agregue solo el producto.
+const PISTOLA_MIN_CHARS = 4;
 
 function getLectorModeCompra() {
   try {
     const v = localStorage.getItem(LECTOR_KEY_COMPRA);
-    return v === 'manual' ? 'manual' : 'pistola';
-  } catch { return 'pistola'; }
+    // Default: Manual. La Pistola es opt-in para evitar que
+    // typing humano dispare auto-adicion al pedido.
+    return v === 'pistola' ? 'pistola' : 'manual';
+  } catch { return 'manual'; }
 }
 
 function setLectorModeCompra(modo) {
@@ -525,11 +532,12 @@ function setLectorModeCompra(modo) {
 
 /**
  * Devuelve el producto si la query coincide EXACTAMENTE con un
- * código o un código de barras. Pensado para la pistola.
+ * codigo o un codigo de barras. Pensado para la pistola.
+ * Requiere PISTOLA_MIN_CHARS para evitar auto-adicion al digitar.
  */
 function tryScannerExactCompra(query) {
   const q = String(query || '').trim();
-  if (q.length < 2) return null;
+  if (q.length < PISTOLA_MIN_CHARS) return null;
   return _productos.find((p) => {
     const c = String(p.codigo || '').trim();
     const b = String(p.barras || '').trim();
