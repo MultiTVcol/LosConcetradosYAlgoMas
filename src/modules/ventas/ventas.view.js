@@ -868,37 +868,43 @@ function adjuntarEventosCarrito(contenedor) {
 
 /**
  * Modo del lector USB persistido en localStorage.
- * Valores: 'pistola' (default) | 'manual'.
- * Cuando exista el módulo Configuración, esto se moverá allá.
+ * Valores: 'pistola' | 'manual' (default).
+ * Default Manual: la Pistola es opt-in para evitar que digitar codigos
+ * cortos (142, 234...) los agregue solos al carrito.
  */
 const LECTOR_KEY = 'pospunto:lector';
+// Codigos de barras EAN/UPC son siempre largos (>= 8 chars). Asi
+// la Pistola solo dispara con queries que parezcan barcode real
+// y nunca con codigos internos cortos digitados a mano.
+const PISTOLA_MIN_CHARS = 4;
 
 function getLectorMode() {
   try {
     const v = localStorage.getItem(LECTOR_KEY);
-    return v === 'manual' ? 'manual' : 'pistola';
+    return v === 'pistola' ? 'pistola' : 'manual';
   } catch {
-    return 'pistola';
+    return 'manual';
   }
 }
 
 function setLectorMode(modo) {
   try {
-    localStorage.setItem(LECTOR_KEY, modo === 'manual' ? 'manual' : 'pistola');
+    localStorage.setItem(LECTOR_KEY, modo === 'pistola' ? 'pistola' : 'manual');
   } catch {}
 }
 
 /**
  * Match EXACTO en barras o código (replica `tryScannerExact` del legacy).
  *
- * - Requiere query.length >= 3 para evitar falsos positivos (no dispara
- *   con "1" mientras el usuario está tipeando "100").
+ * - Requiere query.length >= PISTOLA_MIN_CHARS (4) para evitar que
+ *   digitar codigos cortos a mano (142, 234, 567...) los agregue
+ *   solos al carrito.
  * - Prioriza `barras` (escáner físico) antes que `codigo`.
  * - Trim + case-insensitive.
  */
 function tryScannerExact(query) {
   const qn = (query || '').trim().toLowerCase();
-  if (qn.length < 3) return null;
+  if (qn.length < PISTOLA_MIN_CHARS) return null;
   // Barras primero
   let p = _productos.find(x => String(x.barras || '').trim().toLowerCase() === qn);
   if (p) return p;
