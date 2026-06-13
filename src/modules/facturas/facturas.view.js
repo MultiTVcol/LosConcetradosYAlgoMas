@@ -199,6 +199,16 @@ function adjuntarEventos(contenedor) {
       pintarLista();
     });
   }
+  const btnLimpiar = contenedor.querySelector('#fac-limpiar');
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener('click', () => {
+      _filtro = { q: '', desde: '', hasta: '' };
+      if (inpQ) inpQ.value = '';
+      if (inpDesde) inpDesde.value = '';
+      if (inpHasta) inpHasta.value = '';
+      pintarLista();
+    });
+  }
 }
 
 function cablearAccionesFila(contenedor) {
@@ -558,29 +568,23 @@ function htmlLayout() {
 
       ${_facturas.length > 0 ? htmlKpis() : ''}
 
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:18px">
-        <div style="display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr">
-          <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">
-              🔎 Buscar (cliente, N° factura o método)
-            </div>
-            <input id="fac-q" type="text" placeholder="Escribe aquí..." autocomplete="off"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
-            />
-          </div>
-          <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Desde</div>
-            <input id="fac-desde" type="date"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
-            />
-          </div>
-          <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Hasta</div>
-            <input id="fac-hasta" type="date"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
-            />
-          </div>
-        </div>
+      <div class="ui-filterbar">
+        <label class="ui-field ui-filter-grow">
+          <span class="ui-label">Buscar</span>
+          <input id="fac-q" class="ui-input" type="text" placeholder="Cliente, N° de factura o método de pago…" autocomplete="off" />
+        </label>
+        <label class="ui-field">
+          <span class="ui-label">Desde</span>
+          <input id="fac-desde" class="ui-input" type="date" />
+        </label>
+        <label class="ui-field">
+          <span class="ui-label">Hasta</span>
+          <input id="fac-hasta" class="ui-input" type="date" />
+        </label>
+        <button id="fac-limpiar" type="button"
+          style="padding:9px 16px;background:#fff;border:1px solid #d1d5db;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#374151;height:39px">
+          Limpiar
+        </button>
       </div>
 
       <div id="fac-lista" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px"></div>

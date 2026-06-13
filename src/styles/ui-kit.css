@@ -92,6 +92,59 @@
 }
 
 /* ============================================================
+   CAMPOS DE FORMULARIO
+   ============================================================ */
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ui-label {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+.ui-label .req { color: #dc2626; }
+.ui-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  color: #111827;
+  outline: none;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+.ui-input::placeholder { color: #9ca3af; }
+.ui-input:hover { border-color: #9ca3af; }
+.ui-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+textarea.ui-input { resize: vertical; }
+
+/* ============================================================
+   BARRA DE FILTROS COMPACTA
+   ============================================================ */
+.ui-filterbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.ui-filterbar .ui-field { flex: 0 0 auto; }
+.ui-filterbar .ui-input { padding: 9px 12px; }
+.ui-filter-grow { flex: 1 1 240px; min-width: 180px; }
+
+/* ============================================================
    BOTÓN DE MENÚ CONTEXTUAL (⋮)
    ============================================================ */
 .ui-menu-btn {

@@ -129,17 +129,17 @@ function construirFormulario(datos) {
 
 function campo(id, label, tipo, valor, placeholder, requerido = false) {
   return `
-    <label style="display:flex;flex-direction:column;gap:5px">
-      <span style="font-size:13px;color:#475569;font-weight:600">
-        ${esc(label)}${requerido ? ' <span style="color:#dc2626">*</span>' : ''}
+    <label class="ui-field" style="gap:5px">
+      <span class="ui-label">
+        ${esc(label)}${requerido ? ' <span class="req">*</span>' : ''}
       </span>
       <input
         id="${id}"
+        class="ui-input"
         type="${tipo}"
         value="${esc(String(valor || ''))}"
         placeholder="${esc(placeholder || '')}"
         autocomplete="off"
-        style="padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;font-family:inherit;background:white;color:#0f172a;box-sizing:border-box"
       />
     </label>
   `;
