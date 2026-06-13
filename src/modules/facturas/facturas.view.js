@@ -463,7 +463,7 @@ async function editarFactura(id) {
   `;
 
   const m = Modal.abrir({
-    titulo: `✏️ Editar venta ${f.numero || ''}`,
+    titulo: `Editar venta ${f.numero || ''}`,
     contenido,
     ancho: 'md',
   });
@@ -515,7 +515,7 @@ async function borrarFactura(id) {
     `¿Eliminar la venta ${f.numero || ''}? Se devolverá el stock de los productos al inventario. Esta acción no se puede deshacer.`,
     {
       titulo: 'Eliminar venta',
-      textoConfirmar: '🗑️ Eliminar',
+      textoConfirmar: 'Eliminar',
     },
   );
   if (!ok) return;

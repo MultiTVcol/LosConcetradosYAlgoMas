@@ -100,7 +100,7 @@ function adjuntarEventos(contenedor) {
     Toast.info('Reintentando pendientes…');
     try {
       const r = await Sync.flushPendientes();
-      Toast.ok(`✅ ${r.exitos} subidos · ${r.fallos} pendientes`);
+      Toast.ok(`${r.exitos} subidos · ${r.fallos} pendientes`);
       actualizarEstadoSync();
     } catch (err) {
       console.error(err);
@@ -237,7 +237,7 @@ async function importarJSON(e) {
 
   const ok = await Confirm.peligro(
     'Importar este respaldo SOBREESCRIBIRÁ todos los datos locales. ¿Continuar?',
-    { titulo: 'Importar respaldo', textoConfirmar: '⬆️ Importar' },
+    { titulo: 'Importar respaldo', textoConfirmar: 'Importar' },
   );
   if (!ok) { e.target.value = ''; return; }
 
@@ -311,7 +311,7 @@ async function importarProductosExcel(e) {
         const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} productos…`);
         try {
           const r = await ImpExp.importarProductos(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} productos…`, n, total));
-          Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+          Toast.ok(`${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
           render(_contenedor);
         } finally { overlay.cerrar(); }
       },
@@ -345,7 +345,7 @@ async function importarClientesExcel(e) {
         const overlay = abrirOverlayProgreso(`Importando ${fmt(filas.length)} clientes…`);
         try {
           const r = await ImpExp.importarClientes(filas, (n, total) => overlay.actualizar(`Importando ${fmt(total)} clientes…`, n, total));
-          Toast.ok(`✅ ${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
+          Toast.ok(`${r.creados} creados · ${r.actualizados} actualizados${r.errores ? ` · ⚠ ${r.errores} con errores` : ''}`);
           render(_contenedor);
         } finally { overlay.cerrar(); }
       },
@@ -449,7 +449,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
   return `
     <!-- Banner: archivo leído -->
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#1d4ed8">
-      📊 <b>${fmt(filasRaw.length)}</b> fila(s) detectadas en el archivo · <b>${fmt(columnasArchivo.length)}</b> columna(s) encontradas
+      <b>${fmt(filasRaw.length)}</b> fila(s) detectadas en el archivo · <b>${fmt(columnasArchivo.length)}</b> columna(s) encontradas
     </div>
 
     <!-- PASO 1: Mapeo de columnas -->
@@ -479,7 +479,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
       </div>
       ${sinMapear.length > 0 ? `
         <div style="margin-top:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#991b1b">
-          ⚠ Campo obligatorio sin mapear: <b>${sinMapear.join(', ')}</b>. Sin esto no se podrá importar.
+          Campo obligatorio sin mapear: <b>${sinMapear.join(', ')}</b>. Sin esto no se podrá importar.
         </div>
       ` : ''}
     </div>
@@ -488,11 +488,11 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
     <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
         <div style="font-weight:700;font-size:14px;color:#0f172a">2️⃣ Formato de los números</div>
-        ${formatoDetectado !== 'auto' ? `<div style="font-size:11px;color:#15803d;font-weight:600">🤖 Auto-detectado: <b>${esc(formatoDetectado)}</b></div>` : ''}
+        ${formatoDetectado !== 'auto' ? `<div style="font-size:11px;color:#15803d;font-weight:600">Auto-detectado: <b>${esc(formatoDetectado)}</b></div>` : ''}
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${[
-          ['auto',  '🤖 Auto', 'Detecta automáticamente cada valor'],
+          ['auto',  'Auto', 'Detecta automáticamente cada valor'],
           ['es-CO', '🇨🇴 1.500.000 / 1.500,50', 'Punto = miles · Coma = decimal'],
           ['en-US', '🇺🇸 1,500,000 / 1,500.50', 'Coma = miles · Punto = decimal'],
         ].map(([id, label, hint]) => `
@@ -551,7 +551,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
 
       ${errores.length > 0 ? `
         <div style="margin-top:10px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e">
-          ⚠ <b>${errores.length} advertencia(s)</b>:
+          <b>${errores.length} advertencia(s)</b>:
           <ul style="margin:4px 0 0 18px;padding:0">
             ${errores.slice(0, 5).map((e) => `<li>Fila ${e.fila}: ${esc(e.msg)}</li>`).join('')}
             ${errores.length > 5 ? `<li>… y ${errores.length - 5} más</li>` : ''}
@@ -562,7 +562,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
 
     <!-- Aviso -->
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#1d4ed8;margin-bottom:14px">
-      ℹ Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán. Todo se sincronizará automáticamente con la nube.
+      Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán. Todo se sincronizará automáticamente con la nube.
     </div>
 
     <!-- Botones -->
@@ -571,7 +571,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
         style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="imp-confirmar" data-primary
         ${(totalUtil === 0 || sinMapear.length > 0) ? 'disabled' : ''}
-        style="flex:1.4;padding:11px;background:${totalUtil > 0 && sinMapear.length === 0 ? '#15803d' : '#cbd5e1'};color:white;border:0;border-radius:10px;cursor:${totalUtil > 0 && sinMapear.length === 0 ? 'pointer' : 'not-allowed'};font-size:14px;font-weight:700;font-family:inherit;${totalUtil > 0 && sinMapear.length === 0 ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''}">✅ Importar ${fmt(totalUtil)} fila${totalUtil === 1 ? '' : 's'}</button>
+        style="flex:1.4;padding:11px;background:${totalUtil > 0 && sinMapear.length === 0 ? '#15803d' : '#cbd5e1'};color:white;border:0;border-radius:10px;cursor:${totalUtil > 0 && sinMapear.length === 0 ? 'pointer' : 'not-allowed'};font-size:14px;font-weight:700;font-family:inherit;${totalUtil > 0 && sinMapear.length === 0 ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''}">Importar ${fmt(totalUtil)} fila${totalUtil === 1 ? '' : 's'}</button>
     </div>
   `;
 }
@@ -596,7 +596,7 @@ async function borrarSeleccionado() {
 
   const ok = await Confirm.peligro(
     `Vas a borrar: ${desc}. Esta acción NO se puede deshacer. ¿Continuar?`,
-    { titulo: 'Borrar datos', textoConfirmar: '🗑️ Borrar' },
+    { titulo: 'Borrar datos', textoConfirmar: 'Borrar' },
   );
   if (!ok) return;
 
@@ -643,7 +643,7 @@ async function borrarSeleccionado() {
       }
     }
     overlay.cerrar();
-    console.log('🗑️ Borrado completado:\n  • ' + resumen.join('\n  • '));
+    console.log('Borrado completado:\n  • ' + resumen.join('\n  • '));
     Toast.ok('Datos borrados (local + nube)');
     render(_contenedor);
   } catch (err) {
@@ -743,7 +743,7 @@ function htmlDatosNegocio(cfg) {
   const neg = cfg.negocio;
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🧾 Datos para la factura</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Datos para la factura</h3>
 
       <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
         <div style="grid-column:1/-1">${campo('cfg-negocio', 'Nombre del negocio', neg.nombre)}</div>
@@ -769,7 +769,7 @@ function htmlDatosNegocio(cfg) {
 
       <button id="cfg-guardar-negocio"
         style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);margin-top:8px">
-        💾 Guardar configuración
+        Guardar configuración
       </button>
     </div>
   `;
@@ -788,7 +788,7 @@ function campo(id, label, valor, placeholder = '') {
 function htmlLector(cfg) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🔫 Lector de código de barras</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Lector de código de barras</h3>
       <p style="color:#64748b;font-size:13.5px;margin:0">Elige cómo escaneas en la pantalla de Ventas.</p>
       <select id="cfg-lector"
         style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
@@ -802,13 +802,13 @@ function htmlLector(cfg) {
 function htmlImpresora(cfg) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🖨️ Impresora predeterminada</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Impresora predeterminada</h3>
       <p style="color:#64748b;font-size:13.5px;margin:0">Cuando imprimas una factura, el POS puede ir directo a una impresora o preguntarte cada vez.</p>
       <select id="cfg-impresora"
         style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
-        <option value="preguntar" ${cfg.impresoraDefault === 'preguntar' ? 'selected' : ''}>🤔 Preguntar cada vez (recomendado)</option>
-        <option value="pos" ${cfg.impresoraDefault === 'pos' ? 'selected' : ''}>🧾 POS 80mm (térmica)</option>
-        <option value="carta" ${cfg.impresoraDefault === 'carta' ? 'selected' : ''}>📄 Carta empresarial</option>
+        <option value="preguntar" ${cfg.impresoraDefault === 'preguntar' ? 'selected' : ''}>Preguntar cada vez (recomendado)</option>
+        <option value="pos" ${cfg.impresoraDefault === 'pos' ? 'selected' : ''}>POS 80mm (térmica)</option>
+        <option value="carta" ${cfg.impresoraDefault === 'carta' ? 'selected' : ''}>Carta empresarial</option>
       </select>
     </div>
   `;
@@ -817,11 +817,11 @@ function htmlImpresora(cfg) {
 function htmlSync() {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">☁️ Sincronización con la nube</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Sincronización con la nube</h3>
       <div id="cfg-sync-estado" style="font-size:14px;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:11px 13px">Cargando estado…</div>
       <button id="cfg-sync-flush"
         style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">
-        🔁 Reintentar pendientes
+        Reintentar pendientes
       </button>
       <p style="color:#94a3b8;font-size:12.5px;margin:0">El POS sigue funcionando aunque la nube esté caída. Los registros locales se subirán cuando vuelva la conexión.</p>
     </div>
@@ -835,15 +835,15 @@ function htmlExcel(stats) {
       <div style="display:flex;flex-direction:column;gap:8px">
         <button id="${idExp}"
           style="padding:10px 12px;background:#0f172a;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
-          ⬇️ Exportar (${fmt(count)})
+          Exportar (${fmt(count)})
         </button>
         <button id="${idTpl}"
           style="padding:10px 12px;background:white;border:1px solid #e2e8f0;color:#475569;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
-          📋 Descargar plantilla
+          Descargar plantilla
         </button>
         <label
           style="padding:10px 12px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
-          ⬆️ Importar Excel/CSV
+          Importar Excel/CSV
           <input id="${idImp}" type="file" accept=".xlsx,.xls,.csv,.txt" style="display:none" />
         </label>
       </div>
@@ -852,7 +852,7 @@ function htmlExcel(stats) {
 
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📊 Productos y clientes en Excel</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Productos y clientes en Excel</h3>
       <p style="color:#64748b;font-size:13.5px;margin:0">
         Exporta tus datos, descarga una <b>plantilla lista para llenar</b>, o importa desde Excel/CSV.
         Al importar se sincronizará automáticamente en la nube y en las otras terminales conectadas.
@@ -862,7 +862,7 @@ function htmlExcel(stats) {
         ${cardLado('Clientes', '👥', stats.clientes, 'cfg-exp-clientes', 'cfg-tpl-clientes', 'cfg-imp-clientes')}
       </div>
       <p style="color:#94a3b8;font-size:12px;margin:4px 0 0">
-        💡 Descarga la plantilla, llénala en Excel y vuelve a importarla. También puedes exportar lo que ya tienes, editarlo y reimportarlo.
+        Descarga la plantilla, llénala en Excel y vuelve a importarla. También puedes exportar lo que ya tienes, editarlo y reimportarlo.
       </p>
     </div>
   `;
@@ -871,15 +871,15 @@ function htmlExcel(stats) {
 function htmlRespaldo() {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💾 Respaldo (copia de seguridad)</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Respaldo (copia de seguridad)</h3>
       <p style="color:#64748b;font-size:13.5px;margin:0">Guarda todo tu sistema en un archivo, o restáuralo cuando quieras.</p>
       <button id="cfg-export-json"
         style="padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
-        ⬇️ Exportar respaldo (JSON)
+        Exportar respaldo (JSON)
       </button>
       <label
         style="padding:12px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569;text-align:center">
-        ⬆️ Importar respaldo (JSON)
+        Importar respaldo (JSON)
         <input id="cfg-import-json" type="file" accept=".json" style="display:none" />
       </label>
     </div>
@@ -894,18 +894,18 @@ function htmlDatosSistema(stats) {
   `;
 
   const tipos = [
-    ['stock', '📊 Solo el stock (dejar productos en 0)', 'Conserva nombre, código, precio y costo. Útil para hacer un conteo físico desde cero.'],
-    ['productos', '📦 Productos completos (catálogo entero)', 'Elimina todos los productos. Quedas sin catálogo.'],
-    ['clientes', '👥 Clientes', 'Borra el listado completo de clientes.'],
-    ['ventas', '🧾 Ventas / Facturas', 'Borra el historial de ventas.'],
-    ['compras', '🚚 Compras', 'Borra el historial de compras a proveedores.'],
-    ['gastos', '💸 Gastos', 'Borra todos los gastos registrados.'],
-    ['proveedores', '🏢 Proveedores', 'Borra el listado de proveedores.'],
+    ['stock', 'Solo el stock (dejar productos en 0)', 'Conserva nombre, código, precio y costo. Útil para hacer un conteo físico desde cero.'],
+    ['productos', 'Productos completos (catálogo entero)', 'Elimina todos los productos. Quedas sin catálogo.'],
+    ['clientes', 'Clientes', 'Borra el listado completo de clientes.'],
+    ['ventas', 'Ventas / Facturas', 'Borra el historial de ventas.'],
+    ['compras', 'Compras', 'Borra el historial de compras a proveedores.'],
+    ['gastos', 'Gastos', 'Borra todos los gastos registrados.'],
+    ['proveedores', 'Proveedores', 'Borra el listado de proveedores.'],
   ];
 
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:11px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🗃️ Datos del sistema</h3>
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Datos del sistema</h3>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         ${badge('📦', 'productos', stats.productos)}
         ${badge('👥', 'clientes', stats.clientes)}
@@ -928,7 +928,7 @@ function htmlDatosSistema(stats) {
         `).join('')}
         <button id="cfg-borrar-confirmar"
           style="margin-top:6px;padding:11px;background:#dc2626;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">
-          🗑️ Borrar seleccionado
+          Borrar seleccionado
         </button>
       </div>
     </div>

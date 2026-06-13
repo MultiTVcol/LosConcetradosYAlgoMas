@@ -4,7 +4,7 @@
  * Modal con formulario para crear o editar clientes — réplica del legacy.
  * Campos: nombre, negocio, teléfono, dirección, ciudad, observaciones.
  *
- * Incluye sección "💎 Precios especiales" con sub-modal para configurar
+ * Incluye sección "Precios especiales" con sub-modal para configurar
  * precios distintos al estándar por producto para este cliente.
  */
 
@@ -51,7 +51,7 @@ function abrirFormCliente(datos, esEdicion, opciones) {
   const formEl = construirFormulario(datos);
 
   const modal = Modal.abrir({
-    titulo: esEdicion ? '✏️ Editar cliente' : '➕ Nuevo cliente',
+    titulo: esEdicion ? 'Editar cliente' : 'Nuevo cliente',
     ancho: 'md',
     contenido: formEl,
     cerrarAlClicarFondo: false,
@@ -94,7 +94,7 @@ function construirFormulario(datos) {
       <div style="background:#f8fafc;border:2px dashed #2563eb;border-radius:12px;padding:14px;margin-top:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
-            <div style="font-weight:800;font-size:15px;color:#0f172a">💎 Precios especiales</div>
+            <div style="font-weight:800;font-size:15px;color:#0f172a">Precios especiales</div>
             <div style="color:#64748b;font-size:12.5px;margin-top:3px">
               Opcional · Solo los productos que listes aquí tendrán precio especial. El resto usa el precio estándar.
             </div>
@@ -103,7 +103,7 @@ function construirFormulario(datos) {
             id="cli-btn-pe"
             type="button"
             style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
-          >⚙️ Configurar precios especiales</button>
+          >Configurar precios especiales</button>
         </div>
         <div id="cli-pe-resumen" style="margin-top:10px;font-size:13px;color:#64748b"></div>
       </div>
@@ -120,7 +120,7 @@ function construirFormulario(datos) {
           id="cli-guardar"
           type="button"
           style="flex:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
-        >💾 Guardar</button>
+        >Guardar</button>
       </div>
     </div>
   `;
@@ -215,7 +215,7 @@ function configurarEventos(formEl, datosIniciales, modal, opciones, esEdicion) {
       console.error('Error guardando cliente:', err);
       mostrarErrores(errBox, [err.message || 'Error al guardar']);
       btnGuardar.disabled = false;
-      btnGuardar.innerHTML = '💾 Guardar';
+      btnGuardar.innerHTML = 'Guardar';
     }
   });
 }
@@ -264,7 +264,7 @@ async function abrirPreciosEspeciales(datosCliente, esEdicion, opciones) {
       <button id="pe-cancelar"
         style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cerrar sin aplicar</button>
       <button id="pe-aplicar"
-        style="flex:1.2;padding:11px;background:#15803d;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">✅ Aplicar al cliente</button>
+        style="flex:1.2;padding:11px;background:#15803d;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">Aplicar al cliente</button>
     </div>
   `;
 
@@ -272,7 +272,7 @@ async function abrirPreciosEspeciales(datosCliente, esEdicion, opciones) {
   const peEditSnapshot = { ..._peEdit };
 
   const modalPE = Modal.abrir({
-    titulo: '💎 Precios especiales',
+    titulo: 'Precios especiales',
     ancho: 'md',
     contenido,
     cerrarAlClicarFondo: false,

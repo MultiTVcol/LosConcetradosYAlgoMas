@@ -345,7 +345,7 @@ function htmlHeaderVentas() {
       <button id="venta-btn-personalizar-ticket"
         title="Personaliza tu ticket POS 80mm"
         style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
-        🎨 Personaliza tu ticket
+        Personaliza tu ticket
       </button>
     </div>
   `;
@@ -448,12 +448,12 @@ function htmlPaso2BuscarProducto() {
             class="lm-btn"
             data-modo="pistola"
             style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
-          >🔫 Pistola</button>
+          >Pistola</button>
           <button
             class="lm-btn"
             data-modo="manual"
             style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
-          >⌨️ Manual</button>
+          >Manual</button>
         </div>
       </div>
 
@@ -481,7 +481,7 @@ function htmlPaso2BuscarProducto() {
 
       ${esPistola ? `
         <div style="color:#64748b;font-size:13px;margin-top:10px;display:flex;align-items:center;gap:6px">
-          🔫 <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al borrador.</span>
+          <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al borrador.</span>
         </div>
       ` : ''}
     </div>
@@ -664,10 +664,10 @@ function htmlTotales(t) {
         <div style="display:flex;justify-content:space-between;align-items:center;background:${bgUtil};border:1px solid ${utilidad >= 0 ? '#bbf7d0' : '#fecaca'};border-radius:8px;padding:8px 12px;margin:8px 0">
           <div>
             <div style="font-size:12.5px;font-weight:700;color:${colorUtil};display:flex;align-items:center;gap:6px">
-              💰 Utilidad estimada
+              Utilidad estimada
             </div>
             ${sinCosto
-              ? `<div style="font-size:11px;color:#a16207;margin-top:1px">⚠ Define el costo de los productos para un cálculo real</div>`
+              ? `<div style="font-size:11px;color:#a16207;margin-top:1px">Define el costo de los productos para un cálculo real</div>`
               : `<div style="font-size:11px;color:#64748b;margin-top:1px">Margen: <b>${margenPct.toFixed(1)}%</b> · Costo: ${money(t.costoTotal)}</div>`
             }
           </div>
@@ -777,7 +777,7 @@ function adjuntarEventosPaso2(contenedor) {
       const modo = btn.dataset.modo;
       if (modo === getLectorMode()) return;
       setLectorMode(modo);
-      Toast.ok(modo === 'pistola' ? '🔫 Modo lector USB' : '⌨️ Modo manual');
+      Toast.ok(modo === 'pistola' ? 'Modo lector USB' : 'Modo manual');
       // Re-renderizar el paso 2 y re-adjuntar solo sus eventos
       const paso2 = contenedor.querySelector('#paso1-cliente-wrap')?.nextElementSibling;
       if (paso2) {
@@ -988,8 +988,8 @@ function abrirModalLinea(producto, linea) {
   // Para "agregar": mostrar stock disponible
   const stockReal = esEdicion ? null : (Number(producto.stock) || 0);
 
-  const titulo = esEdicion ? '✏️ Editar línea' : '➕ Agregar producto';
-  const textoBoton = esEdicion ? '💾 Guardar' : '＋ Agregar al borrador';
+  const titulo = esEdicion ? 'Editar línea' : 'Agregar producto';
+  const textoBoton = esEdicion ? 'Guardar' : '＋ Agregar al borrador';
 
   const html = `
     <div>
@@ -999,7 +999,7 @@ function abrirModalLinea(producto, linea) {
       </div>
       ${tienePE ? `
         <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 10px;margin-bottom:14px;font-size:12.5px;color:#1d4ed8;font-weight:600">
-          💎 Precio especial para <b>${esc(_cliente?.nombre || '')}</b> · Estándar: <span style="text-decoration:line-through;color:#94a3b8">${money(precioStd)}</span>
+          Precio especial para <b>${esc(_cliente?.nombre || '')}</b> · Estándar: <span style="text-decoration:line-through;color:#94a3b8">${money(precioStd)}</span>
         </div>
       ` : ''}
 
@@ -1622,11 +1622,11 @@ async function vaciarCarrito() {
 // ============================================================
 
 const METODOS_PAGO = [
-  { id: 'efectivo',      label: '💵 Efectivo' },
-  { id: 'transferencia', label: '🏦 Transfer.' },
-  { id: 'qr',            label: '📲 QR' },
-  { id: 'tarjeta',       label: '💳 Tarjeta' },
-  { id: 'mixto',         label: '🧩 Mixto' },
+  { id: 'efectivo',      label: 'Efectivo' },
+  { id: 'transferencia', label: 'Transfer.' },
+  { id: 'qr',            label: 'QR' },
+  { id: 'tarjeta',       label: 'Tarjeta' },
+  { id: 'mixto',         label: 'Mixto' },
 ];
 
 const METODOS_LABEL = {
@@ -1690,12 +1690,12 @@ function abrirModalCobro() {
       <button
         id="cobro-btn-confirmar"
         style="flex:1.4;padding:13px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)"
-      >✅ Confirmar</button>
+      >Confirmar</button>
     </div>
   `;
 
   _cobroModal = Modal.abrir({
-    titulo: '💵 Cobrar venta',
+    titulo: 'Cobrar venta',
     contenido,
     ancho: 'lg',
     onClose: () => { _cobroModal = null; },
@@ -1736,10 +1736,10 @@ function seleccionarMetodoPago(metodo) {
     area.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:8px">
         ${[
-          ['efectivo',      '💵 Efectivo'],
-          ['transferencia', '🏦 Transferencia'],
-          ['qr',            '📲 QR'],
-          ['tarjeta',       '💳 Tarjeta'],
+          ['efectivo',      'Efectivo'],
+          ['transferencia', 'Transferencia'],
+          ['qr',            'QR'],
+          ['tarjeta',       'Tarjeta'],
         ].map(([k, label]) => `
           <div style="display:flex;align-items:center;gap:10px">
             <span style="flex:1;font-weight:600;font-size:13.5px;color:#475569">${label}</span>
@@ -1785,7 +1785,7 @@ function seleccionarMetodoPago(metodo) {
         <button
           id="cobro-btn-exacto"
           style="width:100%;margin-top:10px;padding:13px;border:2px solid #2563eb;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
-        >💰 Exacto · ${money(totales.total)}</button>
+        >Exacto · ${money(totales.total)}</button>
         <div
           id="cobro-cambio-box"
           style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:15px;text-align:center;font-size:14px;margin-top:12px"
@@ -1931,7 +1931,7 @@ async function confirmarVenta() {
       // Asi no aparece el preview del navegador automaticamente: solo
       // si el usuario lo pide.
       const quiere = await Confirm.preguntar(`¿Desea imprimir el ticket de la venta ${venta.numero}?`, {
-        titulo: '🧾 Imprimir ticket',
+        titulo: 'Imprimir ticket',
         textoConfirmar: 'Sí, imprimir',
         textoCancelar: 'No, gracias',
       });

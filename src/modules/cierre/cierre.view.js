@@ -599,7 +599,7 @@ async function imprimirInforme(r) {
         kv('Unidades', fmt(r.invUnidades)) +
         kv('Valor a costo', money(r.invValorCosto), true) +
         kv('Valor a venta', money(r.invValorVenta)) +
-        (r.invBajoStock > 0 ? kv('⚠ Stock bajo', fmt(r.invBajoStock)) : '') +
+        (r.invBajoStock > 0 ? kv('Stock bajo', fmt(r.invBajoStock)) : '') +
         (r.invSinStock > 0 ? kv('✗ Agotados', fmt(r.invSinStock)) : '')
       )}
 
@@ -692,7 +692,7 @@ async function imprimirCierrePDF(r) {
       </div>
 
       <!-- SECCIÓN VENTAS -->
-      ${tituloSec('🟢 Ventas del periodo', '#15803d')}
+      ${tituloSec('Ventas del periodo', '#15803d')}
       <table style="width:100%;border-collapse:collapse">
         ${fila('Facturas emitidas', fmt(r.nFac))}
         ${fila('Total vendido', r.ventas, { bold: true })}
@@ -703,7 +703,7 @@ async function imprimirCierrePDF(r) {
       </table>
 
       ${metodos.length > 0 ? `
-        ${tituloSec('💳 Métodos de pago', '#1d4ed8')}
+        ${tituloSec('Métodos de pago', '#1d4ed8')}
         <table style="width:100%;border-collapse:collapse">
           ${metodos.map(([m, v]) => `
             <tr>
@@ -715,7 +715,7 @@ async function imprimirCierrePDF(r) {
       ` : ''}
 
       ${r.nCompras > 0 ? `
-        ${tituloSec('🚚 Compras del periodo', '#0369a1')}
+        ${tituloSec('Compras del periodo', '#0369a1')}
         <table style="width:100%;border-collapse:collapse">
           ${fila('Compras registradas', fmt(r.nCompras))}
           ${fila('Total comprado', r.compras, { bold: true })}
@@ -725,7 +725,7 @@ async function imprimirCierrePDF(r) {
         </table>
       ` : ''}
 
-      ${tituloSec('💸 Gastos del periodo', '#dc2626')}
+      ${tituloSec('Gastos del periodo', '#dc2626')}
       <table style="width:100%;border-collapse:collapse">
         ${fila('Registros', fmt(r.nGastos))}
         ${fila('Total gastos', r.gastos, { bold: true, color: '#dc2626' })}
@@ -733,7 +733,7 @@ async function imprimirCierrePDF(r) {
       </table>
 
       <!-- CAJA / FLUJO -->
-      ${tituloSec('💧 Flujo de caja del periodo', colCaja)}
+      ${tituloSec('Flujo de caja del periodo', colCaja)}
       <table style="width:100%;border-collapse:collapse">
         ${fila('Ingresos (ventas)', r.ventas, { color: '#15803d' })}
         ${r.comprasContado > 0 ? fila('(−) Compras contado', -r.comprasContado, { color: '#0369a1' }) : ''}
@@ -744,7 +744,7 @@ async function imprimirCierrePDF(r) {
       </table>
 
       <!-- ESTADO DE RESULTADOS -->
-      ${tituloSec('⭐ Utilidad del periodo', colNeta)}
+      ${tituloSec('Utilidad del periodo', colNeta)}
       <table style="width:100%;border-collapse:collapse">
         ${fila('Utilidad bruta', r.utilidadBruta)}
         ${fila('(−) Gastos operativos', -r.gastos, { color: '#dc2626' })}
@@ -757,7 +757,7 @@ async function imprimirCierrePDF(r) {
 
       <!-- TOP PRODUCTOS -->
       ${r.topProductos && r.topProductos.length > 0 ? `
-        ${tituloSec('🏆 Productos más vendidos del periodo', '#a16207')}
+        ${tituloSec('Productos más vendidos del periodo', '#a16207')}
         <table style="width:100%;border-collapse:collapse;font-size:10.5px">
           <thead>
             <tr style="border-bottom:1px solid #cbd5e1;color:#64748b;font-size:9.5px;font-weight:700;text-transform:uppercase;text-align:left">
@@ -781,7 +781,7 @@ async function imprimirCierrePDF(r) {
       ` : ''}
 
       <!-- INVENTARIO AL CIERRE -->
-      ${tituloSec('📦 Inventario al cierre', '#8b5cf6')}
+      ${tituloSec('Inventario al cierre', '#8b5cf6')}
       <table style="width:100%;border-collapse:collapse">
         ${fila('SKUs', fmt(r.invSKUs))}
         ${fila('Unidades totales', fmt(r.invUnidades))}

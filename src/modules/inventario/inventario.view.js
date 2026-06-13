@@ -78,9 +78,9 @@ function htmlLayout(r) {
         </div>
         <div style="display:flex;gap:8px">
           <button id="inv-btn-ajustes"
-            style="padding:10px 16px;background:white;color:#2563eb;border:1px solid #bfdbfe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📜 Ajustes</button>
+            style="padding:10px 16px;background:white;color:#2563eb;border:1px solid #bfdbfe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Ajustes</button>
           <button id="inv-btn-conteo"
-            style="padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">📋 Conteo físico</button>
+            style="padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">Conteo físico</button>
         </div>
       </div>
 
@@ -97,7 +97,7 @@ function htmlLayout(r) {
             <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">Productos</h3>
             <div style="font-size:12.5px;color:#64748b;margin-top:2px">Haz click en un producto para ver su <b>kardex</b> (toda su historia)</div>
           </div>
-          <input id="inv-buscar" type="text" placeholder="🔎 Buscar por nombre o código…" autocomplete="off"
+          <input id="inv-buscar" type="text" placeholder="Buscar por nombre o código…" autocomplete="off"
             style="padding:10px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;font-family:inherit;min-width:260px" />
         </div>
         <div id="inv-tabla" style="overflow-x:auto"></div>
@@ -221,7 +221,7 @@ async function abrirKardex(productoId) {
     `}
   `;
 
-  Modal.abrir({ titulo: `📒 Kardex`, contenido, ancho: 'lg' });
+  Modal.abrir({ titulo: `Kardex`, contenido, ancho: 'lg' });
 }
 
 // ============================================================
@@ -237,7 +237,7 @@ function abrirConteo() {
     <div style="display:grid;gap:12px">
       <div style="display:flex;gap:8px;align-items:stretch;position:relative">
         <div style="flex:1;position:relative">
-          <input id="ct-buscar" type="text" placeholder="🔎 Agregar producto por nombre o código…" autocomplete="off"
+          <input id="ct-buscar" type="text" placeholder="Agregar producto por nombre o código…" autocomplete="off"
             style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           <div id="ct-resultados" style="position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;display:flex;flex-direction:column;gap:4px;max-height:230px;overflow:auto;background:white;border-radius:8px"></div>
         </div>
@@ -256,12 +256,12 @@ function abrirConteo() {
 
       <div style="display:flex;gap:10px;margin-top:4px">
         <button id="ct-cancelar" style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="ct-confirmar" data-primary disabled style="flex:1.4;padding:12px;border:0;background:#94a3b8;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">📋 Registrar ajustes</button>
+        <button id="ct-confirmar" data-primary disabled style="flex:1.4;padding:12px;border:0;background:#94a3b8;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">Registrar ajustes</button>
       </div>
     </div>
   `;
 
-  const m = Modal.abrir({ titulo: '📋 Conteo físico (planilla)', contenido, ancho: 'xl' });
+  const m = Modal.abrir({ titulo: 'Conteo físico (planilla)', contenido, ancho: 'xl' });
 
   const inpBuscar = m.body.querySelector('#ct-buscar');
   const boxRes = m.body.querySelector('#ct-resultados');
@@ -370,7 +370,7 @@ function abrirConteo() {
     btnOk.disabled = !habilitado;
     btnOk.style.background = habilitado ? '#2563eb' : '#94a3b8';
     btnOk.style.cursor = habilitado ? 'pointer' : 'not-allowed';
-    btnOk.textContent = habilitado ? `📋 Registrar ${difs.length} ajuste(s)` : '📋 Registrar ajustes';
+    btnOk.textContent = habilitado ? `Registrar ${difs.length} ajuste(s)` : 'Registrar ajustes';
 
     if (hoja.length === 0) { footer.style.display = 'none'; return; }
     footer.style.display = 'block';
@@ -427,7 +427,7 @@ let _histModal = null;
 
 async function abrirHistorial() {
   _histModal = Modal.abrir({
-    titulo: '📜 Ajustes de inventario',
+    titulo: 'Ajustes de inventario',
     contenido: '<div style="padding:24px;text-align:center;color:#64748b;font-size:13.5px">Cargando…</div>',
     ancho: 'lg',
     onClose: () => { _histModal = null; },
@@ -531,8 +531,8 @@ async function verAjuste(id) {
       </table>
     </div>
     <div style="display:flex;gap:10px;margin-top:16px">
-      <button id="det-del" style="flex:1;padding:11px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🗑️ Eliminar ajuste</button>
-      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🖨️ Imprimir</button>
+      <button id="det-del" style="flex:1;padding:11px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Eliminar ajuste</button>
+      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Imprimir</button>
     </div>
   `;
 
@@ -597,7 +597,7 @@ async function eliminarAjuste(id) {
 
   const ok = await Confirm.peligro(
     `¿Eliminar el ajuste ${a.numero}? Se DEVOLVERÁ el stock de ${fmt((a.items || []).length)} producto(s) al estado anterior al conteo.`,
-    { titulo: 'Eliminar ajuste', textoConfirmar: '🗑️ Eliminar' },
+    { titulo: 'Eliminar ajuste', textoConfirmar: 'Eliminar' },
   );
   if (!ok) return;
 

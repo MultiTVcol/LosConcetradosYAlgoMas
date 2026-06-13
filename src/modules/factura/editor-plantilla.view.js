@@ -18,9 +18,9 @@ import { Toast, Modal, Confirm } from '../../components/index.js';
 import { esc } from '../../core/strings.js';
 
 const TITULOS = {
-  venta:   '🎨 Personaliza tu ticket de venta',
-  cierre:  '🎨 Personaliza el ticket de cierre de caja',
-  reporte: '🎨 Personaliza el ticket de reporte',
+  venta:   'Personaliza tu ticket de venta',
+  cierre:  'Personaliza el ticket de cierre de caja',
+  reporte: 'Personaliza el ticket de reporte',
 };
 
 const PL_INPUTS = ['pl-fuente', 'pl-tam', 'pl-line', 'pl-sep', 'pl-ancho', 'pl-mayus', 'pl-neg', 'pl-tituloDoc', 'pl-msg1', 'pl-msg2'];
@@ -229,11 +229,11 @@ function htmlEditor(p) {
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button id="ed-pl-guardar" data-primary
             style="flex:1;min-width:140px;padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
-            💾 Guardar diseño
+            Guardar diseño
           </button>
           <button id="ed-pl-prueba"
             style="flex:1;min-width:140px;padding:12px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
-            🧾 Imprimir prueba
+            Imprimir prueba
           </button>
           <button id="ed-pl-restablecer"
             style="flex:0 0 auto;padding:12px 16px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:#475569;font-family:inherit">

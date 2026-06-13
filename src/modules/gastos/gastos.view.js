@@ -276,12 +276,12 @@ async function abrirFormGasto(id) {
 
     <div id="g-productos" style="display:none;margin-top:14px">
       <div style="background:#fef3c7;border:2px dashed #f59e0b;border-radius:10px;padding:12px">
-        <div style="font-weight:700;font-size:13.5px;color:#92400e">📦 Baja de productos del inventario</div>
+        <div style="font-weight:700;font-size:13.5px;color:#92400e">Baja de productos del inventario</div>
         <div style="color:#92400e;font-size:12px;margin-top:3px">Selecciona los productos que se dañaron, vencieron o vas a usar internamente. <b>El stock se descontará automáticamente</b> y el costo total se registrará como gasto.</div>
       </div>
 
       <div style="margin-top:12px">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">🔎 Buscar producto</div>
+        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Buscar producto</div>
         <input id="g-buscar-prod" type="text" placeholder="Nombre, código o barras..." autocomplete="off"
           style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
         <div id="g-resultados" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto;margin-top:8px"></div>
@@ -304,12 +304,12 @@ async function abrirFormGasto(id) {
       <button id="g-btn-cancelar"
         style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="g-btn-guardar"
-        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">💾 Guardar</button>
+        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">Guardar</button>
     </div>
   `;
 
   _formModal = Modal.abrir({
-    titulo: id ? '✏️ Editar gasto' : '➕ Registrar gasto',
+    titulo: id ? 'Editar gasto' : 'Registrar gasto',
     contenido,
     ancho: 'md',
     onClose: () => { _formModal = null; _bajaItems = []; },
@@ -663,7 +663,7 @@ function htmlLayout(k) {
       <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:18px">
         <div style="display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr auto;align-items:end">
           <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">🔎 Buscar (concepto, categoría o nota)</div>
+            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Buscar (concepto, categoría o nota)</div>
             <input id="gasto-q" type="text" placeholder="Escribe aquí..." autocomplete="off"
               style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
@@ -680,7 +680,7 @@ function htmlLayout(k) {
           <div>
             <button id="gasto-btn-nuevo"
               style="white-space:nowrap;padding:11px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
-              ➕ Registrar gasto
+              Registrar gasto
             </button>
           </div>
         </div>

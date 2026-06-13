@@ -99,7 +99,7 @@ function htmlLayout() {
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button id="comp-btn-prov-list"
-            style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">🏢 Ver proveedores</button>
+            style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">Ver proveedores</button>
           <button id="comp-btn-prov-nuevo"
             style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">+ Agregar proveedor</button>
         </div>
@@ -173,7 +173,7 @@ function htmlFormCompra() {
         <div id="comp-resultados" style="margin-top:4px;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto"></div>
         ${getLectorModeCompra() === 'pistola' ? `
           <div style="color:#64748b;font-size:12.5px;margin-top:10px;display:flex;align-items:center;gap:6px">
-            🔫 <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al pedido.</span>
+            <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al pedido.</span>
           </div>
         ` : ''}
       </div>
@@ -187,9 +187,9 @@ function htmlSelectorLectorCompra() {
   return `
     <div style="display:flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:8px;padding:3px">
       <button class="lm-btn-comp" data-modo="pistola"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">🔫 Pistola</button>
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">Pistola</button>
       <button class="lm-btn-comp" data-modo="manual"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">⌨️ Manual</button>
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">Manual</button>
     </div>
   `;
 }
@@ -202,7 +202,7 @@ function htmlPanelItems() {
       <div id="comp-total" style="border-top:1px solid #e2e8f0;padding-top:12px;margin-top:6px"></div>
       <button id="comp-btn-registrar"
         style="width:100%;padding:14px;background:#15803d;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">
-        💵 Registrar pago
+        Registrar pago
       </button>
     </div>
   `;
@@ -282,7 +282,7 @@ function cablearSelectorLector(contenedor) {
       const modo = btn.dataset.modo;
       if (modo === getLectorModeCompra()) return;
       setLectorModeCompra(modo);
-      Toast.ok(modo === 'pistola' ? '🔫 Modo lector USB' : '⌨️ Modo manual');
+      Toast.ok(modo === 'pistola' ? 'Modo lector USB' : 'Modo manual');
       actualizarFormCompra();
     };
   });
@@ -430,7 +430,7 @@ function abrirModalCantidadCompra(prodId) {
   const contenido = `
     <div style="text-align:left">
       <div style="font-weight:700;font-size:16px;color:#0f172a">${esc(p.nombre)}</div>
-      <div style="color:#64748b;font-size:12.5px;margin-bottom:14px">${esc(p.codigo || '')} · Stock actual: <b>${fmt(p.stock || 0)}</b> · Último costo: <b>${money(p.costo || 0)}</b>${yaEn ? ' · <span style="color:#a16207">⚠ Ya está en el pedido (se reemplaza)</span>' : ''}</div>
+      <div style="color:#64748b;font-size:12.5px;margin-bottom:14px">${esc(p.codigo || '')} · Stock actual: <b>${fmt(p.stock || 0)}</b> · Último costo: <b>${money(p.costo || 0)}</b>${yaEn ? ' · <span style="color:#a16207">Ya está en el pedido (se reemplaza)</span>' : ''}</div>
 
       <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Cantidad a comprar *</div>
       <input id="comp-mc-cant" data-miles type="text" inputmode="numeric" value="${cant}" placeholder="0"
@@ -448,12 +448,12 @@ function abrirModalCantidadCompra(prodId) {
         <button id="comp-mc-cancelar"
           style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
         <button id="comp-mc-aceptar"
-          style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${yaEn ? '🔄 Reemplazar' : '＋ Agregar'}</button>
+          style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${yaEn ? 'Reemplazar' : '＋ Agregar'}</button>
       </div>
     </div>
   `;
 
-  const m = Modal.abrir({ titulo: '➕ Agregar a la compra', contenido, ancho: 'sm' });
+  const m = Modal.abrir({ titulo: 'Agregar a la compra', contenido, ancho: 'sm' });
 
   const inpC = m.body.querySelector('#comp-mc-cant');
   const inpK = m.body.querySelector('#comp-mc-costo');
@@ -590,7 +590,7 @@ function agregarItemDirecto(producto, cantidad = 1) {
 function abrirSelectorProveedor() {
   const contenido = `
     <div style="margin-bottom:12px">
-      <input id="prov-sel-q" type="text" placeholder="🔎 Buscar proveedor..." autocomplete="off"
+      <input id="prov-sel-q" type="text" placeholder="Buscar proveedor..." autocomplete="off"
         style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
     </div>
     <div id="prov-sel-list" style="display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto"></div>
@@ -643,7 +643,7 @@ function abrirSelectorProveedor() {
 
 function abrirFormProveedor(prov = null) {
   const datos = prov || { nombre: '', nit: '', telefono: '', contacto: '', ciudad: '', direccion: '', email: '', nota: '' };
-  const titulo = prov ? '✏️ Editar proveedor' : '➕ Nuevo proveedor';
+  const titulo = prov ? 'Editar proveedor' : 'Nuevo proveedor';
 
   const campos = [
     ['nombre', 'Nombre *', 'text'],
@@ -674,7 +674,7 @@ function abrirFormProveedor(prov = null) {
       <button id="prov-cancel"
         style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="prov-save"
-        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar</button>
+        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar</button>
     </div>
   `;
 
@@ -703,7 +703,7 @@ function abrirFormProveedor(prov = null) {
       m.cerrar();
       actualizarFormCompra();
     } catch (err) {
-      console.error('❌ Error guardando proveedor:', err);
+      console.error('Error guardando proveedor:', err);
       const msg = err?.message || String(err) || 'error desconocido';
       Toast.error('No se pudo guardar: ' + msg);
     }
@@ -753,9 +753,9 @@ function abrirRegistroPago() {
 
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button id="comp-pago-contado" class="comp-tipo-pago"
-        style="flex:1;padding:11px;border:1.5px solid #2563eb;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💵 Contado</button>
+        style="flex:1;padding:11px;border:1.5px solid #2563eb;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Contado</button>
       <button id="comp-pago-credito" class="comp-tipo-pago"
-        style="flex:1;padding:11px;border:1.5px solid #e2e8f0;background:white;color:#475569;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">📋 Crédito</button>
+        style="flex:1;padding:11px;border:1.5px solid #e2e8f0;background:white;color:#475569;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Crédito</button>
     </div>
 
     <div id="comp-pago-area"></div>
@@ -764,11 +764,11 @@ function abrirRegistroPago() {
       <button id="comp-pago-cancel"
         style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="comp-pago-confirmar"
-        style="flex:1;padding:12px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">✅ Confirmar</button>
+        style="flex:1;padding:12px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">Confirmar</button>
     </div>
   `;
 
-  const m = Modal.abrir({ titulo: '💵 Registrar compra', contenido, ancho: 'sm' });
+  const m = Modal.abrir({ titulo: 'Registrar compra', contenido, ancho: 'sm' });
   let tipoPago = 'contado';
 
   const renderArea = () => {
@@ -877,7 +877,7 @@ function pintarCuentasPorPagar() {
     <div style="background:white;border:1px solid #e2e8f0;border-left:4px solid #f59e0b;border-radius:12px;padding:20px;margin-top:18px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
         <div>
-          <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">📋 Cuentas por pagar a proveedores</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">Cuentas por pagar a proveedores</h3>
           <div style="font-size:12.5px;color:#64748b;margin-top:2px">
             ${fmt(creditos.length)} compra(s) a crédito pendientes · Total deuda:
             <b style="color:#a16207">${money(totalDeuda)}</b>
@@ -915,7 +915,7 @@ function pintarCuentasPorPagar() {
                         <i data-lucide="eye" style="width:14px;height:14px;color:#475569"></i>
                       </button>
                       <button class="comp-abonar" data-id="${esc(c.id)}"
-                        style="padding:7px 12px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">💰 Abonar</button>
+                        style="padding:7px 12px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">Abonar</button>
                     </div>
                   </td>
                 </tr>
@@ -1007,11 +1007,11 @@ function abrirAbono(compraId) {
       <button id="comp-abono-cancel"
         style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="comp-abono-save"
-        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Registrar abono</button>
+        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>
     </div>
   `;
 
-  const m = Modal.abrir({ titulo: '💰 Registrar abono', contenido, ancho: 'sm' });
+  const m = Modal.abrir({ titulo: 'Registrar abono', contenido, ancho: 'sm' });
   bindMilesInputs(m.body);
   setTimeout(() => m.body.querySelector('#comp-abono-monto')?.focus(), 60);
 
@@ -1057,7 +1057,7 @@ function pintarHistorial() {
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-top:18px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
         <div>
-          <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">📚 Historial de compras</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">Historial de compras</h3>
           <div style="font-size:12.5px;color:#64748b;margin-top:2px">${fmt(_compras.length)} compra(s) registradas</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1226,7 +1226,7 @@ function verDetalleCompra(compraId) {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Historial de abonos (${abonos.length})</div>
           ${!pagada ? `
-            <button id="comp-det-abonar" style="padding:6px 12px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit">💰 Nuevo abono</button>
+            <button id="comp-det-abonar" style="padding:6px 12px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit">Nuevo abono</button>
           ` : ''}
         </div>
         ${abonos.length === 0 ? `
@@ -1270,7 +1270,7 @@ function verDetalleCompra(compraId) {
 
     ${c.nota ? `
       <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;margin-bottom:14px">
-        <div style="font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px">📝 Nota</div>
+        <div style="font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px">Nota</div>
         <div style="font-size:13px;color:#0f172a">${esc(c.nota)}</div>
       </div>
     ` : ''}
@@ -1302,7 +1302,7 @@ async function eliminarCompra(id) {
   if (!c) return;
   const ok = await Confirm.peligro(
     `¿Eliminar esta compra? Se restará del inventario lo que se había sumado (${c.items.length} producto(s)).`,
-    { titulo: 'Eliminar compra', textoConfirmar: '🗑️ Eliminar' },
+    { titulo: 'Eliminar compra', textoConfirmar: 'Eliminar' },
   );
   if (!ok) return;
   try {

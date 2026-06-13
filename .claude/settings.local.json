@@ -26,7 +26,16 @@
       "Bash(grep -nA8 \"const ANCHOS\" src/components/modal.js)",
       "Bash(git -C /c/PosPunto commit -m ' *)",
       "Bash(git -C /c/PosPunto push)",
-      "Bash(git -C /c/PosPunto add -A)"
+      "Bash(git -C /c/PosPunto add -A)",
+      "Bash(node /tmp/lines.cjs src/modules/ventas/ventas.view.js src/modules/compras/compras.view.js src/modules/config/config.view.js src/modules/inventario/inventario.view.js src/modules/factura/editor-plantilla.view.js)",
+      "Bash(node /tmp/lines.cjs src/modules/reportes/reportes.view.js src/modules/inventario/inventario.view.js src/modules/gastos/gastos.view.js src/modules/ventas/ventas.view.js)",
+      "Bash(cat)",
+      "Bash(node /tmp/strip2.cjs)",
+      "Bash(node /tmp/lines.cjs src/modules/ventas/ventas.view.js src/modules/compras/compras.view.js src/modules/gastos/gastos.view.js src/modules/clientes/clientes.form.js src/modules/config/config.view.js src/modules/reportes/reportes.view.js)",
+      "Bash(grep -ivE \"console|Toast|↑|↓|→|🐾|repo|//|^\\\\s*\\\\*\")",
+      "Bash(node /tmp/strip3.cjs)",
+      "Bash(node /tmp/lines.cjs src/modules/clientes/clientes.form.js)",
+      "Bash(git -C /c/PosPunto diff --no-color src/modules/clientes/clientes.form.js)"
     ]
   }
 }

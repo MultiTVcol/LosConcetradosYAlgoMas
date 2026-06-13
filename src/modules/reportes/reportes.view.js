@@ -229,12 +229,12 @@ function htmlLayout() {
           <button id="rep-btn-pers-reporte"
             title="Personaliza tu ticket de reporte POS 80mm"
             style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
-            🎨 Ticket de reporte
+            Ticket de reporte
           </button>
           <button id="rep-btn-pers-cierre"
             title="Personaliza tu ticket de cierre de caja POS 80mm"
             style="padding:9px 14px;border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
-            🎨 Ticket de cierre
+            Ticket de cierre
           </button>
         </div>
       </div>
@@ -248,19 +248,19 @@ function htmlLayout() {
 
       <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-          <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📅 Reporte por fechas</h3>
+          <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Reporte por fechas</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="rep-btn-csv"
               style="padding:9px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569;display:flex;align-items:center;gap:6px">
-              📊 Exportar CSV
+              Exportar CSV
             </button>
             <button id="rep-btn-pos"
               style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
-              🧾 Imprimir POS 80mm
+              Imprimir POS 80mm
             </button>
             <button id="rep-btn-pdf"
               style="padding:9px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
-              📄 Generar informe PDF
+              Generar informe PDF
             </button>
           </div>
         </div>
@@ -292,22 +292,22 @@ function htmlLayout() {
 
       <div style="display:grid;gap:16px;grid-template-columns:1.5fr 1fr;margin-bottom:18px">
         <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">📈 Ventas últimos 14 días</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Ventas últimos 14 días</h3>
           <div id="rep-ventas-bars" style="display:flex;align-items:flex-end;gap:6px;height:160px"></div>
         </div>
         <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">💳 Métodos de pago</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Métodos de pago</h3>
           <div id="rep-metodos"></div>
         </div>
       </div>
 
       <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr">
         <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">🏆 Productos más vendidos</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Productos más vendidos</h3>
           <div id="rep-top-prod"></div>
         </div>
         <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">⭐ Clientes frecuentes</h3>
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Clientes frecuentes</h3>
           <div id="rep-top-cli"></div>
         </div>
       </div>
@@ -406,7 +406,7 @@ function pintarReporteRango() {
   if (_estado.desde > _estado.hasta) {
     box.innerHTML = `
       <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;color:#991b1b;font-weight:600">
-        ⚠️ La fecha "Desde" es posterior a "Hasta". Corrige el rango.
+        La fecha "Desde" es posterior a "Hasta". Corrige el rango.
       </div>
     `;
     return;
@@ -425,15 +425,15 @@ function pintarReporteRango() {
     </div>
 
     <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
-      ${tarjeta('🟢 Ventas', money(r.ventas), '#eff6ff', '#1d4ed8')}
-      ${tarjeta('🚚 Compras', money(r.compras), '#dbeafe', '#0369a1')}
-      ${tarjeta('💸 Gastos', money(r.gastos), '#fef2f2', '#dc2626')}
-      ${tarjeta('⭐ Utilidad neta', money(r.utilidadNeta), r.utilidadNeta >= 0 ? '#dcfce7' : '#fef2f2', colNeta)}
+      ${tarjeta('Ventas', money(r.ventas), '#eff6ff', '#1d4ed8')}
+      ${tarjeta('Compras', money(r.compras), '#dbeafe', '#0369a1')}
+      ${tarjeta('Gastos', money(r.gastos), '#fef2f2', '#dc2626')}
+      ${tarjeta('Utilidad neta', money(r.utilidadNeta), r.utilidadNeta >= 0 ? '#dcfce7' : '#fef2f2', colNeta)}
     </div>
 
     <div style="display:grid;gap:14px;grid-template-columns:1fr 1fr;align-items:start">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">
-        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">📈 Utilidad por margen (rentabilidad)</h4>
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Utilidad por margen (rentabilidad)</h4>
         ${repFila('Ventas del periodo', r.ventas, '#0f172a')}
         ${repFila('− Costo de lo vendido', -r.costoVenta, '#64748b')}
         <div style="border-top:2px solid #e2e8f0;margin:6px 0"></div>
@@ -446,7 +446,7 @@ function pintarReporteRango() {
       </div>
 
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">
-        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">💧 Flujo de caja (dinero del periodo)</h4>
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Flujo de caja (dinero del periodo)</h4>
         ${repFila('Ventas (dinero que entró)', r.ventas, '#0f172a')}
         ${repFila('− Compras', -r.compras, '#0369a1')}
         ${repFila('− Gastos', -r.gastos, '#dc2626')}
@@ -753,7 +753,7 @@ function htmlInformeFormal(r, cfg) {
 
       <!-- PERIODO -->
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-        <div style="font-weight:700;color:#1d4ed8">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
+        <div style="font-weight:700;color:#1d4ed8">Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
         <div style="font-size:11px;color:#475569">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
       </div>
 
@@ -1177,7 +1177,7 @@ function htmlInformePOS80mm(r, cfg, plantilla) {
         <div style="font-size:10.5px;color:#333;margin-top:2px;text-align:center">
           ${fmt(r.invUnidades)} uds · ${r.invSKUs} productos
         </div>
-        ${r.invBajoStock > 0 ? `<div style="font-size:10.5px;color:#333;text-align:center">⚠ ${r.invBajoStock} con stock bajo</div>` : ''}
+        ${r.invBajoStock > 0 ? `<div style="font-size:10.5px;color:#333;text-align:center">${r.invBajoStock} con stock bajo</div>` : ''}
         ${r.invSinStock > 0 ? `<div style="font-size:10.5px;color:#333;text-align:center">✗ ${r.invSinStock} agotados</div>` : ''}
       ` : ''}
 
