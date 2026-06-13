@@ -54,7 +54,7 @@ function construirFormulario(datos) {
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         ${campo('prod-codigo', 'Código / SKU', 'text', datos.codigo, 'CRO-001')}
-        ${campo('prod-barras', 'Código de barras', 'text', datos.barras, '7702123456789')}
+        ${campoBarras(datos.barras)}
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -87,6 +87,30 @@ function construirFormulario(datos) {
     </div>
   `;
   return wrapper;
+}
+
+/**
+ * Campo de Código de barras con botón "Escanear" para leer con la pistola
+ * USB. La pistola escribe el código en el input enfocado y manda Enter;
+ * ese Enter se intercepta en configurarEventos para que NO guarde el form.
+ */
+function campoBarras(valor) {
+  return `
+    <label class="ui-field" style="gap:6px">
+      <span class="ui-label">Código de barras</span>
+      <div style="display:flex;gap:8px">
+        <input id="prod-barras" class="ui-input" type="text"
+          value="${esc(String(valor != null ? valor : ''))}"
+          placeholder="Escanea o escribe…" autocomplete="off" style="flex:1;min-width:0" />
+        <button id="prod-barras-scan" type="button" title="Leer con la pistola"
+          style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
+          <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2"></i> Escanear</button>
+      </div>
+      <div id="prod-barras-hint" style="display:none;font-size:12px;color:#1d4ed8;font-weight:600;margin-top:1px;align-items:center;gap:6px">
+        <i data-lucide="radio" style="width:13px;height:13px;stroke-width:2.25"></i> Esperando lectura… escanea el producto ahora.
+      </div>
+    </label>
+  `;
 }
 
 function campo(id, label, tipo, valor, placeholder, requerido = false) {
@@ -147,7 +171,9 @@ function configurarEventos(formEl, datosIniciales, modal, opciones) {
   validarUI();
 
   Object.values(inputs).forEach((inp) => {
-    if (!inp) return;
+    // El campo de barras se maneja aparte: su Enter viene de la pistola y
+    // NO debe guardar el producto.
+    if (!inp || inp === inputs.barras) return;
     inp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !btnGuardar.disabled) {
         e.preventDefault();
@@ -155,6 +181,30 @@ function configurarEventos(formEl, datosIniciales, modal, opciones) {
       }
     });
   });
+
+  // ----- Lectura con pistola en el campo Código de barras -----
+  const btnScan = formEl.querySelector('#prod-barras-scan');
+  const hintScan = formEl.querySelector('#prod-barras-hint');
+  const mostrarHint = (v) => { if (hintScan) hintScan.style.display = v ? 'flex' : 'none'; };
+
+  btnScan?.addEventListener('click', () => {
+    inputs.barras.focus();
+    inputs.barras.select();
+    mostrarHint(true);
+  });
+
+  inputs.barras?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    // La pistola manda Enter al final: confirmamos la lectura SIN guardar
+    // (evita guardar a medias) y pasamos el foco a Precio para continuar.
+    e.preventDefault();
+    e.stopPropagation();
+    mostrarHint(false);
+    validarUI();
+    if (inputs.precio) { inputs.precio.focus(); inputs.precio.select(); }
+  });
+
+  inputs.barras?.addEventListener('blur', () => setTimeout(() => mostrarHint(false), 150));
 
   btnCancelar.addEventListener('click', () => modal.cerrar());
 
