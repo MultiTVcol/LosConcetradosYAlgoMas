@@ -71,3 +71,46 @@ export function kpiGrid(items = []) {
     </div>
   `;
 }
+
+/**
+ * Badge de estado con color suave.
+ *
+ * @param {string} label - Texto del badge
+ * @param {string} [tipo] - success | warn | danger | info | neutral
+ */
+export function badge(label, tipo = 'neutral') {
+  const t = ['success', 'warn', 'danger', 'info', 'neutral'].includes(tipo) ? tipo : 'neutral';
+  return `<span class="ui-badge ui-badge--${t}">${esc(label)}</span>`;
+}
+
+/* Paleta de avatares (bg suave + texto fuerte) — asignada por nombre */
+const AVATAR_COLORS = [
+  ['#dbeafe', '#1d4ed8'], // azul
+  ['#dcfce7', '#166534'], // verde
+  ['#ede9fe', '#6d28d9'], // violeta
+  ['#fef3c7', '#92400e'], // ámbar
+  ['#fce7f3', '#9d174d'], // rosa
+  ['#cffafe', '#0e7490'], // cian
+  ['#ffedd5', '#9a3412'], // naranja
+];
+
+/** Iniciales (1-2 letras) a partir de un nombre. */
+export function iniciales(nombre) {
+  const partes = String(nombre || '').trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return '?';
+  if (partes.length === 1) return partes[0].charAt(0).toUpperCase();
+  return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
+}
+
+/**
+ * Avatar circular con iniciales. Color estable derivado del nombre.
+ *
+ * @param {string} nombre
+ */
+export function avatar(nombre) {
+  const s = String(nombre || '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  const [bg, fg] = AVATAR_COLORS[h % AVATAR_COLORS.length];
+  return `<span class="ui-avatar" style="background:${bg};color:${fg}">${esc(iniciales(nombre))}</span>`;
+}

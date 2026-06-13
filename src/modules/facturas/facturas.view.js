@@ -21,7 +21,7 @@ import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, badge } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO
@@ -88,16 +88,17 @@ function pintarLista() {
         Total: ${money(total)}
       </span>
     </div>
-    <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:14px">
+    <div class="ui-table-card" style="overflow-x:auto">
+      <table class="ui-table">
         <thead>
-          <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:600;text-align:left">
-            <th style="padding:10px 12px">N°</th>
-            <th style="padding:10px 12px">Fecha</th>
-            <th style="padding:10px 12px">Cliente</th>
-            <th style="padding:10px 12px">Pago</th>
-            <th style="padding:10px 12px;text-align:right">Total</th>
-            <th style="padding:10px 12px;width:120px"></th>
+          <tr>
+            <th>N°</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Pago</th>
+            <th>Estado</th>
+            <th style="text-align:right">Total</th>
+            <th style="width:120px"></th>
           </tr>
         </thead>
         <tbody>
@@ -117,26 +118,24 @@ function filaFactura(f) {
   const hora = f.data?.timestamp ? new Date(f.data.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '';
   const cliente = f.cliente_nombre || 'Cliente ocasional';
   const metodo = (f.metodo_pago || '').split(' ')[0] || '—';
+  const anulada = f.estado === 'anulada';
 
   return `
-    <tr style="border-bottom:1px solid #f1f5f9" data-fac-id="${esc(f.id)}">
-      <td style="padding:12px">
-        <b style="color:#0f172a">${esc(f.numero || '—')}</b>
-        ${ediciones > 0 ? `<span style="margin-left:6px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px">✏ Editada</span>` : ''}
+    <tr data-fac-id="${esc(f.id)}">
+      <td>
+        <b style="color:#111827">${esc(f.numero || '—')}</b>
+        ${ediciones > 0 ? badge('Editada', 'warn') : ''}
       </td>
-      <td style="padding:12px;color:#475569;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">
+      <td style="color:#6b7280;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">
         ${esc(fecha)}${hora ? ' ' + esc(hora) : ''}
       </td>
-      <td style="padding:12px;color:#0f172a">${esc(cliente)}</td>
-      <td style="padding:12px">
-        <span style="background:#e0e7ff;color:#1d4ed8;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px">
-          ${esc(metodo)}
-        </span>
-      </td>
-      <td style="padding:12px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#0f172a">
+      <td style="color:#111827">${esc(cliente)}</td>
+      <td>${badge(metodo, 'info')}</td>
+      <td>${anulada ? badge('Anulada', 'danger') : badge('Pagada', 'success')}</td>
+      <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#111827">
         ${money(f.total)}
       </td>
-      <td style="padding:12px">
+      <td>
         <div style="display:flex;gap:6px;justify-content:flex-end">
           <button
             class="fac-btn-ver"

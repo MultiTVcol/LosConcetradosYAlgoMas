@@ -1,0 +1,92 @@
+/**
+ * styles/ui-kit.css — Clases del Design System premium (capa 3)
+ *
+ * Tablas, badges de estado y avatares con un lenguaje visual consistente
+ * estilo ERP (Stripe/Linear): más aire, menos líneas, hover elegante.
+ * Acompaña a los helpers de app/ui-kit.js.
+ */
+
+/* ============================================================
+   TABLA PREMIUM
+   ============================================================ */
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.ui-table thead th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+.ui-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+.ui-table tbody tr {
+  transition: background .12s ease;
+}
+.ui-table tbody tr:hover {
+  background: #f9fafb;
+}
+.ui-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Contenedor de tabla (card) */
+.ui-table-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   BADGES DE ESTADO
+   ============================================================ */
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.ui-badge--success { background: #dcfce7; color: #166534; }
+.ui-badge--warn    { background: #fef3c7; color: #92400e; }
+.ui-badge--danger  { background: #fee2e2; color: #991b1b; }
+.ui-badge--info    { background: #dbeafe; color: #1d4ed8; }
+.ui-badge--neutral { background: #f3f4f6; color: #374151; }
+
+/* ============================================================
+   AVATAR CON INICIALES
+   ============================================================ */
+.ui-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.ui-cell-user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}

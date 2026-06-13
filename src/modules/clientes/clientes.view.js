@@ -11,7 +11,7 @@ import * as Realtime from '../../services/realtime.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, avatar, badge } from '../../app/ui-kit.js';
 import { fmt } from '../../core/format.js';
 
 // ============================================================
@@ -241,17 +241,17 @@ function htmlSinResultados(filtro) {
 function htmlTabla(clientes) {
   const filas = clientes.map((c) => htmlFila(c)).join('');
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+    <div class="ui-table-card">
       <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <table class="ui-table">
           <thead>
-            <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0">
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Nombre</th>
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Negocio</th>
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Teléfono</th>
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Ciudad</th>
-              <th style="text-align:center;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;width:90px">💎 PE</th>
-              <th style="text-align:right;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;width:120px">Acciones</th>
+            <tr>
+              <th>Cliente</th>
+              <th>Negocio</th>
+              <th>Teléfono</th>
+              <th>Ciudad</th>
+              <th style="text-align:center;width:110px">Precio esp.</th>
+              <th style="text-align:right;width:120px">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -266,25 +266,20 @@ function htmlTabla(clientes) {
 function htmlFila(c) {
   const nPE = c.preciosEspeciales ? Object.keys(c.preciosEspeciales).filter((k) => Number(c.preciosEspeciales[k]) > 0).length : 0;
   return `
-    <tr data-id="${esc(c.id)}" style="border-bottom:1px solid #f1f5f9">
-      <td style="padding:14px 16px;color:#0f172a;font-weight:500">
-        ${esc(c.nombre || '(sin nombre)')}
+    <tr data-id="${esc(c.id)}">
+      <td>
+        <div class="ui-cell-user">
+          ${avatar(c.nombre)}
+          <span style="font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre || '(sin nombre)')}</span>
+        </div>
       </td>
-      <td style="padding:14px 16px;color:#475569">
-        ${esc(c.negocio || '—')}
+      <td>${esc(c.negocio || '—')}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:13px">${esc(c.telefono || '—')}</td>
+      <td>${esc(c.ciudad || '—')}</td>
+      <td style="text-align:center">
+        ${nPE > 0 ? badge(`💎 ${nPE}`, 'info') : '<span style="color:#d1d5db">—</span>'}
       </td>
-      <td style="padding:14px 16px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:13px">
-        ${esc(c.telefono || '—')}
-      </td>
-      <td style="padding:14px 16px;color:#475569">
-        ${esc(c.ciudad || '—')}
-      </td>
-      <td style="padding:14px 16px;text-align:center">
-        ${nPE > 0
-          ? `<span style="background:#eff6ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px">💎 ${nPE}</span>`
-          : '<span style="color:#cbd5e1">—</span>'}
-      </td>
-      <td style="padding:10px 16px;text-align:right;white-space:nowrap">
+      <td style="text-align:right;white-space:nowrap">
         <button
           class="btn-editar-cli"
           data-id="${esc(c.id)}"

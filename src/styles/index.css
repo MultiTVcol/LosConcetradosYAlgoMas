@@ -17,5 +17,6 @@
 @import './tokens.css';
 @import './base.css';
 @import './components.css';
+@import './ui-kit.css';
 @import './utilities.css';
 @import './print.css';

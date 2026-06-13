@@ -20,7 +20,7 @@ import { money, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, badge } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO (vive mientras la vista está montada)
@@ -280,17 +280,17 @@ function htmlSinResultados(filtro) {
 function htmlTabla(productos) {
   const filas = productos.map((p) => htmlFila(p)).join('');
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+    <div class="ui-table-card">
       <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <table class="ui-table">
           <thead>
-            <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0">
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Producto</th>
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Código</th>
-              <th style="text-align:left;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Categoría</th>
-              <th style="text-align:right;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Precio</th>
-              <th style="text-align:right;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em">Stock</th>
-              <th style="text-align:right;padding:12px 16px;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;width:120px">Acciones</th>
+            <tr>
+              <th>Producto</th>
+              <th>Código</th>
+              <th>Categoría</th>
+              <th style="text-align:right">Precio</th>
+              <th style="text-align:right">Stock</th>
+              <th style="text-align:right;width:120px">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -303,26 +303,20 @@ function htmlTabla(productos) {
 }
 
 function htmlFila(p) {
-  const stockBajo = Number(p.stock) < 5;
+  const stock = Number(p.stock) || 0;
+  const stockBajo = stock < 5;
   return `
-    <tr data-id="${esc(p.id)}" style="border-bottom:1px solid #f1f5f9">
-      <td style="padding:14px 16px;color:#0f172a;font-weight:500">
-        ${esc(p.nombre || '(sin nombre)')}
+    <tr data-id="${esc(p.id)}">
+      <td style="font-weight:600;color:#111827">${esc(p.nombre || '(sin nombre)')}</td>
+      <td style="color:#6b7280;font-family:'JetBrains Mono',monospace;font-size:13px">${esc(p.codigo || '—')}</td>
+      <td>${p.categoria ? badge(p.categoria, 'neutral') : '<span style="color:#d1d5db">—</span>'}</td>
+      <td style="text-align:right;color:#111827;font-weight:600;font-family:'JetBrains Mono',monospace">${money(p.precio)}</td>
+      <td style="text-align:right;font-family:'JetBrains Mono',monospace">
+        ${stockBajo
+          ? badge(`${stock} · bajo`, 'danger')
+          : `<span style="color:#111827;font-weight:500">${stock}</span>`}
       </td>
-      <td style="padding:14px 16px;color:#64748b;font-family:'JetBrains Mono',monospace;font-size:13px">
-        ${esc(p.codigo || '—')}
-      </td>
-      <td style="padding:14px 16px;color:#475569">
-        ${esc(p.categoria || '—')}
-      </td>
-      <td style="padding:14px 16px;text-align:right;color:#0f172a;font-weight:600;font-family:'JetBrains Mono',monospace">
-        ${money(p.precio)}
-      </td>
-      <td style="padding:14px 16px;text-align:right;color:${stockBajo ? '#dc2626' : '#0f172a'};font-weight:${stockBajo ? '600' : '500'};font-family:'JetBrains Mono',monospace">
-        ${Number(p.stock) || 0}
-        ${stockBajo ? '<i data-lucide="alert-triangle" style="width:14px;height:14px;color:#dc2626;margin-left:4px;vertical-align:middle"></i>' : ''}
-      </td>
-      <td style="padding:10px 16px;text-align:right;white-space:nowrap">
+      <td style="text-align:right;white-space:nowrap">
         <button
           class="btn-editar"
           data-id="${esc(p.id)}"
