@@ -11,6 +11,8 @@ import * as Realtime from '../../services/realtime.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
+import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
+import { fmt } from '../../core/format.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO
@@ -114,6 +116,7 @@ function htmlLayout(estado, clientes, filtro, totalGeneral) {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       ${htmlHeader(totalGeneral, clientes.length, filtro)}
+      ${totalGeneral > 0 ? htmlKpis() : ''}
       ${totalGeneral > 0 ? htmlBuscador(filtro) : ''}
       ${estado === 'cargando' ? htmlCargando() : ''}
       ${estado === 'vacio' ? htmlVacio() : ''}
@@ -130,32 +133,34 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
       ? `${totalVisible} de ${totalGeneral} cliente${totalGeneral === 1 ? '' : 's'}`
       : `${totalGeneral} cliente${totalGeneral === 1 ? '' : 's'} registrado${totalGeneral === 1 ? '' : 's'}`;
 
-  return `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
-      <div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="users" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
-          <h1 style="font-size:26px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
-            Clientes
-          </h1>
-        </div>
-        <div style="color:#64748b;font-size:14px">${subtitulo}</div>
-      </div>
-
-      <div style="display:flex;gap:8px;align-items:center">
-        <span style="font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:4px 8px;border-radius:6px">
-          atajo: <kbd style="font-weight:600;color:#475569">N</kbd>
-        </span>
-        <button
-          id="btn-nuevo-cliente"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
-        >
-          <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
-          Nuevo cliente
-        </button>
-      </div>
-    </div>
+  const acciones = `
+    <button
+      id="btn-nuevo-cliente"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
+    >
+      <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
+      Nuevo cliente
+    </button>
   `;
+  return pageHeader({
+    icono: 'users',
+    titulo: 'Clientes',
+    descripcion: subtitulo,
+    acciones,
+  });
+}
+
+function htmlKpis() {
+  const total = _clientes.length;
+  const conTel = _clientes.filter((c) => c.telefono).length;
+  const conEmail = _clientes.filter((c) => c.email).length;
+  const conPrecios = _clientes.filter((c) => c.preciosEspeciales && Object.keys(c.preciosEspeciales).length > 0).length;
+  return kpiGrid([
+    { label: 'Clientes registrados', valor: fmt(total), sub: 'En la base', icono: 'users', color: '#2563eb' },
+    { label: 'Con teléfono', valor: fmt(conTel), sub: 'Contactables', icono: 'phone', color: '#16a34a' },
+    { label: 'Con correo', valor: fmt(conEmail), sub: 'Email registrado', icono: 'mail', color: '#7c3aed' },
+    { label: 'Precios especiales', valor: fmt(conPrecios), sub: 'Tarifa personalizada', icono: 'badge-percent', color: '#d97706' },
+  ]);
 }
 
 function htmlBuscador(filtro) {

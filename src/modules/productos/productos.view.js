@@ -20,6 +20,7 @@ import { money, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
+import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO (vive mientras la vista está montada)
@@ -138,10 +139,28 @@ function renderizarLista() {
 //  HTML BUILDERS
 // ============================================================
 
+function htmlKpis() {
+  let valor = 0, bajo = 0;
+  const cats = new Set();
+  for (const p of _productos) {
+    const st = Number(p.stock) || 0;
+    if (st > 0) valor += st * (Number(p.costo) || 0);
+    if (st > 0 && st <= (Number(p.stock_min) || 0)) bajo++;
+    if (p.categoria) cats.add(p.categoria);
+  }
+  return kpiGrid([
+    { label: 'Productos activos', valor: fmt(_productos.length), sub: 'En el catálogo', icono: 'package', color: '#2563eb' },
+    { label: 'Valor inventario', valor: money(valor), sub: 'Valorizado a costo', icono: 'wallet', color: '#16a34a' },
+    { label: 'Stock bajo', valor: fmt(bajo), sub: 'Bajo el mínimo', icono: 'alert-triangle', color: bajo > 0 ? '#d97706' : '#16a34a' },
+    { label: 'Categorías', valor: fmt(cats.size), sub: 'Distintas', icono: 'tags', color: '#7c3aed' },
+  ]);
+}
+
 function htmlLayout(estado, productos, filtro, totalGeneral) {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       ${htmlHeader(totalGeneral, productos.length, filtro)}
+      ${totalGeneral > 0 ? htmlKpis() : ''}
       ${totalGeneral > 0 ? htmlBuscador(filtro) : ''}
       ${estado === 'cargando' ? htmlCargando() : ''}
       ${estado === 'vacio' ? htmlVacio() : ''}
@@ -158,42 +177,29 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
       ? `${totalVisible} de ${totalGeneral} producto${totalGeneral === 1 ? '' : 's'}`
       : `${totalGeneral} producto${totalGeneral === 1 ? '' : 's'} en el catálogo`;
 
-  return `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
-      <div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="package" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
-          <h1 style="font-size:26px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
-            Productos
-          </h1>
-        </div>
-        <div style="color:#64748b;font-size:14px">
-          ${subtitulo}
-        </div>
-      </div>
-
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button
-          id="btn-inventario"
-          title="Imprimir inventario / hoja de auditoría"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
-        >
-          <i data-lucide="clipboard-list" style="width:17px;height:17px;stroke-width:2"></i>
-          📦 Inventario
-        </button>
-        <span style="font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:4px 8px;border-radius:6px">
-          atajo: <kbd style="font-weight:600;color:#475569">N</kbd>
-        </span>
-        <button
-          id="btn-nuevo-producto"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
-        >
-          <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
-          Nuevo producto
-        </button>
-      </div>
-    </div>
+  const acciones = `
+    <button
+      id="btn-inventario"
+      title="Imprimir inventario / hoja de auditoría"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+    >
+      <i data-lucide="clipboard-list" style="width:17px;height:17px;stroke-width:2"></i>
+      Inventario
+    </button>
+    <button
+      id="btn-nuevo-producto"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
+    >
+      <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
+      Nuevo producto
+    </button>
   `;
+  return pageHeader({
+    icono: 'package',
+    titulo: 'Productos',
+    descripcion: subtitulo,
+    acciones,
+  });
 }
 
 function htmlBuscador(filtro) {

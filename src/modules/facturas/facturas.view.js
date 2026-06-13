@@ -21,6 +21,7 @@ import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
+import { pageHeader, kpiGrid } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO
@@ -550,13 +551,30 @@ function htmlCargando() {
   `;
 }
 
+function htmlKpis() {
+  const vigentes = _facturas.filter((f) => f.estado !== 'anulada');
+  const n = vigentes.length;
+  const ingresos = vigentes.reduce((s, f) => s + (Number(f.total) || 0), 0);
+  const ticket = n > 0 ? ingresos / n : 0;
+  const clientes = new Set(vigentes.map((f) => f.cliente_id || (f.cliente_nombre || '').toLowerCase()).filter(Boolean)).size;
+  return kpiGrid([
+    { label: 'Facturas emitidas', valor: fmt(n), sub: 'Documentos vigentes', icono: 'receipt', color: '#2563eb' },
+    { label: 'Ingresos', valor: money(ingresos), sub: 'Total facturado', icono: 'trending-up', color: '#16a34a' },
+    { label: 'Ticket promedio', valor: money(ticket), sub: 'Por factura', icono: 'calculator', color: '#7c3aed' },
+    { label: 'Clientes atendidos', valor: fmt(clientes), sub: 'Distintos', icono: 'users', color: '#d97706' },
+  ]);
+}
+
 function htmlLayout() {
   return `
     <div style="padding:32px 40px;max-width:1200px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="receipt" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
-        <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Facturas</h1>
-      </div>
+      ${pageHeader({
+        icono: 'receipt',
+        titulo: 'Facturación',
+        descripcion: 'Administra las ventas y documentos emitidos por el sistema.',
+      })}
+
+      ${_facturas.length > 0 ? htmlKpis() : ''}
 
       <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:18px">
         <div style="display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr">
