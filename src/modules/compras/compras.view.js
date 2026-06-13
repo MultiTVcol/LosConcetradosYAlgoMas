@@ -18,6 +18,8 @@ import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import { bindMilesInput, bindMilesInputs } from '../../core/inputs.js';
 import * as Realtime from '../../services/realtime.js';
+import { pageHeader } from '../../app/ui-kit.js';
+import { Router } from '../../core/index.js';
 
 // ============================================================
 //  ESTADO
@@ -57,13 +59,9 @@ export async function render(contenedor) {
   adjuntarEventos(contenedor);
   pintarItemsCompra();
 
-  // Realtime: refrescar listados de compras/proveedores/productos en vivo
+  // Realtime: mantener actualizados productos/proveedores para el buscador
   _offRealtime = Realtime.escucharVarias(['compras', 'proveedores', 'productos'], async () => {
-    try {
-      await refrescarDatos();
-      pintarCuentasPorPagar();
-      pintarHistorial();
-    } catch (err) { console.warn('Realtime compras:', err); }
+    try { await refrescarDatos(); } catch (err) { console.warn('Realtime compras:', err); }
   });
 }
 
@@ -82,36 +80,29 @@ function htmlCargando() {
 }
 
 function htmlLayout() {
+  const acciones = `
+    <button id="comp-btn-facturas"
+      style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit">
+      <i data-lucide="receipt-text" style="width:16px;height:16px;stroke-width:2"></i> Facturas de compra</button>
+    <button id="comp-btn-prov-list"
+      style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#374151">Proveedores</button>
+    <button id="comp-btn-prov-nuevo"
+      style="display:inline-flex;align-items:center;gap:7px;padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
+      <i data-lucide="plus" style="width:16px;height:16px;stroke-width:2.25"></i> Proveedor</button>
+  `;
   return `
-    <div style="padding:32px 40px;max-width:1280px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
-        <i data-lucide="truck" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
-        <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Compras</h1>
-      </div>
-
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-          <div style="width:44px;height:44px;border-radius:11px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:22px">🚚</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;letter-spacing:-0.01em;color:#0f172a">Módulo de Compras</div>
-            <div style="font-size:12.5px;color:#64748b">${fmt(_proveedores.length)} proveedor(es) · ${fmt(_compras.length)} compras registradas</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="comp-btn-prov-list"
-            style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">Ver proveedores</button>
-          <button id="comp-btn-prov-nuevo"
-            style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">+ Agregar proveedor</button>
-        </div>
-      </div>
+    <div style="padding:20px 28px;max-width:1280px">
+      ${pageHeader({
+        icono: 'truck',
+        titulo: 'Compras',
+        descripcion: `Registra mercancía entrante. ${fmt(_proveedores.length)} proveedor(es) · ${fmt(_compras.length)} compras.`,
+        acciones,
+      })}
 
       <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr;align-items:start">
         ${htmlFormCompra()}
         ${htmlPanelItems()}
       </div>
-
-      <div id="comp-cxp"></div>
-      <div id="comp-hist"></div>
     </div>
   `;
 }
@@ -213,6 +204,7 @@ function htmlPanelItems() {
 // ============================================================
 
 function adjuntarEventos(contenedor) {
+  contenedor.querySelector('#comp-btn-facturas').onclick = () => Router.navegar('facturas-compra');
   contenedor.querySelector('#comp-btn-prov-list').onclick = () => abrirSelectorProveedor();
   contenedor.querySelector('#comp-btn-prov-nuevo').onclick = () => abrirFormProveedor();
   contenedor.querySelector('#comp-prov-box').onclick = () => abrirSelectorProveedor();
@@ -223,9 +215,6 @@ function adjuntarEventos(contenedor) {
 
   cablearBuscador(contenedor);
   cablearSelectorLector(contenedor);
-
-  pintarCuentasPorPagar();
-  pintarHistorial();
 }
 
 function cablearBuscador(contenedor) {

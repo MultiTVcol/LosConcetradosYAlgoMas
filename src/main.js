@@ -158,6 +158,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mod = await import('./modules/compras/compras.js');
     await mod.montar();
   });
+  // Facturas de compra: módulo real
+  Core.Router.registrar('facturas-compra', async () => {
+    const mod = await import('./modules/compras/facturas-compra.js');
+    await mod.montar();
+  });
   // Gastos: módulo real
   Core.Router.registrar('gastos', async () => {
     const mod = await import('./modules/gastos/gastos.js');

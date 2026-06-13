@@ -43,6 +43,7 @@ const MODULOS = [
   { ruta: 'productos', etiqueta: 'Productos',       icono: 'package',          feature: 'productos' },
   { ruta: 'inventario',etiqueta: 'Inventario',      icono: 'boxes',            feature: 'productos' },
   { ruta: 'compras',   etiqueta: 'Compras',         icono: 'truck',            feature: 'compras' },
+  { ruta: 'facturas-compra', etiqueta: 'Facturas de compra', icono: 'receipt-text', feature: 'compras' },
   { ruta: 'gastos',    etiqueta: 'Gastos',          icono: 'wallet',           feature: 'gastos' },
   { ruta: 'cierre',    etiqueta: 'Cierre de Caja',  icono: 'shield-check',     feature: 'cierreCaja' },
   { ruta: 'reportes',  etiqueta: 'Reportes',        icono: 'bar-chart-3',      feature: 'reportes' },
@@ -58,7 +59,7 @@ const MODULOS = [
 const GRUPOS = [
   { titulo: null,         rutas: ['dashboard'] },
   { titulo: 'Ventas',     rutas: ['ventas', 'facturas', 'clientes'] },
-  { titulo: 'Inventario', rutas: ['productos', 'inventario', 'compras'] },
+  { titulo: 'Inventario', rutas: ['productos', 'inventario', 'compras', 'facturas-compra'] },
   { titulo: 'Finanzas',   rutas: ['gastos', 'cierre', 'reportes'] },
   { titulo: 'Sistema',    rutas: ['usuarios', 'config'] },
 ];
