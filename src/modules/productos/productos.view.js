@@ -20,7 +20,7 @@ import { money, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid, badge } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, badge, menuButton, wireMenus } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO (vive mientras la vista está montada)
@@ -317,22 +317,7 @@ function htmlFila(p) {
           : `<span style="color:#111827;font-weight:500">${stock}</span>`}
       </td>
       <td style="text-align:right;white-space:nowrap">
-        <button
-          class="btn-editar"
-          data-id="${esc(p.id)}"
-          title="Editar producto"
-          style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#f1f5f9;border:0;border-radius:7px;cursor:pointer;color:#475569;margin-right:4px"
-        >
-          <i data-lucide="pencil" style="width:15px;height:15px;stroke-width:2"></i>
-        </button>
-        <button
-          class="btn-borrar"
-          data-id="${esc(p.id)}"
-          title="Eliminar producto"
-          style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#fef2f2;border:0;border-radius:7px;cursor:pointer;color:#dc2626"
-        >
-          <i data-lucide="trash-2" style="width:15px;height:15px;stroke-width:2"></i>
-        </button>
+        ${menuButton(p.id)}
       </td>
     </tr>
   `;
@@ -371,19 +356,19 @@ function adjuntarEventos(contenedor) {
     });
   }
 
-  // Botones Editar / Borrar en cada fila
-  contenedor.querySelectorAll('.btn-editar').forEach((btn) => {
-    btn.addEventListener('click', () => abrirFormEdicion(btn.dataset.id));
-  });
-  contenedor.querySelectorAll('.btn-borrar').forEach((btn) => {
-    btn.addEventListener('click', () => borrarProducto(btn.dataset.id));
-  });
-
-  // Hover sutil en las filas
-  contenedor.querySelectorAll('tbody tr').forEach((tr) => {
-    tr.addEventListener('mouseenter', () => { tr.style.background = '#fafafa'; });
-    tr.addEventListener('mouseleave', () => { tr.style.background = 'transparent'; });
-  });
+  // Menú contextual por fila
+  wireMenus(
+    contenedor,
+    () => ([
+      { label: 'Editar', value: 'editar', icono: '✏️' },
+      { separador: true },
+      { label: 'Eliminar', value: 'eliminar', icono: '🗑️', color: '#dc2626' },
+    ]),
+    (accion, id) => {
+      if (accion === 'editar') abrirFormEdicion(id);
+      else if (accion === 'eliminar') borrarProducto(id);
+    },
+  );
 }
 
 // ============================================================

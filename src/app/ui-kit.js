@@ -9,6 +9,7 @@
  */
 
 import { esc } from '../core/strings.js';
+import * as Dropdown from '../components/dropdown.js';
 
 /**
  * Encabezado premium de un módulo: título + descripción + acciones.
@@ -93,6 +94,45 @@ const AVATAR_COLORS = [
   ['#cffafe', '#0e7490'], // cian
   ['#ffedd5', '#9a3412'], // naranja
 ];
+
+/**
+ * Botón de menú contextual (⋮) para una fila de tabla.
+ * Marcar con la clase `.ui-menu-btn` y `data-id` para luego cablearlo
+ * con `wireMenus()`.
+ *
+ * @param {string} id - Identificador de la fila (queda en data-id)
+ */
+export function menuButton(id) {
+  return `
+    <button class="ui-menu-btn" data-id="${esc(id)}" type="button" title="Acciones" aria-label="Acciones">
+      <i data-lucide="more-vertical" style="width:18px;height:18px;stroke-width:2"></i>
+    </button>
+  `;
+}
+
+/**
+ * Cablea todos los botones `.ui-menu-btn` de un contenedor con un menú
+ * desplegable. Para cada uno construye las opciones según su id y
+ * delega la selección.
+ *
+ * @param {HTMLElement} contenedor
+ * @param {(id:string)=>Array<Object>} buildOpciones - opciones por fila
+ *        (cada una: { label, value, icono?, color?, separador?, disabled? })
+ * @param {(value:string, id:string)=>void} onSelect
+ */
+export function wireMenus(contenedor, buildOpciones, onSelect) {
+  if (!contenedor) return;
+  contenedor.querySelectorAll('.ui-menu-btn').forEach((btn) => {
+    const id = btn.dataset.id;
+    Dropdown.crear({
+      trigger: btn,
+      alineacion: 'right',
+      anchoMinimo: 184,
+      opciones: buildOpciones(id) || [],
+      onSelect: (op) => { try { onSelect(op.value, id); } catch (e) { console.error('wireMenus onSelect:', e); } },
+    });
+  });
+}
 
 /** Iniciales (1-2 letras) a partir de un nombre. */
 export function iniciales(nombre) {

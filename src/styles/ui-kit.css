@@ -90,3 +90,25 @@
   gap: 11px;
   min-width: 0;
 }
+
+/* ============================================================
+   BOTÓN DE MENÚ CONTEXTUAL (⋮)
+   ============================================================ */
+.ui-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.ui-menu-btn:hover {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #111827;
+}

@@ -11,7 +11,7 @@ import * as Realtime from '../../services/realtime.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid, avatar, badge } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, avatar, badge, menuButton, wireMenus } from '../../app/ui-kit.js';
 import { fmt } from '../../core/format.js';
 
 // ============================================================
@@ -280,22 +280,7 @@ function htmlFila(c) {
         ${nPE > 0 ? badge(`💎 ${nPE}`, 'info') : '<span style="color:#d1d5db">—</span>'}
       </td>
       <td style="text-align:right;white-space:nowrap">
-        <button
-          class="btn-editar-cli"
-          data-id="${esc(c.id)}"
-          title="Editar cliente"
-          style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#f1f5f9;border:0;border-radius:7px;cursor:pointer;color:#475569;margin-right:4px"
-        >
-          <i data-lucide="pencil" style="width:15px;height:15px;stroke-width:2"></i>
-        </button>
-        <button
-          class="btn-borrar-cli"
-          data-id="${esc(c.id)}"
-          title="Eliminar cliente"
-          style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#fef2f2;border:0;border-radius:7px;cursor:pointer;color:#dc2626"
-        >
-          <i data-lucide="trash-2" style="width:15px;height:15px;stroke-width:2"></i>
-        </button>
+        ${menuButton(c.id)}
       </td>
     </tr>
   `;
@@ -327,17 +312,18 @@ function adjuntarEventos(contenedor) {
     });
   }
 
-  contenedor.querySelectorAll('.btn-editar-cli').forEach((btn) => {
-    btn.addEventListener('click', () => abrirFormEdicion(btn.dataset.id));
-  });
-  contenedor.querySelectorAll('.btn-borrar-cli').forEach((btn) => {
-    btn.addEventListener('click', () => borrarCliente(btn.dataset.id));
-  });
-
-  contenedor.querySelectorAll('tbody tr').forEach((tr) => {
-    tr.addEventListener('mouseenter', () => { tr.style.background = '#fafafa'; });
-    tr.addEventListener('mouseleave', () => { tr.style.background = 'transparent'; });
-  });
+  wireMenus(
+    contenedor,
+    () => ([
+      { label: 'Editar', value: 'editar', icono: '✏️' },
+      { separador: true },
+      { label: 'Eliminar', value: 'eliminar', icono: '🗑️', color: '#dc2626' },
+    ]),
+    (accion, id) => {
+      if (accion === 'editar') abrirFormEdicion(id);
+      else if (accion === 'eliminar') borrarCliente(id);
+    },
+  );
 }
 
 // ============================================================

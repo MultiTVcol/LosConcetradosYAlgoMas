@@ -21,7 +21,7 @@ import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { pageHeader, kpiGrid, badge } from '../../app/ui-kit.js';
+import { pageHeader, kpiGrid, badge, menuButton, wireMenus } from '../../app/ui-kit.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO
@@ -135,33 +135,8 @@ function filaFactura(f) {
       <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#111827">
         ${money(f.total)}
       </td>
-      <td>
-        <div style="display:flex;gap:6px;justify-content:flex-end">
-          <button
-            class="fac-btn-ver"
-            data-id="${esc(f.id)}"
-            title="Ver detalle"
-            style="width:32px;height:32px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
-          ><i data-lucide="eye" style="width:15px;height:15px;color:#475569"></i></button>
-          <button
-            class="fac-btn-imprimir"
-            data-id="${esc(f.id)}"
-            title="Imprimir POS 80mm"
-            style="width:32px;height:32px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
-          ><i data-lucide="printer" style="width:15px;height:15px;color:#1d4ed8"></i></button>
-          <button
-            class="fac-btn-editar"
-            data-id="${esc(f.id)}"
-            title="Editar venta"
-            style="width:32px;height:32px;border:1px solid #fde68a;background:#fef9c3;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
-          ><i data-lucide="pencil" style="width:15px;height:15px;color:#a16207"></i></button>
-          <button
-            class="fac-btn-borrar"
-            data-id="${esc(f.id)}"
-            title="Eliminar"
-            style="width:32px;height:32px;border:1px solid #fecaca;background:#fef2f2;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
-          ><i data-lucide="trash-2" style="width:15px;height:15px;color:#dc2626"></i></button>
-        </div>
+      <td style="text-align:right">
+        ${menuButton(f.id)}
       </td>
     </tr>
   `;
@@ -227,18 +202,26 @@ function adjuntarEventos(contenedor) {
 }
 
 function cablearAccionesFila(contenedor) {
-  contenedor.querySelectorAll('.fac-btn-ver').forEach((btn) => {
-    btn.onclick = () => verFactura(btn.dataset.id);
-  });
-  contenedor.querySelectorAll('.fac-btn-imprimir').forEach((btn) => {
-    btn.onclick = () => imprimirFactura(btn.dataset.id);
-  });
-  contenedor.querySelectorAll('.fac-btn-editar').forEach((btn) => {
-    btn.onclick = () => editarFactura(btn.dataset.id);
-  });
-  contenedor.querySelectorAll('.fac-btn-borrar').forEach((btn) => {
-    btn.onclick = () => borrarFactura(btn.dataset.id);
-  });
+  wireMenus(
+    contenedor,
+    (id) => {
+      const f = _facturas.find((x) => x.id === id);
+      const anulada = f && f.estado === 'anulada';
+      return [
+        { label: 'Ver detalle', value: 'ver', icono: '👁️' },
+        { label: 'Imprimir', value: 'imprimir', icono: '🖨️' },
+        { label: 'Editar venta', value: 'editar', icono: '✏️', disabled: anulada },
+        { separador: true },
+        { label: anulada ? 'Eliminar' : 'Anular / eliminar', value: 'borrar', icono: '🗑️', color: '#dc2626' },
+      ];
+    },
+    (accion, id) => {
+      if (accion === 'ver') verFactura(id);
+      else if (accion === 'imprimir') imprimirFactura(id);
+      else if (accion === 'editar') editarFactura(id);
+      else if (accion === 'borrar') borrarFactura(id);
+    },
+  );
 }
 
 async function imprimirFactura(id) {
