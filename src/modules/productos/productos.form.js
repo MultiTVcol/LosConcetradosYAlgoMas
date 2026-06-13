@@ -79,7 +79,7 @@ function construirFormulario(datos) {
 
       <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #e2e8f0;padding-top:14px;margin-top:4px">
         <button id="prod-cancelar" type="button" style="padding:10px 18px;background:white;border:1px solid #cbd5e1;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="prod-guardar" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #4f46e540">
+        <button id="prod-guardar" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
           <i data-lucide="check" style="width:16px;height:16px;stroke-width:2.25"></i>
           Guardar producto
         </button>

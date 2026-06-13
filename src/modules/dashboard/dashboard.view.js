@@ -247,7 +247,7 @@ function htmlHeader() {
 
         <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:999px;padding:6px 16px 6px 7px">
           <div style="position:relative;flex-shrink:0">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#4338ca);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${esc(iniciales)}</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${esc(iniciales)}</div>
             <span id="dash-user-punto" style="position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:#cbd5e1;border:2px solid white"></span>
           </div>
           <div>
@@ -263,7 +263,7 @@ function htmlHeader() {
 function htmlCardCierre() {
   return `
     <div data-ir="cierre" style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:18px 22px;margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:16px;flex-wrap:wrap;transition:all .2s ease">
-      <div style="width:48px;height:48px;border-radius:12px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(79,70,229,.15)">
+      <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(37, 99, 235,.15)">
         <i data-lucide="shield-check" style="width:24px;height:24px;stroke-width:2"></i>
       </div>
       <div style="flex:1;min-width:200px">
@@ -274,7 +274,7 @@ function htmlCardCierre() {
         </div>
       </div>
       <button data-ir="cierre"
-        style="white-space:nowrap;padding:12px 20px;background:#4f46e5;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+        style="white-space:nowrap;padding:12px 20px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
         <i data-lucide="shield-check" style="width:16px;height:16px"></i>
         Hacer Cierre
       </button>
@@ -296,7 +296,7 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
     </div>
   `;
 
-  const badge = (n, bg = '#eef2ff', fg = '#4338ca') =>
+  const badge = (n, bg = '#eff6ff', fg = '#1d4ed8') =>
     `<span style="background:${bg};color:${fg};font-size:12px;font-weight:700;padding:2px 9px;border-radius:7px">${fmt(n)}</span>`;
 
   return `
@@ -304,7 +304,7 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
       ${kpi({
         label: 'Ventas de hoy', valor: money(tHoy.total),
         sub: `${badge(tHoy.n)} factura(s) emitidas`,
-        icono: 'dollar-sign', colorBg: '#eef2ff', colorFg: '#4f46e5',
+        icono: 'dollar-sign', colorBg: '#eff6ff', colorFg: '#2563eb',
       })}
       ${kpi({
         label: 'Utilidad de hoy', valor: money(tHoy.utilidad), colorValor: '#15803d',
@@ -319,7 +319,7 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
       ${kpi({
         label: 'Ventas del mes', valor: money(tMes.total),
         sub: `${badge(tMes.n)} facturas`,
-        icono: 'bar-chart-3', colorBg: '#eef2ff', colorFg: '#4f46e5',
+        icono: 'bar-chart-3', colorBg: '#eff6ff', colorFg: '#2563eb',
       })}
       ${kpi({
         label: 'Por pagar a proveedores', valor: money(cxpTotal), colorValor: '#d97706',
@@ -340,7 +340,7 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
 function htmlAtajos() {
   const btn = (ruta, icono, label, primario = false) => `
     <button data-ir="${ruta}"
-      style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;${primario ? 'background:#4f46e5;color:white;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)' : 'background:white;color:#0f172a;border:1px solid #e2e8f0'}">
+      style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;${primario ? 'background:#2563eb;color:white;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)' : 'background:white;color:#0f172a;border:1px solid #e2e8f0'}">
       <i data-lucide="${icono}" style="width:18px;height:18px"></i>
       ${label}
     </button>
@@ -392,7 +392,7 @@ function htmlUltimasVentas(ultimas) {
               return `
               <tr style="border-bottom:1px solid #f1f5f9">
                 <td style="padding:13px 10px">
-                  <b style="color:#4f46e5;font-size:14px">${esc(f.numero || '—')}</b><br>
+                  <b style="color:#2563eb;font-size:14px">${esc(f.numero || '—')}</b><br>
                   <span style="color:#94a3b8;font-size:12px">${esc((f.fecha || '').slice(0, 10))}${hora ? ' ' + hora : ''}</span>
                 </td>
                 <td style="padding:13px 10px;color:#0f172a;font-weight:500">${esc(f.cliente_nombre || 'Cliente ocasional')}</td>
@@ -458,7 +458,7 @@ function htmlStats(totalProd, totalCli, totalCompras, totalBajos) {
 
   return `
     <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:6px">
-      ${card('package', 'Productos', fmt(totalProd), '#eef2ff', '#4f46e5')}
+      ${card('package', 'Productos', fmt(totalProd), '#eff6ff', '#2563eb')}
       ${card('users', 'Clientes', fmt(totalCli), '#fef3c7', '#a16207')}
       ${card('truck', 'Compras registradas', fmt(totalCompras), '#e0f2fe', '#0284c7')}
       ${card('triangle-alert', 'Stock crítico', fmt(totalBajos), '#fef2f2', '#dc2626')}

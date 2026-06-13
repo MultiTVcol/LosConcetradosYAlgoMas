@@ -222,13 +222,13 @@ function htmlLayout() {
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:12px">
-          <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+          <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
           <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Reportes</h1>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button id="rep-btn-pers-reporte"
             title="Personaliza tu ticket de reporte POS 80mm"
-            style="padding:9px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+            style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
             🎨 Ticket de reporte
           </button>
           <button id="rep-btn-pers-cierre"
@@ -240,7 +240,7 @@ function htmlLayout() {
       </div>
 
       <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px">
-        ${kpiUtilidad('Día', dia, '#4f46e5')}
+        ${kpiUtilidad('Día', dia, '#2563eb')}
         ${kpiUtilidad('Semana', sem, '#0284c7')}
         ${kpiUtilidad('Mes', mes, '#a16207')}
         ${kpiUtilidad('Año', anio, '#15803d')}
@@ -255,11 +255,11 @@ function htmlLayout() {
               📊 Exportar CSV
             </button>
             <button id="rep-btn-pos"
-              style="padding:9px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+              style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
               🧾 Imprimir POS 80mm
             </button>
             <button id="rep-btn-pdf"
-              style="padding:9px 14px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+              style="padding:9px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
               📄 Generar informe PDF
             </button>
           </div>
@@ -268,7 +268,7 @@ function htmlLayout() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
           ${presets.map((p) => `
             <button class="rep-preset" data-preset="${p[0]}"
-              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#4f46e5' : '#e2e8f0'};background:${_estado.preset === p[0] ? '#4f46e5' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
+              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#2563eb' : '#e2e8f0'};background:${_estado.preset === p[0] ? '#2563eb' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
               ${p[1]}
             </button>
           `).join('')}
@@ -389,9 +389,9 @@ function aplicarPreset(p) {
 function marcarPreset() {
   _contenedor?.querySelectorAll('.rep-preset').forEach((btn) => {
     const activo = btn.dataset.preset === _estado.preset;
-    btn.style.background = activo ? '#4f46e5' : 'white';
+    btn.style.background = activo ? '#2563eb' : 'white';
     btn.style.color = activo ? 'white' : '#475569';
-    btn.style.borderColor = activo ? '#4f46e5' : '#e2e8f0';
+    btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
   });
 }
 
@@ -425,7 +425,7 @@ function pintarReporteRango() {
     </div>
 
     <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
-      ${tarjeta('🟢 Ventas', money(r.ventas), '#eef2ff', '#4338ca')}
+      ${tarjeta('🟢 Ventas', money(r.ventas), '#eff6ff', '#1d4ed8')}
       ${tarjeta('🚚 Compras', money(r.compras), '#dbeafe', '#0369a1')}
       ${tarjeta('💸 Gastos', money(r.gastos), '#fef2f2', '#dc2626')}
       ${tarjeta('⭐ Utilidad neta', money(r.utilidadNeta), r.utilidadNeta >= 0 ? '#dcfce7' : '#fef2f2', colNeta)}
@@ -437,7 +437,7 @@ function pintarReporteRango() {
         ${repFila('Ventas del periodo', r.ventas, '#0f172a')}
         ${repFila('− Costo de lo vendido', -r.costoVenta, '#64748b')}
         <div style="border-top:2px solid #e2e8f0;margin:6px 0"></div>
-        ${repFila('= Utilidad bruta', r.utilidadBruta, '#4338ca', true)}
+        ${repFila('= Utilidad bruta', r.utilidadBruta, '#1d4ed8', true)}
         <div style="font-size:12.5px;color:#64748b;margin:2px 0 8px">Margen sobre ventas: <b>${margenPct.toFixed(1)}%</b></div>
         ${repFila('− Gastos operativos', -r.gastos, '#dc2626')}
         <div style="border-top:3px double #cbd5e1;margin:8px 0"></div>
@@ -527,7 +527,7 @@ function pintarVentas14Dias() {
     const dia = fecha.slice(8, 10);
     return `
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px">
-        <div title="${money(total)}" style="width:100%;background:linear-gradient(180deg,#4f46e5,#7c3aed);border-radius:6px 6px 0 0;min-height:${total > 0 ? '6px' : '2px'};height:${h}%"></div>
+        <div title="${money(total)}" style="width:100%;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:6px 6px 0 0;min-height:${total > 0 ? '6px' : '2px'};height:${h}%"></div>
         <div style="font-size:10.5px;color:#94a3b8;font-family:'JetBrains Mono',ui-monospace,monospace">${dia}</div>
       </div>
     `;
@@ -549,7 +549,7 @@ function pintarMetodosPago() {
     return;
   }
   const total = entries.reduce((s, [, v]) => s + v, 0);
-  const colores = ['#4f46e5', '#0284c7', '#15803d', '#a16207', '#dc2626', '#9333ea'];
+  const colores = ['#2563eb', '#0284c7', '#15803d', '#a16207', '#dc2626', '#9333ea'];
 
   box.innerHTML = entries.map(([met, val], i) => {
     const pct = (val / total) * 100;
@@ -599,7 +599,7 @@ function pintarTopProductos() {
           <span style="color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace;flex-shrink:0">${fmt(it.cantidad)} uds · ${money(it.total)}</span>
         </div>
         <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:4px"></div>
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:4px"></div>
         </div>
       </div>
     `;
@@ -630,7 +630,7 @@ function pintarTopClientes() {
       ${top.map((c, i) => `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-            <span style="width:24px;height:24px;border-radius:50%;background:#eef2ff;color:#4f46e5;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${i + 1}</span>
+            <span style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${i + 1}</span>
             <b style="font-size:13.5px;color:#0f172a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre)}</b>
           </div>
           <div style="text-align:right;flex-shrink:0">
@@ -752,8 +752,8 @@ function htmlInformeFormal(r, cfg) {
       </div>
 
       <!-- PERIODO -->
-      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-        <div style="font-weight:700;color:#4338ca">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="font-weight:700;color:#1d4ed8">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
         <div style="font-size:11px;color:#475569">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
       </div>
 
@@ -761,7 +761,7 @@ function htmlInformeFormal(r, cfg) {
       <div style="display:grid;gap:8px;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
           <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Ventas</div>
-          <div style="font-size:14px;font-weight:800;color:#4338ca;font-family:'Courier New',monospace">${money(r.ventas)}</div>
+          <div style="font-size:14px;font-weight:800;color:#1d4ed8;font-family:'Courier New',monospace">${money(r.ventas)}</div>
         </div>
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
           <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Compras</div>
@@ -778,12 +778,12 @@ function htmlInformeFormal(r, cfg) {
       </div>
 
       <!-- ESTADO DE RESULTADOS -->
-      ${titulo('Utilidad por margen (rentabilidad)', '#4338ca')}
+      ${titulo('Utilidad por margen (rentabilidad)', '#1d4ed8')}
       <table style="width:100%;border-collapse:collapse">
         ${filaTabla('Ventas del periodo', r.ventas)}
         ${filaTabla('(−) Costo de lo vendido', -r.costoVenta, { color: '#475569' })}
         <tr><td colspan="2" style="border-top:1px solid #e2e8f0;padding:0"></td></tr>
-        ${filaTabla('= Utilidad bruta', r.utilidadBruta, { bold: true, color: '#4338ca' })}
+        ${filaTabla('= Utilidad bruta', r.utilidadBruta, { bold: true, color: '#1d4ed8' })}
         ${filaTabla('(−) Gastos operativos', -r.gastos, { color: '#dc2626' })}
         <tr><td colspan="2" style="border-top:2px solid #0f172a;padding:0"></td></tr>
         ${filaTabla('= UTILIDAD NETA', r.utilidadNeta, { bold: true, color: colNeta, big: true })}

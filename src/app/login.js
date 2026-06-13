@@ -18,7 +18,7 @@ export function mostrarLogin(appRoot) {
 
           <!-- Logo / marca -->
           <div style="text-align:center;margin-bottom:24px">
-            <div style="width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#4f46e5,#4338ca);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;margin:0 auto 12px;box-shadow:0 10px 24px -8px rgba(79,70,229,.5)">P</div>
+            <div style="width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;margin:0 auto 12px;box-shadow:0 10px 24px -8px rgba(79,70,229,.5)">P</div>
             <div style="font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">${esc(config.branding?.appName || 'PosPunto')}</div>
             <div style="font-size:13px;color:#64748b;margin-top:3px">Inicia sesión para continuar</div>
           </div>
@@ -39,7 +39,7 @@ export function mostrarLogin(appRoot) {
             <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:10px 12px;color:#991b1b;font-size:13px;text-align:center"></div>
 
             <button id="login-entrar"
-              style="width:100%;padding:13px;background:#4f46e5;color:white;border:0;border-radius:11px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 14px -2px rgba(79,70,229,.45);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px">
+              style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 14px -2px rgba(79,70,229,.45);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px">
               Iniciar sesión →
             </button>
           </div>
@@ -47,8 +47,8 @@ export function mostrarLogin(appRoot) {
           <!-- Hint para primera vez (solo visible si el admin aún tiene la clave de fábrica) -->
           <div id="login-hint" style="display:none;margin-top:18px;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:9px;font-size:11.5px;color:#64748b;text-align:center">
             <div style="font-weight:600;color:#475569;margin-bottom:2px">¿Primera vez?</div>
-            Usuario por defecto: <b style="color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace">admin</b>
-            · contraseña: <b style="color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace">admin123</b>
+            Usuario por defecto: <b style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">admin</b>
+            · contraseña: <b style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">admin123</b>
             <div style="margin-top:4px;color:#a16207">⚠ Cambia esta contraseña apenas entres (módulo Usuarios).</div>
           </div>
         </div>

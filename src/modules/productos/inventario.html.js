@@ -204,7 +204,7 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
       </div>
 
       <!-- BANNER PERIODO/TITULO -->
-      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px 14px;margin-bottom:14px;text-align:center;font-weight:700;color:#4338ca">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;text-align:center;font-weight:700;color:#1d4ed8">
         📦 ${esc(subtitulo)}
       </div>
 
@@ -212,7 +212,7 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
       <div style="display:grid;gap:8px;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
           <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">SKUs</div>
-          <div style="font-size:14px;font-weight:800;color:#4338ca;font-family:'Courier New',monospace">${fmt(t.nSKUs)}</div>
+          <div style="font-size:14px;font-weight:800;color:#1d4ed8;font-family:'Courier New',monospace">${fmt(t.nSKUs)}</div>
         </div>
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
           <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Unidades</div>
@@ -281,7 +281,7 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
                   <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace">${fmt(subUds)}</td>
                   <td colspan="2"></td>
                   <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace">${money(subCosto)}</td>
-                  <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace;color:#4338ca">${money(subVal)}</td>
+                  <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace;color:#1d4ed8">${money(subVal)}</td>
                 </tr>
               </tbody>
             </table>
@@ -367,7 +367,7 @@ export function htmlHojaAuditoria(productos, cfg) {
       </table>
 
       <!-- RESUMEN DE LO QUE SE VA A CONTAR -->
-      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#4338ca">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#1d4ed8">
         🔢 Productos a auditar: <b>${fmt(t.nSKUs)}</b> SKUs · <b>${fmt(t.nUnidades)}</b> unidades esperadas
       </div>
 

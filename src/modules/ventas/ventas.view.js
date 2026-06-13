@@ -253,8 +253,8 @@ function htmlLayout() {
         transition:background .12s, border-color .12s;
       }
       .ac-item:last-child { border-bottom:none; }
-      .ac-item:hover, .ac-item.active { background:#eef2ff; }
-      .ac-item.active { outline:2px solid #4f46e5; outline-offset:-2px; }
+      .ac-item:hover, .ac-item.active { background:#eff6ff; }
+      .ac-item.active { outline:2px solid #2563eb; outline-offset:-2px; }
       .ac-item mark {
         background:rgba(74,222,128,.40); color:inherit;
         padding:0 2px; border-radius:3px; font-weight:800;
@@ -269,7 +269,7 @@ function htmlLayout() {
         display:flex; flex-wrap:wrap; gap:4px 8px; align-items:center;
       }
       .ac-item .ac-right { text-align:right; white-space:nowrap; flex-shrink:0; }
-      .ac-item .ac-precio { font-weight:800; color:#4f46e5; font-size:17px; font-family:'JetBrains Mono',ui-monospace,monospace; }
+      .ac-item .ac-precio { font-weight:800; color:#2563eb; font-size:17px; font-family:'JetBrains Mono',ui-monospace,monospace; }
       .ac-item .ac-badge { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; margin-top:4px; font-family:'JetBrains Mono',ui-monospace,monospace; }
       .ac-item .badge-ok { background:#dcfce7; color:#166534; }
       .ac-item .badge-danger { background:#fef2f2; color:#991b1b; }
@@ -283,7 +283,7 @@ function htmlLayout() {
       .paso-badge {
         display:inline-flex; align-items:center; justify-content:center;
         width:26px; height:26px; border-radius:50%;
-        background:#4f46e5; color:white; font-weight:700; font-size:13px;
+        background:#2563eb; color:white; font-weight:700; font-size:13px;
         font-family:'JetBrains Mono',ui-monospace,monospace;
       }
       /* Selector de cliente */
@@ -292,20 +292,20 @@ function htmlLayout() {
         padding:10px 12px; cursor:pointer; border-radius:10px;
         border:1px solid transparent; transition:background .12s, border-color .12s;
       }
-      .sc-item:hover, .sc-item.active { background:#eef2ff; border-color:#c7d2fe; }
-      .sc-item.active { outline:2px solid #4f46e5; outline-offset:-2px; }
+      .sc-item:hover, .sc-item.active { background:#eff6ff; border-color:#bfdbfe; }
+      .sc-item.active { outline:2px solid #2563eb; outline-offset:-2px; }
       .sc-item mark { background:rgba(74,222,128,.40); color:inherit; padding:0 2px; border-radius:3px; font-weight:800; }
       .sc-avatar {
         width:38px; height:38px; border-radius:50%; flex-shrink:0;
-        background:linear-gradient(135deg,#eef2ff,#ffffff); color:#4f46e5;
+        background:linear-gradient(135deg,#eff6ff,#ffffff); color:#2563eb;
         display:flex; align-items:center; justify-content:center;
-        font-weight:800; font-size:15px; border:1.5px solid #c7d2fe;
+        font-weight:800; font-size:15px; border:1.5px solid #bfdbfe;
       }
       .sc-input {
         width:100%; padding:11px 14px; border:1.5px solid #cbd5e1; border-radius:10px;
         font-size:15px; outline:none; font-family:inherit; background:white; box-sizing:border-box;
       }
-      .sc-input:focus { border-color:#4f46e5; box-shadow:0 0 0 3px rgba(79,70,229,.15); }
+      .sc-input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37, 99, 235,.15); }
     </style>
     <div style="display:grid;grid-template-columns:1fr 420px;height:100vh;gap:0">
       ${htmlPanelIzquierdo()}
@@ -333,7 +333,7 @@ function htmlHeaderVentas() {
     <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
       <div>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="shopping-cart" style="width:28px;height:28px;color:#4f46e5;stroke-width:1.75"></i>
+          <i data-lucide="shopping-cart" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
           <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
             Punto de Venta
           </h1>
@@ -344,7 +344,7 @@ function htmlHeaderVentas() {
       </div>
       <button id="venta-btn-personalizar-ticket"
         title="Personaliza tu ticket POS 80mm"
-        style="padding:10px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
+        style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
         🎨 Personaliza tu ticket
       </button>
     </div>
@@ -363,7 +363,7 @@ function htmlPaso1Cliente() {
           <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Cliente</h3>
         </div>
 
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px">
           <div class="sc-avatar" style="width:42px;height:42px;font-size:17px">${esc(inicial)}</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:700;font-size:14.5px;color:#0f172a;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
@@ -376,7 +376,7 @@ function htmlPaso1Cliente() {
           <button
             id="venta-btn-cambiar-cliente"
             title="Cambiar cliente"
-            style="background:white;border:1px solid #c7d2fe;border-radius:8px;padding:6px 10px;cursor:pointer;color:#4f46e5;font-size:12px;font-weight:600;font-family:inherit"
+            style="background:white;border:1px solid #bfdbfe;border-radius:8px;padding:6px 10px;cursor:pointer;color:#2563eb;font-size:12px;font-weight:600;font-family:inherit"
           >Cambiar</button>
           <button
             id="venta-btn-quitar-cliente"
@@ -447,12 +447,12 @@ function htmlPaso2BuscarProducto() {
           <button
             class="lm-btn"
             data-modo="pistola"
-            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#4f46e5' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
+            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
           >🔫 Pistola</button>
           <button
             class="lm-btn"
             data-modo="manual"
-            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#4f46e5' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
+            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
           >⌨️ Manual</button>
         </div>
       </div>
@@ -676,7 +676,7 @@ function htmlTotales(t) {
       ` : ''}
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px">
         <span style="font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">TOTAL</span>
-        <span style="font-size:26px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
+        <span style="font-size:26px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
           ${money(t.total)}
         </span>
       </div>
@@ -998,7 +998,7 @@ function abrirModalLinea(producto, linea) {
         ${esc(base.codigo || '')}${stockReal != null ? ` · Stock: <b style="color:#0f172a">${fmt(stockReal)}</b>` : ''}
       </div>
       ${tienePE ? `
-        <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:7px 10px;margin-bottom:14px;font-size:12.5px;color:#4338ca;font-weight:600">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 10px;margin-bottom:14px;font-size:12.5px;color:#1d4ed8;font-weight:600">
           💎 Precio especial para <b>${esc(_cliente?.nombre || '')}</b> · Estándar: <span style="text-decoration:line-through;color:#94a3b8">${money(precioStd)}</span>
         </div>
       ` : ''}
@@ -1008,7 +1008,7 @@ function abrirModalLinea(producto, linea) {
         <button id="mc-menos" type="button"
           style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">−</button>
         <input id="mc-cant" data-miles type="text" inputmode="numeric" value="${cantIni}"
-          style="flex:1;padding:11px;border:1.5px solid #4f46e5;border-radius:10px;font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;color:#0f172a;outline:none;text-align:center;box-sizing:border-box" />
+          style="flex:1;padding:11px;border:1.5px solid #2563eb;border-radius:10px;font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;color:#0f172a;outline:none;text-align:center;box-sizing:border-box" />
         <button id="mc-mas" type="button"
           style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">+</button>
       </div>
@@ -1039,7 +1039,7 @@ function abrirModalLinea(producto, linea) {
         <button id="mc-cancelar" type="button"
           style="flex:1;padding:12px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
         <button id="mc-aceptar" type="button"
-          style="flex:1.4;padding:12px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">${textoBoton}</button>
+          style="flex:1.4;padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${textoBoton}</button>
       </div>
     </div>
   `;
@@ -1071,7 +1071,7 @@ function abrirModalLinea(producto, linea) {
     const d = num(inpDesc.value);
     if (c > 0) {
       const total = Math.max(0, p - d) * c;
-      subBox.innerHTML = `Subtotal: <span style="color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace">${money(total)}</span>`;
+      subBox.innerHTML = `Subtotal: <span style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(total)}</span>`;
     } else {
       subBox.innerHTML = `<span style="color:#94a3b8;font-size:14px;font-weight:500">Escribe la cantidad para continuar</span>`;
     }
@@ -1198,7 +1198,7 @@ function htmlSelectorCliente() {
     <div style="padding:4px">
       <!-- Header -->
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <div style="width:42px;height:42px;border-radius:10px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <i data-lucide="users" style="width:22px;height:22px;stroke-width:1.75"></i>
         </div>
         <div>
@@ -1239,7 +1239,7 @@ function htmlSelectorCliente() {
         <button
           id="sc-nuevo"
           type="button"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px rgba(79,70,229,.4)"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px rgba(37, 99, 235,.4)"
         >
           <i data-lucide="user-plus" style="width:16px;height:16px;stroke-width:2.25"></i>
           Crear nuevo cliente
@@ -1655,8 +1655,8 @@ function abrirModalCobro() {
       <!-- COLUMNA IZQUIERDA: total + métodos de pago -->
       <div>
         <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
-        <div style="background:#eef2ff;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
-          <div style="font-size:28px;font-weight:800;color:#4338ca;letter-spacing:-0.025em">
+        <div style="background:#eff6ff;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#1d4ed8;letter-spacing:-0.025em">
             ${money(totales.total)}
           </div>
         </div>
@@ -1723,9 +1723,9 @@ function seleccionarMetodoPago(metodo) {
   // Marcar visualmente el chip activo
   body.querySelectorAll('.pm-chip').forEach((btn) => {
     const activo = btn.dataset.pm === metodo;
-    btn.style.background = activo ? '#4f46e5' : 'white';
+    btn.style.background = activo ? '#2563eb' : 'white';
     btn.style.color = activo ? 'white' : '#475569';
-    btn.style.borderColor = activo ? '#4f46e5' : '#e2e8f0';
+    btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
   });
 
   const area = body.querySelector('#cobro-area');
@@ -1784,7 +1784,7 @@ function seleccionarMetodoPago(metodo) {
         />
         <button
           id="cobro-btn-exacto"
-          style="width:100%;margin-top:10px;padding:13px;border:2px solid #4f46e5;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
+          style="width:100%;margin-top:10px;padding:13px;border:2px solid #2563eb;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
         >💰 Exacto · ${money(totales.total)}</button>
         <div
           id="cobro-cambio-box"

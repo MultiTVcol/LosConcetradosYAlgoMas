@@ -36,19 +36,45 @@ import { Router } from '../core/index.js';
  * Orden tomado del legacy PetPOS/PosPunto real.
  */
 const MODULOS = [
-  { ruta: 'dashboard', etiqueta: 'Inicio',         icono: 'home',          feature: 'dashboard' },
-  { ruta: 'ventas',    etiqueta: 'Vender',         icono: 'shopping-cart', feature: 'ventas' },
-  { ruta: 'facturas',  etiqueta: 'Facturas',       icono: 'receipt',       feature: 'facturas' },
-  { ruta: 'clientes',  etiqueta: 'Clientes',       icono: 'users',         feature: 'clientes' },
-  { ruta: 'productos', etiqueta: 'Productos',      icono: 'package',       feature: 'productos' },
-  { ruta: 'inventario',etiqueta: 'Inventario',     icono: 'boxes',         feature: 'productos' },
-  { ruta: 'compras',   etiqueta: 'Compras',        icono: 'truck',         feature: 'compras' },
-  { ruta: 'gastos',    etiqueta: 'Gastos',         icono: 'wallet',        feature: 'gastos' },
-  { ruta: 'reportes',  etiqueta: 'Reportes',       icono: 'bar-chart-3',   feature: 'reportes' },
-  { ruta: 'cierre',    etiqueta: 'Cierre de Caja', icono: 'shield-check',  feature: 'cierreCaja' },
-  { ruta: 'config',    etiqueta: 'Configuración',  icono: 'settings',      feature: 'configuracion', soloAdmin: true },
-  { ruta: 'usuarios',  etiqueta: 'Usuarios',       icono: 'user-cog',      feature: 'dashboard',     soloAdmin: true },
+  { ruta: 'dashboard', etiqueta: 'Inicio',          icono: 'layout-dashboard', feature: 'dashboard' },
+  { ruta: 'ventas',    etiqueta: 'Punto de Venta',  icono: 'shopping-cart',    feature: 'ventas' },
+  { ruta: 'facturas',  etiqueta: 'Facturas',        icono: 'receipt',          feature: 'facturas' },
+  { ruta: 'clientes',  etiqueta: 'Clientes',        icono: 'users',            feature: 'clientes' },
+  { ruta: 'productos', etiqueta: 'Productos',       icono: 'package',          feature: 'productos' },
+  { ruta: 'inventario',etiqueta: 'Inventario',      icono: 'boxes',            feature: 'productos' },
+  { ruta: 'compras',   etiqueta: 'Compras',         icono: 'truck',            feature: 'compras' },
+  { ruta: 'gastos',    etiqueta: 'Gastos',          icono: 'wallet',           feature: 'gastos' },
+  { ruta: 'cierre',    etiqueta: 'Cierre de Caja',  icono: 'shield-check',     feature: 'cierreCaja' },
+  { ruta: 'reportes',  etiqueta: 'Reportes',        icono: 'bar-chart-3',      feature: 'reportes' },
+  { ruta: 'config',    etiqueta: 'Configuración',   icono: 'settings',         feature: 'configuracion', soloAdmin: true },
+  { ruta: 'usuarios',  etiqueta: 'Usuarios',        icono: 'user-cog',         feature: 'dashboard',     soloAdmin: true },
 ];
+
+/**
+ * Agrupación del sidebar por categorías (estilo ERP empresarial).
+ * Cada grupo referencia módulos por su `ruta`; el feature-gating y el
+ * control de admin se siguen resolviendo contra MODULOS.
+ */
+const GRUPOS = [
+  { titulo: null,         rutas: ['dashboard'] },
+  { titulo: 'Ventas',     rutas: ['ventas', 'facturas', 'clientes'] },
+  { titulo: 'Inventario', rutas: ['productos', 'inventario', 'compras'] },
+  { titulo: 'Finanzas',   rutas: ['gastos', 'cierre', 'reportes'] },
+  { titulo: 'Sistema',    rutas: ['usuarios', 'config'] },
+];
+
+const MODULO_POR_RUTA = MODULOS.reduce((m, x) => { m[x.ruta] = x; return m; }, {});
+
+/* Paleta del sidebar oscuro (corporativo, estilo Linear/Stripe) */
+const SB = {
+  bg:        '#111827',  // gray-900
+  hover:     '#1F2937',  // gray-800
+  active:    '#2563EB',  // primary
+  text:      '#D1D5DB',  // gray-300
+  textDim:   '#9CA3AF',  // gray-400
+  section:   '#6B7280',  // gray-500
+  border:    'rgba(255,255,255,.07)',
+};
 
 // ============================================================
 //  REFERENCIAS A ELEMENTOS DEL DOM (se llenan al montar)
@@ -95,53 +121,50 @@ export function montarShell(contenedor) {
   contenedor.innerHTML = '';
   contenedor.style.cssText = `
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 248px 1fr;
     height: 100vh;
     width: 100vw;
-    background: #fafafa;
+    background: #f9fafb;
     font-family: Inter, system-ui, sans-serif;
-    color: #0f172a;
+    color: #111827;
     overflow: hidden;
   `;
 
   // ============================================================
-  //  SIDEBAR IZQUIERDO
+  //  SIDEBAR IZQUIERDO (oscuro, agrupado, estilo ERP)
   // ============================================================
   const sidebar = document.createElement('aside');
   sidebar.style.cssText = `
-    background: #ffffff;
-    border-right: 1px solid #e2e8f0;
+    background: ${SB.bg};
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
   `;
 
-  // ============================================================
-  //  Header del sidebar: logo + nombre del negocio
-  // ============================================================
+  // ---- Header: logo + identidad del producto ----
   const header = document.createElement('div');
   header.style.cssText = `
-    padding: 20px 18px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 20px 18px 18px;
     display: flex;
     align-items: center;
     gap: 12px;
+    border-bottom: 1px solid ${SB.border};
   `;
 
   const logo = document.createElement('div');
   logo.style.cssText = `
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, ${branding.primary}, ${branding.primaryDark});
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: ${SB.active};
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 19px;
     flex-shrink: 0;
-    box-shadow: 0 4px 8px -2px ${branding.primary}40;
+    box-shadow: 0 4px 12px -2px rgba(37,99,235,.45);
   `;
   logo.textContent = (branding.appName || 'P').charAt(0).toUpperCase();
   header.appendChild(logo);
@@ -150,21 +173,24 @@ export function montarShell(contenedor) {
   tituloBox.style.cssText = `flex: 1; min-width: 0;`;
 
   const tituloEl = document.createElement('div');
-  tituloEl.textContent = branding.appName || 'PosPunto';
+  tituloEl.textContent = `${branding.appName || 'PosPunto'} ERP`;
   tituloEl.style.cssText = `
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
     line-height: 1.2;
-    color: #0f172a;
+    color: #ffffff;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   `;
   tituloBox.appendChild(tituloEl);
 
   const subEl = document.createElement('div');
-  subEl.textContent = negocio.nombre || '';
+  subEl.textContent = 'Gestión Empresarial';
   subEl.style.cssText = `
-    font-size: 12px;
-    color: #94a3b8;
+    font-size: 11.5px;
+    color: ${SB.textDim};
     margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
@@ -174,15 +200,15 @@ export function montarShell(contenedor) {
 
   header.appendChild(tituloBox);
 
-  // Badge de estado realtime (punto verde/gris/rojo)
+  // Badge de estado realtime (punto verde/gris)
   const badge = document.createElement('div');
   badge.id = 'rt-badge';
   badge.title = 'Sincronización en tiempo real';
   badge.style.cssText = `
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: #cbd5e1;
+    background: #4b5563;
     flex-shrink: 0;
     transition: background .3s ease, box-shadow .3s ease;
   `;
@@ -195,130 +221,139 @@ export function montarShell(contenedor) {
     Realtime.onEstadoChange((estado) => {
       if (!badge.isConnected) return;
       if (estado.activo && estado.tablas.length > 0) {
-        badge.style.background = '#15803d';
-        badge.style.boxShadow = '0 0 0 3px rgba(21,128,61,.18)';
-        badge.title = `🟢 En vivo · ${estado.tablas.length}/${estado.total} tablas conectadas`;
+        badge.style.background = '#22c55e';
+        badge.style.boxShadow = '0 0 0 3px rgba(34,197,94,.20)';
+        badge.title = `En vivo · ${estado.tablas.length}/${estado.total} tablas conectadas`;
       } else {
-        badge.style.background = '#cbd5e1';
+        badge.style.background = '#4b5563';
         badge.style.boxShadow = 'none';
-        badge.title = '⚪ Sin conexión en vivo';
+        badge.title = 'Sin conexión en vivo';
       }
     });
   } catch (e) { /**/ }
 
-  // ============================================================
-  //  Menú de navegación
-  // ============================================================
+  // ---- Navegación agrupada por categorías ----
   const nav = document.createElement('nav');
   nav.style.cssText = `
     flex: 1;
-    padding: 12px 10px;
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    overflow-y: auto;
   `;
 
   _enlaces.clear();
 
-  MODULOS.forEach((mod) => {
-    // Solo mostrar módulos cuya feature está activa
-    if (!isFeatureEnabled(mod.feature)) return;
-    // Ocultar módulos soloAdmin si el usuario no es admin
-    if (mod.soloAdmin && !Auth.esAdmin()) return;
+  GRUPOS.forEach((grupo) => {
+    // Resolver los módulos visibles de este grupo
+    const visibles = grupo.rutas
+      .map((r) => MODULO_POR_RUTA[r])
+      .filter((mod) => mod && isFeatureEnabled(mod.feature) && !(mod.soloAdmin && !Auth.esAdmin()));
 
-    const btn = document.createElement('button');
-    btn.dataset.ruta = mod.ruta;
-    btn.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 10px 14px;
-      background: transparent;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: #475569;
-      font-family: inherit;
-      text-align: left;
-      transition: background .15s, color .15s;
-    `;
+    if (visibles.length === 0) return;
 
-    // Ícono Lucide (será reemplazado por SVG después)
-    const iconoEl = document.createElement('i');
-    iconoEl.setAttribute('data-lucide', mod.icono);
-    iconoEl.style.cssText = `
-      width: 18px;
-      height: 18px;
-      stroke-width: 2;
-      flex-shrink: 0;
-      display: inline-block;
-      vertical-align: middle;
-    `;
-    btn.appendChild(iconoEl);
+    // Encabezado de sección (salvo el grupo sin título: dashboard)
+    if (grupo.titulo) {
+      const sec = document.createElement('div');
+      sec.textContent = grupo.titulo;
+      sec.style.cssText = `
+        padding: 14px 12px 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: ${SB.section};
+      `;
+      nav.appendChild(sec);
+    }
 
-    const textoEl = document.createElement('span');
-    textoEl.textContent = mod.etiqueta;
-    btn.appendChild(textoEl);
+    visibles.forEach((mod) => {
+      const btn = document.createElement('button');
+      btn.dataset.ruta = mod.ruta;
+      btn.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 9px 12px;
+        background: transparent;
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 13.5px;
+        font-weight: 500;
+        color: ${SB.text};
+        font-family: inherit;
+        text-align: left;
+        transition: background .15s, color .15s;
+      `;
 
-    btn.addEventListener('mouseenter', () => {
-      if (!btn.classList.contains('activo')) {
-        btn.style.background = '#f1f5f9';
-        btn.style.color = '#0f172a';
-      }
+      const iconoEl = document.createElement('i');
+      iconoEl.setAttribute('data-lucide', mod.icono);
+      iconoEl.style.cssText = `
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+      `;
+      btn.appendChild(iconoEl);
+
+      const textoEl = document.createElement('span');
+      textoEl.textContent = mod.etiqueta;
+      btn.appendChild(textoEl);
+
+      btn.addEventListener('mouseenter', () => {
+        if (!btn.classList.contains('activo')) {
+          btn.style.background = SB.hover;
+          btn.style.color = '#ffffff';
+        }
+      });
+      btn.addEventListener('mouseleave', () => {
+        if (!btn.classList.contains('activo')) {
+          btn.style.background = 'transparent';
+          btn.style.color = SB.text;
+        }
+      });
+
+      btn.addEventListener('click', () => {
+        Router.navegar(mod.ruta);
+      });
+
+      _enlaces.set(mod.ruta, btn);
+      nav.appendChild(btn);
     });
-    btn.addEventListener('mouseleave', () => {
-      if (!btn.classList.contains('activo')) {
-        btn.style.background = 'transparent';
-        btn.style.color = '#475569';
-      }
-    });
-
-    btn.addEventListener('click', () => {
-      Router.navegar(mod.ruta);
-    });
-
-    _enlaces.set(mod.ruta, btn);
-    nav.appendChild(btn);
   });
 
   sidebar.appendChild(nav);
 
-  // ============================================================
-  //  Footer del sidebar
-  // ============================================================
+  // ---- Footer: usuario + sesión ----
   const footer = document.createElement('div');
   footer.style.cssText = `
-    padding: 10px 14px 16px;
-    border-top: 1px solid #f1f5f9;
-    font-size: 11px;
-    color: #94a3b8;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    padding: 12px;
+    border-top: 1px solid ${SB.border};
   `;
   const u = Auth.usuarioActual();
   const inicial = u?.nombre ? u.nombre.trim().charAt(0).toUpperCase() : '?';
-  const colorRol = u?.rol === 'admin' ? { bg: '#eef2ff', fg: '#4338ca' } : { bg: '#fef3c7', fg: '#92400e' };
-  // Escapar el nombre antes de inyectarlo en innerHTML
+  const esAdminUsr = u?.rol === 'admin';
   const escHtml = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const nombreSeguro = escHtml(u?.nombre);
   const inicialSegura = escHtml(inicial);
   footer.innerHTML = `
     ${u ? `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px">
-        <div style="width:36px;height:36px;border-radius:9px;background:${colorRol.bg};color:${colorRol.fg};display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:15px;flex-shrink:0">${inicialSegura}</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:${SB.hover};border-radius:11px">
+        <div style="width:36px;height:36px;border-radius:9px;background:${SB.active};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">${inicialSegura}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombreSeguro}</div>
-          <div style="font-family:Inter,sans-serif;font-size:11px;color:${colorRol.fg};font-weight:600;text-transform:uppercase;letter-spacing:.04em">${u.rol === 'admin' ? '👑 Admin' : '💼 Cajero'}</div>
+          <div style="font-weight:600;font-size:13px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombreSeguro}</div>
+          <div style="font-size:11px;color:${SB.textDim};font-weight:500;text-transform:uppercase;letter-spacing:.04em">${esAdminUsr ? 'Administrador' : 'Cajero'}</div>
         </div>
         <button id="btn-logout" title="Cerrar sesión"
-          style="background:white;border:1px solid #e2e8f0;border-radius:7px;padding:6px 8px;cursor:pointer;color:#dc2626;display:flex;align-items:center;justify-content:center">
-          <i data-lucide="log-out" style="width:14px;height:14px;stroke-width:2"></i>
+          style="background:transparent;border:1px solid ${SB.border};border-radius:8px;padding:7px;cursor:pointer;color:${SB.textDim};display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s">
+          <i data-lucide="log-out" style="width:15px;height:15px;stroke-width:2"></i>
         </button>
       </div>
     ` : ''}
-    <div>v0.0.0 · Fase 6</div>
-    <div style="margin-top:2px">tenant: <span style="color:#475569">${config.supabase.tenantId}</span></div>
   `;
   sidebar.appendChild(footer);
 
@@ -326,6 +361,8 @@ export function montarShell(contenedor) {
   setTimeout(() => {
     const btnLogout = footer.querySelector('#btn-logout');
     if (btnLogout) {
+      btnLogout.addEventListener('mouseenter', () => { btnLogout.style.color = '#f87171'; btnLogout.style.borderColor = '#f87171'; });
+      btnLogout.addEventListener('mouseleave', () => { btnLogout.style.color = SB.textDim; btnLogout.style.borderColor = SB.border; });
       btnLogout.addEventListener('click', () => {
         Auth.logout();
         location.reload();
@@ -340,7 +377,7 @@ export function montarShell(contenedor) {
   main.style.cssText = `
     overflow-y: auto;
     padding: 0;
-    background: #fafafa;
+    background: #f9fafb;
   `;
 
   contenedor.appendChild(sidebar);
@@ -392,15 +429,17 @@ export function marcarActivo(ruta) {
   _enlaces.forEach((btn) => {
     btn.classList.remove('activo');
     btn.style.background = 'transparent';
-    btn.style.color = '#475569';
+    btn.style.color = SB.text;
+    btn.style.boxShadow = 'none';
   });
 
   // Marcar el nuevo
   const btn = _enlaces.get(ruta);
   if (btn) {
     btn.classList.add('activo');
-    btn.style.background = '#eef2ff';
-    btn.style.color = config.branding.primary;
+    btn.style.background = SB.active;
+    btn.style.color = '#ffffff';
+    btn.style.boxShadow = '0 4px 12px -3px rgba(37,99,235,.55)';
   }
 }
 

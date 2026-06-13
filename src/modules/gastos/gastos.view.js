@@ -304,7 +304,7 @@ async function abrirFormGasto(id) {
       <button id="g-btn-cancelar"
         style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="g-btn-guardar"
-        style="flex:1;padding:12px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">💾 Guardar</button>
+        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">💾 Guardar</button>
     </div>
   `;
 
@@ -388,7 +388,7 @@ function renderResultadosProductos(query) {
           <b style="font-size:13px;color:#0f172a;display:block">${esc(p.nombre)}</b>
           <span style="color:#64748b;font-size:11.5px">${esc(p.codigo || '')} · Stock: ${fmt(p.stock || 0)} · Costo: ${money(p.costo || 0)}</span>
         </div>
-        <span style="background:${yaEn ? '#e0e7ff' : '#dcfce7'};color:${yaEn ? '#4338ca' : '#166534'};font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">${yaEn ? 'Ya agregado' : '＋ Añadir'}</span>
+        <span style="background:${yaEn ? '#e0e7ff' : '#dcfce7'};color:${yaEn ? '#1d4ed8' : '#166534'};font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">${yaEn ? 'Ya agregado' : '＋ Añadir'}</span>
       </button>
     `;
   }).join('');
@@ -642,7 +642,7 @@ function htmlKPIs(k) {
     </div>
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
       <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Mayor categoría (mes)</div>
-      <div style="font-size:20px;font-weight:700;color:#4f46e5">${Repo.ICONOS[k.topCat] || '📌'} ${esc(k.topCat)}</div>
+      <div style="font-size:20px;font-weight:700;color:#2563eb">${Repo.ICONOS[k.topCat] || '📌'} ${esc(k.topCat)}</div>
       <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace">${money(k.topVal)}</div>
     </div>
   `;
@@ -679,7 +679,7 @@ function htmlLayout(k) {
           </div>
           <div>
             <button id="gasto-btn-nuevo"
-              style="white-space:nowrap;padding:11px 16px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+              style="white-space:nowrap;padding:11px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
               ➕ Registrar gasto
             </button>
           </div>

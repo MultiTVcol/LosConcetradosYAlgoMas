@@ -52,8 +52,8 @@ export const config = {
   // ============================================================
   branding: {
     appName: 'PosPunto',
-    primary: '#4f46e5',     // Color principal (indigo)
-    primaryDark: '#4338ca', // Versión más oscura para hovers
+    primary: '#2563eb',     // Color principal (azul corporativo)
+    primaryDark: '#1d4ed8', // Versión más oscura para hovers
     logoUrl: null,          // URL del logo del cliente (opcional)
   },
 

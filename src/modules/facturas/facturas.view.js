@@ -128,7 +128,7 @@ function filaFactura(f) {
       </td>
       <td style="padding:12px;color:#0f172a">${esc(cliente)}</td>
       <td style="padding:12px">
-        <span style="background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px">
+        <span style="background:#e0e7ff;color:#1d4ed8;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px">
           ${esc(metodo)}
         </span>
       </td>
@@ -147,8 +147,8 @@ function filaFactura(f) {
             class="fac-btn-imprimir"
             data-id="${esc(f.id)}"
             title="Imprimir POS 80mm"
-            style="width:32px;height:32px;border:1px solid #c7d2fe;background:#eef2ff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
-          ><i data-lucide="printer" style="width:15px;height:15px;color:#4338ca"></i></button>
+            style="width:32px;height:32px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center"
+          ><i data-lucide="printer" style="width:15px;height:15px;color:#1d4ed8"></i></button>
           <button
             class="fac-btn-editar"
             data-id="${esc(f.id)}"
@@ -316,7 +316,7 @@ async function verFactura(id) {
       ` : ''}
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">
         <b style="font-size:15px;color:#0f172a">TOTAL</b>
-        <b style="font-size:22px;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(f.total)}</b>
+        <b style="font-size:22px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(f.total)}</b>
       </div>
     </div>
 
@@ -326,7 +326,7 @@ async function verFactura(id) {
       <button
         id="fac-modal-imprimir"
         data-id="${esc(f.id)}"
-        style="padding:12px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)"
+        style="padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
       >🧾 Imprimir POS 80mm</button>
       <button
         id="fac-modal-borrar"
@@ -464,7 +464,7 @@ async function editarFactura(id) {
         style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
       >Cancelar</button>
       <button id="fac-edit-guardar"
-        style="flex:1;padding:12px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)"
+        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
       >💾 Guardar cambios</button>
     </div>
   `;
@@ -554,7 +554,7 @@ function htmlLayout() {
   return `
     <div style="padding:32px 40px;max-width:1200px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="receipt" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+        <i data-lucide="receipt" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
         <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Facturas</h1>
       </div>
 

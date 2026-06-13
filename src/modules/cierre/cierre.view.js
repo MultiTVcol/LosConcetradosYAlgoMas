@@ -92,7 +92,7 @@ function pintarContenido() {
   const colNeta = r.utilidadNeta >= 0 ? '#15803d' : '#dc2626';
 
   box.innerHTML = `
-    <div style="background:#eef2ff;border:2px solid #4f46e5;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;font-weight:700;color:#4338ca">
+    <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;font-weight:700;color:#1d4ed8">
       📅 Periodo: <b>${fechaBonita(_estado.desde)}</b> → <b>${fechaBonita(_estado.hasta)}</b>
       &nbsp;·&nbsp; ${fmt(r.nFac)} venta(s) &nbsp;·&nbsp; ${fmt(r.nGastos)} gasto(s)
     </div>
@@ -104,14 +104,14 @@ function pintarContenido() {
       ${htmlPanelInventario(r)}
     </div>
 
-    <div style="background:#f8fafc;border:2px dashed #4f46e5;border-radius:12px;padding:18px;margin-top:18px">
+    <div style="background:#f8fafc;border:2px dashed #2563eb;border-radius:12px;padding:18px;margin-top:18px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
         <div>
           <div style="font-size:17px;font-weight:800;color:#0f172a">¿Listo para cerrar?</div>
           <div style="color:#64748b;font-size:13.5px;margin-top:2px">Imprime el resumen del periodo en tu impresora POS térmica.</div>
         </div>
         <button id="cierre-btn-imprimir"
-          style="padding:14px 26px;background:#4f46e5;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35);min-width:240px">
+          style="padding:14px 26px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);min-width:240px">
           🧾 Imprimir Informe POS
         </button>
       </div>
@@ -297,9 +297,9 @@ function aplicarPreset(preset) {
 function marcarPreset() {
   _contenedor?.querySelectorAll('.cierre-preset').forEach((btn) => {
     const activo = btn.dataset.preset === _estado.preset;
-    btn.style.background = activo ? '#4f46e5' : 'white';
+    btn.style.background = activo ? '#2563eb' : 'white';
     btn.style.color = activo ? 'white' : '#475569';
-    btn.style.borderColor = activo ? '#4f46e5' : '#e2e8f0';
+    btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
   });
 }
 
@@ -332,7 +332,7 @@ function htmlLayout() {
             <button id="cierre-btn-actualizar"
               style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">📊 Actualizar</button>
             <button id="cierre-btn-pdf"
-              style="padding:10px 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📄 Cierre PDF</button>
+              style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📄 Cierre PDF</button>
             <button id="cierre-btn-pos-top"
               style="padding:10px 18px;background:#15803d;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35);display:flex;align-items:center;gap:6px">
               🧾 Hacer cierre POS
@@ -343,7 +343,7 @@ function htmlLayout() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
           ${presets.map((p) => `
             <button class="cierre-preset" data-preset="${p[0]}"
-              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#4f46e5' : '#e2e8f0'};background:${_estado.preset === p[0] ? '#4f46e5' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
+              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#2563eb' : '#e2e8f0'};background:${_estado.preset === p[0] ? '#2563eb' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
               ${p[1]}
             </button>
           `).join('')}
@@ -373,11 +373,11 @@ function htmlPanelVentas(r, tkt) {
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🟢 Ventas</h3>
-        <span style="background:#e0e7ff;color:#4338ca;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.nFac)} fac.</span>
+        <span style="background:#e0e7ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.nFac)} fac.</span>
       </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Total vendido</div>
-        <div style="font-size:24px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.ventas)}</div>
+        <div style="font-size:24px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.ventas)}</div>
       </div>
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${kvLinea('Ticket promedio', money(tkt))}
@@ -433,7 +433,7 @@ function htmlPanelInventario(r) {
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📦 Inventario (al día)</h3>
-        <span style="background:#e0e7ff;color:#4338ca;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.invSKUs)} SKUs</span>
+        <span style="background:#e0e7ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.invSKUs)} SKUs</span>
       </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Valor inventario (costo)</div>
@@ -677,14 +677,14 @@ async function imprimirCierrePDF(r) {
       </div>
 
       <!-- PERIODO -->
-      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-        <div style="font-weight:700;color:#4338ca">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="font-weight:700;color:#1d4ed8">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
         <div style="font-size:11px;color:#475569">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
       </div>
 
       <!-- KPIs PRINCIPALES -->
       <div style="display:grid;gap:8px;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-        ${kpi('Ventas', r.ventas, '#4338ca')}
+        ${kpi('Ventas', r.ventas, '#1d4ed8')}
         ${kpi('Utilidad bruta', r.utilidadBruta, '#15803d')}
         ${kpi('Gastos', r.gastos, '#dc2626')}
         ${kpi('Utilidad neta', r.utilidadNeta, colNeta)}
@@ -702,7 +702,7 @@ async function imprimirCierrePDF(r) {
       </table>
 
       ${metodos.length > 0 ? `
-        ${tituloSec('💳 Métodos de pago', '#4338ca')}
+        ${tituloSec('💳 Métodos de pago', '#1d4ed8')}
         <table style="width:100%;border-collapse:collapse">
           ${metodos.map(([m, v]) => `
             <tr>

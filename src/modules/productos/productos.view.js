@@ -162,7 +162,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
       <div>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="package" style="width:28px;height:28px;color:#4f46e5;stroke-width:1.75"></i>
+          <i data-lucide="package" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
           <h1 style="font-size:26px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
             Productos
           </h1>
@@ -176,7 +176,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
         <button
           id="btn-inventario"
           title="Imprimir inventario / hoja de auditoría"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#4338ca;border:1px solid #c7d2fe;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
         >
           <i data-lucide="clipboard-list" style="width:17px;height:17px;stroke-width:2"></i>
           📦 Inventario
@@ -186,7 +186,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
         </span>
         <button
           id="btn-nuevo-producto"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #4f46e540"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
         >
           <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
           Nuevo producto
@@ -234,8 +234,8 @@ function htmlCargando() {
 function htmlVacio() {
   return `
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:64px 24px;text-align:center">
-      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eef2ff;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="package" style="width:36px;height:36px;color:#4f46e5;stroke-width:1.5"></i>
+      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="package" style="width:36px;height:36px;color:#2563eb;stroke-width:1.5"></i>
       </div>
       <h2 style="font-size:18px;font-weight:600;color:#0f172a;margin:0 0 8px;letter-spacing:-0.01em">
         Tu catálogo está vacío
@@ -246,7 +246,7 @@ function htmlVacio() {
       </p>
       <button
         id="btn-nuevo-producto-vacio"
-        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
       >
         <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
         Agregar primer producto
@@ -512,7 +512,7 @@ async function abrirModalInventario() {
     </div>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-      ${opcion('inv-opt-pos', '🧾', 'Imprimir inventario en POS 80mm', 'Listado compacto agrupado por categoría con valor a costo y venta. Ideal para revisión rápida en impresora térmica.', '#4f46e5')}
+      ${opcion('inv-opt-pos', '🧾', 'Imprimir inventario en POS 80mm', 'Listado compacto agrupado por categoría con valor a costo y venta. Ideal para revisión rápida en impresora térmica.', '#2563eb')}
       ${opcion('inv-opt-pdf', '📄', 'Generar informe PDF (Carta)', 'Inventario completo con tabla por categoría, subtotales, totales y resumen financiero. Optimizado para guardar como PDF o imprimir en carta.', '#15803d')}
       ${opcion('inv-opt-audit', '📋', 'Hoja de auditoría para conteo físico', 'Hoja con columnas vacías para anotar el conteo real durante una auditoría de inventario. Incluye firmas y diferencia.', '#a16207')}
       ${bajos.length > 0 ? opcion('inv-opt-bajos', '⚠️', `Solo productos con stock bajo (${bajos.length})`, 'Imprime solo el listado de productos que están por debajo del stock mínimo. Útil para órdenes de compra.', '#dc2626') : ''}
@@ -535,7 +535,7 @@ async function abrirModalInventario() {
   // Hover effect en las opciones
   m.body.querySelectorAll('button[id^="inv-opt"]').forEach((btn) => {
     btn.addEventListener('mouseenter', () => {
-      btn.style.borderColor = '#4f46e5';
+      btn.style.borderColor = '#2563eb';
       btn.style.background = '#f8fafc';
     });
     btn.addEventListener('mouseleave', () => {

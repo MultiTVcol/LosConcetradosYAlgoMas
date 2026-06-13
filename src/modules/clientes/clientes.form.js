@@ -91,7 +91,7 @@ function construirFormulario(datos) {
       ${campo('cli-obs', 'Observaciones', 'text', datos.obs, 'Notas internas sobre el cliente')}
 
       <!-- Sección Precios Especiales -->
-      <div style="background:#f8fafc;border:2px dashed #4f46e5;border-radius:12px;padding:14px;margin-top:4px">
+      <div style="background:#f8fafc;border:2px dashed #2563eb;border-radius:12px;padding:14px;margin-top:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
             <div style="font-weight:800;font-size:15px;color:#0f172a">💎 Precios especiales</div>
@@ -102,7 +102,7 @@ function construirFormulario(datos) {
           <button
             id="cli-btn-pe"
             type="button"
-            style="padding:10px 14px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)"
+            style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
           >⚙️ Configurar precios especiales</button>
         </div>
         <div id="cli-pe-resumen" style="margin-top:10px;font-size:13px;color:#64748b"></div>
@@ -119,7 +119,7 @@ function construirFormulario(datos) {
         <button
           id="cli-guardar"
           type="button"
-          style="flex:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)"
+          style="flex:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
         >💾 Guardar</button>
       </div>
     </div>
@@ -163,7 +163,7 @@ function pintarResumenPreciosEspeciales(formEl) {
   if (ids.length === 0) {
     el.innerHTML = 'Sin precios especiales asignados. Este cliente comprará al precio estándar.';
   } else {
-    el.innerHTML = `<b style="color:#4338ca">${fmt(ids.length)} producto(s)</b> con precio especial asignado.`;
+    el.innerHTML = `<b style="color:#1d4ed8">${fmt(ids.length)} producto(s)</b> con precio especial asignado.`;
   }
 }
 
@@ -341,7 +341,7 @@ function pintarListaPE(box, productos, query, body, titleEl) {
     const pe = _peEdit[p.id];
     const tiene = pe != null && pe !== '' && Number(pe) > 0;
     return `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${tiene ? '#eef2ff' : '#f8fafc'};border:1px solid ${tiene ? '#c7d2fe' : '#e2e8f0'};border-radius:9px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${tiene ? '#eff6ff' : '#f8fafc'};border:1px solid ${tiene ? '#bfdbfe' : '#e2e8f0'};border-radius:9px">
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;font-size:13.5px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
           <div style="color:#64748b;font-size:11.5px">${esc(p.codigo || '—')} · Estándar: <b style="color:#0f172a">${money(std)}</b></div>

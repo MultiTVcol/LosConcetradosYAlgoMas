@@ -73,14 +73,14 @@ function htmlLayout(r) {
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:12px">
-          <i data-lucide="boxes" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+          <i data-lucide="boxes" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
           <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Inventario</h1>
         </div>
         <div style="display:flex;gap:8px">
           <button id="inv-btn-ajustes"
-            style="padding:10px 16px;background:white;color:#4f46e5;border:1px solid #c7d2fe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📜 Ajustes</button>
+            style="padding:10px 16px;background:white;color:#2563eb;border:1px solid #bfdbfe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📜 Ajustes</button>
           <button id="inv-btn-conteo"
-            style="padding:10px 16px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">📋 Conteo físico</button>
+            style="padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">📋 Conteo físico</button>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ function pintarTabla() {
     : ProductosRepo.filtrarConPrioridad(_res.productos, _q);
 
   if (filas.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:32px;color:#94a3b8;font-size:13.5px">Sin productos${q ? ` para "${esc(_q)}"` : ''}.</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:32px;color:#94a3b8;font-size:13.5px">Sin productos${String(_q || '').trim() ? ` para "${esc(_q)}"` : ''}.</div>`;
     return;
   }
 
@@ -168,7 +168,7 @@ async function abrirKardex(productoId) {
     return;
   }
 
-  const colorTipo = { Compra: '#15803d', Venta: '#4f46e5', Baja: '#dc2626', 'Conteo físico': '#a16207' };
+  const colorTipo = { Compra: '#15803d', Venta: '#2563eb', Baja: '#dc2626', 'Conteo físico': '#a16207' };
 
   const contenido = `
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
@@ -241,7 +241,7 @@ function abrirConteo() {
             style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           <div id="ct-resultados" style="position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;display:flex;flex-direction:column;gap:4px;max-height:230px;overflow:auto;background:white;border-radius:8px"></div>
         </div>
-        <button id="ct-todos" style="padding:0 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap">Cargar todos</button>
+        <button id="ct-todos" style="padding:0 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap">Cargar todos</button>
       </div>
 
       <div id="ct-sheet"></div>
@@ -348,7 +348,7 @@ function abrirConteo() {
         if (!has) { cel.textContent = '—'; cel.style.color = '#cbd5e1'; actualizarFooter(); return; }
         const delta = num(inp.value) - it.sistema;
         if (delta === 0) { cel.textContent = '0'; cel.style.color = '#15803d'; }
-        else { cel.textContent = (delta > 0 ? '+' : '−') + fmt(Math.abs(delta)); cel.style.color = delta > 0 ? '#4338ca' : '#dc2626'; }
+        else { cel.textContent = (delta > 0 ? '+' : '−') + fmt(Math.abs(delta)); cel.style.color = delta > 0 ? '#1d4ed8' : '#dc2626'; }
         actualizarFooter();
       };
       inp.addEventListener('input', refrescarDif);
@@ -368,14 +368,14 @@ function abrirConteo() {
 
     const habilitado = difs.length > 0;
     btnOk.disabled = !habilitado;
-    btnOk.style.background = habilitado ? '#4f46e5' : '#94a3b8';
+    btnOk.style.background = habilitado ? '#2563eb' : '#94a3b8';
     btnOk.style.cursor = habilitado ? 'pointer' : 'not-allowed';
     btnOk.textContent = habilitado ? `📋 Registrar ${difs.length} ajuste(s)` : '📋 Registrar ajustes';
 
     if (hoja.length === 0) { footer.style.display = 'none'; return; }
     footer.style.display = 'block';
     footer.innerHTML = `
-      <b>${fmt(hoja.length)}</b> producto(s) en la planilla · <b style="color:#4338ca">${sobra}</b> sobrante(s) · <b style="color:#dc2626">${falta}</b> faltante(s)
+      <b>${fmt(hoja.length)}</b> producto(s) en la planilla · <b style="color:#1d4ed8">${sobra}</b> sobrante(s) · <b style="color:#dc2626">${falta}</b> faltante(s)
       ${difs.length ? ` · ajuste neto <b style="color:${valorNeto >= 0 ? '#15803d' : '#dc2626'}">${money(Math.abs(valorNeto))}</b> ${valorNeto >= 0 ? '(sobra)' : '(falta)'}` : ''}
     `;
   };
@@ -467,7 +467,7 @@ async function pintarHistorial() {
             const neto = num(a.valor);
             return `
             <tr style="border-bottom:1px solid #f1f5f9">
-              <td style="padding:9px 10px"><b style="color:#4f46e5">${esc(a.numero || '—')}</b>${a.nota ? `<div style="font-size:11.5px;color:#94a3b8">${esc(a.nota)}</div>` : ''}</td>
+              <td style="padding:9px 10px"><b style="color:#2563eb">${esc(a.numero || '—')}</b>${a.nota ? `<div style="font-size:11.5px;color:#94a3b8">${esc(a.nota)}</div>` : ''}</td>
               <td style="padding:9px 10px;color:#64748b;white-space:nowrap">${esc(fmtDate(a.fecha))}</td>
               <td style="padding:9px 10px;text-align:right;color:#475569">${fmt(nProd)}</td>
               <td style="padding:9px 10px;text-align:right;font-weight:700;color:${neto >= 0 ? '#15803d' : '#dc2626'}">${neto >= 0 ? '+' : '−'}${money(Math.abs(neto))}</td>
@@ -499,7 +499,7 @@ async function verAjuste(id) {
         <td style="padding:8px 10px;font-weight:600;color:#0f172a">${esc(it.nombre)}${it.codigo ? `<span style="color:#94a3b8;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
         <td style="padding:8px 10px;text-align:right;color:#475569">${fmt(it.sistema)}</td>
         <td style="padding:8px 10px;text-align:right;color:#0f172a;font-weight:700">${fmt(it.fisico)}</td>
-        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${d >= 0 ? '#4338ca' : '#dc2626'}">${d >= 0 ? '+' : '−'}${fmt(Math.abs(d))}</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${d >= 0 ? '#1d4ed8' : '#dc2626'}">${d >= 0 ? '+' : '−'}${fmt(Math.abs(d))}</td>
         <td style="padding:8px 10px;text-align:right;color:${num(it.valor) >= 0 ? '#15803d' : '#dc2626'}">${num(it.valor) >= 0 ? '+' : '−'}${money(Math.abs(num(it.valor)))}</td>
       </tr>`;
   }).join('');
@@ -532,7 +532,7 @@ async function verAjuste(id) {
     </div>
     <div style="display:flex;gap:10px;margin-top:16px">
       <button id="det-del" style="flex:1;padding:11px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🗑️ Eliminar ajuste</button>
-      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#4f46e5;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🖨️ Imprimir</button>
+      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🖨️ Imprimir</button>
     </div>
   `;
 

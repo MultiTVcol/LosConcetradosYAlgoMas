@@ -448,7 +448,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
 
   return `
     <!-- Banner: archivo leído -->
-    <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#4338ca">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#1d4ed8">
       📊 <b>${fmt(filasRaw.length)}</b> fila(s) detectadas en el archivo · <b>${fmt(columnasArchivo.length)}</b> columna(s) encontradas
     </div>
 
@@ -497,7 +497,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
           ['en-US', '🇺🇸 1,500,000 / 1,500.50', 'Coma = miles · Punto = decimal'],
         ].map(([id, label, hint]) => `
           <button class="imp-fmt-btn" data-fmt="${id}"
-            style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#4f46e5' : '#e2e8f0'};background:${formato === id ? '#eef2ff' : 'white'};color:${formato === id ? '#4338ca' : '#475569'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+            style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#2563eb' : '#e2e8f0'};background:${formato === id ? '#eff6ff' : 'white'};color:${formato === id ? '#1d4ed8' : '#475569'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
             <div style="font-weight:700;font-size:12.5px;font-family:'JetBrains Mono',ui-monospace,monospace">${label}</div>
             <div style="font-size:11px;color:#64748b;margin-top:2px">${hint}</div>
           </button>
@@ -535,7 +535,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
                     if (v == null || v === '') {
                       str = '<span style="color:#cbd5e1">—</span>';
                     } else if (esNum) {
-                      str = `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#4338ca">${Number(v).toLocaleString('es-CO')}</span>`;
+                      str = `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#1d4ed8">${Number(v).toLocaleString('es-CO')}</span>`;
                     } else {
                       str = esc(String(v));
                     }
@@ -561,7 +561,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
     </div>
 
     <!-- Aviso -->
-    <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#4338ca;margin-bottom:14px">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#1d4ed8;margin-bottom:14px">
       ℹ Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán. Todo se sincronizará automáticamente con la nube.
     </div>
 
@@ -666,11 +666,11 @@ function abrirOverlayProgreso(textoInicial) {
   overlay.innerHTML = `
     <div style="background:white;border-radius:14px;padding:24px 28px;min-width:300px;max-width:380px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);font-family:Inter,system-ui,sans-serif">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div class="op-spinner" style="width:24px;height:24px;border-radius:50%;border:3px solid #e0e7ff;border-top-color:#4f46e5;animation:opspin 0.8s linear infinite"></div>
+        <div class="op-spinner" style="width:24px;height:24px;border-radius:50%;border:3px solid #e0e7ff;border-top-color:#2563eb;animation:opspin 0.8s linear infinite"></div>
         <div id="op-texto" style="flex:1;font-weight:600;color:#0f172a;font-size:14px">${textoInicial || 'Procesando…'}</div>
       </div>
       <div id="op-barra-wrap" style="display:none;background:#f1f5f9;border-radius:999px;height:8px;overflow:hidden">
-        <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .2s ease;border-radius:999px"></div>
+        <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .2s ease;border-radius:999px"></div>
       </div>
       <div id="op-conteo" style="display:none;font-size:11.5px;color:#64748b;text-align:right;margin-top:5px;font-family:'JetBrains Mono',ui-monospace,monospace"></div>
     </div>
@@ -710,7 +710,7 @@ function htmlLayout(cfg, stats) {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="settings" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+        <i data-lucide="settings" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
         <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Configuración</h1>
       </div>
 
@@ -768,7 +768,7 @@ function htmlDatosNegocio(cfg) {
       </div>
 
       <button id="cfg-guardar-negocio"
-        style="width:100%;padding:13px;background:#4f46e5;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35);margin-top:8px">
+        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);margin-top:8px">
         💾 Guardar configuración
       </button>
     </div>
@@ -842,7 +842,7 @@ function htmlExcel(stats) {
           📋 Descargar plantilla
         </button>
         <label
-          style="padding:10px 12px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+          style="padding:10px 12px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
           ⬆️ Importar Excel/CSV
           <input id="${idImp}" type="file" accept=".xlsx,.xls,.csv,.txt" style="display:none" />
         </label>
@@ -874,7 +874,7 @@ function htmlRespaldo() {
       <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💾 Respaldo (copia de seguridad)</h3>
       <p style="color:#64748b;font-size:13.5px;margin:0">Guarda todo tu sistema en un archivo, o restáuralo cuando quieras.</p>
       <button id="cfg-export-json"
-        style="padding:12px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+        style="padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
         ⬇️ Exportar respaldo (JSON)
       </button>
       <label
@@ -888,7 +888,7 @@ function htmlRespaldo() {
 
 function htmlDatosSistema(stats) {
   const badge = (icono, label, count) => `
-    <span style="background:#e0e7ff;color:#4338ca;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:7px">
+    <span style="background:#e0e7ff;color:#1d4ed8;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:7px">
       ${icono} ${fmt(count)} ${label}
     </span>
   `;

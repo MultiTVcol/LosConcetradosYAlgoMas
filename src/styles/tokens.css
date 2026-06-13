@@ -28,11 +28,11 @@
   --muted:        #475569;     /* Subido de #71717a → ya no es "gris fantasma" */
   --muted-soft:   #64748b;
 
-  /* Primario — Indigo profesional (Stripe-style) */
-  --primary:      #4f46e5;
-  --primary-d:    #4338ca;
-  --primary-soft: #eef2ff;
-  --primary-ring: rgba(79, 70, 229, .15);
+  /* Primario — Azul corporativo (estilo Stripe/Linear) */
+  --primary:      #2563eb;
+  --primary-d:    #1d4ed8;
+  --primary-soft: #eff6ff;
+  --primary-ring: rgba(37, 99, 235, .15);
 
   /* Acento secundario — Cyan */
   --accent:       #0ea5e9;

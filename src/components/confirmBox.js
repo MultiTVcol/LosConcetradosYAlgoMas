@@ -31,9 +31,9 @@ import * as Modal from './modal.js';
  * @param {string} opciones.mensaje - Pregunta/mensaje principal
  * @param {string} [opciones.textoConfirmar='Confirmar'] - Texto del botón positivo
  * @param {string} [opciones.textoCancelar='Cancelar'] - Texto del botón negativo
- * @param {string} [opciones.colorConfirmar='#4f46e5'] - Color del botón positivo
+ * @param {string} [opciones.colorConfirmar='#2563eb'] - Color del botón positivo
  * @param {string} [opciones.icono='?'] - Ícono central
- * @param {string} [opciones.colorIcono='#4f46e5'] - Color del ícono
+ * @param {string} [opciones.colorIcono='#2563eb'] - Color del ícono
  * @returns {Promise<boolean>} - true si confirmó, false si canceló
  */
 function crearDialog(opciones) {
@@ -110,7 +110,7 @@ function crearDialog(opciones) {
     btnConfirmar.setAttribute('data-primary', '');
     btnConfirmar.style.cssText = `
       padding: 11px 22px;
-      background: ${opciones.colorConfirmar || '#4f46e5'};
+      background: ${opciones.colorConfirmar || '#2563eb'};
       border: 0;
       color: white;
       border-radius: 10px;
@@ -120,7 +120,7 @@ function crearDialog(opciones) {
       font-family: inherit;
       min-width: 110px;
       transition: filter .15s;
-      box-shadow: 0 4px 8px -2px ${opciones.colorConfirmar || '#4f46e5'}40;
+      box-shadow: 0 4px 8px -2px ${opciones.colorConfirmar || '#2563eb'}40;
     `;
     btnConfirmar.onmouseenter = () => { btnConfirmar.style.filter = 'brightness(.92)'; };
     btnConfirmar.onmouseleave = () => { btnConfirmar.style.filter = 'brightness(1)'; };
@@ -183,8 +183,8 @@ export function preguntar(mensaje, opciones = {}) {
     titulo: opciones.titulo || 'Confirmación',
     mensaje,
     icono: '?',
-    colorIcono: '#4f46e5',
-    colorConfirmar: '#4f46e5',
+    colorIcono: '#2563eb',
+    colorConfirmar: '#2563eb',
     textoConfirmar: opciones.textoConfirmar || 'Confirmar',
     textoCancelar: opciones.textoCancelar || 'Cancelar',
   });
@@ -277,7 +277,7 @@ export function aviso(mensaje, opciones = {}) {
     const btnOk = document.createElement('button');
     btnOk.textContent = opciones.textoOk || 'Entendido';
     btnOk.style.cssText = `
-      padding: 11px 22px; background: #4f46e5; border: 0; color: white;
+      padding: 11px 22px; background: #2563eb; border: 0; color: white;
       border-radius: 10px; cursor: pointer; font-size: 14px;
       font-weight: 600; font-family: inherit; min-width: 110px;
     `;

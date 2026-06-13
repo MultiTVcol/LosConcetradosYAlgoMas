@@ -228,11 +228,11 @@ function htmlEditor(p) {
 
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button id="ed-pl-guardar" data-primary
-            style="flex:1;min-width:140px;padding:12px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">
+            style="flex:1;min-width:140px;padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
             💾 Guardar diseño
           </button>
           <button id="ed-pl-prueba"
-            style="flex:1;min-width:140px;padding:12px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
+            style="flex:1;min-width:140px;padding:12px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
             🧾 Imprimir prueba
           </button>
           <button id="ed-pl-restablecer"

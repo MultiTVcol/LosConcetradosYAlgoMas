@@ -221,7 +221,7 @@ export function crear(opciones) {
   function actualizarActivo() {
     dropdown.querySelectorAll('.ac-item').forEach((el, idx) => {
       if (idx === indiceActivo) {
-        el.style.background = '#eef2ff';
+        el.style.background = '#eff6ff';
       } else {
         el.style.background = 'white';
       }

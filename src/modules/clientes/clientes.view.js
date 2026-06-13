@@ -134,7 +134,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
       <div>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="users" style="width:28px;height:28px;color:#4f46e5;stroke-width:1.75"></i>
+          <i data-lucide="users" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
           <h1 style="font-size:26px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
             Clientes
           </h1>
@@ -148,7 +148,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
         </span>
         <button
           id="btn-nuevo-cliente"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #4f46e540"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
         >
           <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
           Nuevo cliente
@@ -196,8 +196,8 @@ function htmlCargando() {
 function htmlVacio() {
   return `
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:64px 24px;text-align:center">
-      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eef2ff;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="users" style="width:36px;height:36px;color:#4f46e5;stroke-width:1.5"></i>
+      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="users" style="width:36px;height:36px;color:#2563eb;stroke-width:1.5"></i>
       </div>
       <h2 style="font-size:18px;font-weight:600;color:#0f172a;margin:0 0 8px;letter-spacing:-0.01em">
         No hay clientes registrados
@@ -208,7 +208,7 @@ function htmlVacio() {
       </p>
       <button
         id="btn-nuevo-cliente-vacio"
-        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
       >
         <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
         Agregar primer cliente
@@ -276,7 +276,7 @@ function htmlFila(c) {
       </td>
       <td style="padding:14px 16px;text-align:center">
         ${nPE > 0
-          ? `<span style="background:#eef2ff;color:#4338ca;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px">💎 ${nPE}</span>`
+          ? `<span style="background:#eff6ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px">💎 ${nPE}</span>`
           : '<span style="color:#cbd5e1">—</span>'}
       </td>
       <td style="padding:10px 16px;text-align:right;white-space:nowrap">

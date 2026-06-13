@@ -63,7 +63,7 @@ function htmlLayout() {
   return `
     <div style="padding:32px 40px;max-width:1100px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="users" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+        <i data-lucide="users" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
         <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Usuarios y permisos</h1>
       </div>
 
@@ -88,7 +88,7 @@ function htmlLayout() {
             <div style="font-size:12.5px;color:#64748b;margin-top:2px">Administra los accesos al sistema.</div>
           </div>
           <button id="btn-nuevo-usuario"
-            style="padding:10px 16px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35);display:flex;align-items:center;gap:6px">
+            style="padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);display:flex;align-items:center;gap:6px">
             <i data-lucide="user-plus" style="width:16px;height:16px"></i> Nuevo usuario
           </button>
         </div>
@@ -119,11 +119,11 @@ function fila(u) {
   return `
     <tr style="border-bottom:1px solid #f1f5f9" data-id="${esc(u.id)}">
       <td style="padding:14px 12px;color:#0f172a;font-weight:600;font-family:'JetBrains Mono',ui-monospace,monospace">
-        ${esc(u.usuario)}${esYo ? ' <span style="background:#e0e7ff;color:#4338ca;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px">TÚ</span>' : ''}
+        ${esc(u.usuario)}${esYo ? ' <span style="background:#e0e7ff;color:#1d4ed8;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px">TÚ</span>' : ''}
       </td>
       <td style="padding:14px 12px;color:#475569">${esc(u.nombre)}</td>
       <td style="padding:14px 12px">
-        <span style="background:${u.rol === 'admin' ? '#eef2ff' : '#fef3c7'};color:${u.rol === 'admin' ? '#4338ca' : '#92400e'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em">
+        <span style="background:${u.rol === 'admin' ? '#eff6ff' : '#fef3c7'};color:${u.rol === 'admin' ? '#1d4ed8' : '#92400e'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em">
           ${u.rol === 'admin' ? '👑 Admin' : '💼 Cajero'}
         </span>
       </td>
@@ -136,7 +136,7 @@ function fila(u) {
         <div style="display:flex;gap:6px;justify-content:flex-end">
           ${u.rol !== 'admin' ? `
             <button class="u-permisos" data-id="${esc(u.id)}" title="Configurar permisos"
-              style="padding:6px 11px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">🔧 Permisos</button>
+              style="padding:6px 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">🔧 Permisos</button>
           ` : ''}
           <button class="u-editar" data-id="${esc(u.id)}" title="Editar"
             style="width:32px;height:32px;border:1px solid #fde68a;background:#fef9c3;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center">
@@ -202,7 +202,7 @@ async function abrirFormUsuario(id) {
         <div style="display:flex;gap:8px">
           <label style="flex:1;cursor:pointer">
             <input type="radio" name="uf-rol" value="admin" ${datos.rol === 'admin' ? 'checked' : ''} style="display:none" class="uf-rol-radio" />
-            <div class="uf-rol-card" data-rol="admin" style="padding:11px;border:2px solid ${datos.rol === 'admin' ? '#4f46e5' : '#e2e8f0'};background:${datos.rol === 'admin' ? '#eef2ff' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'admin' ? '#4338ca' : '#475569'}">👑 Administrador</div>
+            <div class="uf-rol-card" data-rol="admin" style="padding:11px;border:2px solid ${datos.rol === 'admin' ? '#2563eb' : '#e2e8f0'};background:${datos.rol === 'admin' ? '#eff6ff' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'admin' ? '#1d4ed8' : '#475569'}">👑 Administrador</div>
           </label>
           <label style="flex:1;cursor:pointer">
             <input type="radio" name="uf-rol" value="cajero" ${datos.rol === 'cajero' ? 'checked' : ''} style="display:none" class="uf-rol-radio" />
@@ -224,7 +224,7 @@ async function abrirFormUsuario(id) {
         <button id="uf-cancelar"
           style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
         <button id="uf-guardar"
-          style="flex:1.2;padding:11px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">💾 Guardar</button>
+          style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">💾 Guardar</button>
       </div>
     </div>
   `;
@@ -245,9 +245,9 @@ async function abrirFormUsuario(id) {
       m.body.querySelectorAll('.uf-rol-card').forEach((c) => {
         const seleccionado = c.dataset.rol === rol;
         const esAdmin = c.dataset.rol === 'admin';
-        c.style.borderColor = seleccionado ? (esAdmin ? '#4f46e5' : '#a16207') : '#e2e8f0';
-        c.style.background = seleccionado ? (esAdmin ? '#eef2ff' : '#fef3c7') : 'white';
-        c.style.color = seleccionado ? (esAdmin ? '#4338ca' : '#92400e') : '#475569';
+        c.style.borderColor = seleccionado ? (esAdmin ? '#2563eb' : '#a16207') : '#e2e8f0';
+        c.style.background = seleccionado ? (esAdmin ? '#eff6ff' : '#fef3c7') : 'white';
+        c.style.color = seleccionado ? (esAdmin ? '#1d4ed8' : '#92400e') : '#475569';
       });
     });
   });
@@ -327,7 +327,7 @@ async function abrirEditorPermisos(id) {
       <button id="perm-cancelar"
         style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="perm-guardar"
-        style="flex:1.2;padding:11px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar permisos</button>
+        style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar permisos</button>
     </div>
   `;
 

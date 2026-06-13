@@ -12,7 +12,21 @@
       "Bash(git remote *)",
       "Bash(git push *)",
       "Bash(node -e ' *)",
-      "Bash(xargs wc -l)"
+      "Bash(xargs wc -l)",
+      "Bash(git -C /c/PosPunto log --oneline -1)",
+      "Bash(git -C /c/ContaExpress log --oneline -3)",
+      "Bash(git -C /c/ContaExpress add -A)",
+      "Bash(git -C /c/ContaExpress commit -m ' *)",
+      "Bash(git -C /c/ContaExpress push)",
+      "Bash(git -C /c/ContaExpress status --short)",
+      "Bash(git -C /c/ContaExpress show --stat HEAD)",
+      "Bash(git -C /c/ContaExpress show --stat HEAD --format=\"\")",
+      "Bash(git -C /c/ContaExpress log --oneline -2 -- src/modules/reportes/reportes.view.js)",
+      "Bash(git -C /c/ContaExpress commit -m \"AUDITORIA.md: marcar O1 \\(cierre de ejercicio\\) como resuelto\")",
+      "Bash(grep -nA8 \"const ANCHOS\" src/components/modal.js)",
+      "Bash(git -C /c/PosPunto commit -m ' *)",
+      "Bash(git -C /c/PosPunto push)",
+      "Bash(git -C /c/PosPunto add -A)"
     ]
   }
 }

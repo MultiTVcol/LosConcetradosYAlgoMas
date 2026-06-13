@@ -85,13 +85,13 @@ function htmlLayout() {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
-        <i data-lucide="truck" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
+        <i data-lucide="truck" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
         <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Compras</h1>
       </div>
 
       <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-          <div style="width:44px;height:44px;border-radius:11px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:22px">🚚</div>
+          <div style="width:44px;height:44px;border-radius:11px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:22px">🚚</div>
           <div>
             <div style="font-size:15px;font-weight:700;letter-spacing:-0.01em;color:#0f172a">Módulo de Compras</div>
             <div style="font-size:12.5px;color:#64748b">${fmt(_proveedores.length)} proveedor(es) · ${fmt(_compras.length)} compras registradas</div>
@@ -101,7 +101,7 @@ function htmlLayout() {
           <button id="comp-btn-prov-list"
             style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">🏢 Ver proveedores</button>
           <button id="comp-btn-prov-nuevo"
-            style="padding:10px 14px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">+ Agregar proveedor</button>
+            style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">+ Agregar proveedor</button>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ function htmlFormCompra() {
         ${prov ? `
           <div id="comp-prov-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;cursor:pointer">
             <div style="min-width:0;flex:1">
-              <div style="display:flex;align-items:center;gap:8px"><b style="font-size:14px;color:#0f172a">${esc(prov.nombre)}</b> ${prov.nit ? `<span style="background:#e0e7ff;color:#4338ca;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px">${esc(prov.nit)}</span>` : ''}</div>
+              <div style="display:flex;align-items:center;gap:8px"><b style="font-size:14px;color:#0f172a">${esc(prov.nombre)}</b> ${prov.nit ? `<span style="background:#e0e7ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px">${esc(prov.nit)}</span>` : ''}</div>
               <div style="font-size:11.5px;color:#64748b;margin-top:2px">${[prov.telefono, prov.ciudad, prov.contacto].filter(Boolean).map(esc).join(' · ') || 'Sin datos adicionales'}</div>
             </div>
             <button id="comp-prov-cambiar"
@@ -140,7 +140,7 @@ function htmlFormCompra() {
               <div style="font-weight:600;font-size:13.5px;color:#0f172a">Sin proveedor asignado</div>
               <div style="font-size:11.5px;color:#64748b;margin-top:2px">${_proveedores.length ? 'Click para seleccionar o crear uno' : 'Crea tu primer proveedor para empezar'}</div>
             </div>
-            <button style="padding:7px 13px;background:#4f46e5;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">${_proveedores.length ? 'Seleccionar' : '+ Nuevo'}</button>
+            <button style="padding:7px 13px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">${_proveedores.length ? 'Seleccionar' : '+ Nuevo'}</button>
           </div>
         `}
       </div>
@@ -187,9 +187,9 @@ function htmlSelectorLectorCompra() {
   return `
     <div style="display:flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:8px;padding:3px">
       <button class="lm-btn-comp" data-modo="pistola"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#4f46e5' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">🔫 Pistola</button>
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">🔫 Pistola</button>
       <button class="lm-btn-comp" data-modo="manual"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#4f46e5' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">⌨️ Manual</button>
+        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">⌨️ Manual</button>
     </div>
   `;
 }
@@ -318,7 +318,7 @@ function pintarResultadosBusqueda() {
     const activo = i === _indiceActivo;
     return `
       <button class="comp-res" data-id="${esc(p.id)}"
-        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#4f46e5' : '#e2e8f0'};background:${activo ? '#eef2ff' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#2563eb' : '#e2e8f0'};background:${activo ? '#eff6ff' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
         <div style="min-width:0;flex:1">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:13px;background:#f1f5f9;color:#0f172a;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
@@ -441,14 +441,14 @@ function abrirModalCantidadCompra(prodId) {
         style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:18px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box" />
 
       <div id="comp-mc-sub" style="margin-top:12px;text-align:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:14px">
-        Subtotal: <b style="font-size:18px;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace">${money(cant * costo)}</b>
+        Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(cant * costo)}</b>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:18px">
         <button id="comp-mc-cancelar"
           style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
         <button id="comp-mc-aceptar"
-          style="flex:1;padding:12px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">${yaEn ? '🔄 Reemplazar' : '＋ Agregar'}</button>
+          style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${yaEn ? '🔄 Reemplazar' : '＋ Agregar'}</button>
       </div>
     </div>
   `;
@@ -465,7 +465,7 @@ function abrirModalCantidadCompra(prodId) {
   const recalc = () => {
     const c = num(inpC.value);
     const k = num(inpK.value);
-    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c * k)}</b>`;
+    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c * k)}</b>`;
   };
   inpC.addEventListener('input', recalc);
   inpK.addEventListener('input', recalc);
@@ -598,7 +598,7 @@ function abrirSelectorProveedor() {
       <button id="prov-sel-cancel"
         style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="prov-sel-nuevo"
-        style="flex:1;padding:11px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">+ Crear proveedor</button>
+        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">+ Crear proveedor</button>
     </div>
   `;
   const m = Modal.abrir({ titulo: 'Seleccionar proveedor', contenido, ancho: 'md' });
@@ -674,7 +674,7 @@ function abrirFormProveedor(prov = null) {
       <button id="prov-cancel"
         style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="prov-save"
-        style="flex:1;padding:11px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar</button>
+        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar</button>
     </div>
   `;
 
@@ -746,14 +746,14 @@ function abrirRegistroPago() {
   const contenido = `
     <div style="text-align:center;margin-bottom:14px">
       <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px">Total a pagar</div>
-      <div style="background:#eef2ff;border-radius:12px;padding:18px 14px">
-        <div style="font-size:32px;font-weight:800;color:#4338ca;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(total)}</div>
+      <div style="background:#eff6ff;border-radius:12px;padding:18px 14px">
+        <div style="font-size:32px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(total)}</div>
       </div>
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button id="comp-pago-contado" class="comp-tipo-pago"
-        style="flex:1;padding:11px;border:1.5px solid #4f46e5;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💵 Contado</button>
+        style="flex:1;padding:11px;border:1.5px solid #2563eb;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💵 Contado</button>
       <button id="comp-pago-credito" class="comp-tipo-pago"
         style="flex:1;padding:11px;border:1.5px solid #e2e8f0;background:white;color:#475569;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">📋 Crédito</button>
     </div>
@@ -806,9 +806,9 @@ function abrirRegistroPago() {
     const c = m.body.querySelector('#comp-pago-contado');
     const cr = m.body.querySelector('#comp-pago-credito');
     const setOn = (btn, on) => {
-      btn.style.background = on ? '#4f46e5' : 'white';
+      btn.style.background = on ? '#2563eb' : 'white';
       btn.style.color = on ? 'white' : '#475569';
-      btn.style.borderColor = on ? '#4f46e5' : '#e2e8f0';
+      btn.style.borderColor = on ? '#2563eb' : '#e2e8f0';
     };
     setOn(c, tipoPago === 'contado');
     setOn(cr, tipoPago === 'credito');
@@ -905,7 +905,7 @@ function pintarCuentasPorPagar() {
                   <td style="padding:10px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;color:#475569">${esc((c.fecha || '').slice(0, 10))}</td>
                   <td style="padding:10px;color:#0f172a"><b>${esc(c.proveedor || 'Sin proveedor')}</b></td>
                   <td style="padding:10px;color:#64748b">${esc(c.ref || '—')}</td>
-                  <td style="padding:10px">${c.vence ? `<span style="background:${vencido ? '#fef2f2' : '#e0e7ff'};color:${vencido ? '#dc2626' : '#4338ca'};font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px">${esc(c.vence)}</span>` : '—'}</td>
+                  <td style="padding:10px">${c.vence ? `<span style="background:${vencido ? '#fef2f2' : '#e0e7ff'};color:${vencido ? '#dc2626' : '#1d4ed8'};font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px">${esc(c.vence)}</span>` : '—'}</td>
                   <td style="padding:10px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</td>
                   <td style="padding:10px;text-align:right;color:#a16207;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.saldo)}</td>
                   <td style="padding:10px">
@@ -915,7 +915,7 @@ function pintarCuentasPorPagar() {
                         <i data-lucide="eye" style="width:14px;height:14px;color:#475569"></i>
                       </button>
                       <button class="comp-abonar" data-id="${esc(c.id)}"
-                        style="padding:7px 12px;background:#4f46e5;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">💰 Abonar</button>
+                        style="padding:7px 12px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">💰 Abonar</button>
                     </div>
                   </td>
                 </tr>
@@ -973,7 +973,7 @@ function abrirAbono(compraId) {
             <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;font-size:12.5px">
               <div>
                 <span style="color:#475569;font-family:'JetBrains Mono',ui-monospace,monospace">${esc((a.fecha || '').slice(0, 10))}</span>
-                <span style="background:#e0e7ff;color:#4338ca;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px">${esc(a.metodo || 'Efectivo')}</span>
+                <span style="background:#e0e7ff;color:#1d4ed8;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px">${esc(a.metodo || 'Efectivo')}</span>
               </div>
               <b style="color:#15803d;font-family:'JetBrains Mono',ui-monospace,monospace">${money(a.monto)}</b>
             </div>
@@ -1007,7 +1007,7 @@ function abrirAbono(compraId) {
       <button id="comp-abono-cancel"
         style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="comp-abono-save"
-        style="flex:1;padding:11px;border:0;background:#4f46e5;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Registrar abono</button>
+        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Registrar abono</button>
     </div>
   `;
 
@@ -1226,7 +1226,7 @@ function verDetalleCompra(compraId) {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Historial de abonos (${abonos.length})</div>
           ${!pagada ? `
-            <button id="comp-det-abonar" style="padding:6px 12px;background:#4f46e5;color:white;border:0;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit">💰 Nuevo abono</button>
+            <button id="comp-det-abonar" style="padding:6px 12px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit">💰 Nuevo abono</button>
           ` : ''}
         </div>
         ${abonos.length === 0 ? `
@@ -1249,7 +1249,7 @@ function verDetalleCompra(compraId) {
                   <tr style="border-top:1px solid #f1f5f9">
                     <td style="padding:8px 10px;color:#94a3b8">${i + 1}</td>
                     <td style="padding:8px 10px;font-family:'JetBrains Mono',ui-monospace,monospace;color:#475569">${esc((a.fecha || '').slice(0, 10))}</td>
-                    <td style="padding:8px 10px"><span style="background:#e0e7ff;color:#4338ca;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">${esc(a.metodo || 'Efectivo')}</span></td>
+                    <td style="padding:8px 10px"><span style="background:#e0e7ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">${esc(a.metodo || 'Efectivo')}</span></td>
                     <td style="padding:8px 10px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#15803d">${money(a.monto)}</td>
                   </tr>
                 `).join('')}
