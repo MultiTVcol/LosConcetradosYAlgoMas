@@ -460,3 +460,16 @@ export function getContenido() {
 export function refrescarIconos(root) {
   renderLucide(root || _contenido);
 }
+
+/**
+ * Dispara la transición de entrada (fade + slide-up) del área de contenido.
+ * Se llama al cambiar de módulo para que el contenido no aparezca "de golpe".
+ * Re-arranca la animación quitando la clase, forzando un reflow y volviéndola
+ * a poner.
+ */
+export function animarEntrada() {
+  if (!_contenido) return;
+  _contenido.classList.remove('mod-enter');
+  void _contenido.offsetWidth; // fuerza reflow para reiniciar la animación
+  _contenido.classList.add('mod-enter');
+}

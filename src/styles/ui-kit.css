@@ -7,6 +7,21 @@
  */
 
 /* ============================================================
+   TRANSICIÓN AL CAMBIAR DE MÓDULO (fade + leve slide-up)
+   ============================================================ */
+@keyframes modEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.mod-enter {
+  animation: modEnter .28s cubic-bezier(.16, 1, .3, 1);
+  will-change: opacity, transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mod-enter { animation: none; }
+}
+
+/* ============================================================
    TABLA PREMIUM
    ============================================================ */
 .ui-table {

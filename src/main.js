@@ -7,7 +7,7 @@ import * as Realtime from './services/realtime.js';
 import * as UsuariosRepo from './modules/usuarios/usuarios.repo.js';
 import { mostrarLogin } from './app/login.js';
 import { mostrarActivacion } from './app/activacion.js';
-import { montarShell, setContenido, marcarActivo } from './app/shell.js';
+import { montarShell, setContenido, marcarActivo, animarEntrada } from './app/shell.js';
 
 console.log('🐾 PosPunto arrancando…');
 
@@ -208,6 +208,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         mostrarPlaceholder('No encontrado', 'circle-help', `La ruta "${ruta}" no existe.`);
       }
+
+      // Transición premium: el contenido nuevo entra con fade + slide-up
+      // en vez de aparecer de golpe.
+      try { animarEntrada(); } catch (e) { /**/ }
     },
   });
 
