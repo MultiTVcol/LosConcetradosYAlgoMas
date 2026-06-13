@@ -143,7 +143,7 @@ export function crear(config) {
     // Crear el contenedor del dropdown
     const dropdown = document.createElement('div');
     dropdown.style.cssText = `
-      position: absolute;
+      position: fixed;
       background: white;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
@@ -229,16 +229,26 @@ export function crear(config) {
 
     document.body.appendChild(dropdown);
 
-    // Posicionar
+    // Posicionar — position:fixed usa coordenadas del VIEWPORT, que es lo
+    // que devuelve getBoundingClientRect. No se suma scroll (en esta app el
+    // scroll vive dentro del área de contenido, no en window).
     const rect = trigger.getBoundingClientRect();
     const ancho = config.ancho || Math.max(rect.width, anchoMinimo);
+    const margen = 8;
     dropdown.style.width = `${ancho}px`;
-    dropdown.style.top = `${rect.bottom + window.scrollY + 4}px`;
 
-    if (alineacion === 'right') {
-      dropdown.style.left = `${rect.right - ancho + window.scrollX}px`;
+    // Horizontal: alineado a un borde del trigger, sin salirse de la pantalla
+    let left = alineacion === 'right' ? (rect.right - ancho) : rect.left;
+    left = Math.max(margen, Math.min(left, window.innerWidth - ancho - margen));
+    dropdown.style.left = `${left}px`;
+
+    // Vertical: debajo del trigger; si no cabe, se abre hacia arriba
+    const alto = dropdown.offsetHeight;
+    const espacioAbajo = window.innerHeight - rect.bottom;
+    if (espacioAbajo < alto + margen && rect.top > alto + margen) {
+      dropdown.style.top = `${rect.top - alto - 4}px`;
     } else {
-      dropdown.style.left = `${rect.left + window.scrollX}px`;
+      dropdown.style.top = `${rect.bottom + 4}px`;
     }
 
     // Animar entrada
