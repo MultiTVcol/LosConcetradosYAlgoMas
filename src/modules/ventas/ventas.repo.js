@@ -247,8 +247,7 @@ export function construirVenta(datos) {
  *
  * @returns {Promise<Array>}
  */
-export async function listar() {
-  const items = await db.getAll(TABLA);
+function ordenarDesc(items) {
   items.sort((a, b) => {
     const fa = a.fecha || '';
     const fb = b.fecha || '';
@@ -259,6 +258,26 @@ export async function listar() {
     return nb.localeCompare(na);
   });
   return items;
+}
+
+export async function listar() {
+  return ordenarDesc(await db.getAll(TABLA));
+}
+
+/**
+ * Lista SOLO las ventas dentro de un rango de fechas [desde, hasta]
+ * (YYYY-MM-DD, ambos inclusive), usando el índice por fecha — no carga
+ * toda la tabla. Clave para que el historial/reportes escalen.
+ *
+ * @param {string} desde - 'YYYY-MM-DD'
+ * @param {string} hasta - 'YYYY-MM-DD'
+ * @returns {Promise<Array>}
+ */
+export async function listarRango(desde, hasta) {
+  if (!desde || !hasta) return listar();
+  // upper con sufijo alto para incluir fechas con hora del mismo día
+  const items = await db.getAllByIndexRange(TABLA, 'fecha', desde, hasta + '￿');
+  return ordenarDesc(items);
 }
 
 /**

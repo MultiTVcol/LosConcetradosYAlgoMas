@@ -19,6 +19,7 @@ import * as Auth from '../../services/auth.js';
 import * as Realtime from '../../services/realtime.js';
 import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
+import { todayISO } from '../../core/dates.js';
 import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import { pageHeader, kpiGrid, badge, menuButton, wireMenus } from '../../app/ui-kit.js';
@@ -29,8 +30,35 @@ import { pageHeader, kpiGrid, badge, menuButton, wireMenus } from '../../app/ui-
 
 let _contenedor = null;
 let _facturas = [];
-let _filtro = { q: '', desde: '', hasta: '' };
+let _filtro = { q: '' };               // búsqueda de texto (en memoria)
+let _rango = { desde: '', hasta: '' }; // ventana de carga (índice por fecha)
 let _offRealtime = null;
+
+const DIAS_DEFECTO = 90;
+
+/** Rango por defecto: últimos N días (carga acotada, no toda la BD). */
+function rangoPorDefecto() {
+  const hasta = todayISO();
+  const d = new Date();
+  d.setDate(d.getDate() - DIAS_DEFECTO);
+  const desde = d.toISOString().slice(0, 10);
+  return { desde, hasta };
+}
+
+/** Carga las facturas según el rango actual (o todo si el rango está vacío). */
+async function cargarFacturas() {
+  if (_rango.desde && _rango.hasta) return Repo.listarRango(_rango.desde, _rango.hasta);
+  return Repo.listar();
+}
+
+/** Recarga datos (re-consulta por rango) y vuelve a pintar todo. */
+async function recargar() {
+  try { _facturas = await cargarFacturas(); } catch (e) { _facturas = []; }
+  _contenedor.innerHTML = htmlLayout();
+  refrescarIconos(_contenedor);
+  adjuntarEventos(_contenedor);
+  pintarLista();
+}
 
 // ============================================================
 //  RENDERIZADO
@@ -38,7 +66,8 @@ let _offRealtime = null;
 
 export async function render(contenedor) {
   _contenedor = contenedor;
-  _filtro = { q: '', desde: '', hasta: '' };
+  _filtro = { q: '' };
+  _rango = rangoPorDefecto();
 
   // Cerrar suscripción anterior
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
@@ -46,17 +75,17 @@ export async function render(contenedor) {
   contenedor.innerHTML = htmlCargando();
 
   try {
-    _facturas = await Repo.listar();
+    _facturas = await cargarFacturas();
   } catch (err) {
     console.error('Error listando facturas:', err);
     _facturas = [];
     Toast.error('No se pudieron cargar las facturas');
   }
 
-  // Suscripción en vivo: ventas cambian aquí también
+  // Suscripción en vivo: recargar el rango vigente cuando cambian ventas
   _offRealtime = Realtime.escuchar('ventas', async () => {
     try {
-      _facturas = await Repo.listar();
+      _facturas = await cargarFacturas();
       pintarLista();
     } catch (err) { console.warn('Realtime facturas:', err); }
   });
@@ -147,25 +176,13 @@ function filaFactura(f) {
 // ============================================================
 
 function aplicarFiltros(lista, filtro) {
-  let r = [...lista];
+  // El rango de fechas ya se aplicó al CARGAR (índice). Aquí solo el texto.
   const q = (filtro.q || '').toLowerCase().trim();
-  if (q) {
-    r = r.filter((f) => {
-      const text = [
-        f.numero,
-        f.cliente_nombre,
-        f.metodo_pago,
-      ].filter(Boolean).join(' ').toLowerCase();
-      return text.includes(q);
-    });
-  }
-  if (filtro.desde) {
-    r = r.filter((f) => (f.fecha || '').slice(0, 10) >= filtro.desde);
-  }
-  if (filtro.hasta) {
-    r = r.filter((f) => (f.fecha || '').slice(0, 10) <= filtro.hasta);
-  }
-  return r;
+  if (!q) return [...lista];
+  return lista.filter((f) => {
+    const text = [f.numero, f.cliente_nombre, f.metodo_pago].filter(Boolean).join(' ').toLowerCase();
+    return text.includes(q);
+  });
 }
 
 // ============================================================
@@ -187,26 +204,20 @@ function adjuntarEventos(contenedor) {
       }, 120);
     });
   }
+  // Cambiar el rango RECARGA desde el índice (no filtra en memoria)
   if (inpDesde) {
-    inpDesde.addEventListener('change', (e) => {
-      _filtro.desde = e.target.value;
-      pintarLista();
-    });
+    inpDesde.addEventListener('change', (e) => { _rango.desde = e.target.value; recargar(); });
   }
   if (inpHasta) {
-    inpHasta.addEventListener('change', (e) => {
-      _filtro.hasta = e.target.value;
-      pintarLista();
-    });
+    inpHasta.addEventListener('change', (e) => { _rango.hasta = e.target.value; recargar(); });
   }
-  const btnLimpiar = contenedor.querySelector('#fac-limpiar');
-  if (btnLimpiar) {
-    btnLimpiar.addEventListener('click', () => {
-      _filtro = { q: '', desde: '', hasta: '' };
-      if (inpQ) inpQ.value = '';
-      if (inpDesde) inpDesde.value = '';
-      if (inpHasta) inpHasta.value = '';
-      pintarLista();
+  // Alterna entre "todo el historial" y "últimos 90 días"
+  const btnTodo = contenedor.querySelector('#fac-todo');
+  if (btnTodo) {
+    btnTodo.addEventListener('click', () => {
+      _rango = (_rango.desde || _rango.hasta) ? { desde: '', hasta: '' } : rangoPorDefecto();
+      _filtro.q = '';
+      recargar();
     });
   }
 }
@@ -523,7 +534,7 @@ async function borrarFactura(id) {
   try {
     const r = await Repo.eliminar(id);
     Toast.ok(`Venta eliminada · ${fmt(r.devueltas)} uds devueltas al inventario`);
-    _facturas = await Repo.listar();
+    _facturas = await cargarFacturas();
     pintarLista();
   } catch (err) {
     console.error('Error eliminando venta:', err);
@@ -571,20 +582,25 @@ function htmlLayout() {
       <div class="ui-filterbar">
         <label class="ui-field ui-filter-grow">
           <span class="ui-label">Buscar</span>
-          <input id="fac-q" class="ui-input" type="text" placeholder="Cliente, N° de factura o método de pago…" autocomplete="off" />
+          <input id="fac-q" class="ui-input" type="text" value="${esc(_filtro.q)}" placeholder="Cliente, N° de factura o método de pago…" autocomplete="off" />
         </label>
         <label class="ui-field">
           <span class="ui-label">Desde</span>
-          <input id="fac-desde" class="ui-input" type="date" />
+          <input id="fac-desde" class="ui-input" type="date" value="${esc(_rango.desde)}" />
         </label>
         <label class="ui-field">
           <span class="ui-label">Hasta</span>
-          <input id="fac-hasta" class="ui-input" type="date" />
+          <input id="fac-hasta" class="ui-input" type="date" value="${esc(_rango.hasta)}" />
         </label>
-        <button id="fac-limpiar" type="button"
+        <button id="fac-todo" type="button"
           style="padding:9px 16px;background:#fff;border:1px solid #d1d5db;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#374151;height:39px">
-          Limpiar
+          ${(_rango.desde || _rango.hasta) ? 'Cargar todo' : 'Últimos 90 días'}
         </button>
+      </div>
+      <div style="font-size:12px;color:#9ca3af;margin:-8px 2px 16px">
+        ${(_rango.desde || _rango.hasta)
+          ? `Mostrando facturas del rango cargado. Para ver el histórico completo, usa <b>Cargar todo</b>.`
+          : `Mostrando <b>todo el historial</b>. En tiendas con mucho volumen, acota por fechas para que cargue más rápido.`}
       </div>
 
       <div id="fac-lista" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px"></div>

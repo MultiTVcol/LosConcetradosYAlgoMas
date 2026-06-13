@@ -34,7 +34,7 @@ const DB_NAME = 'pospunto';
  * cambiar índices), hay que subir este número para que IndexedDB
  * sepa que tiene que aplicar la migración.
  */
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 
 /**
  * Lista de stores (tablas) que tendrá la BD.
@@ -52,6 +52,35 @@ const STORES = [
   'ajustes_inventario',  // conteos físicos: ajustes de stock por sobrante/faltante
   'kvs',  // key-value store: configs, preferencias, contadores
 ];
+
+/**
+ * Índices por store. Permiten consultar por rango sin cargar toda la tabla
+ * (ej: ventas de un rango de fechas) — clave para que el historial y los
+ * reportes escalen cuando hay decenas de miles de ventas.
+ *
+ * Si agregás un índice nuevo, subí DB_VERSION para que se cree.
+ */
+const INDICES = {
+  ventas: [{ nombre: 'fecha', keyPath: 'fecha' }],
+};
+
+/**
+ * Crea (si faltan) los stores y sus índices dentro de una transacción de
+ * upgrade. Se usa tanto en el alta inicial como en la auto-reparación.
+ */
+function aplicarEsquema(db, tx) {
+  for (const storeName of STORES) {
+    const store = db.objectStoreNames.contains(storeName)
+      ? tx.objectStore(storeName)
+      : db.createObjectStore(storeName, { keyPath: 'id' });
+    for (const idx of (INDICES[storeName] || [])) {
+      if (!store.indexNames.contains(idx.nombre)) {
+        store.createIndex(idx.nombre, idx.keyPath, { unique: false });
+        console.log(`📑 Índice creado: ${storeName}.${idx.nombre}`);
+      }
+    }
+  }
+}
 
 // ============================================================
 //  CONEXIÓN A LA BD (se abre una sola vez y se reusa)
@@ -108,12 +137,7 @@ function openDB() {
       // Acá se crean los stores que no existen.
       req.onupgradeneeded = (event) => {
         const db = event.target.result;
-        for (const storeName of STORES) {
-          if (!db.objectStoreNames.contains(storeName)) {
-            db.createObjectStore(storeName, { keyPath: 'id' });
-            console.log(`📦 Store creado: ${storeName}`);
-          }
-        }
+        aplicarEsquema(db, event.target.transaction);
       };
     });
   })();
@@ -151,13 +175,7 @@ export async function init() {
       req.onerror = () => reject(req.error);
       req.onsuccess = () => { req.result.close(); resolve(); };
       req.onupgradeneeded = (event) => {
-        const dbu = event.target.result;
-        for (const storeName of STORES) {
-          if (!dbu.objectStoreNames.contains(storeName)) {
-            dbu.createObjectStore(storeName, { keyPath: 'id' });
-            console.log(`📦 Store recreado: ${storeName}`);
-          }
-        }
+        aplicarEsquema(event.target.result, event.target.transaction);
       };
     });
     // Reabrir con la versión nueva
@@ -233,6 +251,43 @@ export async function getAll(storeName) {
     const tx = db.transaction(storeName, 'readonly');
     const store = tx.objectStore(storeName);
     const req = store.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/**
+ * Obtiene registros cuyo índice está dentro de un rango [lower, upper]
+ * (ambos inclusive), SIN cargar toda la tabla. Ideal para traer solo las
+ * ventas de un rango de fechas en bases con muchos registros.
+ *
+ * Si el índice no existe (BD vieja sin migrar), cae a getAll() filtrando
+ * en memoria, para no romper nada.
+ *
+ * @param {string} storeName
+ * @param {string} indexName - nombre del índice (ej: 'fecha')
+ * @param {string|number} lower - límite inferior inclusivo
+ * @param {string|number} upper - límite superior inclusivo
+ * @returns {Promise<Array>}
+ */
+export async function getAllByIndexRange(storeName, indexName, lower, upper) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    if (!store.indexNames.contains(indexName)) {
+      // Fallback: BD sin el índice todavía → traer todo y filtrar en JS
+      const req = store.getAll();
+      req.onsuccess = () => resolve((req.result || []).filter((x) => {
+        const v = x?.[indexName];
+        return v != null && v >= lower && v <= upper;
+      }));
+      req.onerror = () => reject(req.error);
+      return;
+    }
+    const idx = store.index(indexName);
+    const rango = IDBKeyRange.bound(lower, upper, false, false);
+    const req = idx.getAll(rango);
     req.onsuccess = () => resolve(req.result || []);
     req.onerror = () => reject(req.error);
   });

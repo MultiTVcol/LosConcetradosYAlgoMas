@@ -45,7 +45,7 @@ export async function render(contenedor) {
 
   contenedor.innerHTML = htmlCargando();
 
-  try { _ventas = await VentasRepo.listar(); } catch (e) { console.warn(e); _ventas = []; }
+  try { _ventas = await VentasRepo.listarRango(_estado.desde, _estado.hasta); } catch (e) { console.warn(e); _ventas = []; }
   try { _gastos = await GastosRepo.listar(); } catch (e) { console.warn(e); _gastos = []; }
   try { _compras = await ComprasRepo.listar(); } catch (e) { console.warn(e); _compras = []; }
   try { _productos = await ProductosRepo.listar(); } catch (e) { console.warn(e); _productos = []; }
@@ -62,7 +62,7 @@ export async function render(contenedor) {
     ['ventas', 'compras', 'gastos', 'productos'],
     async () => {
       try {
-        _ventas = await VentasRepo.listar();
+        _ventas = await VentasRepo.listarRango(_estado.desde, _estado.hasta);
         _gastos = await GastosRepo.listar();
         _compras = await ComprasRepo.listar();
         _productos = await ProductosRepo.listar();
@@ -70,6 +70,13 @@ export async function render(contenedor) {
       } catch (err) { console.warn('Realtime cierre:', err); }
     },
   );
+}
+
+/** Recarga las ventas del periodo activo (índice por fecha) y repinta. */
+async function recargarVentas() {
+  try { _ventas = await VentasRepo.listarRango(_estado.desde, _estado.hasta); }
+  catch (e) { console.warn('recargarVentas:', e); }
+  pintarContenido();
 }
 
 function pintarContenido() {
@@ -239,17 +246,17 @@ function adjuntarEventos(contenedor) {
     _estado.desde = e.target.value;
     _estado.preset = 'custom';
     marcarPreset();
-    pintarContenido();
+    recargarVentas();
   });
   contenedor.querySelector('#cierre-hasta')?.addEventListener('change', (e) => {
     _estado.hasta = e.target.value;
     _estado.preset = 'custom';
     marcarPreset();
-    pintarContenido();
+    recargarVentas();
   });
 
   contenedor.querySelector('#cierre-btn-actualizar')?.addEventListener('click', async () => {
-    try { _ventas = await VentasRepo.listar(); } catch (e) { /**/ }
+    try { _ventas = await VentasRepo.listarRango(_estado.desde, _estado.hasta); } catch (e) { /**/ }
     try { _gastos = await GastosRepo.listar(); } catch (e) { /**/ }
     try { _compras = await ComprasRepo.listar(); } catch (e) { /**/ }
     try { _productos = await ProductosRepo.listar(); } catch (e) { /**/ }
@@ -292,7 +299,7 @@ function aplicarPreset(preset) {
   if (inpD) inpD.value = desde;
   if (inpH) inpH.value = hasta;
   marcarPreset();
-  pintarContenido();
+  recargarVentas();
 }
 
 function marcarPreset() {
