@@ -92,8 +92,9 @@ function pintarContenido() {
   const colNeta = r.utilidadNeta >= 0 ? '#15803d' : '#dc2626';
 
   box.innerHTML = `
-    <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;font-weight:700;color:#1d4ed8">
-      📅 Periodo: <b>${fechaBonita(_estado.desde)}</b> → <b>${fechaBonita(_estado.hasta)}</b>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;font-weight:600;color:#1d4ed8;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap">
+      <i data-lucide="calendar-range" style="width:16px;height:16px;stroke-width:2"></i>
+      Periodo: <b>${fechaBonita(_estado.desde)}</b> → <b>${fechaBonita(_estado.hasta)}</b>
       &nbsp;·&nbsp; ${fmt(r.nFac)} venta(s) &nbsp;·&nbsp; ${fmt(r.nGastos)} gasto(s)
     </div>
 
@@ -111,8 +112,8 @@ function pintarContenido() {
           <div style="color:#64748b;font-size:13.5px;margin-top:2px">Imprime el resumen del periodo en tu impresora POS térmica.</div>
         </div>
         <button id="cierre-btn-imprimir"
-          style="padding:14px 26px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);min-width:240px">
-          🧾 Imprimir Informe POS
+          style="padding:14px 26px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);min-width:240px;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+          <i data-lucide="printer" style="width:18px;height:18px;stroke-width:2"></i> Imprimir Informe POS
         </button>
       </div>
     </div>
@@ -325,17 +326,17 @@ function htmlLayout() {
       <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
           <div>
-            <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">📑 Cierre de Caja</h1>
+            <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em;display:flex;align-items:center;gap:9px"><i data-lucide="receipt-text" style="width:24px;height:24px;color:#2563eb;stroke-width:1.9"></i> Cierre de Caja</h1>
             <div style="color:#64748b;font-weight:500;margin-top:4px;font-size:13.5px">Informe financiero del periodo, listo para imprimir en POS térmica.</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="cierre-btn-actualizar"
-              style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">📊 Actualizar</button>
+              style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;display:inline-flex;align-items:center;gap:6px"><i data-lucide="refresh-cw" style="width:15px;height:15px;stroke-width:2"></i> Actualizar</button>
             <button id="cierre-btn-pdf"
-              style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📄 Cierre PDF</button>
+              style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><i data-lucide="file-text" style="width:15px;height:15px;stroke-width:2"></i> Cierre PDF</button>
             <button id="cierre-btn-pos-top"
               style="padding:10px 18px;background:#15803d;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35);display:flex;align-items:center;gap:6px">
-              🧾 Hacer cierre POS
+              <i data-lucide="printer" style="width:16px;height:16px;stroke-width:2"></i> Hacer cierre POS
             </button>
           </div>
         </div>
@@ -351,12 +352,12 @@ function htmlLayout() {
 
         <div style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">📅 Desde</div>
+            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Desde</div>
             <input id="cierre-desde" type="date" value="${esc(_estado.desde)}"
               style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">📅 Hasta</div>
+            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Hasta</div>
             <input id="cierre-hasta" type="date" value="${esc(_estado.hasta)}"
               style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
@@ -372,7 +373,7 @@ function htmlPanelVentas(r, tkt) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🟢 Ventas</h3>
+        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a;display:flex;align-items:center;gap:8px"><i data-lucide="shopping-cart" style="width:18px;height:18px;color:#16a34a;stroke-width:2"></i> Ventas</h3>
         <span style="background:#e0e7ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.nFac)} fac.</span>
       </div>
       <div style="margin-bottom:10px">
@@ -391,7 +392,7 @@ function htmlPanelGastos(r, cats) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💸 Gastos</h3>
+        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a;display:flex;align-items:center;gap:8px"><i data-lucide="trending-down" style="width:18px;height:18px;color:#dc2626;stroke-width:2"></i> Gastos</h3>
         <span style="background:#fef2f2;color:#dc2626;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.nGastos)}</span>
       </div>
       <div style="margin-bottom:10px">
@@ -412,7 +413,7 @@ function htmlPanelCaja(r, colCaja, colNeta) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💰 Caja</h3>
+        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a;display:flex;align-items:center;gap:8px"><i data-lucide="banknote" style="width:18px;height:18px;color:#16a34a;stroke-width:2"></i> Caja</h3>
         <span style="background:${r.flujoCaja >= 0 ? '#dcfce7' : '#fef2f2'};color:${r.flujoCaja >= 0 ? '#166534' : '#dc2626'};font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${r.flujoCaja >= 0 ? 'POSITIVA' : 'NEGATIVA'}</span>
       </div>
       ${kvLinea('Ingresos (ventas)', `<b style="color:#15803d">${money(r.ventas)}</b>`)}
@@ -432,7 +433,7 @@ function htmlPanelInventario(r) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📦 Inventario (al día)</h3>
+        <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a;display:flex;align-items:center;gap:8px"><i data-lucide="boxes" style="width:18px;height:18px;color:#7c3aed;stroke-width:2"></i> Inventario (al día)</h3>
         <span style="background:#e0e7ff;color:#1d4ed8;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${fmt(r.invSKUs)} SKUs</span>
       </div>
       <div style="margin-bottom:10px">
@@ -442,8 +443,8 @@ function htmlPanelInventario(r) {
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${kvLinea('Valor a precio venta', money(r.invValorVenta))}
       ${kvLinea('Unidades totales', fmt(r.invUnidades))}
-      ${kvLinea('⚠️ Stock bajo', `<b style="color:#a16207">${fmt(r.invBajoStock)} productos</b>`)}
-      ${kvLinea('❌ Agotados', `<b style="color:#dc2626">${fmt(r.invSinStock)} productos</b>`)}
+      ${kvLinea('Stock bajo', `<b style="color:#a16207">${fmt(r.invBajoStock)} productos</b>`)}
+      ${kvLinea('Agotados', `<b style="color:#dc2626">${fmt(r.invSinStock)} productos</b>`)}
     </div>
   `;
 }

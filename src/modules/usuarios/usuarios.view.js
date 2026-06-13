@@ -70,13 +70,13 @@ function htmlLayout() {
       <!-- Código de autorización del admin -->
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
-          <div style="font-weight:700;font-size:15px;color:#92400e">🔑 Código de autorización</div>
+          <div style="font-weight:700;font-size:15px;color:#92400e;display:flex;align-items:center;gap:7px"><i data-lucide="key-round" style="width:17px;height:17px;stroke-width:2"></i> Código de autorización</div>
           <div style="color:#92400e;font-size:13px;margin-top:3px">Los cajeros lo necesitan para editar o eliminar ventas (y otras acciones restringidas).</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
           <span style="background:white;border:1.5px solid #fde68a;padding:9px 16px;border-radius:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:18px;color:#92400e;letter-spacing:.2em" id="codigo-actual" title="${_codigoAdmin ? 'Código personalizado (guardado cifrado, no se puede mostrar)' : 'Código de fábrica — cámbialo'}">${_codigoAdmin ? '••••' : '1094'}</span>
           <button id="btn-cambiar-codigo"
-            style="padding:9px 14px;background:#a16207;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">✏️ Cambiar código</button>
+            style="padding:9px 14px;background:#a16207;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><i data-lucide="pencil" style="width:14px;height:14px;stroke-width:2.25"></i> Cambiar código</button>
         </div>
       </div>
 
@@ -123,20 +123,20 @@ function fila(u) {
       </td>
       <td style="padding:14px 12px;color:#475569">${esc(u.nombre)}</td>
       <td style="padding:14px 12px">
-        <span style="background:${u.rol === 'admin' ? '#eff6ff' : '#fef3c7'};color:${u.rol === 'admin' ? '#1d4ed8' : '#92400e'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em">
-          ${u.rol === 'admin' ? '👑 Admin' : '💼 Cajero'}
+        <span style="background:${u.rol === 'admin' ? '#eff6ff' : '#fef3c7'};color:${u.rol === 'admin' ? '#1d4ed8' : '#92400e'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px">
+          <i data-lucide="${u.rol === 'admin' ? 'shield-check' : 'user'}" style="width:13px;height:13px;stroke-width:2.25"></i>${u.rol === 'admin' ? 'Admin' : 'Cajero'}
         </span>
       </td>
       <td style="padding:14px 12px;text-align:center">
-        <span style="background:${u.activo ? '#dcfce7' : '#fef2f2'};color:${u.activo ? '#166534' : '#dc2626'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px">
-          ${u.activo ? '✓ Activo' : '✗ Inactivo'}
+        <span style="background:${u.activo ? '#dcfce7' : '#fef2f2'};color:${u.activo ? '#166534' : '#dc2626'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:5px">
+          <span style="width:7px;height:7px;border-radius:50%;background:${u.activo ? '#16a34a' : '#dc2626'};display:inline-block"></span>${u.activo ? 'Activo' : 'Inactivo'}
         </span>
       </td>
       <td style="padding:14px 12px">
         <div style="display:flex;gap:6px;justify-content:flex-end">
           ${u.rol !== 'admin' ? `
             <button class="u-permisos" data-id="${esc(u.id)}" title="Configurar permisos"
-              style="padding:6px 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">🔧 Permisos</button>
+              style="padding:6px 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:5px"><i data-lucide="sliders-horizontal" style="width:13px;height:13px;stroke-width:2.25"></i> Permisos</button>
           ` : ''}
           <button class="u-editar" data-id="${esc(u.id)}" title="Editar"
             style="width:32px;height:32px;border:1px solid #fde68a;background:#fef9c3;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center">
@@ -202,11 +202,11 @@ async function abrirFormUsuario(id) {
         <div style="display:flex;gap:8px">
           <label style="flex:1;cursor:pointer">
             <input type="radio" name="uf-rol" value="admin" ${datos.rol === 'admin' ? 'checked' : ''} style="display:none" class="uf-rol-radio" />
-            <div class="uf-rol-card" data-rol="admin" style="padding:11px;border:2px solid ${datos.rol === 'admin' ? '#2563eb' : '#e2e8f0'};background:${datos.rol === 'admin' ? '#eff6ff' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'admin' ? '#1d4ed8' : '#475569'}">👑 Administrador</div>
+            <div class="uf-rol-card" data-rol="admin" style="padding:11px;border:2px solid ${datos.rol === 'admin' ? '#2563eb' : '#e2e8f0'};background:${datos.rol === 'admin' ? '#eff6ff' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'admin' ? '#1d4ed8' : '#475569'}">Administrador</div>
           </label>
           <label style="flex:1;cursor:pointer">
             <input type="radio" name="uf-rol" value="cajero" ${datos.rol === 'cajero' ? 'checked' : ''} style="display:none" class="uf-rol-radio" />
-            <div class="uf-rol-card" data-rol="cajero" style="padding:11px;border:2px solid ${datos.rol === 'cajero' ? '#a16207' : '#e2e8f0'};background:${datos.rol === 'cajero' ? '#fef3c7' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'cajero' ? '#92400e' : '#475569'}">💼 Cajero</div>
+            <div class="uf-rol-card" data-rol="cajero" style="padding:11px;border:2px solid ${datos.rol === 'cajero' ? '#a16207' : '#e2e8f0'};background:${datos.rol === 'cajero' ? '#fef3c7' : 'white'};border-radius:10px;text-align:center;font-weight:700;font-size:13px;color:${datos.rol === 'cajero' ? '#92400e' : '#475569'}">Cajero</div>
           </label>
         </div>
         <div style="font-size:11.5px;color:#64748b;margin-top:6px">
@@ -224,13 +224,13 @@ async function abrirFormUsuario(id) {
         <button id="uf-cancelar"
           style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
         <button id="uf-guardar"
-          style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">💾 Guardar</button>
+          style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">Guardar</button>
       </div>
     </div>
   `;
 
   const m = Modal.abrir({
-    titulo: id ? '✏️ Editar usuario' : '➕ Nuevo usuario',
+    titulo: id ? 'Editar usuario' : 'Nuevo usuario',
     contenido,
     ancho: 'md',
     cerrarAlClicarFondo: false,
@@ -327,12 +327,12 @@ async function abrirEditorPermisos(id) {
       <button id="perm-cancelar"
         style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="perm-guardar"
-        style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar permisos</button>
+        style="flex:1.2;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar permisos</button>
     </div>
   `;
 
   const m = Modal.abrir({
-    titulo: `🔧 Permisos de ${usuario.nombre}`,
+    titulo: `Permisos de ${usuario.nombre}`,
     contenido,
     ancho: 'lg',
   });
@@ -371,10 +371,10 @@ function cambiarCodigo() {
       <button id="codigo-cancelar"
         style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
       <button id="codigo-guardar"
-        style="flex:1.2;padding:11px;background:#a16207;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">💾 Guardar código</button>
+        style="flex:1.2;padding:11px;background:#a16207;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar código</button>
     </div>
   `;
-  const m = Modal.abrir({ titulo: '🔑 Cambiar código de autorización', contenido, ancho: 'sm' });
+  const m = Modal.abrir({ titulo: 'Cambiar código de autorización', contenido, ancho: 'sm' });
   const inp = m.body.querySelector('#codigo-nuevo');
   const err = m.body.querySelector('#codigo-error');
   setTimeout(() => { inp.focus(); inp.select(); }, 80);
@@ -399,7 +399,7 @@ async function borrarUsuario(id) {
   if (!u) return;
   const ok = await Confirm.peligro(
     `¿Eliminar al usuario "${u.nombre}" (${u.usuario})?`,
-    { titulo: 'Eliminar usuario', textoConfirmar: '🗑️ Eliminar' },
+    { titulo: 'Eliminar usuario', textoConfirmar: 'Eliminar' },
   );
   if (!ok) return;
   try {
