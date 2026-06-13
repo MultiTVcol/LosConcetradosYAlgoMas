@@ -124,7 +124,7 @@ export function montarShell(contenedor) {
     grid-template-columns: 248px 1fr;
     height: 100vh;
     width: 100vw;
-    background: #f9fafb;
+    background: #eff3fb;
     font-family: Inter, system-ui, sans-serif;
     color: #111827;
     overflow: hidden;
@@ -377,7 +377,7 @@ export function montarShell(contenedor) {
   main.style.cssText = `
     overflow-y: auto;
     padding: 0;
-    background: #f9fafb;
+    background: #eff3fb;
   `;
 
   contenedor.appendChild(sidebar);
