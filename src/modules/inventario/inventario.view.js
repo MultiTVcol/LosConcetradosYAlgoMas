@@ -13,9 +13,11 @@ import * as ProductosRepo from '../productos/productos.repo.js';
 import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { fmtDate } from '../../core/dates.js';
-import { Toast, Modal } from '../../components/index.js';
+import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import * as Realtime from '../../services/realtime.js';
+import { imprimirPOS } from '../../services/printer.js';
+import * as ConfigRepo from '../config/config.repo.js';
 
 let _contenedor = null;
 let _res = null;       // resumen (KPIs + productos)
@@ -51,6 +53,7 @@ function adjuntarEventos(c) {
     debounce = setTimeout(() => { _q = e.target.value; pintarTabla(); }, 100);
   });
   c.querySelector('#inv-btn-conteo')?.addEventListener('click', () => abrirConteo());
+  c.querySelector('#inv-btn-ajustes')?.addEventListener('click', () => abrirHistorial());
 }
 
 // ============================================================
@@ -73,8 +76,12 @@ function htmlLayout(r) {
           <i data-lucide="boxes" style="width:30px;height:30px;color:#4f46e5;stroke-width:1.75"></i>
           <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Inventario</h1>
         </div>
-        <button id="inv-btn-conteo"
-          style="padding:10px 16px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">📋 Conteo físico</button>
+        <div style="display:flex;gap:8px">
+          <button id="inv-btn-ajustes"
+            style="padding:10px 16px;background:white;color:#4f46e5;border:1px solid #c7d2fe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">📜 Ajustes</button>
+          <button id="inv-btn-conteo"
+            style="padding:10px 16px;background:#4f46e5;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">📋 Conteo físico</button>
+        </div>
       </div>
 
       <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:18px">
@@ -410,4 +417,196 @@ function abrirConteo() {
   };
 
   pintarSheet();
+}
+
+// ============================================================
+//  HISTORIAL DE AJUSTES (ver / imprimir / eliminar)
+// ============================================================
+
+let _histModal = null;
+
+async function abrirHistorial() {
+  _histModal = Modal.abrir({
+    titulo: '📜 Ajustes de inventario',
+    contenido: '<div style="padding:24px;text-align:center;color:#64748b;font-size:13.5px">Cargando…</div>',
+    ancho: 'lg',
+    onClose: () => { _histModal = null; },
+  });
+  await pintarHistorial();
+}
+
+async function pintarHistorial() {
+  if (!_histModal) return;
+  const ajustes = await Repo.listarAjustes();
+
+  if (ajustes.length === 0) {
+    _histModal.body.innerHTML = `
+      <div style="text-align:center;padding:36px;color:#94a3b8;font-size:13.5px">
+        <div style="font-size:34px">📭</div>
+        <div style="margin-top:8px;font-weight:600;color:#475569">Aún no hay ajustes de inventario</div>
+        <div style="font-size:12px;margin-top:2px">Usa <b>Conteo físico</b> para registrar el primero.</div>
+      </div>`;
+    return;
+  }
+
+  _histModal.body.innerHTML = `
+    <div style="max-height:60vh;overflow:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0;background:white">
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Ajuste</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Fecha</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Productos</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Ajuste neto</th>
+            <th style="width:120px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ajustes.map((a) => {
+            const nProd = (a.items || []).length;
+            const neto = num(a.valor);
+            return `
+            <tr style="border-bottom:1px solid #f1f5f9">
+              <td style="padding:9px 10px"><b style="color:#4f46e5">${esc(a.numero || '—')}</b>${a.nota ? `<div style="font-size:11.5px;color:#94a3b8">${esc(a.nota)}</div>` : ''}</td>
+              <td style="padding:9px 10px;color:#64748b;white-space:nowrap">${esc(fmtDate(a.fecha))}</td>
+              <td style="padding:9px 10px;text-align:right;color:#475569">${fmt(nProd)}</td>
+              <td style="padding:9px 10px;text-align:right;font-weight:700;color:${neto >= 0 ? '#15803d' : '#dc2626'}">${neto >= 0 ? '+' : '−'}${money(Math.abs(neto))}</td>
+              <td style="padding:9px 10px;text-align:right;white-space:nowrap">
+                <button class="hist-ver" data-id="${esc(a.id)}" title="Ver detalle" style="border:0;background:none;cursor:pointer;font-size:15px;padding:3px 5px">👁️</button>
+                <button class="hist-print" data-id="${esc(a.id)}" title="Imprimir" style="border:0;background:none;cursor:pointer;font-size:15px;padding:3px 5px">🖨️</button>
+                <button class="hist-del" data-id="${esc(a.id)}" title="Eliminar" style="border:0;background:none;cursor:pointer;font-size:15px;padding:3px 5px">🗑️</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  _histModal.body.querySelectorAll('.hist-ver').forEach((b) => { b.onclick = () => verAjuste(b.dataset.id); });
+  _histModal.body.querySelectorAll('.hist-print').forEach((b) => { b.onclick = () => imprimirAjuste(b.dataset.id); });
+  _histModal.body.querySelectorAll('.hist-del').forEach((b) => { b.onclick = () => eliminarAjuste(b.dataset.id); });
+}
+
+async function verAjuste(id) {
+  const a = await Repo.obtenerAjuste(id);
+  if (!a) { Toast.error('Ajuste no encontrado'); return; }
+
+  const filas = (a.items || []).map((it) => {
+    const d = num(it.delta);
+    return `
+      <tr style="border-bottom:1px solid #f1f5f9">
+        <td style="padding:8px 10px;font-weight:600;color:#0f172a">${esc(it.nombre)}${it.codigo ? `<span style="color:#94a3b8;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
+        <td style="padding:8px 10px;text-align:right;color:#475569">${fmt(it.sistema)}</td>
+        <td style="padding:8px 10px;text-align:right;color:#0f172a;font-weight:700">${fmt(it.fisico)}</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${d >= 0 ? '#4338ca' : '#dc2626'}">${d >= 0 ? '+' : '−'}${fmt(Math.abs(d))}</td>
+        <td style="padding:8px 10px;text-align:right;color:${num(it.valor) >= 0 ? '#15803d' : '#dc2626'}">${num(it.valor) >= 0 ? '+' : '−'}${money(Math.abs(num(it.valor)))}</td>
+      </tr>`;
+  }).join('');
+
+  const neto = num(a.valor);
+  const contenido = `
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+      <div>
+        <div style="font-weight:800;font-size:17px;color:#0f172a">${esc(a.numero || '')}</div>
+        <div style="font-size:12.5px;color:#64748b">${esc(fmtDate(a.fecha))}${a.nota ? ` · ${esc(a.nota)}` : ''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:#94a3b8">Ajuste neto</div>
+        <div style="font-weight:800;font-size:18px;color:${neto >= 0 ? '#15803d' : '#dc2626'}">${neto >= 0 ? '+' : '−'}${money(Math.abs(neto))}</div>
+      </div>
+    </div>
+    <div style="max-height:46vh;overflow:auto;border:1px solid #e2e8f0;border-radius:10px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0">
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Producto</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Sistema</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Contado</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Dif.</th>
+            <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Valor</th>
+          </tr>
+        </thead>
+        <tbody>${filas}</tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button id="det-del" style="flex:1;padding:11px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🗑️ Eliminar ajuste</button>
+      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#4f46e5;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">🖨️ Imprimir</button>
+    </div>
+  `;
+
+  const m = Modal.abrir({ titulo: 'Detalle del ajuste', contenido, ancho: 'lg' });
+  m.body.querySelector('#det-print').onclick = () => imprimirAjuste(a.id);
+  m.body.querySelector('#det-del').onclick = async () => { m.cerrar(); await eliminarAjuste(a.id); };
+}
+
+async function imprimirAjuste(id) {
+  const a = await Repo.obtenerAjuste(id);
+  if (!a) { Toast.error('Ajuste no encontrado'); return; }
+  let cfg;
+  try { cfg = await ConfigRepo.leer(); } catch (e) { cfg = { negocio: {} }; }
+  const neg = cfg.negocio || {};
+  imprimirPOS(htmlTicketAjuste(a, neg), { titulo: `Ajuste ${a.numero || ''}`.trim(), anchoMm: 80 });
+}
+
+function htmlTicketAjuste(a, neg) {
+  const filas = (a.items || []).map((it) => {
+    const d = num(it.delta);
+    return `
+      <tr><td colspan="2" style="padding-top:5px;font-weight:bold">${esc(it.nombre)}</td></tr>
+      <tr style="font-size:11px">
+        <td>Sist ${fmt(it.sistema)} &rarr; Cont ${fmt(it.fisico)}</td>
+        <td style="text-align:right;font-weight:bold">${d >= 0 ? '+' : '-'}${fmt(Math.abs(d))}</td>
+      </tr>`;
+  }).join('');
+  const neto = num(a.valor);
+  return `
+    <div style="font-family:'Courier New',monospace;font-size:12px;color:#000;line-height:1.35">
+      <div style="text-align:center">
+        <div style="font-weight:bold;font-size:14px">${esc(neg.nombre || 'PosPunto')}</div>
+        ${neg.nit ? `<div>NIT ${esc(neg.nit)}</div>` : ''}
+        ${neg.direccion ? `<div>${esc(neg.direccion)}</div>` : ''}
+        ${neg.telefono ? `<div>Tel ${esc(neg.telefono)}</div>` : ''}
+        <div style="margin-top:6px;font-weight:bold">AJUSTE DE INVENTARIO</div>
+        <div style="font-weight:bold">${esc(a.numero || '')}</div>
+      </div>
+      <div style="border-top:1px dashed #000;margin:6px 0"></div>
+      <div>Fecha: ${esc(fmtDate(a.fecha))}</div>
+      ${a.nota ? `<div>Nota: ${esc(a.nota)}</div>` : ''}
+      <div style="border-top:1px dashed #000;margin:6px 0"></div>
+      <table style="width:100%;border-collapse:collapse">${filas}</table>
+      <div style="border-top:1px dashed #000;margin:6px 0"></div>
+      <div style="display:flex;justify-content:space-between;font-weight:bold">
+        <span>Productos:</span><span>${fmt((a.items || []).length)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:bold">
+        <span>Ajuste neto:</span><span>${neto >= 0 ? '+' : '-'}${money(Math.abs(neto))}</span>
+      </div>
+      <div style="border-top:1px dashed #000;margin:6px 0"></div>
+      <div style="text-align:center;font-size:11px">Soporte de conteo fisico</div>
+      <div style="text-align:center;margin-top:18px">________________________</div>
+      <div style="text-align:center;font-size:11px">Responsable</div>
+    </div>
+  `;
+}
+
+async function eliminarAjuste(id) {
+  const a = await Repo.obtenerAjuste(id);
+  if (!a) { Toast.error('Ajuste no encontrado'); return; }
+
+  const ok = await Confirm.peligro(
+    `¿Eliminar el ajuste ${a.numero}? Se DEVOLVERÁ el stock de ${fmt((a.items || []).length)} producto(s) al estado anterior al conteo.`,
+    { titulo: 'Eliminar ajuste', textoConfirmar: '🗑️ Eliminar' },
+  );
+  if (!ok) return;
+
+  try {
+    await Repo.eliminarAjuste(id);
+    Toast.ok(`Ajuste ${a.numero} eliminado · stock revertido`);
+    if (_histModal) await pintarHistorial();
+    await refrescar();
+  } catch (err) {
+    Toast.error(err.message || 'No se pudo eliminar el ajuste');
+  }
 }

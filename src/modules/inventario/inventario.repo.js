@@ -269,3 +269,32 @@ export async function listarAjustes() {
   items.sort((a, b) => (b.fecha + (b.creado || '')).localeCompare(a.fecha + (a.creado || '')));
   return items;
 }
+
+export async function obtenerAjuste(id) {
+  if (!id) return null;
+  return await db.get(TABLA_AJUSTES, id);
+}
+
+/**
+ * Elimina un ajuste hecho por error: DEVUELVE el stock de cada producto
+ * al estado anterior (aplica el delta inverso) y borra el documento.
+ *
+ * @param {string} id
+ */
+export async function eliminarAjuste(id) {
+  const a = await db.get(TABLA_AJUSTES, id);
+  if (!a) throw new Error('Ajuste no encontrado');
+
+  // Revertir el stock: si el ajuste sumó +3, ahora restamos 3 (y viceversa)
+  for (const it of a.items || []) {
+    if (!it.producto_id) continue;
+    try {
+      await Sync.ajustarStock(it.producto_id, -num(it.delta));
+    } catch (e) {
+      console.warn('Error revirtiendo stock del ajuste:', e);
+    }
+  }
+
+  await Sync.borrar(TABLA_AJUSTES, id);
+  return a;
+}
