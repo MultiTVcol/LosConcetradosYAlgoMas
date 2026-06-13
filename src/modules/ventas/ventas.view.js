@@ -432,28 +432,15 @@ function htmlPaso2BuscarProducto() {
     `;
   }
 
-  const modo = getLectorMode();
-  const esPistola = modo === 'pistola';
-
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
         <div style="display:flex;align-items:center;gap:10px">
           <span class="paso-badge">2</span>
-          <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Buscar producto</h3>
+          <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Buscar o escanear producto</h3>
         </div>
-        <!-- Selector temporal de modo lector (después se mueve a Configuración) -->
-        <div style="display:flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:8px;padding:3px">
-          <button
-            class="lm-btn"
-            data-modo="pistola"
-            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
-          >Pistola</button>
-          <button
-            class="lm-btn"
-            data-modo="manual"
-            style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}"
-          >Manual</button>
+        <div style="display:flex;align-items:center;gap:6px;color:#64748b;font-size:12.5px;font-weight:600">
+          <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#2563eb"></i> Pistola lista
         </div>
       </div>
 
@@ -463,7 +450,7 @@ function htmlPaso2BuscarProducto() {
             <input
               id="venta-buscar"
               type="text"
-              placeholder="Buscar por código, barras, nombre, categoría o proveedor..."
+              placeholder="Escanea con la pistola o escribe (código, nombre, categoría)…"
               autocomplete="off"
               role="combobox"
               aria-autocomplete="list"
@@ -472,18 +459,12 @@ function htmlPaso2BuscarProducto() {
             />
           </div>
           <div class="ac-hint">
-            <kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> agregar · <kbd>Esc</kbd> cerrar · los códigos salen primero
+            <kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> agregar · <kbd>Esc</kbd> cerrar · escanea para agregar al instante
           </div>
         </div>
 
         <div class="ac-list" id="prodSearchList" role="listbox" aria-label="Resultados de productos"></div>
       </div>
-
-      ${esPistola ? `
-        <div style="color:#64748b;font-size:13px;margin-top:10px;display:flex;align-items:center;gap:6px">
-          <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al borrador.</span>
-        </div>
-      ` : ''}
     </div>
   `;
 }
@@ -714,13 +695,13 @@ function adjuntarEventosPaso2(contenedor) {
       const query = e.target.value;
 
       _debounceTimer = setTimeout(() => {
-        // Modo pistola: intentar match exacto en barras o código
-        if (getLectorMode() === 'pistola') {
-          const exact = tryScannerExact(query);
-          if (exact) {
-            procesarEscaneo(exact, query, inputBuscar);
-            return;
-          }
+        // Pistola SIEMPRE activa: si el texto coincide EXACTO con un código
+        // de barras (o código, ≥4 chars), es un escaneo → abrir cantidad
+        // directo. Si no, se muestra el dropdown para búsqueda manual.
+        const exact = tryScannerExact(query);
+        if (exact) {
+          procesarEscaneo(exact, query, inputBuscar);
+          return;
         }
         // Render normal del dropdown
         _resultados = ProductosRepo.filtrarConPrioridad(_productos, query);

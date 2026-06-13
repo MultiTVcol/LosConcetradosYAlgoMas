@@ -150,35 +150,19 @@ function htmlFormCompra() {
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:4px 0">
 
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Agregar producto al pedido</div>
-        ${htmlSelectorLectorCompra()}
+        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Agregar o escanear producto</div>
+        <div style="display:flex;align-items:center;gap:6px;color:#64748b;font-size:12px;font-weight:600">
+          <i data-lucide="scan-barcode" style="width:15px;height:15px;stroke-width:2;color:#2563eb"></i> Pistola lista
+        </div>
       </div>
       <div style="position:relative">
         <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:12px;padding:12px">
-          <input id="comp-buscar" type="text" placeholder="Buscar por código, barras, nombre o categoría..." autocomplete="off"
+          <input id="comp-buscar" type="text" placeholder="Escanea con la pistola o escribe (código, nombre, categoría)…" autocomplete="off"
             style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit" />
-          <div style="color:#64748b;font-size:12px;margin-top:6px">↑↓ navegar · Enter agregar · Esc cerrar · los códigos salen primero</div>
+          <div style="color:#64748b;font-size:12px;margin-top:6px">↑↓ navegar · Enter agregar · Esc cerrar · escanea para abrir la cantidad</div>
         </div>
         <div id="comp-resultados" style="margin-top:4px;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto"></div>
-        ${getLectorModeCompra() === 'pistola' ? `
-          <div style="color:#64748b;font-size:12.5px;margin-top:10px;display:flex;align-items:center;gap:6px">
-            <span><strong>Lector USB activo:</strong> escanea y se agrega automáticamente al pedido.</span>
-          </div>
-        ` : ''}
       </div>
-    </div>
-  `;
-}
-
-function htmlSelectorLectorCompra() {
-  const modo = getLectorModeCompra();
-  const esPistola = modo === 'pistola';
-  return `
-    <div style="display:flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:8px;padding:3px">
-      <button class="lm-btn-comp" data-modo="pistola"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${esPistola ? 'white' : 'transparent'};color:${esPistola ? '#2563eb' : '#64748b'};${esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">Pistola</button>
-      <button class="lm-btn-comp" data-modo="manual"
-        style="padding:5px 10px;border:0;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${!esPistola ? 'white' : 'transparent'};color:${!esPistola ? '#2563eb' : '#64748b'};${!esPistola ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">Manual</button>
     </div>
   `;
 }
@@ -223,13 +207,12 @@ function cablearBuscador(contenedor) {
     if (debounce) clearTimeout(debounce);
     const query = e.target.value;
     debounce = setTimeout(() => {
-      // Modo pistola: intentar match exacto y agregar directo al pedido
-      if (getLectorModeCompra() === 'pistola') {
-        const exact = tryScannerExactCompra(query);
-        if (exact) {
-          procesarEscaneoCompra(exact, query, inp);
-          return;
-        }
+      // Pistola SIEMPRE activa: coincidencia exacta (barras/código, ≥4) abre
+      // la cantidad; si no, se muestra el dropdown para búsqueda manual.
+      const exact = tryScannerExactCompra(query);
+      if (exact) {
+        procesarEscaneoCompra(exact, query, inp);
+        return;
       }
       _resultadosBusqueda = filtrarProductos(query);
       _indiceActivo = _resultadosBusqueda.length > 0 ? 0 : -1;
