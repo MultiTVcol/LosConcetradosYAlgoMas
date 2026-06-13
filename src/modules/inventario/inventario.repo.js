@@ -207,6 +207,63 @@ export async function registrarConteo(datos) {
   return ajuste;
 }
 
+/**
+ * Registra un conteo físico de VARIOS productos a la vez (planilla de
+ * inventario). Cada producto con diferencia contra el sistema ajusta su
+ * stock; todos quedan en UN solo documento de ajuste.
+ *
+ * @param {Object} datos - { conteos: [{producto_id, fisico}], nota?, fecha? }
+ */
+export async function registrarConteoMultiple(datos) {
+  const conteos = Array.isArray(datos.conteos) ? datos.conteos : [];
+  if (conteos.length === 0) throw new Error('No hay productos en el conteo');
+
+  const items = [];
+  for (const c of conteos) {
+    const p = await db.get('productos', c.producto_id);
+    if (!p) continue;
+    const sistema = num(p.stock);
+    const fisico = num(c.fisico);
+    if (fisico < 0) throw new Error(`El conteo de "${p.nombre}" no puede ser negativo`);
+    const delta = round(fisico - sistema, 2);
+    if (delta === 0) continue; // sin diferencia: no se ajusta
+    const costo = num(p.costo);
+    items.push({
+      producto_id: p.id,
+      nombre: p.nombre,
+      codigo: p.codigo || '',
+      sistema,
+      fisico,
+      delta,
+      costo,
+      valor: round(delta * costo, 2),
+    });
+  }
+
+  if (items.length === 0) throw new Error('Ningún producto tiene diferencia para ajustar');
+
+  const valor = round(items.reduce((s, it) => s + it.valor, 0), 2);
+  const numero = await siguienteNumero();
+  const ajuste = {
+    id: uid(),
+    numero,
+    fecha: datos.fecha || todayISO(),
+    items,
+    valor,
+    nota: String(datos.nota || '').trim(),
+    estado: 'activo',
+    creado: nowISO(),
+  };
+
+  // Ajustar el stock de cada producto (delta atómico)
+  for (const it of items) {
+    await Sync.ajustarStock(it.producto_id, it.delta);
+  }
+  await Sync.guardar(TABLA_AJUSTES, ajuste);
+
+  return ajuste;
+}
+
 export async function listarAjustes() {
   const items = await db.getAll(TABLA_AJUSTES);
   items.sort((a, b) => (b.fecha + (b.creado || '')).localeCompare(a.fecha + (a.creado || '')));

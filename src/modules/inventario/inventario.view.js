@@ -14,7 +14,6 @@ import { esc } from '../../core/strings.js';
 import { fmtDate } from '../../core/dates.js';
 import { Toast, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
-import { bindMilesInputs } from '../../core/inputs.js';
 import * as Realtime from '../../services/realtime.js';
 
 let _contenedor = null;
@@ -223,51 +222,58 @@ async function abrirKardex(productoId) {
 // ============================================================
 
 function abrirConteo() {
+  // Planilla: cada entrada es { producto_id, nombre, codigo, sistema, costo, fisico }
+  // (fisico se guarda como string para distinguir "vacío" de "0")
+  const hoja = [];
+
   const contenido = `
     <div style="display:grid;gap:12px">
-      <div>
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Producto a contar *</div>
-        <input id="ct-buscar" type="text" placeholder="🔎 Nombre o código…" autocomplete="off"
-          style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
-        <div id="ct-resultados" style="display:flex;flex-direction:column;gap:5px;max-height:170px;overflow:auto;margin-top:6px"></div>
+      <div style="display:flex;gap:8px;align-items:stretch;position:relative">
+        <div style="flex:1;position:relative">
+          <input id="ct-buscar" type="text" placeholder="🔎 Agregar producto por nombre o código…" autocomplete="off"
+            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          <div id="ct-resultados" style="position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;display:flex;flex-direction:column;gap:4px;max-height:230px;overflow:auto;background:white;border-radius:8px"></div>
+        </div>
+        <button id="ct-todos" style="padding:0 14px;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap">Cargar todos</button>
       </div>
 
-      <div id="ct-detalle" style="display:none">
-        <div id="ct-info" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:10px"></div>
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">¿Cuántas unidades contaste físicamente? *</div>
-        <input id="ct-fisico" data-miles type="text" inputmode="numeric" placeholder="0"
-          style="width:100%;padding:13px 15px;border:1.5px solid #cbd5e1;border-radius:9px;font-size:20px;font-weight:800;outline:none;box-sizing:border-box;font-family:inherit;text-align:center" />
-        <div id="ct-preview" style="margin-top:10px"></div>
-        <div style="margin-top:10px">
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
-          <input id="ct-nota" type="text" placeholder="Ej: conteo de fin de mes"
-            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
-        </div>
+      <div id="ct-sheet"></div>
+
+      <div>
+        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
+        <input id="ct-nota" type="text" placeholder="Ej: conteo de fin de mes"
+          style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
+
+      <div id="ct-footer" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px 14px;font-size:13px;color:#334155"></div>
 
       <div style="display:flex;gap:10px;margin-top:4px">
         <button id="ct-cancelar" style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="ct-confirmar" data-primary disabled style="flex:1.2;padding:12px;border:0;background:#94a3b8;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">📋 Registrar ajuste</button>
+        <button id="ct-confirmar" data-primary disabled style="flex:1.4;padding:12px;border:0;background:#94a3b8;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">📋 Registrar ajustes</button>
       </div>
     </div>
   `;
 
-  const m = Modal.abrir({ titulo: '📋 Conteo físico', contenido, ancho: 'md' });
-  bindMilesInputs(m.body);
+  const m = Modal.abrir({ titulo: '📋 Conteo físico (planilla)', contenido, ancho: 'xl' });
 
-  let productoSel = null;
   const inpBuscar = m.body.querySelector('#ct-buscar');
   const boxRes = m.body.querySelector('#ct-resultados');
-  const detalle = m.body.querySelector('#ct-detalle');
-  const inpFisico = m.body.querySelector('#ct-fisico');
-  const preview = m.body.querySelector('#ct-preview');
+  const sheet = m.body.querySelector('#ct-sheet');
+  const footer = m.body.querySelector('#ct-footer');
   const btnOk = m.body.querySelector('#ct-confirmar');
 
   setTimeout(() => inpBuscar.focus(), 60);
 
+  const agregar = (p) => {
+    if (hoja.some((x) => x.producto_id === p.id)) return; // ya está
+    hoja.push({ producto_id: p.id, nombre: p.nombre, codigo: p.codigo || '', sistema: num(p.stock), costo: num(p.costo), fisico: '' });
+    pintarSheet();
+  };
+
   const pintarResultados = (q) => {
     const query = String(q || '').trim().toLowerCase();
     const lista = !query ? [] : _res.productos.filter((p) =>
+      !hoja.some((x) => x.producto_id === p.id) &&
       [p.nombre, p.codigo, p.barras].filter(Boolean).some((x) => String(x).toLowerCase().includes(query))
     ).slice(0, 8);
     boxRes.innerHTML = lista.map((p) => `
@@ -279,72 +285,130 @@ function abrirConteo() {
     `).join('');
     boxRes.querySelectorAll('.ct-res').forEach((b) => {
       b.onclick = () => {
-        productoSel = _res.productos.find((x) => x.id === b.dataset.id);
+        const p = _res.productos.find((x) => x.id === b.dataset.id);
+        if (p) agregar(p);
+        inpBuscar.value = '';
         boxRes.innerHTML = '';
-        inpBuscar.value = productoSel.nombre;
-        detalle.style.display = 'block';
-        m.body.querySelector('#ct-info').innerHTML = `
-          <b style="color:#0f172a">${esc(productoSel.nombre)}</b><br>
-          Sistema: <b>${fmt(productoSel.stock)}</b> unidades · Costo: <b>${money(productoSel.costo)}</b>
-        `;
-        inpFisico.value = '';
-        actualizarPreview();
-        setTimeout(() => inpFisico.focus(), 50);
+        inpBuscar.focus();
       };
     });
   };
 
-  const actualizarPreview = () => {
-    if (!productoSel) return;
-    const fisico = num(inpFisico.value);
-    const delta = fisico - num(productoSel.stock);
-    const valor = delta * num(productoSel.costo);
-    const habilitado = inpFisico.value.trim() !== '' && delta !== 0;
+  const pintarSheet = () => {
+    if (hoja.length === 0) {
+      sheet.innerHTML = `<div style="text-align:center;padding:26px;color:#94a3b8;font-size:13.5px;border:1px dashed #e2e8f0;border-radius:10px">
+        Busca productos para agregarlos, o usa <b>Cargar todos</b> para contar el inventario completo.</div>`;
+      actualizarFooter();
+      return;
+    }
+    sheet.innerHTML = `
+      <div style="max-height:46vh;overflow:auto;border:1px solid #e2e8f0;border-radius:10px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0;z-index:1">
+              <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Producto</th>
+              <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Sistema</th>
+              <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:center;width:110px">Contado</th>
+              <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right;width:120px">Diferencia</th>
+              <th style="width:34px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${hoja.map((it, i) => `
+              <tr class="ct-row" data-i="${i}" style="border-bottom:1px solid #f1f5f9">
+                <td style="padding:7px 10px;font-weight:600;color:#0f172a">${esc(it.nombre)}${it.codigo ? `<span style="color:#94a3b8;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
+                <td style="padding:7px 10px;text-align:right;color:#475569">${fmt(it.sistema)}</td>
+                <td style="padding:7px 10px;text-align:center">
+                  <input class="ct-fis" inputmode="numeric" value="${it.fisico === '' ? '' : esc(String(it.fisico))}" placeholder="—"
+                    style="width:90px;padding:7px 8px;border:1.5px solid #cbd5e1;border-radius:7px;font-size:14px;font-weight:700;text-align:center;outline:none;font-family:inherit;box-sizing:border-box" />
+                </td>
+                <td class="ct-dif" style="padding:7px 10px;text-align:right;font-weight:700;color:#cbd5e1">—</td>
+                <td style="text-align:center"><button class="ct-del" title="Quitar" style="border:0;background:none;cursor:pointer;color:#cbd5e1;font-size:16px;line-height:1;padding:4px">✕</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
 
+    sheet.querySelectorAll('.ct-row').forEach((row) => {
+      const i = Number(row.dataset.i);
+      const it = hoja[i];
+      const inp = row.querySelector('.ct-fis');
+      const cel = row.querySelector('.ct-dif');
+      const refrescarDif = () => {
+        it.fisico = inp.value;
+        const has = inp.value.trim() !== '';
+        if (!has) { cel.textContent = '—'; cel.style.color = '#cbd5e1'; actualizarFooter(); return; }
+        const delta = num(inp.value) - it.sistema;
+        if (delta === 0) { cel.textContent = '0'; cel.style.color = '#15803d'; }
+        else { cel.textContent = (delta > 0 ? '+' : '−') + fmt(Math.abs(delta)); cel.style.color = delta > 0 ? '#4338ca' : '#dc2626'; }
+        actualizarFooter();
+      };
+      inp.addEventListener('input', refrescarDif);
+      refrescarDif();
+      row.querySelector('.ct-del').onclick = () => { hoja.splice(i, 1); pintarSheet(); };
+    });
+    actualizarFooter();
+  };
+
+  const conDiferencia = () => hoja.filter((it) => String(it.fisico).trim() !== '' && (num(it.fisico) - it.sistema) !== 0);
+
+  const actualizarFooter = () => {
+    const difs = conDiferencia();
+    const valorNeto = difs.reduce((s, it) => s + (num(it.fisico) - it.sistema) * it.costo, 0);
+    const sobra = difs.filter((it) => num(it.fisico) > it.sistema).length;
+    const falta = difs.filter((it) => num(it.fisico) < it.sistema).length;
+
+    const habilitado = difs.length > 0;
     btnOk.disabled = !habilitado;
     btnOk.style.background = habilitado ? '#4f46e5' : '#94a3b8';
     btnOk.style.cursor = habilitado ? 'pointer' : 'not-allowed';
+    btnOk.textContent = habilitado ? `📋 Registrar ${difs.length} ajuste(s)` : '📋 Registrar ajustes';
 
-    if (inpFisico.value.trim() === '') { preview.innerHTML = ''; return; }
-    if (delta === 0) {
-      preview.innerHTML = `<div style="background:#dcfce7;border:1px solid #86efac;border-radius:9px;padding:10px 13px;font-size:13px;color:#166534">✓ El físico coincide con el sistema — no hay ajuste que hacer.</div>`;
-    } else {
-      const esSobra = delta > 0;
-      preview.innerHTML = `
-        <div style="background:${esSobra ? '#eef2ff' : '#fef2f2'};border:1px solid ${esSobra ? '#c7d2fe' : '#fecaca'};border-radius:9px;padding:10px 13px;font-size:13px;color:${esSobra ? '#4338ca' : '#991b1b'}">
-          ${esSobra ? '➕ SOBRANTE' : '➖ FALTANTE'} de <b>${fmt(Math.abs(delta))}</b> unidad(es)
-          · valor <b>${money(Math.abs(valor))}</b><br>
-          <span style="font-size:11.5px">El stock del producto pasará de <b>${fmt(productoSel.stock)}</b> a <b>${fmt(fisico)}</b>.</span>
-        </div>
-      `;
-    }
+    if (hoja.length === 0) { footer.style.display = 'none'; return; }
+    footer.style.display = 'block';
+    footer.innerHTML = `
+      <b>${fmt(hoja.length)}</b> producto(s) en la planilla · <b style="color:#4338ca">${sobra}</b> sobrante(s) · <b style="color:#dc2626">${falta}</b> faltante(s)
+      ${difs.length ? ` · ajuste neto <b style="color:${valorNeto >= 0 ? '#15803d' : '#dc2626'}">${money(Math.abs(valorNeto))}</b> ${valorNeto >= 0 ? '(sobra)' : '(falta)'}` : ''}
+    `;
   };
 
   let debounce;
   inpBuscar.addEventListener('input', (e) => {
     if (debounce) clearTimeout(debounce);
-    productoSel = null;
-    detalle.style.display = 'none';
-    btnOk.disabled = true;
-    btnOk.style.background = '#94a3b8';
     debounce = setTimeout(() => pintarResultados(e.target.value), 100);
   });
-  inpFisico.addEventListener('input', actualizarPreview);
+  inpBuscar.addEventListener('blur', () => setTimeout(() => { boxRes.innerHTML = ''; }, 150));
+
+  m.body.querySelector('#ct-todos').onclick = () => {
+    for (const p of _res.productos) {
+      if (!hoja.some((x) => x.producto_id === p.id)) {
+        hoja.push({ producto_id: p.id, nombre: p.nombre, codigo: p.codigo || '', sistema: num(p.stock), costo: num(p.costo), fisico: '' });
+      }
+    }
+    boxRes.innerHTML = '';
+    pintarSheet();
+  };
 
   m.body.querySelector('#ct-cancelar').onclick = () => m.cerrar();
   btnOk.onclick = async () => {
-    if (!productoSel || btnOk.disabled) return;
+    const difs = conDiferencia();
+    if (difs.length === 0) return;
+    btnOk.disabled = true;
     try {
-      const ajuste = await Repo.registrarConteo({
-        producto_id: productoSel.id,
-        fisico: num(inpFisico.value),
+      const ajuste = await Repo.registrarConteoMultiple({
+        conteos: difs.map((it) => ({ producto_id: it.producto_id, fisico: num(it.fisico) })),
         nota: m.body.querySelector('#ct-nota').value,
       });
-      Toast.ok(`Ajuste ${ajuste.numero} registrado`);
+      Toast.ok(`Ajuste ${ajuste.numero} registrado · ${ajuste.items.length} producto(s)`);
       m.cerrar();
       await refrescar();
     } catch (err) {
+      btnOk.disabled = false;
       Toast.error(err.message || 'No se pudo registrar el conteo');
     }
   };
+
+  pintarSheet();
 }
