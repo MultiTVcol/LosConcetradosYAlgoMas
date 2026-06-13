@@ -935,10 +935,9 @@ function procesarEscaneo(producto, codigoOriginal, inputBuscar) {
   inputBuscar.value = '';
   cerrarDropdown();
 
-  addToCartDirecto(producto, 1);
-
-  // Devolver foco para seguir escaneando
-  setTimeout(() => inputBuscar.focus(), 50);
+  // Abrir el modal de cantidad. Al cerrarse, su onClose devuelve el foco
+  // al buscador para poder seguir escaneando.
+  abrirModalCantidad(producto);
 }
 
 /**

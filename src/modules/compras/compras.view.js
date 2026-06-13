@@ -537,14 +537,14 @@ function tryScannerExactCompra(query) {
  * Si el producto ya está en el pedido, suma 1 a su cantidad.
  */
 function procesarEscaneoCompra(producto, codigoOriginal, inputBuscar) {
-  agregarItemDirecto(producto, 1);
-  Toast.ok(`✓ ${producto.nombre} agregado (${codigoOriginal})`);
+  // Limpiar el buscador y abrir el modal de cantidad/costo (al aceptar,
+  // el modal devuelve el foco al buscador para seguir escaneando).
   if (inputBuscar) {
     inputBuscar.value = '';
     _dropdownAbierto = false;
     pintarResultadosBusqueda();
-    setTimeout(() => inputBuscar.focus(), 30);
   }
+  abrirModalCantidadCompra(producto.id);
 }
 
 /**
