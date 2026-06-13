@@ -189,16 +189,35 @@ export async function selectAll(tabla) {
     return [];
   }
 
-  const { data, error } = await _client
-    .from(tabla)
-    .select('*')
-    .eq('tenant_id', TENANT_ID);
+  // PostgREST devuelve como máximo ~1000 filas por petición. Sin paginar,
+  // una tabla con muchos registros (ej: ventas) se bajaba INCOMPLETA. Acá
+  // recorremos por páginas (range) hasta traerlas todas, con orden estable
+  // por 'id' para que no haya filas repetidas ni huecos entre páginas.
+  const PAGE = 1000;
+  const todos = [];
+  let desde = 0;
 
-  if (error) {
-    console.error(`❌ Error en Supa.selectAll(${tabla}):`, error.message);
-    return [];
+  for (;;) {
+    const { data, error } = await _client
+      .from(tabla)
+      .select('*')
+      .eq('tenant_id', TENANT_ID)
+      .order('id', { ascending: true })
+      .range(desde, desde + PAGE - 1);
+
+    if (error) {
+      console.error(`❌ Error en Supa.selectAll(${tabla}) [pág. ${desde}]:`, error.message);
+      // Devolvemos lo que se haya alcanzado a bajar (mejor que nada)
+      return todos;
+    }
+
+    const lote = data || [];
+    todos.push(...lote);
+    if (lote.length < PAGE) break; // última página
+    desde += PAGE;
   }
-  return data || [];
+
+  return todos;
 }
 
 /**
