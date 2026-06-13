@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // 2) Después BAJAR el estado completo de todas las tablas.
       //    Con tope de 12s para que una red lenta no bloquee el POS.
-      const TABLAS_SYNC = ['productos', 'clientes', 'ventas', 'compras', 'proveedores', 'gastos', 'kvs'];
+      const TABLAS_SYNC = ['productos', 'clientes', 'ventas', 'compras', 'proveedores', 'gastos', 'ajustes_inventario', 'kvs'];
       await Promise.race([
         Promise.allSettled(TABLAS_SYNC.map((t) => Services.Sync.descargar(t))),
         new Promise((resolve) => setTimeout(resolve, 12000)),

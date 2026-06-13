@@ -35,7 +35,9 @@
       "Bash(grep -ivE \"console|Toast|↑|↓|→|🐾|repo|//|^\\\\s*\\\\*\")",
       "Bash(node /tmp/strip3.cjs)",
       "Bash(node /tmp/lines.cjs src/modules/clientes/clientes.form.js)",
-      "Bash(git -C /c/PosPunto diff --no-color src/modules/clientes/clientes.form.js)"
+      "Bash(git -C /c/PosPunto diff --no-color src/modules/clientes/clientes.form.js)",
+      "Bash(grep -nA12 \"const TABLAS\" /c/PosPunto/src/services/realtime.js)",
+      "Bash(grep -nA20 \"export async function upsert\" /c/PosPunto/src/services/supabase.js)"
     ]
   }
 }

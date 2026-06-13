@@ -16,6 +16,7 @@ const TABLAS = [
   'compras',
   'proveedores',
   'gastos',
+  'ajustes_inventario',
   'usuarios',
   'kvs',
 ];
