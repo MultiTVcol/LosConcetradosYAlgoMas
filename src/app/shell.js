@@ -41,6 +41,7 @@ const MODULOS = [
   { ruta: 'facturas',  etiqueta: 'Facturas',       icono: 'receipt',       feature: 'facturas' },
   { ruta: 'clientes',  etiqueta: 'Clientes',       icono: 'users',         feature: 'clientes' },
   { ruta: 'productos', etiqueta: 'Productos',      icono: 'package',       feature: 'productos' },
+  { ruta: 'inventario',etiqueta: 'Inventario',     icono: 'boxes',         feature: 'productos' },
   { ruta: 'compras',   etiqueta: 'Compras',        icono: 'truck',         feature: 'compras' },
   { ruta: 'gastos',    etiqueta: 'Gastos',         icono: 'wallet',        feature: 'gastos' },
   { ruta: 'reportes',  etiqueta: 'Reportes',       icono: 'bar-chart-3',   feature: 'reportes' },

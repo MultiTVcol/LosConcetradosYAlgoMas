@@ -147,6 +147,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     await mod.montar();
   });
 
+  // Inventario: módulo real
+  Core.Router.registrar('inventario', async () => {
+    const mod = await import('./modules/inventario/inventario.js');
+    await mod.montar();
+  });
+
   // Compras: módulo real
   Core.Router.registrar('compras', async () => {
     const mod = await import('./modules/compras/compras.js');
