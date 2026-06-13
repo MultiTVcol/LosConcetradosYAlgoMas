@@ -9,6 +9,7 @@
  */
 
 import * as Repo from './inventario.repo.js';
+import * as ProductosRepo from '../productos/productos.repo.js';
 import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { fmtDate } from '../../core/dates.js';
@@ -102,11 +103,10 @@ function pintarTabla() {
   const box = _contenedor.querySelector('#inv-tabla');
   if (!box) return;
 
-  const q = String(_q || '').trim().toLowerCase();
-  const filas = !q ? _res.productos : _res.productos.filter((p) =>
-    [p.nombre, p.codigo, p.barras, p.categoria].filter(Boolean)
-      .some((x) => String(x).toLowerCase().includes(q))
-  );
+  // Mismo buscador con prioridad que Ventas/Compras
+  const filas = !String(_q || '').trim()
+    ? _res.productos
+    : ProductosRepo.filtrarConPrioridad(_res.productos, _q);
 
   if (filas.length === 0) {
     box.innerHTML = `<div style="text-align:center;padding:32px;color:#94a3b8;font-size:13.5px">Sin productos${q ? ` para "${esc(_q)}"` : ''}.</div>`;
@@ -271,11 +271,10 @@ function abrirConteo() {
   };
 
   const pintarResultados = (q) => {
-    const query = String(q || '').trim().toLowerCase();
-    const lista = !query ? [] : _res.productos.filter((p) =>
-      !hoja.some((x) => x.producto_id === p.id) &&
-      [p.nombre, p.codigo, p.barras].filter(Boolean).some((x) => String(x).toLowerCase().includes(query))
-    ).slice(0, 8);
+    const lista = !String(q || '').trim() ? [] :
+      ProductosRepo.filtrarConPrioridad(_res.productos, q)
+        .filter((p) => !hoja.some((x) => x.producto_id === p.id))
+        .slice(0, 8);
     boxRes.innerHTML = lista.map((p) => `
       <button class="ct-res" data-id="${esc(p.id)}"
         style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border:1px solid #e2e8f0;background:white;border-radius:8px;cursor:pointer;font-family:inherit;text-align:left;font-size:13px">

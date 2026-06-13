@@ -52,11 +52,9 @@ function normalizar(texto) {
  */
 function aplicarFiltro(productos, filtro) {
   if (!filtro || !filtro.trim()) return productos;
-  const q = normalizar(filtro);
-  return productos.filter((p) => {
-    const campos = [p.nombre, p.codigo, p.categoria].map(normalizar);
-    return campos.some((c) => c.includes(q));
-  });
+  // Mismo buscador con prioridad que Ventas/Compras: código exacto →
+  // empieza con → barras → nombre → categoría → proveedor (sin acentos).
+  return Repo.filtrarConPrioridad(productos, filtro);
 }
 
 // ============================================================

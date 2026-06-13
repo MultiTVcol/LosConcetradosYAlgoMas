@@ -92,16 +92,28 @@ export function normalizar(p) {
  * @param {string} q - texto a buscar (puede estar vacío)
  * @returns {Array} productos ordenados por relevancia
  */
+/**
+ * Normaliza un texto para búsqueda: sin acentos, en minúsculas y sin
+ * espacios sobrantes. Así "alimon" encuentra "Alimón" y viceversa.
+ */
+function normalizarBusqueda(s) {
+  return String(s || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
 export function filtrarConPrioridad(productos, q) {
-  const query = (q || '').trim().toLowerCase();
+  const query = normalizarBusqueda(q);
   if (!query) return productos.slice();
 
   function rank(p) {
-    const cod = String(p.codigo || '').toLowerCase();
-    const bar = String(p.barras || '').toLowerCase();
-    const nom = String(p.nombre || '').toLowerCase();
-    const cat = String(p.categoria || '').toLowerCase();
-    const prv = String(p.proveedor || '').toLowerCase();
+    const cod = normalizarBusqueda(p.codigo);
+    const bar = normalizarBusqueda(p.barras);
+    const nom = normalizarBusqueda(p.nombre);
+    const cat = normalizarBusqueda(p.categoria);
+    const prv = normalizarBusqueda(p.proveedor);
 
     if (cod === query)            return 0;
     if (cod.startsWith(query))    return 1;
