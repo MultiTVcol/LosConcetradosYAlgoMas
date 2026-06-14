@@ -80,6 +80,7 @@ async function safeCount(tabla) {
 function adjuntarEventos(contenedor) {
   // Guardar datos del negocio
   contenedor.querySelector('#cfg-guardar-negocio')?.addEventListener('click', guardarDatosNegocio);
+  contenedor.querySelector('#cfg-guardar-fe')?.addEventListener('click', guardarFE);
 
   // Lector
   contenedor.querySelector('#cfg-lector')?.addEventListener('change', async (e) => {
@@ -161,6 +162,46 @@ async function guardarDatosNegocio() {
   } catch (err) {
     console.error(err);
     Toast.error('No se pudo guardar la configuración');
+  }
+}
+
+async function guardarFE() {
+  const get = (id) => _contenedor.querySelector(`#${id}`)?.value || '';
+  _cfg.fe = {
+    activa: _contenedor.querySelector('#cfg-fe-activa')?.checked === true,
+    ambiente: get('cfg-fe-ambiente') === 'produccion' ? 'produccion' : 'sandbox',
+    emisor: {
+      ...(_cfg.fe?.emisor || {}),
+      razonSocial: get('cfg-fe-razon').trim(),
+      nit: get('cfg-fe-nit').trim(),
+      dv: get('cfg-fe-dv').trim(),
+      tipoPersona: get('cfg-fe-tipopersona'),
+      regimen: get('cfg-fe-regimen'),
+      responsabilidades: get('cfg-fe-resp').trim(),
+      actividadCIIU: get('cfg-fe-ciiu').trim(),
+      direccion: get('cfg-fe-direccion').trim(),
+      municipio: get('cfg-fe-municipio').trim(),
+      municipioDane: get('cfg-fe-dane').trim(),
+      departamento: get('cfg-fe-departamento').trim(),
+      email: get('cfg-fe-email').trim(),
+      telefono: get('cfg-fe-telefono').trim(),
+    },
+    resolucion: {
+      ...(_cfg.fe?.resolucion || {}),
+      prefijo: get('cfg-fe-prefijo').trim(),
+      numeroResolucion: get('cfg-fe-numres').trim(),
+      rangoDesde: get('cfg-fe-rangodesde').trim(),
+      rangoHasta: get('cfg-fe-rangohasta').trim(),
+      fechaResolucion: get('cfg-fe-fecharesol'),
+      vigenciaHasta: get('cfg-fe-vigencia'),
+    },
+  };
+  try {
+    await Repo.guardar(_cfg);
+    Toast.ok(_cfg.fe.activa ? 'Facturación electrónica activada y guardada' : 'Datos de facturación electrónica guardados');
+  } catch (err) {
+    console.error(err);
+    Toast.error('No se pudieron guardar los datos de FE');
   }
 }
 
@@ -734,6 +775,89 @@ function htmlLayout(cfg, stats) {
           ${htmlDatosSistema(stats)}
         </div>
       </div>
+
+      ${htmlFacturacionElectronica(cfg)}
+    </div>
+  `;
+}
+
+function htmlFacturacionElectronica(cfg) {
+  const fe = cfg.fe || {};
+  const e = fe.emisor || {};
+  const r = fe.resolucion || {};
+  const sel = (id, label, valor, opciones) => `
+    <label class="ui-field" style="gap:5px">
+      <span class="ui-label">${label}</span>
+      <select id="${id}" class="ui-input">
+        ${opciones.map(([v, t]) => `<option value="${v}" ${valor === v ? 'selected' : ''}>${t}</option>`).join('')}
+      </select>
+    </label>`;
+  const inp = (id, label, valor, ph = '') => `
+    <label class="ui-field" style="gap:5px">
+      <span class="ui-label">${label}</span>
+      <input id="${id}" class="ui-input" type="text" value="${esc(String(valor || ''))}" placeholder="${esc(ph)}" autocomplete="off" />
+    </label>`;
+
+  return `
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:22px;margin-top:16px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <i data-lucide="file-check" style="width:22px;height:22px;color:#2563eb;stroke-width:1.9"></i>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Facturación electrónica (DIAN)</h3>
+            <div style="font-size:12.5px;color:#64748b">Datos del emisor y resolución. La conexión con Factus se configura aparte (en el servidor).</div>
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:13.5px;color:#0f172a;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 13px">
+          <input id="cfg-fe-activa" type="checkbox" ${fe.activa ? 'checked' : ''} style="width:18px;height:18px"> Activar facturación electrónica
+        </label>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 13px;font-size:12.5px;color:#92400e">
+        Mientras esté <b>desactivada</b>, nada cambia en Punto de Venta. Al activarla (cuando el servidor tenga las credenciales de Factus), el cajero podrá marcar cada venta como factura electrónica.
+      </div>
+
+      <div>
+        <div class="ui-label" style="margin-bottom:8px">Ambiente</div>
+        ${sel('cfg-fe-ambiente', 'Ambiente de emisión', fe.ambiente, [['sandbox', 'Pruebas (sandbox)'], ['produccion', 'Producción (DIAN real)']])}
+      </div>
+
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Datos del emisor (tu empresa)</div>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+          <div style="grid-column:1/-1">${inp('cfg-fe-razon', 'Razón social', e.razonSocial, 'Como está en el RUT')}</div>
+          ${inp('cfg-fe-nit', 'NIT', e.nit, 'Sin dígito de verificación')}
+          ${inp('cfg-fe-dv', 'Dígito verificación (DV)', e.dv, 'Ej: 6')}
+          ${sel('cfg-fe-tipopersona', 'Tipo de persona', e.tipoPersona, [['juridica', 'Jurídica'], ['natural', 'Natural']])}
+          ${sel('cfg-fe-regimen', 'Régimen IVA', e.regimen, [['no_responsable_iva', 'No responsable de IVA'], ['responsable_iva', 'Responsable de IVA']])}
+          ${inp('cfg-fe-resp', 'Responsabilidades (RUT)', e.responsabilidades, 'Ej: O-13; O-15; R-99-PN')}
+          ${inp('cfg-fe-ciiu', 'Actividad económica (CIIU)', e.actividadCIIU, 'Ej: 4711')}
+          <div style="grid-column:1/-1">${inp('cfg-fe-direccion', 'Dirección fiscal', e.direccion)}</div>
+          ${inp('cfg-fe-municipio', 'Municipio', e.municipio, 'Ej: Armenia')}
+          ${inp('cfg-fe-dane', 'Código DANE del municipio', e.municipioDane, 'Ej: 63001')}
+          ${inp('cfg-fe-departamento', 'Departamento', e.departamento, 'Ej: Quindío')}
+          ${inp('cfg-fe-email', 'Correo del emisor', e.email)}
+          ${inp('cfg-fe-telefono', 'Teléfono', e.telefono)}
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Resolución de numeración DIAN</div>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+          ${inp('cfg-fe-prefijo', 'Prefijo', r.prefijo, 'Ej: SETP / FE')}
+          ${inp('cfg-fe-numres', 'N° de resolución', r.numeroResolucion)}
+          ${inp('cfg-fe-rangodesde', 'Rango desde', r.rangoDesde, 'Ej: 1')}
+          ${inp('cfg-fe-rangohasta', 'Rango hasta', r.rangoHasta, 'Ej: 5000')}
+          <label class="ui-field" style="gap:5px"><span class="ui-label">Fecha resolución</span><input id="cfg-fe-fecharesol" class="ui-input" type="date" value="${esc(r.fechaResolucion || '')}" /></label>
+          <label class="ui-field" style="gap:5px"><span class="ui-label">Vigencia hasta</span><input id="cfg-fe-vigencia" class="ui-input" type="date" value="${esc(r.vigenciaHasta || '')}" /></label>
+        </div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:6px">En pruebas, Factus te da una resolución de prueba. En producción usa la que te autorizó la DIAN.</div>
+      </div>
+
+      <button id="cfg-guardar-fe"
+        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+        Guardar datos de facturación electrónica
+      </button>
     </div>
   `;
 }

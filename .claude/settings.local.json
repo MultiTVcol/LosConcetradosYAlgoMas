@@ -37,7 +37,11 @@
       "Bash(node /tmp/lines.cjs src/modules/clientes/clientes.form.js)",
       "Bash(git -C /c/PosPunto diff --no-color src/modules/clientes/clientes.form.js)",
       "Bash(grep -nA12 \"const TABLAS\" /c/PosPunto/src/services/realtime.js)",
-      "Bash(grep -nA20 \"export async function upsert\" /c/PosPunto/src/services/supabase.js)"
+      "Bash(grep -nA20 \"export async function upsert\" /c/PosPunto/src/services/supabase.js)",
+      "WebSearch",
+      "WebFetch(domain:developers.factus.com.co)",
+      "WebFetch(domain:github.com)",
+      "Bash(grep -nE \"htmlDatosNegocio|function campo|function render|htmlLector|htmlImpresora|htmlSync|adjuntarEventos|function htmlLayout|\\\\\\\\\\\\$\\\\{html\" /c/PosPunto/src/modules/config/config.view.js)"
     ]
   }
 }
