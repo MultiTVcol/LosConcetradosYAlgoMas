@@ -90,6 +90,8 @@ function construirFormulario(datos) {
 
       ${campo('cli-obs', 'Observaciones', 'text', datos.obs, 'Notas internas sobre el cliente')}
 
+      ${htmlDatosFiscales(datos)}
+
       <!-- Sección Precios Especiales -->
       <div style="background:#f8fafc;border:2px dashed #2563eb;border-radius:12px;padding:14px;margin-top:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
@@ -127,6 +129,46 @@ function construirFormulario(datos) {
   return wrapper;
 }
 
+/** Tipos de documento (DIAN). El código exacto se mapea al integrar Factus. */
+const TIPOS_DOC = [
+  ['CC', 'Cédula de ciudadanía'],
+  ['NIT', 'NIT'],
+  ['CE', 'Cédula de extranjería'],
+  ['TI', 'Tarjeta de identidad'],
+  ['PAS', 'Pasaporte'],
+  ['NUIP', 'NUIP'],
+  ['OTRO', 'Otro'],
+];
+
+/**
+ * Subsección con los datos fiscales del cliente (adquirente) que pide la
+ * factura electrónica. Son opcionales: solo se exigen al emitir una FE.
+ * Los campos nuevos (tipo doc, DV, persona) se guardan en `data.fiscal`
+ * para no requerir columnas nuevas en la nube.
+ */
+function htmlDatosFiscales(datos) {
+  const f = (datos.data && datos.data.fiscal) || {};
+  const opt = (arr, val) => arr.map(([v, t]) => `<option value="${v}" ${val === v ? 'selected' : ''}>${esc(t)}</option>`).join('');
+  return `
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:2px">
+      <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Datos para factura electrónica (opcional)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label class="ui-field" style="gap:5px">
+          <span class="ui-label">Tipo de documento</span>
+          <select id="cli-tipodoc" class="ui-input">${opt(TIPOS_DOC, f.tipoDocumento || 'CC')}</select>
+        </label>
+        ${campo('cli-documento', 'Número de documento', 'text', datos.documento, 'Sin puntos ni guiones')}
+        ${campo('cli-dv', 'DV (solo NIT)', 'text', f.dv, 'Ej: 6')}
+        <label class="ui-field" style="gap:5px">
+          <span class="ui-label">Tipo de persona</span>
+          <select id="cli-tipopersona" class="ui-input">${opt([['natural', 'Natural'], ['juridica', 'Jurídica']], f.tipoPersona || 'natural')}</select>
+        </label>
+        <div style="grid-column:1/-1">${campo('cli-email', 'Correo electrónico', 'email', datos.email, 'Donde llega la factura electrónica')}</div>
+      </div>
+    </div>
+  `;
+}
+
 function campo(id, label, tipo, valor, placeholder, requerido = false) {
   return `
     <label class="ui-field" style="gap:5px">
@@ -146,13 +188,22 @@ function campo(id, label, tipo, valor, placeholder, requerido = false) {
 }
 
 function leerFormulario(formEl) {
+  const val = (id) => formEl.querySelector(`#${id}`)?.value.trim() || '';
   return {
-    nombre: formEl.querySelector('#cli-nombre').value.trim(),
-    negocio: formEl.querySelector('#cli-negocio').value.trim(),
-    telefono: formEl.querySelector('#cli-telefono').value.trim(),
-    direccion: formEl.querySelector('#cli-direccion').value.trim(),
-    ciudad: formEl.querySelector('#cli-ciudad').value.trim(),
-    obs: formEl.querySelector('#cli-obs').value.trim(),
+    nombre: val('cli-nombre'),
+    negocio: val('cli-negocio'),
+    telefono: val('cli-telefono'),
+    direccion: val('cli-direccion'),
+    ciudad: val('cli-ciudad'),
+    obs: val('cli-obs'),
+    // Datos fiscales (factura electrónica)
+    documento: val('cli-documento'),
+    email: val('cli-email'),
+    fiscal: {
+      tipoDocumento: formEl.querySelector('#cli-tipodoc')?.value || 'CC',
+      dv: val('cli-dv'),
+      tipoPersona: formEl.querySelector('#cli-tipopersona')?.value || 'natural',
+    },
   };
 }
 
@@ -185,7 +236,10 @@ function configurarEventos(formEl, datosIniciales, modal, opciones, esEdicion) {
   btnPE.addEventListener('click', () => {
     // Capturar lo que el usuario haya escrito antes de cerrar
     const formSnapshot = leerFormulario(formEl);
-    const datosActualizados = { ...datosIniciales, ...formSnapshot };
+    const datosActualizados = {
+      ...datosIniciales, ...formSnapshot,
+      data: { ...(datosIniciales.data || {}), fiscal: formSnapshot.fiscal },
+    };
     modal.cerrar();
     setTimeout(() => abrirPreciosEspeciales(datosActualizados, esEdicion, opciones), 220);
   });
@@ -194,6 +248,9 @@ function configurarEventos(formEl, datosIniciales, modal, opciones, esEdicion) {
     const datos = leerFormulario(formEl);
     if (datosIniciales.id) datos.id = datosIniciales.id;
     datos.preciosEspeciales = { ..._peEdit };
+    // Guardar los datos fiscales dentro de `data` (sin columnas nuevas en la nube)
+    datos.data = { ...(datosIniciales.data || {}), fiscal: datos.fiscal };
+    delete datos.fiscal;
 
     const errores = Repo.validar(datos);
     if (errores.length > 0) {
