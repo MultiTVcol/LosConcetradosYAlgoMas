@@ -101,6 +101,7 @@ function rangoVentas(desde, hasta) {
 
 function reporteRango(desde, hasta) {
   let ventas = 0, utilidadBruta = 0, costoVenta = 0, nFac = 0;
+  let contadoVentas = 0, recaudoVentas = 0;  // efectivo real de ventas
   for (const v of _ventas) {
     const d = (v.fecha || '').slice(0, 10);
     if (d >= desde && d <= hasta) {
@@ -110,6 +111,14 @@ function reporteRango(desde, hasta) {
       utilidadBruta += uti;
       costoVenta += (tot - uti);
       nFac++;
+      if (v.tipoPago !== 'credito') contadoVentas += tot;
+    }
+    // Recaudos de crédito (abonos) recibidos en el rango → sí entran a caja
+    if (v.tipoPago === 'credito') {
+      for (const a of v.abonos || []) {
+        const da = (a.fecha || '').slice(0, 10);
+        if (da >= desde && da <= hasta) recaudoVentas += num(a.monto);
+      }
     }
   }
 
@@ -163,6 +172,17 @@ function reporteRango(desde, hasta) {
     }
   }
 
+  // Cuentas por cobrar (snapshot actual) — ventas a crédito con saldo
+  let cxcTotal = 0, cxcVencido = 0, nVentasPorCobrar = 0;
+  for (const v of _ventas) {
+    if (v.tipoPago === 'credito' && num(v.saldo) > 0.5) {
+      const s = num(v.saldo);
+      cxcTotal += s;
+      nVentasPorCobrar++;
+      if (v.vence && v.vence < hoyISO) cxcVencido += s;
+    }
+  }
+
   // Inventario al día
   let invSKUs = 0, invUnidades = 0, invValorCosto = 0, invValorVenta = 0;
   for (const p of _productos) {
@@ -175,16 +195,21 @@ function reporteRango(desde, hasta) {
     }
   }
 
+  const comprasContado = compras - creditoNuevo;
   const utilidadNeta = utilidadBruta - gastos;
-  const flujoCaja = ventas - compras - gastos;
-  const flujoCajaProyectado = flujoCaja - cxpTotal;
+  // Flujo de caja REAL del periodo: solo lo que entró/salió en efectivo.
+  const flujoCaja = (contadoVentas + recaudoVentas) - (comprasContado + abonosDelPeriodo) - gastos;
+  // Proyectado: si cobras lo pendiente y pagas lo que debes.
+  const flujoCajaProyectado = flujoCaja + cxcTotal - cxpTotal;
 
   return {
     desde, hasta,
     ventas, utilidadBruta, costoVenta, nFac,
+    contadoVentas, recaudoVentas, comprasContado,
     compras, nCompras, creditoNuevo, nCreditosNuevos, abonosDelPeriodo, nAbonos,
     gastos, nGastos, gastosPorCat,
     cxpTotal, cxpVencido, cxpPorVencer, cxpSinFecha, nFacturasPorPagar,
+    cxcTotal, cxcVencido, nVentasPorCobrar,
     invSKUs, invUnidades, invValorCosto, invValorVenta,
     utilidadNeta, flujoCaja, flujoCajaProyectado,
   };
@@ -446,16 +471,18 @@ function pintarReporteRango() {
       </div>
 
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">
-        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Flujo de caja (dinero del periodo)</h4>
-        ${repFila('Ventas (dinero que entró)', r.ventas, '#0f172a')}
-        ${repFila('− Compras', -r.compras, '#0369a1')}
-        ${repFila('− Gastos', -r.gastos, '#dc2626')}
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Flujo de caja (efectivo del periodo)</h4>
+        ${repFila('Ventas de contado', r.contadoVentas, '#0f172a')}
+        ${r.recaudoVentas > 0 ? repFila('+ Recaudos de crédito', r.recaudoVentas, '#15803d') : ''}
+        ${repFila('− Compras de contado', -r.comprasContado, '#0369a1')}
         ${r.abonosDelPeriodo > 0 ? repFila('− Abonos a proveedores', -r.abonosDelPeriodo, '#a16207') : ''}
+        ${repFila('− Gastos', -r.gastos, '#dc2626')}
         <div style="border-top:3px double #cbd5e1;margin:8px 0"></div>
         ${repFila('= FLUJO DE CAJA', r.flujoCaja, colCaja, true, true)}
-        ${r.cxpTotal > 0 ? `
+        ${(r.cxcTotal > 0 || r.cxpTotal > 0) ? `
           <div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:8px">
-            ${repFila('− Deuda pendiente', -r.cxpTotal, '#a16207')}
+            ${r.cxcTotal > 0 ? repFila('+ Por cobrar (clientes)', r.cxcTotal, '#15803d') : ''}
+            ${r.cxpTotal > 0 ? repFila('− Por pagar (proveedores)', -r.cxpTotal, '#a16207') : ''}
             <div style="border-top:2px dashed #cbd5e1;margin:6px 0"></div>
             ${repFila('= Flujo proyectado', r.flujoCajaProyectado, colProy, true)}
           </div>
@@ -793,14 +820,16 @@ function htmlInformeFormal(r, cfg) {
       </div>
 
       <!-- FLUJO DE CAJA -->
-      ${titulo('Flujo de caja (dinero del periodo)', '#0369a1')}
+      ${titulo('Flujo de caja (efectivo del periodo)', '#0369a1')}
       <table style="width:100%;border-collapse:collapse">
-        ${filaTabla('Ventas (entró)', r.ventas, { color: '#15803d' })}
-        ${filaTabla('(−) Compras de mercancía', -r.compras, { color: '#0369a1' })}
-        ${filaTabla('(−) Gastos pagados', -r.gastos, { color: '#dc2626' })}
+        ${filaTabla('Ventas de contado', r.contadoVentas, { color: '#15803d' })}
+        ${r.recaudoVentas > 0 ? filaTabla('(+) Recaudos de crédito', r.recaudoVentas, { color: '#15803d' }) : ''}
+        ${filaTabla('(−) Compras de contado', -r.comprasContado, { color: '#0369a1' })}
         ${r.abonosDelPeriodo > 0 ? filaTabla(`(−) Abonos a proveedores (${r.nAbonos})`, -r.abonosDelPeriodo, { color: '#a16207' }) : ''}
+        ${filaTabla('(−) Gastos pagados', -r.gastos, { color: '#dc2626' })}
         <tr><td colspan="2" style="border-top:2px solid #0f172a;padding:0"></td></tr>
         ${filaTabla('= FLUJO DE CAJA', r.flujoCaja, { bold: true, color: colCaja, big: true })}
+        ${r.cxcTotal > 0 ? filaTabla('Por cobrar a clientes (snapshot)', r.cxcTotal, { color: '#15803d' }) : ''}
       </table>
 
       <!-- CUENTAS POR PAGAR -->
@@ -940,8 +969,11 @@ function exportarCSV() {
   linea('Gastos', r.gastos);
   linea('Abonos a proveedores', r.abonosDelPeriodo);
   linea('Utilidad neta', r.utilidadNeta);
-  linea('Flujo de caja', r.flujoCaja);
-  linea('Deuda pendiente (snapshot)', r.cxpTotal);
+  linea('Ventas de contado', r.contadoVentas);
+  linea('Recaudos de credito', r.recaudoVentas);
+  linea('Flujo de caja (efectivo)', r.flujoCaja);
+  linea('Por cobrar a clientes (snapshot)', r.cxcTotal);
+  linea('Deuda a proveedores (snapshot)', r.cxpTotal);
   linea('Valor inventario costo (snapshot)', r.invValorCosto);
   linea('');
 
@@ -1136,14 +1168,16 @@ function htmlInformePOS80mm(r, cfg, plantilla) {
       <!-- FLUJO DE CAJA -->
       ${titulo('FLUJO DE CAJA')}
       ${wrap(
-        kv('Ventas (entró)', r.ventas) +
-        kv('(-) Compras', -r.compras) +
-        kv('(-) Gastos', -r.gastos) +
-        (r.abonosDelPeriodo > 0 ? kv(`(-) Abonos prov (${r.nAbonos})`, -r.abonosDelPeriodo) : '')
+        kv('Ventas contado', r.contadoVentas) +
+        (r.recaudoVentas > 0 ? kv('(+) Recaudos credito', r.recaudoVentas) : '') +
+        kv('(-) Compras contado', -r.comprasContado) +
+        (r.abonosDelPeriodo > 0 ? kv(`(-) Abonos prov (${r.nAbonos})`, -r.abonosDelPeriodo) : '') +
+        kv('(-) Gastos', -r.gastos)
       )}
       ${sep}
       ${wrap(
-        kv('= FLUJO DE CAJA', r.flujoCaja, true)
+        kv('= FLUJO DE CAJA', r.flujoCaja, true) +
+        (r.cxcTotal > 0 ? kv('Por cobrar (snapshot)', r.cxcTotal) : '')
       )}
 
       <!-- CUENTAS POR PAGAR -->

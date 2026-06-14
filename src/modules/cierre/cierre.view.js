@@ -136,6 +136,8 @@ function pintarContenido() {
 
 function calcularReporte(desde, hasta) {
   let ventas = 0, utilidadBruta = 0, costoVenta = 0, nFac = 0;
+  // Caja: separar lo que ENTRÓ en efectivo de lo vendido a crédito.
+  let contadoVentas = 0, creditoVentasNuevo = 0, recaudoVentas = 0, nRecaudos = 0;
   const metodosPago = {};         // { 'Efectivo': monto, 'Tarjeta': monto, ... }
   const topProductos = new Map(); // ranking de productos vendidos
   for (const v of _ventas) {
@@ -147,6 +149,8 @@ function calcularReporte(desde, hasta) {
       utilidadBruta += uti;
       costoVenta += (tot - uti);
       nFac++;
+      if (v.tipoPago === 'credito') creditoVentasNuevo += tot;  // no entra a caja hoy
+      else contadoVentas += tot;                                // entra completo
       // Métodos de pago — primer token (ej: "Mixto (Efectivo: ...)" → "Mixto")
       const met = (v.metodo_pago || '').split(' ')[0] || '—';
       metodosPago[met] = (metodosPago[met] || 0) + tot;
@@ -157,6 +161,14 @@ function calcularReporte(desde, hasta) {
         prev.cantidad += num(it.cantidad);
         prev.total += num(it.total) || num(it.precio) * num(it.cantidad);
         topProductos.set(id, prev);
+      }
+    }
+    // Recaudos: abonos de ventas a crédito recibidos en el periodo (sí entran
+    // a caja), sin importar la fecha de la venta original.
+    if (v.tipoPago === 'credito') {
+      for (const a of v.abonos || []) {
+        const da = (a.fecha || '').slice(0, 10);
+        if (da >= desde && da <= hasta) { recaudoVentas += num(a.monto); nRecaudos++; }
       }
     }
   }
@@ -218,12 +230,15 @@ function calcularReporte(desde, hasta) {
   // Compras a contado y abonos sí cuentan; compras a crédito NO (no salió plata).
   const comprasContado = compras - creditoNuevo;
   const egresosCaja = comprasContado + abonosDelPeriodo + gastos;
-  const flujoCaja = ventas - egresosCaja;
+  // Efectivo real que entró por ventas: contado + recaudos de crédito.
+  const ingresoCaja = contadoVentas + recaudoVentas;
+  const flujoCaja = ingresoCaja - egresosCaja;
   const utilidadNeta = utilidadBruta - gastos;
 
   return {
     desde, hasta,
     ventas, utilidadBruta, costoVenta, nFac,
+    contadoVentas, creditoVentasNuevo, recaudoVentas, nRecaudos, ingresoCaja,
     metodosPago, topProductos: topProductosArr,
     gastos, nGastos, gastosPorCat,
     compras, nCompras, creditoNuevo, nCreditosNuevos, comprasContado,
@@ -423,13 +438,15 @@ function htmlPanelCaja(r, colCaja, colNeta) {
         <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a;display:flex;align-items:center;gap:8px"><i data-lucide="banknote" style="width:18px;height:18px;color:#16a34a;stroke-width:2"></i> Caja</h3>
         <span style="background:${r.flujoCaja >= 0 ? '#dcfce7' : '#fef2f2'};color:${r.flujoCaja >= 0 ? '#166534' : '#dc2626'};font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px">${r.flujoCaja >= 0 ? 'POSITIVA' : 'NEGATIVA'}</span>
       </div>
-      ${kvLinea('Ingresos (ventas)', `<b style="color:#15803d">${money(r.ventas)}</b>`)}
-      ${kvLinea('Egresos (gastos)', `<b style="color:#dc2626">- ${money(r.gastos)}</b>`)}
+      ${kvLinea('Ventas de contado', money(r.contadoVentas))}
+      ${r.recaudoVentas > 0 ? kvLinea('Recaudos de crédito', `<b style="color:#15803d">${money(r.recaudoVentas)}</b>`) : ''}
+      ${kvLinea('Egresos (compras/gastos)', `<b style="color:#dc2626">- ${money(r.egresosCaja)}</b>`)}
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       <div style="margin-bottom:10px">
-        <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Caja del periodo</div>
+        <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Efectivo en caja (periodo)</div>
         <div style="font-size:28px;font-weight:800;color:${colCaja};font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.flujoCaja)}</div>
       </div>
+      ${r.creditoVentasNuevo > 0 ? kvLinea('Vendido a crédito (por cobrar)', `<b style="color:#a16207">${money(r.creditoVentasNuevo)}</b>`) : ''}
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${kvLinea('Utilidad neta', `<b style="color:${colNeta}">${money(r.utilidadNeta)}</b>`)}
     </div>
@@ -572,14 +589,16 @@ async function imprimirInforme(r) {
       <!-- CAJA -->
       ${titulo('CAJA DEL DÍA')}
       ${wrap(
-        kv('Ingresos (ventas)', money(r.ventas)) +
+        kv('Ventas contado', money(r.contadoVentas)) +
+        (r.recaudoVentas > 0 ? kv(`Recaudos credito (${r.nRecaudos})`, money(r.recaudoVentas)) : '') +
         (r.comprasContado > 0 ? kv('(-) Compras contado', money(r.comprasContado)) : '') +
         (r.abonosDelPeriodo > 0 ? kv('(-) Abonos proveedores', money(r.abonosDelPeriodo)) : '') +
         kv('(-) Gastos', money(r.gastos))
       )}
       ${sep}
       ${wrap(
-        kv('FLUJO DE CAJA', money(r.flujoCaja), true) +
+        kv('EFECTIVO EN CAJA', money(r.flujoCaja), true) +
+        (r.creditoVentasNuevo > 0 ? kv('Vendido a credito', money(r.creditoVentasNuevo)) : '') +
         kv('UTILIDAD NETA', money(r.utilidadNeta), true)
       )}
 
@@ -742,12 +761,14 @@ async function imprimirCierrePDF(r) {
       <!-- CAJA / FLUJO -->
       ${tituloSec('Flujo de caja del periodo', colCaja)}
       <table style="width:100%;border-collapse:collapse">
-        ${fila('Ingresos (ventas)', r.ventas, { color: '#15803d' })}
+        ${fila('Ventas de contado', r.contadoVentas, { color: '#15803d' })}
+        ${r.recaudoVentas > 0 ? fila(`(+) Recaudos de crédito (${r.nRecaudos})`, r.recaudoVentas, { color: '#15803d' }) : ''}
         ${r.comprasContado > 0 ? fila('(−) Compras contado', -r.comprasContado, { color: '#0369a1' }) : ''}
         ${r.abonosDelPeriodo > 0 ? fila('(−) Abonos a proveedores', -r.abonosDelPeriodo, { color: '#a16207' }) : ''}
         ${fila('(−) Gastos pagados', -r.gastos, { color: '#dc2626' })}
         <tr><td colspan="2" style="border-top:2px solid #0f172a;padding:0"></td></tr>
-        ${fila('= FLUJO DE CAJA', r.flujoCaja, { bold: true, color: colCaja, big: true })}
+        ${fila('= EFECTIVO EN CAJA', r.flujoCaja, { bold: true, color: colCaja, big: true })}
+        ${r.creditoVentasNuevo > 0 ? fila('Vendido a crédito (por cobrar)', r.creditoVentasNuevo, { color: '#a16207' }) : ''}
       </table>
 
       <!-- ESTADO DE RESULTADOS -->
