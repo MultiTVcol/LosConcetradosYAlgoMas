@@ -1607,6 +1607,7 @@ const METODOS_PAGO = [
   { id: 'qr',            label: 'QR' },
   { id: 'tarjeta',       label: 'Tarjeta' },
   { id: 'mixto',         label: 'Mixto' },
+  { id: 'credito',       label: 'Crédito' },
 ];
 
 const METODOS_LABEL = {
@@ -1710,6 +1711,39 @@ function seleccionarMetodoPago(metodo) {
 
   const area = body.querySelector('#cobro-area');
   if (!area) return;
+
+  if (metodo === 'credito') {
+    _payMode = 'credito';
+    const vd = new Date(); vd.setDate(vd.getDate() + 30);
+    const venceDef = vd.toISOString().slice(0, 10);
+    const hayCliente = !!(_cliente && _cliente.id);
+    area.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${hayCliente
+          ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 13px;font-size:13px;color:#1d4ed8"><b>${esc(_cliente.nombre)}</b> queda debiendo esta venta.</div>`
+          : `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:11px 13px;font-size:13px;color:#991b1b">Para vender a crédito primero <b>selecciona un cliente</b> (no "Cliente ocasional").</div>`}
+        <div>
+          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
+          <input id="cobro-cred-abono" data-miles type="text" inputmode="numeric" placeholder="0"
+            style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
+        </div>
+        <div>
+          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha de vencimiento</div>
+          <input id="cobro-cred-vence" type="date" value="${venceDef}"
+            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+        </div>
+        <div id="cobro-cred-saldo" style="font-size:13px;color:#64748b">Quedará a crédito: <b style="color:#a16207">${money(totales.total)}</b></div>
+      </div>
+    `;
+    bindMilesInputs(area);
+    const inpAb = area.querySelector('#cobro-cred-abono');
+    const saldoBox = area.querySelector('#cobro-cred-saldo');
+    inpAb.addEventListener('input', () => {
+      const ab = Math.min(num(inpAb.value), totales.total);
+      saldoBox.innerHTML = `Quedará a crédito: <b style="color:#a16207">${money(Math.max(0, totales.total - ab))}</b>`;
+    });
+    return;
+  }
 
   if (metodo === 'mixto') {
     _payMode = 'mixto';
@@ -1839,8 +1873,23 @@ async function confirmarVenta() {
   let metodo = '';
   let recibido = 0;
   let cambio = 0;
+  let tipoPago = 'contado';
+  let abonoInicial = 0;
+  let vence = '';
 
-  if (_payMode === 'mixto') {
+  if (_payMode === 'credito') {
+    if (!_cliente || !_cliente.id) {
+      Toast.warn('Para vender a crédito primero selecciona un cliente');
+      return;
+    }
+    const b = _cobroModal?.body;
+    abonoInicial = Math.min(num(b?.querySelector('#cobro-cred-abono')?.value), totales.total);
+    vence = b?.querySelector('#cobro-cred-vence')?.value || '';
+    tipoPago = 'credito';
+    metodo = 'Crédito';
+    recibido = abonoInicial;
+    cambio = 0;
+  } else if (_payMode === 'mixto') {
     const sum = _payments.efectivo + _payments.transferencia + _payments.qr + _payments.tarjeta;
     if (sum < totales.total - 0.5) {
       Toast.warn('El pago mixto no cubre el total');
@@ -1876,6 +1925,10 @@ async function confirmarVenta() {
       cliente: _cliente,
       metodo_pago: metodo,
       descuento: _descuento,
+      tipoPago,
+      abonoInicial,
+      vence,
+      metodoAbono: 'Efectivo',
       data: { recibido, cambio },
     });
   } catch (err) {

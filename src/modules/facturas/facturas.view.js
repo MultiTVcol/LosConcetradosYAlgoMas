@@ -148,6 +148,10 @@ function filaFactura(f) {
   const cliente = f.cliente_nombre || 'Cliente ocasional';
   const metodo = (f.metodo_pago || '').split(' ')[0] || '—';
   const anulada = f.estado === 'anulada';
+  const credPend = f.tipoPago === 'credito' && (Number(f.saldo) || 0) > 0.5;
+  const estadoBadge = anulada ? badge('Anulada', 'danger')
+    : credPend ? badge('Crédito', 'warn')
+    : badge('Pagada', 'success');
 
   return `
     <tr data-fac-id="${esc(f.id)}">
@@ -160,7 +164,7 @@ function filaFactura(f) {
       </td>
       <td style="color:#111827">${esc(cliente)}</td>
       <td>${badge(metodo, 'info')}</td>
-      <td>${anulada ? badge('Anulada', 'danger') : badge('Pagada', 'success')}</td>
+      <td>${estadoBadge}</td>
       <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#111827">
         ${money(f.total)}
       </td>

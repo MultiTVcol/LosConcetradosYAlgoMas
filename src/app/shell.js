@@ -39,6 +39,7 @@ const MODULOS = [
   { ruta: 'dashboard', etiqueta: 'Inicio',          icono: 'layout-dashboard', feature: 'dashboard' },
   { ruta: 'ventas',    etiqueta: 'Punto de Venta',  icono: 'shopping-cart',    feature: 'ventas' },
   { ruta: 'facturas',  etiqueta: 'Facturas',        icono: 'receipt',          feature: 'facturas' },
+  { ruta: 'cuentas-cobrar', etiqueta: 'Cuentas por cobrar', icono: 'hand-coins', feature: 'ventas' },
   { ruta: 'clientes',  etiqueta: 'Clientes',        icono: 'users',            feature: 'clientes' },
   { ruta: 'productos', etiqueta: 'Productos',       icono: 'package',          feature: 'productos' },
   { ruta: 'inventario',etiqueta: 'Inventario',      icono: 'boxes',            feature: 'productos' },
@@ -58,7 +59,7 @@ const MODULOS = [
  */
 const GRUPOS = [
   { titulo: null,         rutas: ['dashboard'] },
-  { titulo: 'Ventas',     rutas: ['ventas', 'facturas', 'clientes'] },
+  { titulo: 'Ventas',     rutas: ['ventas', 'facturas', 'cuentas-cobrar', 'clientes'] },
   { titulo: 'Inventario', rutas: ['productos', 'inventario', 'compras', 'facturas-compra'] },
   { titulo: 'Finanzas',   rutas: ['gastos', 'cierre', 'reportes'] },
   { titulo: 'Sistema',    rutas: ['usuarios', 'config'] },

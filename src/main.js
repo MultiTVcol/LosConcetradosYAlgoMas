@@ -135,6 +135,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     await mod.montar();
   });
 
+  // Cuentas por cobrar (ventas a crédito): módulo real
+  Core.Router.registrar('cuentas-cobrar', async () => {
+    const mod = await import('./modules/ventas/cuentas-cobrar.js');
+    await mod.montar();
+  });
+
   // Clientes: módulo real
   Core.Router.registrar('clientes', async () => {
     const mod = await import('./modules/clientes/clientes.js');

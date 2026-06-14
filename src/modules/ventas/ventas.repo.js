@@ -230,6 +230,15 @@ export function construirVenta(datos) {
     descuento: totales.descuento,
     utilidad: totales.utilidad,
     total: totales.total,
+    // --- Crédito (cuentas por cobrar) ---
+    tipoPago: datos.tipoPago === 'credito' ? 'credito' : 'contado',
+    saldo: datos.tipoPago === 'credito'
+      ? Math.max(0, totales.total - (Number(datos.abonoInicial) || 0))
+      : 0,
+    vence: datos.tipoPago === 'credito' ? (datos.vence || '') : '',
+    abonos: (datos.tipoPago === 'credito' && (Number(datos.abonoInicial) || 0) > 0)
+      ? [{ id: uid(), fecha: todayISO(), monto: Number(datos.abonoInicial) || 0, metodo: datos.metodoAbono || 'Efectivo' }]
+      : [],
     estado: 'completada',
     data: {
       timestamp: nowISO(),
@@ -293,6 +302,38 @@ export async function obtener(id) {
  */
 export async function contar() {
   return await db.count(TABLA);
+}
+
+/**
+ * Registra un abono (recaudo) a una venta a crédito. Baja el saldo y
+ * guarda el abono en la venta.
+ *
+ * @param {string} ventaId
+ * @param {Object} abono - { monto, metodo, fecha?, nota? }
+ */
+export async function abonar(ventaId, abono) {
+  const venta = await db.get(TABLA, ventaId);
+  if (!venta) throw new Error('Venta no encontrada');
+  if (venta.tipoPago !== 'credito') throw new Error('Solo se abonan ventas a crédito');
+
+  const monto = Math.max(0, Number(abono.monto) || 0);
+  if (monto <= 0) throw new Error('El monto del abono debe ser mayor a cero');
+
+  const saldoActual = Number(venta.saldo) || 0;
+  if (monto > saldoActual + 0.5) throw new Error('El abono supera el saldo pendiente');
+
+  const abonos = Array.isArray(venta.abonos) ? [...venta.abonos] : [];
+  abonos.push({
+    id: uid(),
+    fecha: abono.fecha || todayISO(),
+    monto,
+    metodo: abono.metodo || 'Efectivo',
+    nota: String(abono.nota || '').trim(),
+  });
+
+  const actualizada = { ...venta, abonos, saldo: Math.max(0, saldoActual - monto) };
+  await Sync.guardar(TABLA, actualizada);
+  return actualizada;
 }
 
 /**
