@@ -10,6 +10,7 @@
  */
 
 import * as Repo from './compras.repo.js';
+import * as ProveedoresRepo from './proveedores.repo.js';
 import { money, num, fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { todayISO } from '../../core/dates.js';
@@ -70,6 +71,9 @@ function htmlKpis() {
 
 function htmlLayout() {
   const acciones = `
+    <button id="fc-cxp-nueva" style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;background:white;border:1px solid #fde68a;color:#a16207;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit" title="Registrar una deuda existente sin tocar inventario (migración)">
+      <i data-lucide="file-plus" style="width:16px;height:16px;stroke-width:2"></i> Cuenta por pagar
+    </button>
     <button id="fc-nueva" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
       <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i> Nueva compra
     </button>
@@ -91,6 +95,103 @@ function htmlLayout() {
 
 function adjuntar() {
   _contenedor.querySelector('#fc-nueva')?.addEventListener('click', () => Router.navegar('compras'));
+  _contenedor.querySelector('#fc-cxp-nueva')?.addEventListener('click', () => abrirCuentaPorPagar());
+}
+
+// ============================================================
+//  CREAR CUENTA POR PAGAR (sin afectar inventario — migración)
+// ============================================================
+
+async function abrirCuentaPorPagar() {
+  let provs = [];
+  try { provs = await ProveedoresRepo.listar(); } catch (e) { provs = []; }
+  const vd = new Date(); vd.setDate(vd.getDate() + 30);
+  const venceDef = vd.toISOString().slice(0, 10);
+
+  const contenido = `
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 13px;margin-bottom:14px;font-size:12.5px;color:#92400e">
+      Registra una factura de compra que quedó <b>pendiente de pago</b>. <b>No suma stock</b> al inventario — úsalo para migraciones o saldos iniciales.
+    </div>
+    <div style="display:grid;gap:12px">
+      <div>
+        <div class="ui-label" style="margin-bottom:4px">Proveedor *</div>
+        <input id="cxp-prov" class="ui-input" list="cxp-prov-list" placeholder="Nombre del proveedor" autocomplete="off" />
+        <datalist id="cxp-prov-list">${provs.map((p) => `<option value="${esc(p.nombre || '')}"></option>`).join('')}</datalist>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="ui-label" style="margin-bottom:4px">N° factura / remisión</div>
+          <input id="cxp-ref" class="ui-input" type="text" placeholder="Ej: FC-1024" autocomplete="off" />
+        </div>
+        <div>
+          <div class="ui-label" style="margin-bottom:4px">Fecha de la factura</div>
+          <input id="cxp-fecha" class="ui-input" type="date" value="${todayISO()}" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="ui-label" style="margin-bottom:4px">Monto total adeudado *</div>
+          <input id="cxp-total" data-miles type="text" inputmode="numeric" placeholder="0"
+            style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
+        </div>
+        <div>
+          <div class="ui-label" style="margin-bottom:4px">Abono inicial (opcional)</div>
+          <input id="cxp-abono" data-miles type="text" inputmode="numeric" placeholder="0" class="ui-input" style="text-align:right" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end">
+        <div>
+          <div class="ui-label" style="margin-bottom:4px">Vencimiento</div>
+          <input id="cxp-vence" class="ui-input" type="date" value="${venceDef}" />
+        </div>
+        <div id="cxp-saldo" style="font-size:13px;color:#64748b;padding-bottom:10px">Saldo: <b style="color:#a16207">$0</b></div>
+      </div>
+      <div>
+        <div class="ui-label" style="margin-bottom:4px">Nota</div>
+        <input id="cxp-nota" class="ui-input" type="text" placeholder="Ej: saldo migrado del sistema anterior" autocomplete="off" />
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button id="cxp-cancel" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cancelar</button>
+        <button id="cxp-save" style="flex:1.3;padding:11px;border:0;background:#a16207;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar cuenta por pagar</button>
+      </div>
+    </div>
+  `;
+
+  const m = Modal.abrir({ titulo: 'Nueva cuenta por pagar', contenido, ancho: 'md' });
+  bindMilesInputs(m.body);
+  setTimeout(() => m.body.querySelector('#cxp-prov')?.focus(), 60);
+
+  const inpTotal = m.body.querySelector('#cxp-total');
+  const inpAbono = m.body.querySelector('#cxp-abono');
+  const saldoBox = m.body.querySelector('#cxp-saldo');
+  const recalc = () => {
+    const t = num(inpTotal.value);
+    const ab = Math.min(num(inpAbono.value), t);
+    saldoBox.innerHTML = `Saldo: <b style="color:#a16207">${money(Math.max(0, t - ab))}</b>`;
+  };
+  inpTotal.addEventListener('input', recalc);
+  inpAbono.addEventListener('input', recalc);
+
+  m.body.querySelector('#cxp-cancel').onclick = () => m.cerrar();
+  m.body.querySelector('#cxp-save').onclick = async () => {
+    try {
+      await Repo.registrarCuentaPorPagar({
+        proveedor: m.body.querySelector('#cxp-prov').value,
+        ref: m.body.querySelector('#cxp-ref').value,
+        fecha: m.body.querySelector('#cxp-fecha').value || todayISO(),
+        total: num(inpTotal.value),
+        abonoInicial: num(inpAbono.value),
+        vence: m.body.querySelector('#cxp-vence').value || '',
+        nota: m.body.querySelector('#cxp-nota').value,
+      });
+      Toast.ok('Cuenta por pagar registrada');
+      m.cerrar();
+      _compras = await Repo.listar();
+      pintar();
+    } catch (err) {
+      Toast.error(err.message || 'No se pudo registrar la cuenta');
+    }
+  };
 }
 
 // ============================================================

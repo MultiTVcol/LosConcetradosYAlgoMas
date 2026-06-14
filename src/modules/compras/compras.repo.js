@@ -97,6 +97,51 @@ export async function registrar(datos) {
 }
 
 /**
+ * Crea una CUENTA POR PAGAR sin afectar el inventario.
+ *
+ * Pensado para migraciones / saldos iniciales: registrar facturas de
+ * compra que quedaron pendientes de pago, sin sumar stock (la mercancía
+ * ya entró antes o el inventario se cargó por separado).
+ *
+ * @param {Object} datos - { proveedor, proveedor_id?, ref?, fecha?, total,
+ *                            abonoInicial?, vence?, nota? }
+ * @returns {Promise<Object>} la cuenta por pagar guardada
+ */
+export async function registrarCuentaPorPagar(datos) {
+  const total = Math.max(0, Number(datos.total) || 0);
+  if (total <= 0) throw new Error('El monto de la deuda debe ser mayor a cero');
+  if (!String(datos.proveedor || '').trim()) throw new Error('Indica el proveedor');
+
+  const abonoIni = Math.min(Math.max(0, Number(datos.abonoInicial) || 0), total);
+  const saldo = Math.max(0, total - abonoIni);
+
+  const cuenta = {
+    id: uid(),
+    fecha: datos.fecha || todayISO(),
+    ref: String(datos.ref || '').trim(),
+    proveedor_id: datos.proveedor_id || null,
+    proveedor: String(datos.proveedor || '').trim(),
+    items: [],                 // sin productos → no toca inventario
+    total,
+    tipoPago: 'credito',
+    metodoPago: 'Crédito',
+    vence: datos.vence || '',
+    abonos: abonoIni > 0
+      ? [{ id: uid(), fecha: datos.fecha || todayISO(), monto: abonoIni, metodo: datos.metodoAbono || 'Efectivo' }]
+      : [],
+    saldo,
+    nota: String(datos.nota || '').trim(),
+    origen: 'migracion',       // marca: cuenta creada sin afectar inventario
+    sinInventario: true,
+    creado: nowISO(),
+  };
+
+  // OJO: NO se llama a Sync.ajustarStock — el inventario queda intacto.
+  await Sync.guardar(TABLA, cuenta);
+  return cuenta;
+}
+
+/**
  * Registra un abono a una compra de crédito.
  *
  * @param {string} compraId
