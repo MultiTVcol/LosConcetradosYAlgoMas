@@ -23,12 +23,13 @@ import { Router } from '../../core/index.js';
 
 let _contenedor = null;
 let _compras = [];
-let _filtro = { q: '', tipo: '' };
+// modo: 'mes' (este mes, por defecto) | 'todas' | 'custom' (rango desde/hasta)
+let _filtro = { q: '', tipo: '', modo: 'mes', desde: '', hasta: '' };
 let _offRealtime = null;
 
 export async function render(contenedor) {
   _contenedor = contenedor;
-  _filtro = { q: '', tipo: '' };
+  _filtro = { q: '', tipo: '', modo: 'mes', desde: '', hasta: '' };
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
   contenedor.innerHTML = `<div style="padding:28px 32px;color:#64748b;font-size:14px">Cargando facturas de compra…</div>`;
@@ -278,20 +279,37 @@ function pintarHistorial() {
     return;
   }
 
+  const presetBtn = (modo, label) => `
+    <button class="fc-preset" data-modo="${modo}"
+      style="padding:7px 13px;border:1px solid ${_filtro.modo === modo ? '#2563eb' : '#d1d5db'};background:${_filtro.modo === modo ? '#2563eb' : '#fff'};color:${_filtro.modo === modo ? '#fff' : '#374151'};border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${label}</button>`;
+
   box.innerHTML = `
     <div class="ui-table-card">
-      <div style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #f3f4f6">
-        <div>
-          <h3 style="font-size:15px;font-weight:700;margin:0;color:#111827">Historial de compras</h3>
-          <div style="font-size:12.5px;color:#6b7280;margin-top:2px">${fmt(_compras.length)} factura(s) registradas</div>
+      <div style="padding:16px 18px;border-bottom:1px solid #f3f4f6;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="font-size:15px;font-weight:700;margin:0;color:#111827">Historial de compras</h3>
+            <div id="fc-hist-sub" style="font-size:12.5px;color:#6b7280;margin-top:2px"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="fc-q" class="ui-input" type="text" placeholder="Buscar proveedor o factura…" value="${esc(_filtro.q)}" style="min-width:200px;width:auto" />
+            <select id="fc-tipo" class="ui-input" style="width:auto;min-width:140px">
+              <option value="">Contado y crédito</option>
+              <option value="contado" ${_filtro.tipo === 'contado' ? 'selected' : ''}>Solo contado</option>
+              <option value="credito" ${_filtro.tipo === 'credito' ? 'selected' : ''}>Solo crédito</option>
+            </select>
+          </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input id="fc-q" class="ui-input" type="text" placeholder="Buscar proveedor o factura…" value="${esc(_filtro.q)}" style="min-width:200px;width:auto" />
-          <select id="fc-tipo" class="ui-input" style="width:auto;min-width:140px">
-            <option value="">Todas</option>
-            <option value="contado" ${_filtro.tipo === 'contado' ? 'selected' : ''}>Solo contado</option>
-            <option value="credito" ${_filtro.tipo === 'credito' ? 'selected' : ''}>Solo crédito</option>
-          </select>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${presetBtn('mes', 'Este mes')}
+          ${presetBtn('todas', 'Todas')}
+          ${presetBtn('custom', 'Rango…')}
+          ${_filtro.modo === 'custom' ? `
+            <span style="color:#94a3b8;font-size:12.5px">Desde</span>
+            <input id="fc-desde" class="ui-input" type="date" value="${esc(_filtro.desde)}" style="width:auto" />
+            <span style="color:#94a3b8;font-size:12.5px">Hasta</span>
+            <input id="fc-hasta" class="ui-input" type="date" value="${esc(_filtro.hasta)}" style="width:auto" />
+          ` : ''}
         </div>
       </div>
       <div id="fc-hist-body" style="overflow-x:auto"></div>
@@ -307,6 +325,20 @@ function pintarHistorial() {
   });
   selTipo?.addEventListener('change', (e) => { _filtro.tipo = e.target.value; renderFilas(); });
 
+  box.querySelectorAll('.fc-preset').forEach((b) => {
+    b.addEventListener('click', () => {
+      const modo = b.dataset.modo;
+      if (modo === 'custom' && !_filtro.desde && !_filtro.hasta) {
+        _filtro.desde = todayISO().slice(0, 8) + '01';  // inicio de mes
+        _filtro.hasta = todayISO();
+      }
+      _filtro.modo = modo;
+      pintarHistorial();   // re-render para mostrar/ocultar el rango y marcar el activo
+    });
+  });
+  box.querySelector('#fc-desde')?.addEventListener('change', (e) => { _filtro.desde = e.target.value; renderFilas(); });
+  box.querySelector('#fc-hasta')?.addEventListener('change', (e) => { _filtro.hasta = e.target.value; renderFilas(); });
+
   renderFilas();
 }
 
@@ -319,8 +351,24 @@ function renderFilas() {
   if (q) lista = lista.filter((c) => [(c.proveedor || ''), (c.ref || '')].join(' ').toLowerCase().includes(q));
   if (_filtro.tipo) lista = lista.filter((c) => c.tipoPago === _filtro.tipo);
 
+  // Filtro de fecha (solo el historial; las cuentas por pagar muestran toda la deuda)
+  if (_filtro.modo === 'mes') {
+    const mesActual = todayISO().slice(0, 7);
+    lista = lista.filter((c) => (c.fecha || '').slice(0, 7) === mesActual);
+  } else if (_filtro.modo === 'custom') {
+    if (_filtro.desde) lista = lista.filter((c) => (c.fecha || '').slice(0, 10) >= _filtro.desde);
+    if (_filtro.hasta) lista = lista.filter((c) => (c.fecha || '').slice(0, 10) <= _filtro.hasta);
+  }
+
+  // Subtítulo con conteo del rango activo
+  const sub = _contenedor.querySelector('#fc-hist-sub');
+  if (sub) {
+    const etiqueta = _filtro.modo === 'mes' ? 'este mes' : _filtro.modo === 'custom' ? 'en el rango' : 'en total';
+    sub.textContent = `${fmt(lista.length)} factura(s) ${etiqueta} · ${fmt(_compras.length)} registradas`;
+  }
+
   if (lista.length === 0) {
-    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#94a3b8;font-size:13.5px">No hay compras que coincidan.</div>`;
+    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#94a3b8;font-size:13.5px">No hay compras en ${_filtro.modo === 'mes' ? 'este mes' : _filtro.modo === 'custom' ? 'el rango elegido' : 'el filtro'}.</div>`;
     return;
   }
 
