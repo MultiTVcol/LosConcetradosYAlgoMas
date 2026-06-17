@@ -521,6 +521,11 @@ async function guardarFormulario(id) {
   const fecha = body.querySelector('#g-fecha').value || todayISO();
   const categoria = body.querySelector('#g-cat').value;
 
+  // Candado anti-doble-registro (doble clic / doble Enter)
+  const btnG = body.querySelector('#g-btn-guardar');
+  if (btnG?.disabled) return;
+  if (btnG) { btnG.disabled = true; btnG.style.opacity = '0.6'; btnG.style.cursor = 'wait'; }
+
   try {
     if (categoria === 'Productos') {
       if (_bajaItems.length === 0) { Toast.warn('Agrega al menos un producto'); return; }
@@ -562,6 +567,9 @@ async function guardarFormulario(id) {
   } catch (err) {
     console.error('Error guardando gasto:', err);
     Toast.error('No se pudo guardar el gasto');
+  } finally {
+    // Reactivar el botón si la operación falló y el modal sigue abierto
+    if (btnG && btnG.isConnected) { btnG.disabled = false; btnG.style.opacity = '1'; btnG.style.cursor = 'pointer'; }
   }
 }
 

@@ -174,6 +174,9 @@ async function abrirCuentaPorPagar() {
 
   m.body.querySelector('#cxp-cancel').onclick = () => m.cerrar();
   m.body.querySelector('#cxp-save').onclick = async () => {
+    const btn = m.body.querySelector('#cxp-save');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'wait';
     try {
       await Repo.registrarCuentaPorPagar({
         proveedor: m.body.querySelector('#cxp-prov').value,
@@ -190,6 +193,7 @@ async function abrirCuentaPorPagar() {
       pintar();
     } catch (err) {
       Toast.error(err.message || 'No se pudo registrar la cuenta');
+      btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     }
   };
 }
@@ -419,6 +423,9 @@ function abrirAbono(compraId) {
 
   m.body.querySelector('#fc-abono-cancel').onclick = () => m.cerrar();
   m.body.querySelector('#fc-abono-save').onclick = async () => {
+    const btn = m.body.querySelector('#fc-abono-save');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'wait';
     const monto = num(m.body.querySelector('#fc-abono-monto').value);
     const metodo = m.body.querySelector('#fc-abono-metodo').value;
     const fecha = m.body.querySelector('#fc-abono-fecha').value || todayISO();
@@ -431,6 +438,7 @@ function abrirAbono(compraId) {
       pintarHistorial();
     } catch (err) {
       Toast.error(err.message || 'No se pudo registrar el abono');
+      btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     }
   };
 }

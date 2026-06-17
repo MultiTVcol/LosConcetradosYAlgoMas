@@ -247,6 +247,9 @@ function abrirAbono(ventaId) {
 
   m.body.querySelector('#cxc-abono-cancel').onclick = () => m.cerrar();
   m.body.querySelector('#cxc-abono-save').onclick = async () => {
+    const btn = m.body.querySelector('#cxc-abono-save');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'wait';
     const monto = num(m.body.querySelector('#cxc-abono-monto').value);
     const metodo = m.body.querySelector('#cxc-abono-metodo').value;
     const fecha = m.body.querySelector('#cxc-abono-fecha').value || todayISO();
@@ -258,6 +261,7 @@ function abrirAbono(ventaId) {
       pintarHistorial();
     } catch (err) {
       Toast.error(err.message || 'No se pudo registrar el abono');
+      btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     }
   };
 }
