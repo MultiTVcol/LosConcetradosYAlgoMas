@@ -41,7 +41,8 @@
       "WebSearch",
       "WebFetch(domain:developers.factus.com.co)",
       "WebFetch(domain:github.com)",
-      "Bash(grep -nE \"htmlDatosNegocio|function campo|function render|htmlLector|htmlImpresora|htmlSync|adjuntarEventos|function htmlLayout|\\\\\\\\\\\\$\\\\{html\" /c/PosPunto/src/modules/config/config.view.js)"
+      "Bash(grep -nE \"htmlDatosNegocio|function campo|function render|htmlLector|htmlImpresora|htmlSync|adjuntarEventos|function htmlLayout|\\\\\\\\\\\\$\\\\{html\" /c/PosPunto/src/modules/config/config.view.js)",
+      "Bash(grep -nE \"^import .* from '\\\\.\\\\./\\\\.\\\\./services/printer|const cfg = await ConfigRepo.leer\\\\\\(\\\\\\);\" /c/PosPunto/src/modules/ventas/ventas.view.js)"
     ]
   }
 }

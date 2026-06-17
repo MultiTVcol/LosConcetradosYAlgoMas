@@ -31,6 +31,7 @@ import { esc, uid } from '../../core/strings.js';
 import { Toast, Modal, Confirm } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import { imprimirPOS } from '../../services/printer.js';
+import * as Cajon from '../../services/cajon.js';
 import * as PlantillaRepo from '../factura/plantilla.repo.js';
 import * as EditorPlantilla from '../factura/editor-plantilla.view.js';
 import * as ConfigRepo from '../config/config.repo.js';
@@ -1965,6 +1966,12 @@ async function _confirmarVentaInterno() {
   // Imprimir ticket POS según preferencia de impresora
   try {
     const cfg = await ConfigRepo.leer();
+
+    // Abrir el cajón de dinero si está activado (best-effort, no bloquea)
+    if (cfg.cajon?.activo) {
+      Cajon.abrir(cfg.cajon.baud || 9600).catch(() => {});
+    }
+
     const plantilla = await PlantillaRepo.leer('venta');
     const preferencia = cfg.impresoraDefault || 'preguntar';
 

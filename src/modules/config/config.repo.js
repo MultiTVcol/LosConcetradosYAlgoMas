@@ -26,6 +26,10 @@ export async function leer() {
     mostrarUtilidad: datos.mostrarUtilidad !== false,   // default ahora ES true
     lector: datos.lector || 'pistola',
     impresoraDefault: datos.impresoraDefault || 'preguntar',
+    cajon: {
+      activo: (datos.cajon && datos.cajon.activo) === true,
+      baud: (datos.cajon && Number(datos.cajon.baud)) || 9600,
+    },
     // ── Facturación electrónica (DIAN / Factus) ──
     // Apagada por defecto: hasta que el comercio la active y configure,
     // NADA cambia en Punto de Venta.

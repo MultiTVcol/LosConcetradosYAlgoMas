@@ -17,6 +17,7 @@ import * as ImpExp from './import-export.js';
 import * as db from '../../services/db.js';
 import * as Sync from '../../services/sync.js';
 import * as Supa from '../../services/supabase.js';
+import * as Cajon from '../../services/cajon.js';
 import { config as defaultConfig } from '../../services/config.js';
 import { fmt } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
@@ -81,6 +82,31 @@ function adjuntarEventos(contenedor) {
   // Guardar datos del negocio
   contenedor.querySelector('#cfg-guardar-negocio')?.addEventListener('click', guardarDatosNegocio);
   contenedor.querySelector('#cfg-guardar-fe')?.addEventListener('click', guardarFE);
+
+  // Cajón de dinero
+  const estadoCajon = (txt, ok) => {
+    const el = contenedor.querySelector('#cfg-cajon-estado');
+    if (el) { el.textContent = txt; el.style.color = ok ? '#15803d' : '#dc2626'; }
+  };
+  contenedor.querySelector('#cfg-cajon-conectar')?.addEventListener('click', async () => {
+    try {
+      const baud = _cfg?.cajon?.baud || 9600;
+      await Cajon.conectar(baud);
+      estadoCajon('Cajón/impresora conectado por Web Serial ✓', true);
+    } catch (err) {
+      estadoCajon(err.message || 'No se pudo conectar (¿navegador sin Web Serial o cancelaste?)', false);
+    }
+  });
+  contenedor.querySelector('#cfg-cajon-probar')?.addEventListener('click', async () => {
+    try {
+      const baud = _cfg?.cajon?.baud || 9600;
+      const ok = await Cajon.probar(baud);
+      if (ok) estadoCajon('¡Pulso enviado! Si el cajón no abrió, usa el método del driver de Windows.', true);
+      else estadoCajon('No se encontró un cajón por Web Serial. Configura "abrir cajón al imprimir" en el driver.', false);
+    } catch (err) {
+      estadoCajon(err.message || 'No se pudo probar el cajón', false);
+    }
+  });
 
   // Lector
   contenedor.querySelector('#cfg-lector')?.addEventListener('change', async (e) => {
@@ -155,6 +181,11 @@ async function guardarDatosNegocio() {
   const utilidad = _contenedor.querySelector('#cfg-utilidad');
   _cfg.sonido = sonido?.checked ?? true;
   _cfg.mostrarUtilidad = utilidad?.checked ?? false;
+
+  _cfg.cajon = {
+    ...(_cfg.cajon || {}),
+    activo: _contenedor.querySelector('#cfg-cajon-activo')?.checked === true,
+  };
 
   try {
     await Repo.guardar(_cfg);
@@ -769,6 +800,7 @@ function htmlLayout(cfg, stats) {
         <div style="display:flex;flex-direction:column;gap:16px">
           ${htmlLector(cfg)}
           ${htmlImpresora(cfg)}
+          ${htmlCajon(cfg)}
           ${htmlSync()}
           ${htmlExcel(stats)}
           ${htmlRespaldo()}
@@ -919,6 +951,30 @@ function htmlLector(cfg) {
         <option value="pistola" ${cfg.lector === 'pistola' ? 'selected' : ''}>Pistola / Lector USB (no usa cámara)</option>
         <option value="manual" ${cfg.lector === 'manual' ? 'selected' : ''}>Manual (escribir en el buscador)</option>
       </select>
+    </div>
+  `;
+}
+
+function htmlCajon(cfg) {
+  const c = cfg.cajon || {};
+  return `
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Cajón de dinero</h3>
+      <p style="color:#64748b;font-size:13.5px;margin:0">Abre la gaveta automáticamente al confirmar cada venta.</p>
+
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;font-size:13.5px;color:#475569">
+        <input id="cfg-cajon-activo" type="checkbox" ${c.activo ? 'checked' : ''} style="width:18px;height:18px"> Abrir cajón al confirmar la venta
+      </label>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="cfg-cajon-conectar" style="padding:9px 13px;border:1px solid #cbd5e1;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569">Conectar cajón / impresora</button>
+        <button id="cfg-cajon-probar" style="padding:9px 13px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">Probar (abrir cajón)</button>
+      </div>
+      <div id="cfg-cajon-estado" style="font-size:12px;color:#94a3b8"></div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;font-size:12px;color:#92400e;line-height:1.5">
+        Como imprimes con el diálogo del navegador, lo más confiable es configurar tu impresora en Windows para <b>"abrir cajón al imprimir"</b>: así la gaveta salta sola con cada ticket. El botón <b>Probar</b> intenta abrirla por software (Web Serial); si tu impresora no aparece, usa el método del driver.
+      </div>
     </div>
   `;
 }
