@@ -65,6 +65,7 @@ let _payments = { efectivo: 0, transferencia: 0, qr: 0, tarjeta: 0 };
 let _payMode = 'simple';      // 'simple' | 'mixto'
 let _payMethod = 'efectivo';  // método seleccionado en modo simple
 let _cobroModal = null;       // controlador del modal abierto (Modal.abrir)
+let _confirmando = false;     // candado: evita registrar la venta dos veces (doble clic / doble Enter)
 
 // ============================================================
 //  RENDERIZADO
@@ -1869,6 +1870,23 @@ function actualizarMixto() {
 }
 
 async function confirmarVenta() {
+  // Candado anti-doble-registro: si ya hay una confirmación en curso, ignorar
+  // el segundo disparo (doble clic en "Confirmar" o doble Enter). Sin esto se
+  // registraban dos ventas con consecutivos seguidos (V-0018 y V-0019).
+  if (_confirmando) return;
+  _confirmando = true;
+  const btnConfirmar = _cobroModal?.body?.querySelector('#cobro-btn-confirmar');
+  if (btnConfirmar) { btnConfirmar.disabled = true; btnConfirmar.style.opacity = '0.6'; btnConfirmar.style.cursor = 'wait'; }
+  try {
+    await _confirmarVentaInterno();
+  } finally {
+    _confirmando = false;
+    // Si la venta falló y el modal sigue abierto, reactivar el botón para reintentar.
+    if (btnConfirmar && btnConfirmar.isConnected) { btnConfirmar.disabled = false; btnConfirmar.style.opacity = '1'; btnConfirmar.style.cursor = 'pointer'; }
+  }
+}
+
+async function _confirmarVentaInterno() {
   const totales = Repo.calcularTotales(_carrito, _descuento);
   let metodo = '';
   let recibido = 0;

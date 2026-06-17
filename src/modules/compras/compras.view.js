@@ -788,6 +788,13 @@ function abrirRegistroPago() {
   m.body.querySelector('#comp-pago-credito').onclick = () => { tipoPago = 'credito'; marcarTipo(); renderArea(); };
   m.body.querySelector('#comp-pago-cancel').onclick = () => m.cerrar();
   m.body.querySelector('#comp-pago-confirmar').onclick = async () => {
+    // Candado anti-doble-registro (doble clic / doble Enter)
+    const btnConf = m.body.querySelector('#comp-pago-confirmar');
+    if (btnConf.disabled) return;
+    btnConf.disabled = true;
+    btnConf.style.opacity = '0.6';
+    btnConf.style.cursor = 'wait';
+
     const fecha = _contenedor.querySelector('#comp-fecha')?.value || todayISO();
     const ref = _contenedor.querySelector('#comp-ref')?.value || '';
 
@@ -823,6 +830,9 @@ function abrirRegistroPago() {
     } catch (err) {
       console.error(err);
       Toast.error('No se pudo registrar la compra');
+      btnConf.disabled = false;
+      btnConf.style.opacity = '1';
+      btnConf.style.cursor = 'pointer';
     }
   };
 
