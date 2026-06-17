@@ -22,11 +22,15 @@ import * as ConfigRepo from '../config/config.repo.js';
 let _contenedor = null;
 let _res = null;       // resumen (KPIs + productos)
 let _q = '';
+let _verTodos = false; // false = tope 200 filas (rápido); true = todas
 let _offRealtime = null;
+
+const TOPE_FILAS = 200;
 
 export async function render(contenedor) {
   _contenedor = contenedor;
   _q = '';
+  _verTodos = false;
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
   contenedor.innerHTML = `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando inventario…</div>`;
@@ -132,7 +136,7 @@ function pintarTabla() {
         </tr>
       </thead>
       <tbody>
-        ${filas.slice(0, 200).map((p) => {
+        ${(_verTodos ? filas : filas.slice(0, TOPE_FILAS)).map((p) => {
           const st = num(p.stock);
           const alerta = st <= 0 ? '#dc2626' : (st <= num(p.stock_min) ? '#d97706' : '#0f172a');
           return `
@@ -147,8 +151,18 @@ function pintarTabla() {
         }).join('')}
       </tbody>
     </table>
-    ${filas.length > 200 ? `<div style="text-align:center;color:#94a3b8;font-size:12.5px;padding:10px">Mostrando 200 de ${fmt(filas.length)} — usa el buscador</div>` : ''}
+    ${filas.length > TOPE_FILAS ? `
+      <div style="text-align:center;padding:14px 10px 4px">
+        ${_verTodos
+          ? `<span style="color:#94a3b8;font-size:12.5px">Mostrando los ${fmt(filas.length)} productos · </span>
+             <button id="inv-vermenos" style="background:none;border:0;color:#2563eb;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;text-decoration:underline">Mostrar menos</button>`
+          : `<span style="color:#94a3b8;font-size:12.5px">Mostrando ${TOPE_FILAS} de ${fmt(filas.length)} · </span>
+             <button id="inv-vertodos" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;border-radius:8px;padding:6px 12px;margin-left:4px">Mostrar todos (${fmt(filas.length)})</button>`}
+      </div>` : ''}
   `;
+
+  box.querySelector('#inv-vertodos')?.addEventListener('click', () => { _verTodos = true; pintarTabla(); });
+  box.querySelector('#inv-vermenos')?.addEventListener('click', () => { _verTodos = false; pintarTabla(); _contenedor.querySelector('#inv-tabla')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); });
 
   box.querySelectorAll('.inv-fila').forEach((tr) => {
     tr.onclick = () => abrirKardex(tr.dataset.id);
