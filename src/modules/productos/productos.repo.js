@@ -179,6 +179,42 @@ export async function contar() {
   return await db.count(TABLA);
 }
 
+/**
+ * Calcula el siguiente código consecutivo a partir de los productos
+ * existentes. Toma el número MÁS ALTO encontrado en los códigos y suma 1,
+ * conservando el formato del código que lo tiene (prefijo y ceros).
+ *
+ *   "100" → "101"   ·   "CRO-001"…"CRO-100" → "CRO-101"   ·   sin códigos → "1"
+ *
+ * Es best-effort (el código no es la clave única; el id sí). El usuario
+ * puede editarlo a mano.
+ *
+ * @returns {Promise<string>}
+ */
+export async function siguienteCodigo() {
+  const items = await db.getAll(TABLA);
+  let maxNum = -1;
+  let prefijo = '';
+  let pad = 1;
+  let encontrado = false;
+
+  for (const p of items) {
+    const cod = String(p.codigo || '').trim();
+    const m = cod.match(/^(.*?)(\d+)$/); // prefijo (lo que sea) + dígitos finales
+    if (!m) continue;
+    const n = parseInt(m[2], 10);
+    if (n > maxNum) {
+      maxNum = n;
+      prefijo = m[1];
+      pad = m[2].length;
+      encontrado = true;
+    }
+  }
+
+  if (!encontrado) return '1';
+  return prefijo + String(maxNum + 1).padStart(pad, '0');
+}
+
 export async function guardar(producto) {
   const errores = validar(producto);
   if (errores.length > 0) {

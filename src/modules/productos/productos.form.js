@@ -7,7 +7,7 @@ import { Modal, Toast } from '../../components/index.js';
 import { esc } from '../../core/strings.js';
 import { refrescarIconos } from '../../app/shell.js';
 
-export function abrir(opciones = {}) {
+export async function abrir(opciones = {}) {
   const esEdicion = !!opciones.producto;
   const datos = esEdicion ? { ...opciones.producto } : {
     nombre: '',
@@ -22,6 +22,11 @@ export function abrir(opciones = {}) {
     impuesto_pct: 0,
     unidad: '',
   };
+
+  // Al CREAR, precargar el siguiente código consecutivo (editable a gusto).
+  if (!esEdicion) {
+    try { datos.codigo = await Repo.siguienteCodigo(); } catch (e) { datos.codigo = ''; }
+  }
 
   const formEl = construirFormulario(datos);
 
