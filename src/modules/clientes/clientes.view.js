@@ -184,7 +184,7 @@ function htmlBuscador(filtro) {
           <i data-lucide="x" style="width:14px;height:14px"></i>
         </button>
       ` : `
-        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:inherit;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
       `}
     </div>
   `;
@@ -274,7 +274,7 @@ function htmlFila(c) {
         </div>
       </td>
       <td>${esc(c.negocio || '—')}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:13px">${esc(c.telefono || '—')}</td>
+      <td style="font-family:inherit;font-size:13px">${esc(c.telefono || '—')}</td>
       <td>${esc(c.ciudad || '—')}</td>
       <td style="text-align:center">
         ${nPE > 0 ? badge(`💎 ${nPE}`, 'info') : '<span style="color:#d1d5db">—</span>'}

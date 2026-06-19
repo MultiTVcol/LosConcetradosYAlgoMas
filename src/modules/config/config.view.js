@@ -570,7 +570,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
         ].map(([id, label, hint]) => `
           <button class="imp-fmt-btn" data-fmt="${id}"
             style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#2563eb' : '#e2e8f0'};background:${formato === id ? '#eff6ff' : 'white'};color:${formato === id ? '#1d4ed8' : '#475569'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
-            <div style="font-weight:700;font-size:12.5px;font-family:'JetBrains Mono',ui-monospace,monospace">${label}</div>
+            <div style="font-weight:700;font-size:12.5px;font-family:inherit">${label}</div>
             <div style="font-size:11px;color:#64748b;margin-top:2px">${hint}</div>
           </button>
         `).join('')}
@@ -607,7 +607,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
                     if (v == null || v === '') {
                       str = '<span style="color:#cbd5e1">—</span>';
                     } else if (esNum) {
-                      str = `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#1d4ed8">${Number(v).toLocaleString('es-CO')}</span>`;
+                      str = `<span style="font-family:inherit;color:#1d4ed8">${Number(v).toLocaleString('es-CO')}</span>`;
                     } else {
                       str = esc(String(v));
                     }
@@ -744,7 +744,7 @@ function abrirOverlayProgreso(textoInicial) {
       <div id="op-barra-wrap" style="display:none;background:#f1f5f9;border-radius:999px;height:8px;overflow:hidden">
         <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .2s ease;border-radius:999px"></div>
       </div>
-      <div id="op-conteo" style="display:none;font-size:11.5px;color:#64748b;text-align:right;margin-top:5px;font-family:'JetBrains Mono',ui-monospace,monospace"></div>
+      <div id="op-conteo" style="display:none;font-size:11.5px;color:#64748b;text-align:right;margin-top:5px;font-family:inherit"></div>
     </div>
     <style>@keyframes opspin{to{transform:rotate(360deg)}}</style>
   `;

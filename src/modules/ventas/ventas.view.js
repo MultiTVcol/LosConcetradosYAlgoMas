@@ -263,7 +263,7 @@ function htmlLayout() {
       }
       .ac-item .ac-nom { font-weight:700; font-size:16px; line-height:1.25; color:#0f172a; }
       .ac-item .ac-cod {
-        font-family:'JetBrains Mono',ui-monospace,monospace;
+        font-family:inherit;
         font-weight:800; font-size:13.5px;
       }
       .ac-item .ac-meta {
@@ -271,8 +271,8 @@ function htmlLayout() {
         display:flex; flex-wrap:wrap; gap:4px 8px; align-items:center;
       }
       .ac-item .ac-right { text-align:right; white-space:nowrap; flex-shrink:0; }
-      .ac-item .ac-precio { font-weight:800; color:#2563eb; font-size:17px; font-family:'JetBrains Mono',ui-monospace,monospace; }
-      .ac-item .ac-badge { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; margin-top:4px; font-family:'JetBrains Mono',ui-monospace,monospace; }
+      .ac-item .ac-precio { font-weight:800; color:#2563eb; font-size:17px; font-family:inherit; }
+      .ac-item .ac-badge { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; margin-top:4px; font-family:inherit; }
       .ac-item .badge-ok { background:#dcfce7; color:#166534; }
       .ac-item .badge-danger { background:#fef2f2; color:#991b1b; }
       .ac-empty { padding:18px; text-align:center; color:#94a3b8; font-size:14px; }
@@ -286,7 +286,7 @@ function htmlLayout() {
         display:inline-flex; align-items:center; justify-content:center;
         width:26px; height:26px; border-radius:50%;
         background:#2563eb; color:white; font-weight:700; font-size:13px;
-        font-family:'JetBrains Mono',ui-monospace,monospace;
+        font-family:inherit;
       }
       /* Selector de cliente */
       .sc-item {
@@ -590,16 +590,16 @@ function htmlFilaCarrito(item, idx) {
   return `
     <tr data-idx="${idx}" style="border-bottom:1px solid #f1f5f9">
       <td style="padding:10px 6px;vertical-align:top">
-        <b style="color:#0f172a;font-family:'JetBrains Mono',ui-monospace,monospace">${item.cantidad}</b>
+        <b style="color:#0f172a;font-family:inherit">${item.cantidad}</b>
       </td>
       <td style="padding:10px 6px;vertical-align:top;color:#0f172a">
         <div style="font-weight:600">${esc(item.nombre)}</div>
         ${tieneDesc ? `<div style="color:#dc2626;font-size:11.5px;margin-top:2px">desc. ${money(item.descuento)} c/u</div>` : ''}
       </td>
-      <td style="padding:10px 6px;text-align:right;vertical-align:top;white-space:nowrap;font-family:'JetBrains Mono',ui-monospace,monospace">
+      <td style="padding:10px 6px;text-align:right;vertical-align:top;white-space:nowrap;font-family:inherit">
         ${money(item.precio)}
       </td>
-      <td style="padding:10px 6px;text-align:right;vertical-align:top;white-space:nowrap;font-family:'JetBrains Mono',ui-monospace,monospace">
+      <td style="padding:10px 6px;text-align:right;vertical-align:top;white-space:nowrap;font-family:inherit">
         <b>${money(subtotal)}</b>
       </td>
       <td style="padding:10px 6px;vertical-align:top">
@@ -629,18 +629,18 @@ function htmlTotales(t) {
     <div id="venta-totales" style="padding:14px 24px;border-top:2px dashed #cbd5e1;background:#fafafa">
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;margin-bottom:6px">
         <span>Subtotal</span>
-        <b style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#0f172a">${money(t.subtotal)}</b>
+        <b style="font-family:inherit;color:#0f172a">${money(t.subtotal)}</b>
       </div>
       ${t.impuesto > 0 ? `
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:6px">
           <span>Impuesto</span>
-          <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(t.impuesto)}</b>
+          <b style="font-family:inherit">${money(t.impuesto)}</b>
         </div>
       ` : ''}
       ${t.descuentoLineas > 0 ? `
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#dc2626;margin-bottom:6px">
           <span>Descuento</span>
-          <b style="font-family:'JetBrains Mono',ui-monospace,monospace">− ${money(t.descuentoLineas)}</b>
+          <b style="font-family:inherit">− ${money(t.descuentoLineas)}</b>
         </div>
       ` : ''}
       ${mostrarUtilidad ? `
@@ -654,12 +654,12 @@ function htmlTotales(t) {
               : `<div style="font-size:11px;color:#64748b;margin-top:1px">Margen: <b>${margenPct.toFixed(1)}%</b> · Costo: ${money(t.costoTotal)}</div>`
             }
           </div>
-          <b style="font-family:'JetBrains Mono',ui-monospace,monospace;color:${colorUtil};font-size:16px">${money(utilidad)}</b>
+          <b style="font-family:inherit;color:${colorUtil};font-size:16px">${money(utilidad)}</b>
         </div>
       ` : ''}
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px">
         <span style="font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">TOTAL</span>
-        <span style="font-size:26px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">
+        <span style="font-size:26px;font-weight:800;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">
           ${money(t.total)}
         </span>
       </div>
@@ -976,7 +976,7 @@ function abrirModalLinea(producto, linea) {
   const html = `
     <div>
       <div style="font-weight:700;font-size:17px;color:#0f172a">${esc(base.nombre)}</div>
-      <div style="color:#64748b;font-size:12.5px;margin-top:2px;margin-bottom:${tienePE ? '8' : '14'}px;font-family:'JetBrains Mono',ui-monospace,monospace">
+      <div style="color:#64748b;font-size:12.5px;margin-top:2px;margin-bottom:${tienePE ? '8' : '14'}px;font-family:inherit">
         ${esc(base.codigo || '')}${stockReal != null ? ` · Stock: <b style="color:#0f172a">${fmt(stockReal)}</b>` : ''}
       </div>
       ${tienePE ? `
@@ -990,7 +990,7 @@ function abrirModalLinea(producto, linea) {
         <button id="mc-menos" type="button"
           style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">−</button>
         <input id="mc-cant" data-miles type="text" inputmode="numeric" value="${cantIni}"
-          style="flex:1;padding:11px;border:1.5px solid #2563eb;border-radius:10px;font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;color:#0f172a;outline:none;text-align:center;box-sizing:border-box" />
+          style="flex:1;padding:11px;border:1.5px solid #2563eb;border-radius:10px;font-size:24px;font-weight:800;font-family:inherit;color:#0f172a;outline:none;text-align:center;box-sizing:border-box" />
         <button id="mc-mas" type="button"
           style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">+</button>
       </div>
@@ -1006,12 +1006,12 @@ function abrirModalLinea(producto, linea) {
         <div>
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Precio unitario</div>
           <input id="mc-precio" data-miles type="text" inputmode="numeric" value="${precioIni}"
-            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box" />
+            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
         </div>
         <div>
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Descuento c/u</div>
           <input id="mc-desc" data-miles type="text" inputmode="numeric" value="${descIni || ''}" placeholder="0"
-            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box" />
+            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
         </div>
       </div>
 
@@ -1053,7 +1053,7 @@ function abrirModalLinea(producto, linea) {
     const d = num(inpDesc.value);
     if (c > 0) {
       const total = Math.max(0, p - d) * c;
-      subBox.innerHTML = `Subtotal: <span style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(total)}</span>`;
+      subBox.innerHTML = `Subtotal: <span style="color:#1d4ed8;font-family:inherit">${money(total)}</span>`;
     } else {
       subBox.innerHTML = `<span style="color:#94a3b8;font-size:14px;font-weight:500">Escribe la cantidad para continuar</span>`;
     }

@@ -141,7 +141,7 @@ function pintarTabla() {
           const alerta = st <= 0 ? '#dc2626' : (st <= num(p.stock_min) ? '#d97706' : '#0f172a');
           return `
           <tr class="inv-fila" data-id="${esc(p.id)}" style="border-bottom:1px solid #f1f5f9;cursor:pointer">
-            <td style="padding:10px 8px;color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px">${esc(p.codigo || '—')}</td>
+            <td style="padding:10px 8px;color:#64748b;font-family:inherit;font-size:12.5px">${esc(p.codigo || '—')}</td>
             <td style="padding:10px 8px;font-weight:600;color:#0f172a">${esc(p.nombre)}</td>
             <td style="padding:10px 8px;text-align:right;font-weight:800;color:${alerta}">${fmt(st)}</td>
             <td style="padding:10px 8px;text-align:right;color:#475569">${money(p.costo)}</td>

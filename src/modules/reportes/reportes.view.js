@@ -344,7 +344,7 @@ function kpiUtilidad(label, r, color) {
   return `
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
       <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Utilidad ${label}</div>
-      <div style="font-size:22px;font-weight:700;color:${color};font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.utilidad)}</div>
+      <div style="font-size:22px;font-weight:700;color:${color};font-family:inherit;letter-spacing:-0.02em">${money(r.utilidad)}</div>
       <div style="color:#64748b;font-weight:500;margin-top:6px;font-size:12.5px">Ventas: ${money(r.total)} · ${r.n} fac.</div>
     </div>
   `;
@@ -496,7 +496,7 @@ function tarjeta(label, valor, bgColor, fgColor) {
   return `
     <div style="background:${bgColor};border:1px solid #e2e8f0;border-radius:12px;padding:16px">
       <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${label}</div>
-      <div style="font-size:22px;font-weight:800;color:${fgColor};font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${valor}</div>
+      <div style="font-size:22px;font-weight:800;color:${fgColor};font-family:inherit;letter-spacing:-0.02em">${valor}</div>
     </div>
   `;
 }
@@ -505,7 +505,7 @@ function repFila(label, valor, color, bold = false, big = false) {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;${bold ? 'font-weight:700;' : ''}">
       <span style="color:#475569;font-size:${big ? '14.5px' : '13.5px'}">${label}</span>
-      <span style="color:${color};${bold ? 'font-weight:800;' : ''}font-family:'JetBrains Mono',ui-monospace,monospace;font-size:${big ? '16px' : '13.5px'}">${money(valor)}</span>
+      <span style="color:${color};${bold ? 'font-weight:800;' : ''}font-family:inherit;font-size:${big ? '16px' : '13.5px'}">${money(valor)}</span>
     </div>
   `;
 }
@@ -555,7 +555,7 @@ function pintarVentas14Dias() {
     return `
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px">
         <div title="${money(total)}" style="width:100%;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:6px 6px 0 0;min-height:${total > 0 ? '6px' : '2px'};height:${h}%"></div>
-        <div style="font-size:10.5px;color:#94a3b8;font-family:'JetBrains Mono',ui-monospace,monospace">${dia}</div>
+        <div style="font-size:10.5px;color:#94a3b8;font-family:inherit">${dia}</div>
       </div>
     `;
   }).join('');
@@ -585,7 +585,7 @@ function pintarMetodosPago() {
       <div style="margin-bottom:11px">
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
           <span style="color:#0f172a;font-weight:600">${esc(met)}</span>
-          <span style="color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace">${money(val)} · ${pct.toFixed(1)}%</span>
+          <span style="color:#64748b;font-family:inherit">${money(val)} · ${pct.toFixed(1)}%</span>
         </div>
         <div style="height:9px;background:#f1f5f9;border-radius:5px;overflow:hidden">
           <div style="width:${pct}%;height:100%;background:${c};border-radius:5px"></div>
@@ -623,7 +623,7 @@ function pintarTopProductos() {
       <div style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
           <span style="color:#0f172a;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">${esc(it.nombre)}</span>
-          <span style="color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace;flex-shrink:0">${fmt(it.cantidad)} uds · ${money(it.total)}</span>
+          <span style="color:#64748b;font-family:inherit;flex-shrink:0">${fmt(it.cantidad)} uds · ${money(it.total)}</span>
         </div>
         <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">
           <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:4px"></div>
@@ -661,7 +661,7 @@ function pintarTopClientes() {
             <b style="font-size:13.5px;color:#0f172a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre)}</b>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <b style="font-size:13.5px;color:#0f172a;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</b>
+            <b style="font-size:13.5px;color:#0f172a;font-family:inherit">${money(c.total)}</b>
             <div style="font-size:11.5px;color:#64748b">${c.n} compra(s)</div>
           </div>
         </div>

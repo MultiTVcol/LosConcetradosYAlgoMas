@@ -235,12 +235,12 @@ function pintarCxp() {
               const vencido = c.vence && c.vence < todayISO();
               return `
                 <tr data-id="${esc(c.id)}">
-                  <td style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
+                  <td style="font-family:inherit;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
                   <td style="font-weight:600;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</td>
                   <td style="color:#6b7280">${esc(c.ref || '—')}</td>
                   <td>${c.vence ? badge(esc(c.vence), vencido ? 'danger' : 'info') : '<span style="color:#d1d5db">—</span>'}</td>
-                  <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</td>
-                  <td style="text-align:right;color:#a16207;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.saldo)}</td>
+                  <td style="text-align:right;font-family:inherit">${money(c.total)}</td>
+                  <td style="text-align:right;color:#a16207;font-weight:700;font-family:inherit">${money(c.saldo)}</td>
                   <td style="text-align:right">${menuButton(c.id)}</td>
                 </tr>`;
             }).join('')}
@@ -388,11 +388,11 @@ function renderFilas() {
             : pagada ? badge('Pagada', 'success') : badge('Crédito', 'warn');
           return `
             <tr data-id="${esc(c.id)}">
-              <td style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
+              <td style="font-family:inherit;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
               <td style="font-weight:600;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</td>
               <td style="color:#6b7280">${esc(c.ref || '—')}</td>
               <td>${estado}</td>
-              <td style="text-align:right;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</td>
+              <td style="text-align:right;font-weight:700;font-family:inherit">${money(c.total)}</td>
               <td style="text-align:right">${menuButton(c.id)}</td>
             </tr>`;
         }).join('')}
@@ -432,18 +432,18 @@ function abrirAbono(compraId) {
         <span>Compra</span><b style="color:#111827">${esc(c.proveedor || '—')} · ${esc(c.ref || 'Sin ref')}</b>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:4px">
-        <span>Total compra</span><b style="color:#111827;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</b>
+        <span>Total compra</span><b style="color:#111827;font-family:inherit">${money(c.total)}</b>
       </div>
-      ${totalAbonado > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#15803d;margin-bottom:4px"><span>Total abonado (${abonos.length})</span><b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(totalAbonado)}</b></div>` : ''}
+      ${totalAbonado > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#15803d;margin-bottom:4px"><span>Total abonado (${abonos.length})</span><b style="font-family:inherit">${money(totalAbonado)}</b></div>` : ''}
       <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280">
-        <span>Saldo pendiente</span><b style="color:#a16207;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.saldo)}</b>
+        <span>Saldo pendiente</span><b style="color:#a16207;font-family:inherit">${money(c.saldo)}</b>
       </div>
     </div>
 
     <div>
       <div class="ui-label" style="margin-bottom:4px">Monto del abono *</div>
       <input id="fc-abono-monto" data-miles type="text" inputmode="numeric" placeholder="0"
-        style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:22px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box" />
+        style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
     </div>
     <div style="margin-top:12px;display:grid;gap:10px;grid-template-columns:1fr 1fr">
       <div>
@@ -511,18 +511,18 @@ function verDetalle(compraId) {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap">
         <div>
           <div style="font-weight:700;font-size:15px;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</div>
-          <div style="color:#6b7280;font-size:12.5px;margin-top:2px;font-family:'JetBrains Mono',ui-monospace,monospace">Factura: ${esc(c.ref || '—')} · ${esc((c.fecha || '').slice(0, 10))}</div>
+          <div style="color:#6b7280;font-size:12.5px;margin-top:2px;font-family:inherit">Factura: ${esc(c.ref || '—')} · ${esc((c.fecha || '').slice(0, 10))}</div>
         </div>
         ${!esCredito ? badge('Contado', 'success') : pagada ? badge('Pagada', 'success') : badge('Crédito', 'warn')}
       </div>
       <div style="display:grid;gap:6px;grid-template-columns:1fr 1fr;font-size:13px">
         <div style="color:#6b7280">Total compra</div>
-        <div style="text-align:right;font-weight:700;color:#111827;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c.total)}</div>
+        <div style="text-align:right;font-weight:700;color:#111827;font-family:inherit">${money(c.total)}</div>
         ${esCredito ? `
           <div style="color:#6b7280">Total abonado (${abonos.length})</div>
-          <div style="text-align:right;font-weight:700;color:#15803d;font-family:'JetBrains Mono',ui-monospace,monospace">${money(totalAbonado)}</div>
+          <div style="text-align:right;font-weight:700;color:#15803d;font-family:inherit">${money(totalAbonado)}</div>
           <div style="color:#6b7280">Saldo pendiente</div>
-          <div style="text-align:right;font-weight:800;color:${pagada ? '#15803d' : '#a16207'};font-family:'JetBrains Mono',ui-monospace,monospace">${money(saldo)}</div>
+          <div style="text-align:right;font-weight:800;color:${pagada ? '#15803d' : '#a16207'};font-family:inherit">${money(saldo)}</div>
           ${c.vence ? `<div style="color:#6b7280">Vence</div><div style="text-align:right;font-weight:700;color:${vencido ? '#dc2626' : '#475569'}">${esc(c.vence)}${vencido ? ' · vencida' : ''}</div>` : ''}
         ` : ''}
       </div>
@@ -536,10 +536,10 @@ function verDetalle(compraId) {
           <tbody>
             ${items.map((it) => `
               <tr>
-                <td style="font-family:'JetBrains Mono',ui-monospace,monospace"><b>${fmt(it.cantidad)}</b></td>
+                <td style="font-family:inherit"><b>${fmt(it.cantidad)}</b></td>
                 <td>${esc(it.nombre)}</td>
-                <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace">${money(it.costo)}</td>
-                <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace"><b>${money(num(it.subtotal) || num(it.cantidad) * num(it.costo))}</b></td>
+                <td style="text-align:right;font-family:inherit">${money(it.costo)}</td>
+                <td style="text-align:right;font-family:inherit"><b>${money(num(it.subtotal) || num(it.cantidad) * num(it.costo))}</b></td>
               </tr>`).join('')}
           </tbody>
         </table></div>
@@ -555,9 +555,9 @@ function verDetalle(compraId) {
             ${[...abonos].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '')).map((a, i) => `
               <tr>
                 <td style="color:#94a3b8">${i + 1}</td>
-                <td style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#475569">${esc((a.fecha || '').slice(0, 10))}</td>
+                <td style="font-family:inherit;color:#475569">${esc((a.fecha || '').slice(0, 10))}</td>
                 <td>${badge(esc(a.metodo || 'Efectivo'), 'info')}</td>
-                <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#15803d">${money(a.monto)}</td>
+                <td style="text-align:right;font-family:inherit;font-weight:700;color:#15803d">${money(a.monto)}</td>
               </tr>`).join('')}
           </tbody>
         </table></div>

@@ -47,8 +47,8 @@ export function mostrarLogin(appRoot) {
           <!-- Hint para primera vez (solo visible si el admin aún tiene la clave de fábrica) -->
           <div id="login-hint" style="display:none;margin-top:18px;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:9px;font-size:11.5px;color:#64748b;text-align:center">
             <div style="font-weight:600;color:#475569;margin-bottom:2px">¿Primera vez?</div>
-            Usuario por defecto: <b style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">admin</b>
-            · contraseña: <b style="color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">admin123</b>
+            Usuario por defecto: <b style="color:#1d4ed8;font-family:inherit">admin</b>
+            · contraseña: <b style="color:#1d4ed8;font-family:inherit">admin123</b>
             <div style="margin-top:4px;color:#a16207">⚠ Cambia esta contraseña apenas entres (módulo Usuarios).</div>
           </div>
         </div>

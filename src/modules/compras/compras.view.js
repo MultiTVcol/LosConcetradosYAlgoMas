@@ -291,7 +291,7 @@ function pintarResultadosBusqueda() {
         style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#2563eb' : '#e2e8f0'};background:${activo ? '#eff6ff' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
         <div style="min-width:0;flex:1">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:13px;background:#f1f5f9;color:#0f172a;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
+            <span style="font-family:inherit;font-weight:800;font-size:13px;background:#f1f5f9;color:#0f172a;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
             <b style="font-size:13.5px;color:#0f172a">${_hl(p.nombre, q)}</b>
           </div>
           <div style="color:#64748b;font-size:11.5px;margin-top:3px">Stock: ${fmt(p.stock || 0)} · Último costo: ${money(p.costo || 0)}${p.categoria ? ' · ' + esc(p.categoria) : ''}</div>
@@ -337,16 +337,16 @@ function pintarItemsCompra() {
           <div>
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Cant</div>
             <input class="comp-it-cant" data-miles data-ix="${ix}" type="text" inputmode="numeric" value="${it.cantidad}"
-              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace" />
+              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Costo unitario</div>
             <input class="comp-it-costo" data-miles data-ix="${ix}" type="text" inputmode="numeric" value="${it.costo}"
-              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace" />
+              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div style="text-align:right">
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Subtotal</div>
-            <div style="font-weight:700;color:#0f172a;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace">${money(sub)}</div>
+            <div style="font-weight:700;color:#0f172a;font-size:14px;font-family:inherit">${money(sub)}</div>
           </div>
         </div>
       </div>
@@ -379,7 +379,7 @@ function pintarItemsCompra() {
     tot.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px">
         <span style="color:#64748b">${fmt(_items.length)} producto(s) · ${fmt(totalU)} unidad(es)</span>
-        <b style="color:#0f172a;font-size:20px;font-family:'JetBrains Mono',ui-monospace,monospace">${money(total)}</b>
+        <b style="color:#0f172a;font-size:20px;font-family:inherit">${money(total)}</b>
       </div>
     `;
   }
@@ -404,14 +404,14 @@ function abrirModalCantidadCompra(prodId) {
 
       <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Cantidad a comprar *</div>
       <input id="comp-mc-cant" data-miles type="text" inputmode="numeric" value="${cant}" placeholder="0"
-        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:22px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;text-align:center" />
+        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center" />
 
       <div style="margin-top:14px;font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Costo unitario (lo que pagas al proveedor) *</div>
       <input id="comp-mc-costo" data-miles type="text" inputmode="numeric" value="${costo}" placeholder="0"
-        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:18px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box" />
+        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:18px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
 
       <div id="comp-mc-sub" style="margin-top:12px;text-align:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:14px">
-        Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(cant * costo)}</b>
+        Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:inherit">${money(cant * costo)}</b>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:18px">
@@ -435,7 +435,7 @@ function abrirModalCantidadCompra(prodId) {
   const recalc = () => {
     const c = num(inpC.value);
     const k = num(inpK.value);
-    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace">${money(c * k)}</b>`;
+    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:inherit">${money(c * k)}</b>`;
   };
   inpC.addEventListener('input', recalc);
   inpK.addEventListener('input', recalc);
@@ -717,7 +717,7 @@ function abrirRegistroPago() {
     <div style="text-align:center;margin-bottom:14px">
       <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px">Total a pagar</div>
       <div style="background:#eff6ff;border-radius:12px;padding:18px 14px">
-        <div style="font-size:32px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(total)}</div>
+        <div style="font-size:32px;font-weight:800;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">${money(total)}</div>
       </div>
     </div>
 
@@ -754,7 +754,7 @@ function abrirRegistroPago() {
           <div>
             <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
             <input id="comp-abono-ini" data-miles type="text" inputmode="numeric" value="0"
-              style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace" />
+              style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
         </div>
       `;

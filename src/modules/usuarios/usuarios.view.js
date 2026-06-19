@@ -74,7 +74,7 @@ function htmlLayout() {
           <div style="color:#92400e;font-size:13px;margin-top:3px">Los cajeros lo necesitan para editar o eliminar ventas (y otras acciones restringidas).</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="background:white;border:1.5px solid #fde68a;padding:9px 16px;border-radius:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:18px;color:#92400e;letter-spacing:.2em" id="codigo-actual" title="${_codigoAdmin ? 'Código personalizado (guardado cifrado, no se puede mostrar)' : 'Código de fábrica — cámbialo'}">${_codigoAdmin ? '••••' : '1094'}</span>
+          <span style="background:white;border:1.5px solid #fde68a;padding:9px 16px;border-radius:9px;font-family:inherit;font-weight:800;font-size:18px;color:#92400e;letter-spacing:.2em" id="codigo-actual" title="${_codigoAdmin ? 'Código personalizado (guardado cifrado, no se puede mostrar)' : 'Código de fábrica — cámbialo'}">${_codigoAdmin ? '••••' : '1094'}</span>
           <button id="btn-cambiar-codigo"
             style="padding:9px 14px;background:#a16207;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><i data-lucide="pencil" style="width:14px;height:14px;stroke-width:2.25"></i> Cambiar código</button>
         </div>
@@ -118,7 +118,7 @@ function fila(u) {
   const esYo = Auth.usuarioActual()?.id === u.id;
   return `
     <tr style="border-bottom:1px solid #f1f5f9" data-id="${esc(u.id)}">
-      <td style="padding:14px 12px;color:#0f172a;font-weight:600;font-family:'JetBrains Mono',ui-monospace,monospace">
+      <td style="padding:14px 12px;color:#0f172a;font-weight:600;font-family:inherit">
         ${esc(u.usuario)}${esYo ? ' <span style="background:#e0e7ff;color:#1d4ed8;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px">TÚ</span>' : ''}
       </td>
       <td style="padding:14px 12px;color:#475569">${esc(u.nombre)}</td>
@@ -188,7 +188,7 @@ async function abrirFormUsuario(id) {
         <div>
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Usuario *</div>
           <input id="uf-usuario" type="text" value="${esc(datos.usuario)}" placeholder="Ej: jperez" ${id ? 'readonly' : ''} autocomplete="off"
-            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace;${id ? 'background:#f1f5f9;color:#64748b' : ''}" />
+            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;${id ? 'background:#f1f5f9;color:#64748b' : ''}" />
         </div>
         <div>
           <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Contraseña ${usuario ? '' : '*'}</div>
@@ -303,7 +303,7 @@ async function abrirEditorPermisos(id) {
 
   const contenido = `
     <div style="color:#64748b;font-size:13px;margin-bottom:14px">
-      Configura qué puede hacer <b style="color:#0f172a">${esc(usuario.nombre)}</b> (<code style="background:#f1f5f9;padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',ui-monospace,monospace">${esc(usuario.usuario)}</code>).
+      Configura qué puede hacer <b style="color:#0f172a">${esc(usuario.nombre)}</b> (<code style="background:#f1f5f9;padding:2px 6px;border-radius:5px;font-family:inherit">${esc(usuario.usuario)}</code>).
       Las acciones desmarcadas requerirán el código de autorización del admin.
     </div>
 
@@ -365,7 +365,7 @@ function cambiarCodigo() {
       Define el nuevo código que el admin entregará a los cajeros para autorizar acciones restringidas.
     </div>
     <input id="codigo-nuevo" type="text" inputmode="numeric" placeholder="Nuevo código (mín. 3)" value="" maxlength="10"
-      style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
+      style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:24px;font-weight:800;font-family:inherit;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
     <div id="codigo-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;color:#991b1b;font-size:12.5px;margin-top:8px;text-align:center"></div>
     <div style="display:flex;gap:10px;margin-top:16px">
       <button id="codigo-cancelar"

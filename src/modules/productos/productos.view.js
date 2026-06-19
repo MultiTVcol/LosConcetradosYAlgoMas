@@ -223,7 +223,7 @@ function htmlBuscador(filtro) {
           <i data-lucide="x" style="width:14px;height:14px"></i>
         </button>
       ` : `
-        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:inherit;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
       `}
     </div>
   `;
@@ -308,10 +308,10 @@ function htmlFila(p) {
   return `
     <tr data-id="${esc(p.id)}">
       <td style="font-weight:600;color:#111827">${esc(p.nombre || '(sin nombre)')}</td>
-      <td style="color:#6b7280;font-family:'JetBrains Mono',monospace;font-size:13px">${esc(p.codigo || '—')}</td>
+      <td style="color:#6b7280;font-family:inherit;font-size:13px">${esc(p.codigo || '—')}</td>
       <td>${p.categoria ? badge(p.categoria, 'neutral') : '<span style="color:#d1d5db">—</span>'}</td>
-      <td style="text-align:right;color:#111827;font-weight:600;font-family:'JetBrains Mono',monospace">${money(p.precio)}</td>
-      <td style="text-align:right;font-family:'JetBrains Mono',monospace">
+      <td style="text-align:right;color:#111827;font-weight:600;font-family:inherit">${money(p.precio)}</td>
+      <td style="text-align:right;font-family:inherit">
         ${stockBajo
           ? badge(`${stock} · bajo`, 'danger')
           : `<span style="color:#111827;font-weight:500">${stock}</span>`}

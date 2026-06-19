@@ -400,7 +400,7 @@ function htmlPanelVentas(r, tkt) {
       </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Total vendido</div>
-        <div style="font-size:24px;font-weight:800;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.ventas)}</div>
+        <div style="font-size:24px;font-weight:800;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">${money(r.ventas)}</div>
       </div>
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${kvLinea('Ticket promedio', money(tkt))}
@@ -419,7 +419,7 @@ function htmlPanelGastos(r, cats) {
       </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Total gastos</div>
-        <div style="font-size:24px;font-weight:800;color:#dc2626;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.gastos)}</div>
+        <div style="font-size:24px;font-weight:800;color:#dc2626;font-family:inherit;letter-spacing:-0.02em">${money(r.gastos)}</div>
       </div>
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${cats.length
@@ -444,7 +444,7 @@ function htmlPanelCaja(r, colCaja, colNeta) {
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Efectivo en caja (periodo)</div>
-        <div style="font-size:28px;font-weight:800;color:${colCaja};font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.flujoCaja)}</div>
+        <div style="font-size:28px;font-weight:800;color:${colCaja};font-family:inherit;letter-spacing:-0.02em">${money(r.flujoCaja)}</div>
       </div>
       ${r.creditoVentasNuevo > 0 ? kvLinea('Vendido a crédito (por cobrar)', `<b style="color:#a16207">${money(r.creditoVentasNuevo)}</b>`) : ''}
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
@@ -462,7 +462,7 @@ function htmlPanelInventario(r) {
       </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Valor inventario (costo)</div>
-        <div style="font-size:24px;font-weight:800;color:#0f172a;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(r.invValorCosto)}</div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;font-family:inherit;letter-spacing:-0.02em">${money(r.invValorCosto)}</div>
       </div>
       <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
       ${kvLinea('Valor a precio venta', money(r.invValorVenta))}
@@ -477,7 +477,7 @@ function kvLinea(k, v) {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0">
       <span style="color:#64748b;font-weight:600;font-size:13.5px">${k}</span>
-      <span style="font-weight:600;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13.5px">${v}</span>
+      <span style="font-weight:600;text-align:right;font-family:inherit;font-size:13.5px">${v}</span>
     </div>
   `;
 }

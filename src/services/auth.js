@@ -100,7 +100,7 @@ export function solicitarAutorizacion(mensaje = '') {
 
       <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Código de autorización del administrador</div>
       <input id="auth-code" type="password" placeholder="Solicita el código al administrador" autocomplete="off"
-        style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:22px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
+        style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
       <div id="auth-error" style="display:none;margin-top:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;color:#991b1b;font-size:12.5px;text-align:center"></div>
 
       <div style="display:flex;gap:10px;margin-top:16px">

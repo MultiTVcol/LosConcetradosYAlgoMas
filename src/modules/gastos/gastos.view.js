@@ -152,7 +152,7 @@ function filaGasto(g) {
 
   return `
     <tr style="border-bottom:1px solid #f1f5f9" data-gasto-id="${esc(g.id)}">
-      <td style="padding:12px;color:#475569;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">
+      <td style="padding:12px;color:#475569;font-family:inherit;font-size:13px">
         ${esc((g.fecha || '').slice(0, 10))}
       </td>
       <td style="padding:12px;color:#0f172a">
@@ -165,7 +165,7 @@ function filaGasto(g) {
           ${Repo.ICONOS[g.categoria] || '📌'} ${esc(g.categoria || 'Otros')}
         </span>
       </td>
-      <td style="padding:12px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#dc2626">
+      <td style="padding:12px;text-align:right;font-family:inherit;font-weight:700;color:#dc2626">
         ${money(g.monto)}
       </td>
       <td style="padding:12px">
@@ -265,7 +265,7 @@ async function abrirFormGasto(id) {
       <div style="grid-column:1/-1">
         <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Monto *</div>
         <input id="g-monto" data-miles type="text" inputmode="numeric" value="${datos.monto || ''}" placeholder="Ej: 120.000"
-          style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace" />
+          style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
       <div style="grid-column:1/-1">
         <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota (opcional)</div>
@@ -476,7 +476,7 @@ function pintarBajaItems() {
           <div>
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Cantidad</div>
             <input class="g-cant" data-id="${esc(it.producto_id)}" type="number" min="1" max="${stock}" value="${it.cantidad}"
-              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:'JetBrains Mono',ui-monospace,monospace" />
+              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Motivo</div>
@@ -487,7 +487,7 @@ function pintarBajaItems() {
           </div>
           <div style="text-align:right">
             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Subtotal</div>
-            <div style="font-weight:700;color:#dc2626;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace">${money(subtotal)}</div>
+            <div style="font-weight:700;color:#dc2626;font-size:14px;font-family:inherit">${money(subtotal)}</div>
           </div>
         </div>
       </div>
@@ -509,7 +509,7 @@ function pintarBajaItems() {
     tot.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px">
         <span style="color:#64748b">${fmt(_bajaItems.length)} producto(s) · ${fmt(totalU)} unidad(es)</span>
-        <b style="color:#dc2626;font-size:18px;font-family:'JetBrains Mono',ui-monospace,monospace">Gasto total: ${money(total)}</b>
+        <b style="color:#dc2626;font-size:18px;font-family:inherit">Gasto total: ${money(total)}</b>
       </div>
     `;
   }
@@ -640,18 +640,18 @@ function htmlKPIs(k) {
   return `
     <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border-radius:12px;padding:18px 20px;position:relative;overflow:hidden">
       <div style="font-size:12.5px;color:rgba(255,255,255,.85);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Gastos del mes</div>
-      <div style="font-size:24px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(k.mesTotal)}</div>
+      <div style="font-size:24px;font-weight:800;font-family:inherit;letter-spacing:-0.02em">${money(k.mesTotal)}</div>
       <div style="font-weight:600;margin-top:6px;font-size:12.5px;opacity:.9">${k.mesN} registro${k.mesN === 1 ? '' : 's'}</div>
     </div>
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
       <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Gastos del año</div>
-      <div style="font-size:22px;font-weight:700;color:#a16207;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(k.anioTotal)}</div>
+      <div style="font-size:22px;font-weight:700;color:#a16207;font-family:inherit;letter-spacing:-0.02em">${money(k.anioTotal)}</div>
       <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b">${k.anioN} registro${k.anioN === 1 ? '' : 's'}</div>
     </div>
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
       <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Mayor categoría (mes)</div>
       <div style="font-size:20px;font-weight:700;color:#2563eb">${Repo.ICONOS[k.topCat] || '📌'} ${esc(k.topCat)}</div>
-      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b;font-family:'JetBrains Mono',ui-monospace,monospace">${money(k.topVal)}</div>
+      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b;font-family:inherit">${money(k.topVal)}</div>
     </div>
   `;
 }

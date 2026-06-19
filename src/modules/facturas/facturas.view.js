@@ -159,13 +159,13 @@ function filaFactura(f) {
         <b style="color:#111827">${esc(f.numero || '—')}</b>
         ${ediciones > 0 ? badge('Editada', 'warn') : ''}
       </td>
-      <td style="color:#6b7280;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">
+      <td style="color:#6b7280;font-family:inherit;font-size:13px">
         ${esc(fecha)}${hora ? ' ' + esc(hora) : ''}
       </td>
       <td style="color:#111827">${esc(cliente)}</td>
       <td>${badge(metodo, 'info')}</td>
       <td>${estadoBadge}</td>
-      <td style="text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#111827">
+      <td style="text-align:right;font-family:inherit;font-weight:700;color:#111827">
         ${money(f.total)}
       </td>
       <td style="text-align:right">
@@ -279,7 +279,7 @@ async function verFactura(id) {
   const contenido = `
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:14px">
       <div style="font-weight:700;color:#0f172a;font-size:15px">${esc(f.cliente_nombre || 'Cliente ocasional')}</div>
-      <div style="color:#64748b;font-size:13px;margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace">
+      <div style="color:#64748b;font-size:13px;margin-top:3px;font-family:inherit">
         ${esc((f.fecha || '').slice(0, 10))} · ${esc(f.metodo_pago || '—')}
       </div>
     </div>
@@ -297,9 +297,9 @@ async function verFactura(id) {
         ${f.items.map((i) => `
           <tr style="border-bottom:1px solid #f1f5f9">
             <td style="padding:8px 10px;color:#0f172a">${esc(i.nombre)}</td>
-            <td style="padding:8px 10px;text-align:center;font-family:'JetBrains Mono',ui-monospace,monospace">${fmt(i.cantidad)}</td>
-            <td style="padding:8px 10px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace">${money(i.precio)}</td>
-            <td style="padding:8px 10px;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700">${money((i.precio - (i.descuento || 0)) * i.cantidad)}</td>
+            <td style="padding:8px 10px;text-align:center;font-family:inherit">${fmt(i.cantidad)}</td>
+            <td style="padding:8px 10px;text-align:right;font-family:inherit">${money(i.precio)}</td>
+            <td style="padding:8px 10px;text-align:right;font-family:inherit;font-weight:700">${money((i.precio - (i.descuento || 0)) * i.cantidad)}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -308,23 +308,23 @@ async function verFactura(id) {
     <div style="border-top:2px dashed #cbd5e1;padding-top:10px;margin-bottom:6px">
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:4px">
         <span>Subtotal</span>
-        <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(f.subtotal)}</b>
+        <b style="font-family:inherit">${money(f.subtotal)}</b>
       </div>
       ${f.impuesto > 0 ? `
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:4px">
           <span>Impuesto</span>
-          <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(f.impuesto)}</b>
+          <b style="font-family:inherit">${money(f.impuesto)}</b>
         </div>
       ` : ''}
       ${f.descuento > 0 ? `
         <div style="display:flex;justify-content:space-between;color:#dc2626;font-size:13.5px;margin-bottom:4px">
           <span>Descuento</span>
-          <b style="font-family:'JetBrains Mono',ui-monospace,monospace">-${money(f.descuento)}</b>
+          <b style="font-family:inherit">-${money(f.descuento)}</b>
         </div>
       ` : ''}
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">
         <b style="font-size:15px;color:#0f172a">TOTAL</b>
-        <b style="font-size:22px;color:#1d4ed8;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-0.02em">${money(f.total)}</b>
+        <b style="font-size:22px;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">${money(f.total)}</b>
       </div>
     </div>
 
@@ -392,7 +392,7 @@ function htmlHistorialEdiciones(ediciones) {
                 </div>
                 <div style="font-size:12px">
                   <span style="color:#64748b">Total:</span>
-                  <b style="font-family:'JetBrains Mono',ui-monospace,monospace">${money(ed.totalAnterior)} → ${money(ed.totalNuevo)}</b>
+                  <b style="font-family:inherit">${money(ed.totalAnterior)} → ${money(ed.totalNuevo)}</b>
                   <span style="color:${color};font-weight:700;margin-left:4px">(${signo}${money(diff)})</span>
                 </div>
               </div>
@@ -438,21 +438,21 @@ async function editarFactura(id) {
               <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Cant</div>
               <input class="fac-edit-input" data-ei="${ix}" data-ef="cantidad" type="number" inputmode="numeric" min="0"
                 value="${i.cantidad}"
-                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box"
+                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
               />
             </div>
             <div style="flex:1.3">
               <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Precio</div>
               <input class="fac-edit-input" data-ei="${ix}" data-ef="precio" type="text" inputmode="numeric"
                 value="${i.precio}"
-                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box"
+                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
               />
             </div>
             <div style="flex:1">
               <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Desc</div>
               <input class="fac-edit-input" data-ei="${ix}" data-ef="descuento" type="text" inputmode="numeric"
                 value="${i.descuento || 0}"
-                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace;outline:none;box-sizing:border-box"
+                style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
               />
             </div>
           </div>

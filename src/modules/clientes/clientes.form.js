@@ -411,7 +411,7 @@ function pintarListaPE(box, productos, query, body, titleEl) {
           inputmode="numeric"
           placeholder="${fmt(std)}"
           value="${tiene ? pe : ''}"
-          style="width:120px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace;text-align:right;outline:none;font-weight:700"
+          style="width:120px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;font-family:inherit;text-align:right;outline:none;font-weight:700"
         />
         <button class="pe-quitar" data-id="${esc(p.id)}" title="Quitar precio especial"
           style="width:32px;height:32px;border:1px solid #fecaca;background:#fef2f2;border-radius:7px;cursor:pointer;color:#dc2626;display:flex;align-items:center;justify-content:center;font-size:14px">🗑️</button>
