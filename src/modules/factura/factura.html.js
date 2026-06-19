@@ -241,7 +241,16 @@ export function html(venta, plantilla, negocio) {
   if (p.mostrarMetodoPago && venta.metodo_pago) {
     pagoRows.push(dato('Forma de pago', venta.metodo_pago));
   }
-  if (p.mostrarRecibidoCambio && venta.data) {
+  if (venta.tipoPago === 'credito') {
+    // Venta a crédito: mostrar abono inicial, saldo pendiente y vencimiento
+    const abonado = Array.isArray(venta.abonos)
+      ? venta.abonos.reduce((s, a) => s + num(a.monto), 0)
+      : num(venta.data && venta.data.recibido);
+    const saldo = venta.saldo != null ? num(venta.saldo) : Math.max(0, num(venta.total) - abonado);
+    if (abonado > 0) pagoRows.push(dato('Abono', money(abonado)));
+    pagoRows.push(dato('Saldo pendiente', money(saldo)));
+    if (venta.vence) pagoRows.push(dato('Vence', String(venta.vence).slice(0, 10).split('-').reverse().join('/')));
+  } else if (p.mostrarRecibidoCambio && venta.data) {
     const recibido = Number(venta.data.recibido) || 0;
     const cambio = Number(venta.data.cambio) || 0;
     if (recibido > 0) pagoRows.push(dato('Recibido', money(recibido)));
