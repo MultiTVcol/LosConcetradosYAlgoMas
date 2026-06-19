@@ -288,7 +288,8 @@ function htmlTabla(productos) {
               <th>Producto</th>
               <th>Código</th>
               <th>Categoría</th>
-              <th style="text-align:right">Precio</th>
+              <th style="text-align:right">Precio compra</th>
+              <th style="text-align:right">Precio venta</th>
               <th style="text-align:right">Stock</th>
               <th style="text-align:right;width:120px">Acciones</th>
             </tr>
@@ -310,6 +311,7 @@ function htmlFila(p) {
       <td style="font-weight:600;color:#111827">${esc(p.nombre || '(sin nombre)')}</td>
       <td style="color:#6b7280;font-family:inherit;font-size:13px">${esc(p.codigo || '—')}</td>
       <td>${p.categoria ? badge(p.categoria, 'neutral') : '<span style="color:#d1d5db">—</span>'}</td>
+      <td style="text-align:right;color:#6b7280;font-family:inherit">${p.costo != null && p.costo !== '' ? money(p.costo) : '—'}</td>
       <td style="text-align:right;color:#111827;font-weight:600;font-family:inherit">${money(p.precio)}</td>
       <td style="text-align:right;font-family:inherit">
         ${stockBajo
