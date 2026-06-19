@@ -443,22 +443,25 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
   const venta = await db.get(TABLA, id);
   if (!venta) throw new Error('Venta no encontrada');
 
-  // Cantidades previas para calcular delta de stock
+  // Cantidades previas para calcular delta de stock y devolver lo quitado
   const previos = (venta.items || []).map((it) => ({
     producto_id: it.producto_id,
+    nombre: it.nombre,
     cantidad: Number(it.cantidad) || 0,
   }));
 
-  // Construir items actualizados con cálculos al día
+  // Construir items actualizados con cálculos al día. Conserva el costo y el
+  // impuesto del item original; para productos agregados toma los del nuevo.
   const items = itemsNuevos.map((nuevo) => {
     const orig = venta.items.find((x) => x.producto_id === nuevo.producto_id) || {};
     const merged = {
       producto_id: nuevo.producto_id,
-      codigo: orig.codigo || '',
+      codigo: orig.codigo || nuevo.codigo || '',
       nombre: orig.nombre || nuevo.nombre || '',
       precio: Number(nuevo.precio) || 0,
+      costo: orig.costo != null ? Number(orig.costo) || 0 : Number(nuevo.costo) || 0,
       cantidad: Math.max(0, Number(nuevo.cantidad) || 0),
-      impuesto_pct: Number(orig.impuesto_pct) || 0,
+      impuesto_pct: Number(orig.impuesto_pct != null ? orig.impuesto_pct : nuevo.impuesto_pct) || 0,
       descuento: Math.max(0, Number(nuevo.descuento) || 0),
     };
     merged.subtotal = calcularSubtotalItem(merged);
@@ -467,8 +470,22 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
     return merged;
   });
 
-  // Ajustar stock según diferencia (delta = nueva - previa)
+  const idsNuevos = new Set(items.map((i) => i.producto_id));
   const cambios = [];
+
+  // 1) Productos QUITADOS: ya no están en la lista nueva → devolver su stock.
+  for (const prev of previos) {
+    if (prev.producto_id && !idsNuevos.has(prev.producto_id) && prev.cantidad > 0) {
+      try {
+        await Sync.ajustarStock(prev.producto_id, prev.cantidad);
+      } catch (e) {
+        console.warn(`No se pudo devolver stock de ${prev.producto_id}:`, e);
+      }
+      cambios.push(`Quitado: ${prev.nombre} (se devolvieron ${prev.cantidad} al inventario)`);
+    }
+  }
+
+  // 2) Productos en la lista nueva: ajustar stock según diferencia.
   for (const it of items) {
     const prev = previos.find((p) => p.producto_id === it.producto_id);
     const prevQty = prev ? prev.cantidad : 0;
@@ -480,7 +497,17 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
       } catch (e) {
         console.warn(`No se pudo ajustar stock de ${it.producto_id}:`, e);
       }
-      cambios.push(`${it.nombre}: cantidad ${prevQty} → ${it.cantidad}`);
+      if (prevQty === 0) {
+        cambios.push(`Agregado: ${it.nombre} x${it.cantidad}`);
+      } else {
+        cambios.push(`${it.nombre}: cantidad ${prevQty} → ${it.cantidad}`);
+      }
+    } else if (prev && it.producto_id) {
+      // Misma cantidad: registrar si cambió precio o descuento.
+      const prevItem = venta.items.find((x) => x.producto_id === it.producto_id) || {};
+      if (Number(prevItem.precio) !== it.precio || Number(prevItem.descuento || 0) !== it.descuento) {
+        cambios.push(`${it.nombre}: precio/descuento actualizado`);
+      }
     }
   }
 
@@ -506,6 +533,13 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
     total: totales.total,
     ediciones,
   };
+
+  // Venta a crédito: ajustar el saldo pendiente por el cambio de total.
+  if (venta.tipoPago === 'credito') {
+    const deltaTotal = totales.total - (Number(venta.total) || 0);
+    const saldoAnterior = Number(venta.saldo) || 0;
+    actualizada.saldo = Math.max(0, saldoAnterior + deltaTotal);
+  }
 
   await Sync.guardar(TABLA, actualizada);
   return actualizada;
