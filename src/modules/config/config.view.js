@@ -24,6 +24,7 @@ import { esc } from '../../core/strings.js';
 import { Toast, Confirm, Modal } from '../../components/index.js';
 import { refrescarIconos } from '../../app/shell.js';
 import * as Auth from '../../services/auth.js';
+import * as Caja from '../../services/caja.js';
 
 let _contenedor = null;
 let _cfg = null;
@@ -106,6 +107,23 @@ function adjuntarEventos(contenedor) {
     } catch (err) {
       estadoCajon(err.message || 'No se pudo probar el cajón', false);
     }
+  });
+
+  // Esta caja (numeración local, solo este equipo)
+  const prefInput = contenedor.querySelector('#cfg-caja-prefijo');
+  prefInput?.addEventListener('input', () => {
+    const p = Caja.normalizarPrefijo(prefInput.value) || 'V';
+    const ej = contenedor.querySelector('#cfg-caja-ejemplo');
+    if (ej) ej.innerHTML = `Las facturas se numerarán como <b>${esc(p)}-0001</b>.`;
+  });
+  contenedor.querySelector('#cfg-guardar-caja')?.addEventListener('click', () => {
+    const saved = Caja.setCaja({
+      prefijo: contenedor.querySelector('#cfg-caja-prefijo')?.value || '',
+      nombre: contenedor.querySelector('#cfg-caja-nombre')?.value || '',
+    });
+    Toast.ok(saved.prefijo
+      ? `Caja guardada · numeración ${saved.prefijo}-####`
+      : 'Caja guardada (numeración por defecto V-####)');
   });
 
   // Lector
@@ -798,6 +816,7 @@ function htmlLayout(cfg, stats) {
       <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr;align-items:start">
         ${htmlDatosNegocio(cfg)}
         <div style="display:flex;flex-direction:column;gap:16px">
+          ${htmlCaja()}
           ${htmlLector(cfg)}
           ${htmlImpresora(cfg)}
           ${htmlCajon(cfg)}
@@ -937,6 +956,36 @@ function campo(id, label, valor, placeholder = '') {
       <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${label}</div>
       <input id="${id}" type="text" value="${esc(valor || '')}" placeholder="${esc(placeholder)}"
         style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+    </div>
+  `;
+}
+
+function htmlCaja() {
+  const c = Caja.getCaja();
+  return `
+    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Esta caja (numeración)</h3>
+      <p style="color:#64748b;font-size:13.5px;margin:0">
+        Se guarda <b>solo en este equipo</b>. Pon un prefijo <b>distinto en cada computador</b>
+        (A, B, C…) para que dos cajas vendiendo al mismo tiempo no repitan el número de factura.
+      </p>
+      <div style="display:grid;gap:12px;grid-template-columns:2fr 1fr">
+        <div>
+          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nombre de la caja</div>
+          <input id="cfg-caja-nombre" type="text" value="${esc(c.nombre)}" placeholder="Ej: Caja principal"
+            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+        </div>
+        <div>
+          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Prefijo</div>
+          <input id="cfg-caja-prefijo" type="text" maxlength="4" value="${esc(c.prefijo)}" placeholder="A"
+            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;text-transform:uppercase" />
+        </div>
+      </div>
+      <div id="cfg-caja-ejemplo" style="font-size:12.5px;color:#475569">Las facturas se numerarán como <b>${esc(Caja.prefijoNumeracion())}-0001</b>.</div>
+      <button id="cfg-guardar-caja"
+        style="width:100%;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
+        Guardar caja
+      </button>
     </div>
   `;
 }

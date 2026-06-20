@@ -22,6 +22,18 @@ import { uid } from '../../core/strings.js';
 import { todayISO, nowISO } from '../../core/dates.js';
 import { round } from '../../core/format.js';
 import * as Auth from '../../services/auth.js';
+import * as Caja from '../../services/caja.js';
+
+/**
+ * Separa un número de venta en { prefijo, n }. Acepta 'A-0043', 'V-0043'
+ * o '0043' (este último se considera de la serie 'V', por el histórico).
+ */
+function parseNumero(numero) {
+  const m = String(numero || '').trim().match(/^(.*?)-?(\d+)$/);
+  if (!m) return null;
+  const prefijo = (m[1] || '').replace(/-+$/, '').toUpperCase() || 'V';
+  return { prefijo, n: parseInt(m[2], 10) };
+}
 
 /**
  * Sello del cajero que está operando (de la sesión actual).
@@ -177,16 +189,17 @@ export function validar(v) {
  * @returns {Promise<string>}
  */
 export async function siguienteNumero() {
+  // Cada caja (terminal) tiene su propio prefijo local (A, B, C…). El próximo
+  // número se calcula sobre el MAYOR de ESA serie, así dos cajas vendiendo a la
+  // vez en computadores distintos nunca repiten folio.
+  const pref = Caja.prefijoNumeracion();
   const todas = await db.getAll(TABLA);
   let max = 0;
   for (const v of todas) {
-    const m = String(v.numero || '').match(/(\d+)\s*$/);
-    if (m) {
-      const n = parseInt(m[1], 10);
-      if (n > max) max = n;
-    }
+    const p = parseNumero(v.numero);
+    if (p && p.prefijo === pref && p.n > max) max = p.n;
   }
-  return 'V-' + String(max + 1).padStart(4, '0');
+  return `${pref}-` + String(max + 1).padStart(4, '0');
 }
 
 // ============================================================
