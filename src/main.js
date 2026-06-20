@@ -11,6 +11,43 @@ import { montarShell, setContenido, marcarActivo, animarEntrada } from './app/sh
 
 console.log('🐾 PosPunto arrancando…');
 
+// ============================================================
+//  RECUPERACIÓN ANTE CHUNKS OBSOLETOS (tras un nuevo deploy)
+// ------------------------------------------------------------
+//  Cuando se publica una versión nueva, los archivos JS de cada
+//  módulo cambian de nombre (hash). Un navegador con el shell
+//  viejo en caché intenta importar el chunk anterior, que ya no
+//  existe (404) → la ruta no carga. La solución estándar es
+//  recargar UNA vez para traer la versión nueva.
+// ============================================================
+function esErrorDeChunkObsoleto(err) {
+  const msg = String((err && (err.message || err)) || '').toLowerCase();
+  return msg.includes('dynamically imported module') ||
+         msg.includes('importing a module script failed') ||
+         msg.includes('failed to fetch') ||
+         msg.includes('error loading') ||
+         msg.includes('module script');
+}
+
+function recargarPorVersionNueva() {
+  // Evita bucles de recarga: solo una vez cada 20 s.
+  try {
+    const ahora = Date.now();
+    const ultimo = Number(sessionStorage.getItem('pospunto.reloadChunk') || 0);
+    if (ahora - ultimo < 20000) return false;
+    sessionStorage.setItem('pospunto.reloadChunk', String(ahora));
+  } catch (e) { /* sessionStorage no disponible */ }
+  console.warn('Versión nueva detectada (chunk obsoleto). Recargando…');
+  window.location.reload();
+  return true;
+}
+
+// Vite emite este evento cuando falla la precarga de un chunk dinámico.
+window.addEventListener('vite:preloadError', (e) => {
+  e.preventDefault();
+  recargarPorVersionNueva();
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   const app = document.getElementById('app');
   if (!app) return;
@@ -210,7 +247,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const cargador = Core.Router.obtenerCargador(ruta);
       if (cargador) {
-        await cargador();
+        try {
+          await cargador();
+        } catch (err) {
+          console.error(`Error cargando el módulo "${ruta}":`, err);
+          // Si el fallo es por un chunk obsoleto (deploy nuevo), recargar
+          // para traer la versión nueva; si no, mostrar un aviso claro.
+          if (esErrorDeChunkObsoleto(err)) {
+            if (recargarPorVersionNueva()) return;
+          }
+          mostrarPlaceholder(
+            'No se pudo cargar el módulo',
+            'alert-triangle',
+            'Intenta de nuevo. Si persiste, recarga la página (Ctrl+F5).',
+          );
+        }
       } else {
         mostrarPlaceholder('No encontrado', 'circle-help', `La ruta "${ruta}" no existe.`);
       }
