@@ -215,6 +215,7 @@ export async function siguienteNumero() {
 export function construirVenta(datos) {
   const totales = calcularTotales(datos.items, datos.descuento || 0);
   const sello = cajeroSello();
+  const caja = Caja.getCaja();
 
   // Snapshot del cliente para que la factura se pueda reimprimir aunque
   // el cliente se edite o borre después. Solo guardamos los campos básicos.
@@ -269,6 +270,10 @@ export function construirVenta(datos) {
     cajero_id: sello.cajero_id,
     data: {
       timestamp: nowISO(),
+      // Caja/terminal que emitió la venta (para mostrarla en el ticket aunque
+      // se reimprima desde otro equipo). Va en data para no requerir columnas.
+      cajaNombre: caja.nombre || '',
+      cajaPrefijo: caja.prefijo || '',
     },
   };
 }
