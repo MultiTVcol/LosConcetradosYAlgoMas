@@ -10,6 +10,13 @@ import * as db from '../../services/db.js';
 import * as Sync from '../../services/sync.js';
 import { uid } from '../../core/strings.js';
 import { todayISO, nowISO } from '../../core/dates.js';
+import * as Auth from '../../services/auth.js';
+
+/** Cajero de la sesión actual (para el cierre por cajero). */
+function cajeroSello() {
+  const u = Auth.usuarioActual();
+  return { cajero: (u && u.nombre) || '', cajero_id: (u && u.id) || '' };
+}
 
 const TABLA = 'gastos';
 const TABLA_PRODUCTOS = 'productos';
@@ -54,6 +61,7 @@ export async function guardar(datos) {
     monto: Number(datos.monto) || 0,
     nota: String(datos.nota || '').trim(),
     creado: datos.creado || nowISO(),
+    ...cajeroSello(),
   };
   await Sync.guardar(TABLA, item);
   return item;
@@ -115,6 +123,7 @@ export async function guardarBajaProductos(datos) {
       motivo: it.motivo || 'Otro',
     })),
     creado: datos.creado || nowISO(),
+    ...cajeroSello(),
   };
 
   await Sync.guardar(TABLA, item);

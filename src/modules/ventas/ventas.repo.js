@@ -21,6 +21,16 @@ import * as Supa from '../../services/supabase.js';
 import { uid } from '../../core/strings.js';
 import { todayISO, nowISO } from '../../core/dates.js';
 import { round } from '../../core/format.js';
+import * as Auth from '../../services/auth.js';
+
+/**
+ * Sello del cajero que está operando (de la sesión actual).
+ * Se guarda en cada venta/abono para poder hacer el cierre por cajero.
+ */
+function cajeroSello() {
+  const u = Auth.usuarioActual();
+  return { cajero: (u && u.nombre) || '', cajero_id: (u && u.id) || '' };
+}
 
 // ============================================================
 //  CONSTANTES
@@ -191,6 +201,7 @@ export async function siguienteNumero() {
  */
 export function construirVenta(datos) {
   const totales = calcularTotales(datos.items, datos.descuento || 0);
+  const sello = cajeroSello();
 
   // Snapshot del cliente para que la factura se pueda reimprimir aunque
   // el cliente se edite o borre después. Solo guardamos los campos básicos.
@@ -237,9 +248,12 @@ export function construirVenta(datos) {
       : 0,
     vence: datos.tipoPago === 'credito' ? (datos.vence || '') : '',
     abonos: (datos.tipoPago === 'credito' && (Number(datos.abonoInicial) || 0) > 0)
-      ? [{ id: uid(), fecha: todayISO(), monto: Number(datos.abonoInicial) || 0, metodo: datos.metodoAbono || 'Efectivo' }]
+      ? [{ id: uid(), fecha: todayISO(), monto: Number(datos.abonoInicial) || 0, metodo: datos.metodoAbono || 'Efectivo', ...sello }]
       : [],
     estado: 'completada',
+    // Cajero que registró la venta (para el cierre por cajero)
+    cajero: sello.cajero,
+    cajero_id: sello.cajero_id,
     data: {
       timestamp: nowISO(),
     },
@@ -329,6 +343,7 @@ export async function abonar(ventaId, abono) {
     monto,
     metodo: abono.metodo || 'Efectivo',
     nota: String(abono.nota || '').trim(),
+    ...cajeroSello(),  // quién recibió el abono (entra a SU caja)
   });
 
   const actualizada = { ...venta, abonos, saldo: Math.max(0, saldoActual - monto) };

@@ -13,6 +13,7 @@ import * as VentasRepo from '../ventas/ventas.repo.js';
 import * as GastosRepo from '../gastos/gastos.repo.js';
 import * as ProductosRepo from '../productos/productos.repo.js';
 import * as ComprasRepo from '../compras/compras.repo.js';
+import * as UsuariosRepo from '../usuarios/usuarios.repo.js';
 import * as ConfigRepo from '../config/config.repo.js';
 import * as PlantillaRepo from '../factura/plantilla.repo.js';
 import { money, fmt, num } from '../../core/format.js';
@@ -26,11 +27,12 @@ import * as Realtime from '../../services/realtime.js';
 let _offRealtime = null;
 
 let _contenedor = null;
-let _estado = { desde: '', hasta: '', preset: 'hoy' };
+let _estado = { desde: '', hasta: '', preset: 'hoy', cajero: 'todos' };
 let _ventas = [];
 let _gastos = [];
 let _compras = [];
 let _productos = [];
+let _usuarios = [];
 
 // ============================================================
 //  RENDER
@@ -41,7 +43,7 @@ export async function render(contenedor) {
 
   // Estado inicial: hoy
   const hoy = todayISO();
-  _estado = { desde: hoy, hasta: hoy, preset: 'hoy' };
+  _estado = { desde: hoy, hasta: hoy, preset: 'hoy', cajero: 'todos' };
 
   contenedor.innerHTML = htmlCargando();
 
@@ -49,6 +51,7 @@ export async function render(contenedor) {
   try { _gastos = await GastosRepo.listar(); } catch (e) { console.warn(e); _gastos = []; }
   try { _compras = await ComprasRepo.listar(); } catch (e) { console.warn(e); _compras = []; }
   try { _productos = await ProductosRepo.listar(); } catch (e) { console.warn(e); _productos = []; }
+  try { _usuarios = await UsuariosRepo.listar(); } catch (e) { console.warn(e); _usuarios = []; }
 
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
@@ -103,6 +106,7 @@ function pintarContenido() {
       <i data-lucide="calendar-range" style="width:16px;height:16px;stroke-width:2"></i>
       Periodo: <b>${fechaBonita(_estado.desde)}</b> → <b>${fechaBonita(_estado.hasta)}</b>
       &nbsp;·&nbsp; ${fmt(r.nFac)} venta(s) &nbsp;·&nbsp; ${fmt(r.nGastos)} gasto(s)
+      ${_estado.cajero !== 'todos' ? `&nbsp;·&nbsp; <span style="background:#1d4ed8;color:white;border-radius:999px;padding:2px 10px;font-size:12px">Cajero: ${esc(nombreCajeroSel())}</span>` : ''}
     </div>
 
     <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
@@ -134,7 +138,20 @@ function pintarContenido() {
 //  CÁLCULO DEL REPORTE
 // ============================================================
 
+/** Nombre legible del cajero seleccionado en el filtro (o "Todos"). */
+function nombreCajeroSel() {
+  if (!_estado.cajero || _estado.cajero === 'todos') return 'Todos los cajeros';
+  const u = _usuarios.find((x) => x.id === _estado.cajero);
+  return (u && (u.nombre || u.usuario)) || 'Cajero';
+}
+
 function calcularReporte(desde, hasta) {
+  // Filtro por cajero: 'todos' o el id del cajero. Cada movimiento (venta,
+  // abono, gasto, compra) lleva su cajero_id; los registros viejos sin sello
+  // solo aparecen cuando el filtro es "Todos".
+  const cf = _estado.cajero || 'todos';
+  const matchCajero = (o) => cf === 'todos' || (!!o && o.cajero_id === cf);
+
   let ventas = 0, utilidadBruta = 0, costoVenta = 0, nFac = 0;
   // Caja: separar lo que ENTRÓ en efectivo de lo vendido a crédito.
   let contadoVentas = 0, creditoVentasNuevo = 0, recaudoVentas = 0, nRecaudos = 0;
@@ -142,7 +159,7 @@ function calcularReporte(desde, hasta) {
   const topProductos = new Map(); // ranking de productos vendidos
   for (const v of _ventas) {
     const d = (v.fecha || '').slice(0, 10);
-    if (d >= desde && d <= hasta) {
+    if (d >= desde && d <= hasta && matchCajero(v)) {
       const tot = num(v.total);
       const uti = num(v.utilidad);
       ventas += tot;
@@ -168,7 +185,7 @@ function calcularReporte(desde, hasta) {
     if (v.tipoPago === 'credito') {
       for (const a of v.abonos || []) {
         const da = (a.fecha || '').slice(0, 10);
-        if (da >= desde && da <= hasta) { recaudoVentas += num(a.monto); nRecaudos++; }
+        if (da >= desde && da <= hasta && matchCajero(a)) { recaudoVentas += num(a.monto); nRecaudos++; }
       }
     }
   }
@@ -178,7 +195,7 @@ function calcularReporte(desde, hasta) {
   const gastosPorCat = {};
   for (const g of _gastos) {
     const d = (g.fecha || '').slice(0, 10);
-    if (d >= desde && d <= hasta) {
+    if (d >= desde && d <= hasta && matchCajero(g)) {
       const m = num(g.monto);
       gastos += m;
       nGastos++;
@@ -192,7 +209,7 @@ function calcularReporte(desde, hasta) {
   let abonosDelPeriodo = 0, nAbonos = 0;
   for (const c of _compras) {
     const d = (c.fecha || '').slice(0, 10);
-    if (d >= desde && d <= hasta) {
+    if (d >= desde && d <= hasta && matchCajero(c)) {
       compras += num(c.total);
       nCompras++;
       if (c.tipoPago === 'credito') {
@@ -203,7 +220,7 @@ function calcularReporte(desde, hasta) {
     // Los abonos pueden caer en el periodo aunque la compra sea de otra fecha
     for (const a of c.abonos || []) {
       const da = (a.fecha || '').slice(0, 10);
-      if (da >= desde && da <= hasta) {
+      if (da >= desde && da <= hasta && matchCajero(a)) {
         abonosDelPeriodo += num(a.monto);
         nAbonos++;
       }
@@ -268,6 +285,10 @@ function adjuntarEventos(contenedor) {
     _estado.preset = 'custom';
     marcarPreset();
     recargarVentas();
+  });
+  contenedor.querySelector('#cierre-cajero')?.addEventListener('change', (e) => {
+    _estado.cajero = e.target.value || 'todos';
+    pintarContenido();
   });
 
   contenedor.querySelector('#cierre-btn-actualizar')?.addEventListener('click', async () => {
@@ -372,7 +393,15 @@ function htmlLayout() {
           `).join('')}
         </div>
 
-        <div style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
+        <div style="display:grid;gap:14px;grid-template-columns:1.2fr 1fr 1fr">
+          <div>
+            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Cajero</div>
+            <select id="cierre-cajero"
+              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white;color:#0f172a">
+              <option value="todos" ${_estado.cajero === 'todos' ? 'selected' : ''}>Todos los cajeros</option>
+              ${_usuarios.map((u) => `<option value="${esc(u.id)}" ${_estado.cajero === u.id ? 'selected' : ''}>${esc(u.nombre || u.usuario || '')}</option>`).join('')}
+            </select>
+          </div>
           <div>
             <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Desde</div>
             <input id="cierre-desde" type="date" value="${esc(_estado.desde)}"
@@ -543,6 +572,9 @@ async function imprimirInforme(r) {
       <div style="text-align:center;font-size:11.5px;margin-bottom:2px">
         Periodo: ${fechaBonita(r.desde)}${r.desde !== r.hasta ? '<br>al ' + fechaBonita(r.hasta) : ''}
       </div>
+      <div style="text-align:center;font-size:11px;font-weight:bold;margin-bottom:2px">
+        Cajero: ${esc(nombreCajeroSel())}
+      </div>
       <div style="text-align:center;font-size:10.5px;color:#555">
         Generado: ${fechaImp} · ${hora}
       </div>
@@ -706,7 +738,7 @@ async function imprimirCierrePDF(r) {
       <!-- PERIODO -->
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
         <div style="font-weight:700;color:#1d4ed8">📅 Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
-        <div style="font-size:11px;color:#475569">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
+        <div style="font-size:11px;color:#475569">Cajero: <b>${esc(nombreCajeroSel())}</b> · ${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
       </div>
 
       <!-- KPIs PRINCIPALES -->

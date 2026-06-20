@@ -10,6 +10,13 @@ import * as db from '../../services/db.js';
 import * as Sync from '../../services/sync.js';
 import { uid } from '../../core/strings.js';
 import { todayISO, nowISO } from '../../core/dates.js';
+import * as Auth from '../../services/auth.js';
+
+/** Cajero de la sesión actual (para el cierre por cajero). */
+function cajeroSello() {
+  const u = Auth.usuarioActual();
+  return { cajero: (u && u.nombre) || '', cajero_id: (u && u.id) || '' };
+}
 
 const TABLA = 'compras';
 const TABLA_PRODUCTOS = 'productos';
@@ -75,11 +82,12 @@ export async function registrar(datos) {
     metodoPago: datos.metodoPago || (tipoPago === 'credito' ? 'Crédito' : 'Efectivo'),
     vence: tipoPago === 'credito' ? (datos.vence || '') : '',
     abonos: tipoPago === 'credito' && abonoIni > 0
-      ? [{ id: uid(), fecha: datos.fecha || todayISO(), monto: abonoIni, metodo: datos.metodoPago || 'Efectivo' }]
+      ? [{ id: uid(), fecha: datos.fecha || todayISO(), monto: abonoIni, metodo: datos.metodoPago || 'Efectivo', ...cajeroSello() }]
       : [],
     saldo,
     nota: String(datos.nota || '').trim(),
     creado: nowISO(),
+    ...cajeroSello(),
   };
 
   // Sumar stock + actualizar costo (delta atómico en la nube)
@@ -127,13 +135,14 @@ export async function registrarCuentaPorPagar(datos) {
     metodoPago: 'Crédito',
     vence: datos.vence || '',
     abonos: abonoIni > 0
-      ? [{ id: uid(), fecha: datos.fecha || todayISO(), monto: abonoIni, metodo: datos.metodoAbono || 'Efectivo' }]
+      ? [{ id: uid(), fecha: datos.fecha || todayISO(), monto: abonoIni, metodo: datos.metodoAbono || 'Efectivo', ...cajeroSello() }]
       : [],
     saldo,
     nota: String(datos.nota || '').trim(),
     origen: 'migracion',       // marca: cuenta creada sin afectar inventario
     sinInventario: true,
     creado: nowISO(),
+    ...cajeroSello(),
   };
 
   // OJO: NO se llama a Sync.ajustarStock — el inventario queda intacto.
@@ -165,6 +174,7 @@ export async function abonar(compraId, abono) {
     monto,
     metodo: abono.metodo || 'Efectivo',
     nota: String(abono.nota || '').trim(),
+    ...cajeroSello(),
   });
 
   const actualizada = {
