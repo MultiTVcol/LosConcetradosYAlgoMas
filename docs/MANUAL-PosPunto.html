@@ -441,7 +441,6 @@
     <div class="c"><b>MI NEGOCIO</b><br/>NIT 900.123.456-7</div>
     <hr/>
     <div class="row"><span>Nº Documento</span><span>A-0042</span></div>
-    <div class="row"><span>Caja</span><span>Caja principal</span></div>
     <div class="row"><span>Atendió</span><span>Juan</span></div>
     <hr/>
     <div class="row"><span>2 Concentrado 500g</span><span>19.400</span></div>
@@ -453,7 +452,7 @@
     <hr/>
     <div class="c">¡Gracias por su compra!</div>
   </div>
-  <p class="cap">Ejemplo de ticket POS 80 mm (muestra la caja y quién atendió).</p>
+  <p class="cap">Ejemplo de ticket POS 80 mm (el número lleva la serie del cajero y muestra quién atendió).</p>
 
   <div class="callout c-warn">
     <span class="lbl">Venta a crédito</span>
@@ -748,7 +747,6 @@
     <tr><th>Sección</th><th>Para qué sirve</th></tr>
     <tr><td><b>Facturación electrónica (DIAN)</b></td><td>Datos del emisor (tu empresa), resolución de numeración y activación. <span class="muted">Ver sección 19.</span></td></tr>
     <tr><td><b>Datos para la factura</b></td><td>Nombre del negocio, NIT, dirección, teléfono y mensaje del pie que salen en el ticket.</td></tr>
-    <tr><td><b>Esta caja (numeración)</b></td><td>Prefijo de numeración de <b>este equipo</b> (A, B, C…) y nombre de la caja. <span class="muted">Ver abajo.</span></td></tr>
     <tr><td><b>Lector de código de barras</b></td><td>Ajustes de la pistola lectora.</td></tr>
     <tr><td><b>Cajón de dinero</b></td><td>Activarlo y conectarlo para que <b>se abra solo</b> al confirmar una venta. Botón de prueba incluido.</td></tr>
     <tr><td><b>Impresora predeterminada</b></td><td>Define la impresora térmica para los tickets.</td></tr>
@@ -767,18 +765,9 @@
     El diseño del ticket (logo, tamaño, textos) se personaliza desde el <b>editor de plantilla</b>, accesible al imprimir desde Ventas / Reportes.
   </div>
 
-  <h3>Numeración por caja (varios computadores)</h3>
-  <p>Si tienes <b>más de una caja</b>, dale a cada computador un <b>prefijo distinto</b> para que las facturas no se repitan. En <b>Configuración → Esta caja (numeración)</b> de cada equipo:</p>
-  <ol class="steps">
-    <li>Escribe un <b>prefijo</b> corto y único: por ejemplo <b>A</b> en el computador 1 y <b>B</b> en el computador 2.</li>
-    <li>Opcional: ponle un <b>nombre</b> a la caja (“Caja principal”, “Mostrador 2”). Sale en el ticket.</li>
-    <li>Pulsa <b>Guardar caja</b>.</li>
-  </ol>
-  <p>A partir de ahí, el computador 1 numera <b>A-0001, A-0002…</b> y el 2 <b>B-0001, B-0002…</b>, cada uno con su propia serie. Cada ticket muestra la <b>Caja</b> y quién <b>Atendió</b>.</p>
-
-  <div class="callout c-warn">
-    <span class="lbl">Es por equipo, no se comparte</span>
-    Este ajuste se guarda <b>solo en ese computador</b> (no se sincroniza), justamente para que cada caja tenga su prefijo. Debes configurarlo <b>una vez en cada equipo</b>. Si dejas dos cajas sin prefijo, ambas usarían <code>V-</code> y los números podrían repetirse.
+  <div class="callout c-info">
+    <span class="lbl">Numeración por cajero</span>
+    El prefijo de numeración de las facturas (A, B, C…) <b>ya no se configura aquí</b>: lo asigna el administrador a <b>cada cajero</b> desde <b>Usuarios</b>. Así la serie viaja con la persona aunque cambie de computador. Ver la sección 18.
   </div>
 </div>
 
@@ -789,13 +778,28 @@
 
   <ol class="steps">
     <li>Pulsa <b>Nuevo usuario</b>: nombre, usuario, contraseña y rol (administrador o cajero).</li>
+    <li>Asigna el <b>prefijo de numeración</b> del cajero (ver abajo).</li>
     <li>Con <b>Permisos</b> activas o desactivas módulos y acciones para ese usuario.</li>
     <li>En <b>Cambiar código de autorización</b> defines el código que se pide para las acciones restringidas.</li>
   </ol>
 
+  <h3>Prefijo de numeración por cajero</h3>
+  <p>Cada cajero tiene un <b>prefijo</b> propio (A, B, C…) que define la serie de sus facturas. Lo asigna el administrador en el formulario del usuario. Así, las ventas de cada quien se numeran en series separadas y <b>nunca se repiten</b>, aunque dos cajeros vendan al mismo tiempo o cambien de computador.</p>
+  <table class="ref">
+    <tr><th>Cajero</th><th>Prefijo</th><th>Numera sus facturas como…</th></tr>
+    <tr><td>Juan</td><td><b>A</b></td><td>A-0001, A-0002, A-0003…</td></tr>
+    <tr><td>María</td><td><b>B</b></td><td>B-0001, B-0002, B-0003…</td></tr>
+    <tr><td><span class="muted">Sin prefijo</span></td><td><span class="muted">—</span></td><td>V-0001, V-0002… <span class="muted">(serie por defecto)</span></td></tr>
+  </table>
+
+  <div class="callout c-key">
+    <span class="lbl">La clave del multi-caja</span>
+    Como el prefijo viaja con la <b>persona</b> (no con el equipo), <b>Juan</b> numerará siempre <b>A-####</b> esté en el computador que esté. Dale un prefijo <b>distinto a cada cajero</b> y listo.
+  </div>
+
   <div class="callout c-info">
     <span class="lbl">Buenas prácticas</span>
-    Dale a cada cajero su propia cuenta (no compartan usuario). Así sabrás <b>quién</b> hizo cada venta y mantendrás el código de autorización solo con el administrador.
+    Dale a cada cajero su propia cuenta (no compartan usuario). Así sabrás <b>quién</b> hizo cada venta, cada uno tendrá su serie de facturas y su propio cierre, y mantendrás el código de autorización solo con el administrador.
   </div>
 </div>
 
@@ -840,8 +844,8 @@
   <h4>Un cliente abona su deuda, ¿dónde lo registro?</h4>
   <p>En <b>Cuentas por cobrar</b>, busca la venta y pulsa <b>Abonar</b>. El abono entra a la caja de ese día.</p>
 
-  <h4>Tengo dos cajas vendiendo a la vez, ¿se enredan los números o el cierre?</h4>
-  <p>No, si configuras cada equipo. Dale a cada computador un <b>prefijo</b> distinto en <b>Configuración → Esta caja (numeración)</b> (A, B…) y sus facturas irán en series separadas (<b>A-0001</b>, <b>B-0001</b>…) sin repetirse. Para el cierre, cada cajero elige <b>su nombre</b> en el filtro <b>Cajero</b> y obtiene solo lo suyo. El inventario es compartido y se actualiza en vivo entre las cajas.</p>
+  <h4>Tengo dos cajeros vendiendo a la vez, ¿se enredan los números o el cierre?</h4>
+  <p>No, si cada cajero tiene su <b>prefijo</b>. El administrador se lo asigna en <b>Usuarios</b> (A, B…) y sus facturas irán en series separadas (<b>A-0001</b>, <b>B-0001</b>…) sin repetirse, sin importar en qué computador esté cada uno. Para el cierre, cada cajero elige <b>su nombre</b> en el filtro <b>Cajero</b> y obtiene solo lo suyo. El inventario es compartido y se actualiza en vivo entre las cajas.</p>
 
   <h4>¿Por qué el cierre no cuenta una venta a crédito como efectivo?</h4>
   <p>Porque el dinero aún no ha entrado. Solo cuenta cuando el cliente <b>abona</b>. Así el efectivo esperado del cierre coincide con el real.</p>

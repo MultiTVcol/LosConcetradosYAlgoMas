@@ -33,6 +33,7 @@ export async function login(usuario, password) {
     nombre: u.nombre,
     rol: u.rol,
     permisos: u.permisos || {},
+    prefijo: u.prefijo || '',   // prefijo de numeración asignado por el admin
     iniciada: new Date().toISOString(),
   };
   try { sessionStorage.setItem(KEY_SESION, JSON.stringify(sesion)); } catch (e) { /**/ }

@@ -26,6 +26,15 @@ const TABLA_KV = 'kvs';
 const KEY_CODIGO_ADMIN = 'codigo_autorizacion';
 const DEFAULT_CODIGO = '1094';
 
+/**
+ * Normaliza un prefijo de numeración: solo letras/números, en mayúsculas,
+ * máximo 4 caracteres. Cada cajero usa su prefijo para que las facturas de
+ * distintas cajas no se repitan (A-0001, B-0001…).
+ */
+export function normalizarPrefijo(p) {
+  return String(p || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+}
+
 // ============================================================
 //  PERMISOS
 // ============================================================
@@ -209,6 +218,9 @@ export async function guardar(datos) {
     pass_hash: existentePorId?.pass_hash || null,
     rol: datos.rol === 'admin' ? 'admin' : 'cajero',
     permisos: datos.permisos || {},
+    // Prefijo de numeración del cajero (lo asigna el admin). Si está vacío,
+    // las ventas de este usuario usan la serie por defecto 'V'.
+    prefijo: normalizarPrefijo(datos.prefijo),
     activo: datos.activo !== false,
     creado: datos.creado || existentePorId?.creado || nowISO(),
   };

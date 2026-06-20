@@ -132,11 +132,6 @@ export function html(venta, plantilla, negocio) {
   if (p.mostrarFecha) {
     datosBlock.push(dato('Fecha', fechaLarga(venta)));
   }
-  // Caja que emitió la venta (nombre configurado o "Caja <prefijo>")
-  const cajaLabel = (venta.data && (venta.data.cajaNombre || venta.data.cajaPrefijo))
-    ? (venta.data.cajaNombre || ('Caja ' + venta.data.cajaPrefijo))
-    : '';
-  if (cajaLabel) datosBlock.push(dato('Caja', cajaLabel));
   // Cajero que atendió la venta
   if (venta.cajero) datosBlock.push(dato('Atendió', venta.cajero));
   if (datosBlock.length) {

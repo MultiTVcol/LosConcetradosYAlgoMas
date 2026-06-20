@@ -100,6 +100,7 @@ function htmlLayout() {
                 <th style="padding:10px 12px">Usuario</th>
                 <th style="padding:10px 12px">Nombre</th>
                 <th style="padding:10px 12px">Rol</th>
+                <th style="padding:10px 12px;text-align:center">Serie</th>
                 <th style="padding:10px 12px;text-align:center">Estado</th>
                 <th style="padding:10px 12px;width:200px"></th>
               </tr>
@@ -126,6 +127,11 @@ function fila(u) {
         <span style="background:${u.rol === 'admin' ? '#eff6ff' : '#fef3c7'};color:${u.rol === 'admin' ? '#1d4ed8' : '#92400e'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px">
           <i data-lucide="${u.rol === 'admin' ? 'shield-check' : 'user'}" style="width:13px;height:13px;stroke-width:2.25"></i>${u.rol === 'admin' ? 'Admin' : 'Cajero'}
         </span>
+      </td>
+      <td style="padding:14px 12px;text-align:center">
+        ${u.prefijo
+          ? `<span style="background:#f1f5f9;color:#334155;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;font-family:inherit">${esc(u.prefijo)}-####</span>`
+          : '<span style="color:#cbd5e1">V-####</span>'}
       </td>
       <td style="padding:14px 12px;text-align:center">
         <span style="background:${u.activo ? '#dcfce7' : '#fef2f2'};color:${u.activo ? '#166534' : '#dc2626'};font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:5px">
@@ -214,6 +220,16 @@ async function abrirFormUsuario(id) {
         </div>
       </div>
 
+      <div>
+        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Prefijo de numeración</div>
+        <input id="uf-prefijo" type="text" maxlength="4" value="${esc(datos.prefijo || '')}" placeholder="Ej: A"
+          style="width:120px;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;text-transform:uppercase" />
+        <div style="font-size:11.5px;color:#64748b;margin-top:6px">
+          Las facturas de este cajero se numerarán como <b id="uf-prefijo-ej">${esc(Repo.normalizarPrefijo(datos.prefijo) || 'V')}-0001</b>.
+          Dale un prefijo <b>distinto a cada cajero</b> (A, B, C…) para que, vendiendo a la vez, los números no se repitan.
+        </div>
+      </div>
+
       <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#475569;font-weight:600;cursor:pointer;margin-top:4px">
         <input id="uf-activo" type="checkbox" ${datos.activo !== false ? 'checked' : ''} style="width:17px;height:17px"> Usuario activo
       </label>
@@ -252,6 +268,14 @@ async function abrirFormUsuario(id) {
     });
   });
 
+  // Vista previa del prefijo de numeración
+  const prefInput = m.body.querySelector('#uf-prefijo');
+  prefInput?.addEventListener('input', () => {
+    const p = Repo.normalizarPrefijo(prefInput.value) || 'V';
+    const ej = m.body.querySelector('#uf-prefijo-ej');
+    if (ej) ej.textContent = `${p}-0001`;
+  });
+
   const errBox = m.body.querySelector('#uf-error');
   setTimeout(() => m.body.querySelector('#uf-nombre')?.focus(), 80);
 
@@ -265,6 +289,7 @@ async function abrirFormUsuario(id) {
       password: m.body.querySelector('#uf-password').value,
       rol: rolSeleccionado,
       permisos: usuario?.permisos || (rolSeleccionado === 'cajero' ? { ...Repo.PERMISOS_CAJERO_DEFAULT } : {}),
+      prefijo: m.body.querySelector('#uf-prefijo')?.value || '',
       activo: m.body.querySelector('#uf-activo').checked,
       creado: usuario?.creado,
     };

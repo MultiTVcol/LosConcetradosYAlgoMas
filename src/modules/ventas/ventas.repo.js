@@ -22,7 +22,12 @@ import { uid } from '../../core/strings.js';
 import { todayISO, nowISO } from '../../core/dates.js';
 import { round } from '../../core/format.js';
 import * as Auth from '../../services/auth.js';
-import * as Caja from '../../services/caja.js';
+
+/** Prefijo de numeración del cajero en sesión ('V' si no tiene asignado). */
+function prefijoCajero() {
+  const u = Auth.usuarioActual();
+  return (String(u && u.prefijo || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) || 'V';
+}
 
 /**
  * Separa un número de venta en { prefijo, n }. Acepta 'A-0043', 'V-0043'
@@ -189,10 +194,10 @@ export function validar(v) {
  * @returns {Promise<string>}
  */
 export async function siguienteNumero() {
-  // Cada caja (terminal) tiene su propio prefijo local (A, B, C…). El próximo
-  // número se calcula sobre el MAYOR de ESA serie, así dos cajas vendiendo a la
-  // vez en computadores distintos nunca repiten folio.
-  const pref = Caja.prefijoNumeracion();
+  // Cada CAJERO tiene su propio prefijo (lo asigna el admin en Usuarios). El
+  // próximo número se calcula sobre el MAYOR de ESA serie, así dos cajeros
+  // vendiendo a la vez (en cualquier equipo) nunca repiten folio.
+  const pref = prefijoCajero();
   const todas = await db.getAll(TABLA);
   let max = 0;
   for (const v of todas) {
@@ -215,7 +220,6 @@ export async function siguienteNumero() {
 export function construirVenta(datos) {
   const totales = calcularTotales(datos.items, datos.descuento || 0);
   const sello = cajeroSello();
-  const caja = Caja.getCaja();
 
   // Snapshot del cliente para que la factura se pueda reimprimir aunque
   // el cliente se edite o borre después. Solo guardamos los campos básicos.
@@ -270,10 +274,6 @@ export function construirVenta(datos) {
     cajero_id: sello.cajero_id,
     data: {
       timestamp: nowISO(),
-      // Caja/terminal que emitió la venta (para mostrarla en el ticket aunque
-      // se reimprima desde otro equipo). Va en data para no requerir columnas.
-      cajaNombre: caja.nombre || '',
-      cajaPrefijo: caja.prefijo || '',
     },
   };
 }

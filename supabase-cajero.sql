@@ -25,6 +25,11 @@ alter table gastos  add column if not exists cajero_id  text;
 alter table compras add column if not exists cajero     text;
 alter table compras add column if not exists cajero_id  text;
 
+-- USUARIOS — prefijo de numeración por cajero ----------------
+-- El admin asigna a cada cajero un prefijo (A, B, C…) en Usuarios.
+-- Sus ventas se numeran A-0001, B-0001… para no repetir folios.
+alter table usuarios add column if not exists prefijo    text;
+
 -- Nota: los abonos llevan su propio cajero DENTRO del jsonb
 -- "abonos" (no requieren columna nueva).
 
