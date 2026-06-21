@@ -65,6 +65,7 @@ let _offRealtime = null;              // limpieza realtime
 let _payments = { efectivo: 0, transferencia: 0, qr: 0, tarjeta: 0 };
 let _payMode = 'simple';      // 'simple' | 'mixto'
 let _payMethod = 'efectivo';  // método seleccionado en modo simple
+let _transferenciaBanco = 'daviplata'; // 'daviplata' | 'nequi'
 let _cobroModal = null;       // controlador del modal abierto (Modal.abrir)
 let _confirmando = false;     // candado: evita registrar la venta dos veces (doble clic / doble Enter)
 
@@ -441,8 +442,13 @@ function htmlPaso2BuscarProducto() {
           <span class="paso-badge">2</span>
           <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Buscar o escanear producto</h3>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;color:#64748b;font-size:12.5px;font-weight:600">
-          <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#2563eb"></i> Pistola lista
+        <div style="display:flex;align-items:center;gap:10px;color:#64748b;font-size:12.5px;font-weight:600">
+          <span style="display:inline-flex;align-items:center;gap:6px">
+            <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#2563eb"></i> Pistola lista
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:999px;padding:3px 10px;font-size:11.5px">
+            Pulsa <kbd style="background:white;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700;font-size:12px;color:#0f172a">F2</kbd> para buscar
+          </span>
         </div>
       </div>
 
@@ -678,6 +684,7 @@ function htmlBotonCobrar(t) {
       >
         <i data-lucide="dollar-sign" style="width:18px;height:18px;stroke-width:2.25"></i>
         COBRAR
+        <span style="margin-left:6px;font-size:11px;font-weight:700;opacity:${habilitado ? '.85' : '.5'};background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:5px;padding:1px 6px;font-family:inherit;letter-spacing:.02em">F9</span>
       </button>
     </div>
   `;
@@ -777,12 +784,45 @@ function adjuntarEventos(contenedor) {
   document.removeEventListener('mousedown', cerrarDropdownSiClickFuera);
   document.addEventListener('mousedown', cerrarDropdownSiClickFuera);
 
+  // Atajo F2 — salta al buscador de productos (tecla suelta y directa,
+  // sin chocar con la consola del navegador).
+  document.removeEventListener('keydown', atajoFocoBuscador);
+  document.addEventListener('keydown', atajoFocoBuscador);
+
   adjuntarEventosPaso2(contenedor);
   adjuntarEventosCarrito(contenedor);
 
   // Personaliza tu ticket POS 80mm
   const btnPlt = contenedor.querySelector('#venta-btn-personalizar-ticket');
   if (btnPlt) btnPlt.onclick = () => EditorPlantilla.abrir('venta');
+}
+
+/**
+ * Atajos de teclado del Punto de Venta:
+ *   F2 → enfocar el buscador de productos
+ *   F9 → abrir el cuadro de cobro (estándar POS)
+ * Ambas son teclas sueltas (no producen carácter), así que funcionan desde
+ * cualquier lado de la pantalla, incluso si estás escribiendo. Solo aplican
+ * en Punto de Venta (si no hay buscador en pantalla, no hace nada).
+ */
+function atajoFocoBuscador(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+  const input = document.getElementById('venta-buscar');
+  if (!input) return; // no estamos en Punto de Venta
+  if (e.key === 'F2') {
+    e.preventDefault();
+    input.focus();
+    try { input.select(); } catch (_) { /**/ }
+    return;
+  }
+  if (e.key === 'F9') {
+    e.preventDefault();
+    // Si hay un modal abierto (cobro u otro), no abrir otro encima.
+    const modalRoot = document.getElementById('modal-root');
+    if (modalRoot && modalRoot.children.length > 0) return;
+    abrirModalCobro();
+    return;
+  }
 }
 
 function cerrarDropdownSiClickFuera(e) {
@@ -1604,14 +1644,49 @@ async function vaciarCarrito() {
 // ============================================================
 
 const METODOS_PAGO = [
-  { id: 'efectivo',      label: 'Efectivo' },
-  { id: 'transferencia', label: 'Transfer.' },
-  { id: 'qr',            label: 'QR' },
-  { id: 'tarjeta',       label: 'Tarjeta' },
-  { id: 'mixto',         label: 'Mixto' },
-  { id: 'credito',       label: 'Crédito' },
+  { id: 'efectivo',      label: 'Efectivo',     key: 'E' },
+  { id: 'transferencia', label: 'Transfer.',    key: 'T' },
+  { id: 'qr',            label: 'QR',           key: 'Q' },
+  { id: 'mixto',         label: 'Mixto',        key: 'M' },
+  { id: 'credito',       label: 'Crédito',      key: 'C' },
 ];
 
+// Mapa id → tecla (para el atajo dentro del modal de cobro)
+const TECLA_METODO = METODOS_PAGO.reduce((acc, m) => (acc[m.key.toLowerCase()] = m.id, acc), {});
+
+// Bancos para el método "Transferencia". Cada uno con su atajo de teclado y
+// su logo (SVG inline para que cargue al instante, sin pedir archivos).
+const BANCOS_TRANSFERENCIA = [
+  {
+    id: 'daviplata',
+    nombre: 'Daviplata',
+    key: 'D',
+    color: '#E32219',
+    logo: '<svg viewBox="0 0 130 30" xmlns="http://www.w3.org/2000/svg" style="height:24px;display:block" aria-label="Daviplata"><text x="0" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#E32219" letter-spacing="-1.5">DAVI</text><text x="64" y="24" font-family="Inter,sans-serif" font-weight="700" font-size="24" fill="#0f172a" letter-spacing="-0.5">plata</text></svg>',
+  },
+  {
+    id: 'nequi',
+    nombre: 'Nequi',
+    key: 'N',
+    color: '#FF1F8F',
+    logo: '<svg viewBox="0 0 90 30" xmlns="http://www.w3.org/2000/svg" style="height:24px;display:block" aria-label="Nequi"><rect x="2" y="3" width="9" height="9" fill="#FF1F8F"/><text x="13" y="25" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#2A0A4A" letter-spacing="-1">Nequi</text></svg>',
+  },
+];
+
+// Líneas del modo Mixto: cada una con su atajo (E/D/N/Q). Las dos
+// transferencias (Daviplata, Nequi) muestran su logo; las demás solo texto.
+const LINEAS_MIXTO = [
+  { id: 'efectivo',  label: 'Efectivo',  key: 'E', logo: null },
+  { id: 'daviplata', label: 'Daviplata', key: 'D', logo: BANCOS_TRANSFERENCIA[0].logo },
+  { id: 'nequi',     label: 'Nequi',     key: 'N', logo: BANCOS_TRANSFERENCIA[1].logo },
+  { id: 'qr',        label: 'QR',        key: 'Q', logo: null },
+];
+
+// Mapa tecla → id de la línea de Mixto (para enfocar el input correspondiente)
+const TECLA_LINEA_MIXTO = LINEAS_MIXTO.reduce((acc, m) => (acc[m.key.toLowerCase()] = m.id, acc), {});
+
+// Etiquetas para mostrar (incluye 'tarjeta' por compatibilidad con ventas
+// históricas; ya no es seleccionable en cobros nuevos).
 const METODOS_LABEL = {
   efectivo: 'Efectivo',
   transferencia: 'Transferencia',
@@ -1625,8 +1700,8 @@ function abrirModalCobro() {
     return;
   }
 
-  // Reset del estado del modal
-  _payments = { efectivo: 0, transferencia: 0, qr: 0, tarjeta: 0 };
+  // Reset del estado del modal (en Mixto: efectivo + daviplata + nequi + qr)
+  _payments = { efectivo: 0, daviplata: 0, nequi: 0, qr: 0 };
   _payMode = 'simple';
   _payMethod = 'efectivo';
 
@@ -1652,8 +1727,8 @@ function abrirModalCobro() {
             <button
               class="pm-chip"
               data-pm="${m.id}"
-              style="padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;text-align:left"
-            >${m.label}</button>
+              style="padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;text-align:left;display:flex;align-items:center;gap:9px"
+            ><kbd class="pm-key" style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#475569">${m.key}</kbd><span>${m.label}</span></button>
           `).join('')}
         </div>
       </div>
@@ -1681,7 +1756,10 @@ function abrirModalCobro() {
     titulo: 'Cobrar venta',
     contenido,
     ancho: 'lg',
-    onClose: () => { _cobroModal = null; },
+    onClose: () => {
+      document.removeEventListener('keydown', atajoMetodoPago);
+      _cobroModal = null;
+    },
   });
 
   // Cablear eventos dentro del modal
@@ -1694,8 +1772,95 @@ function abrirModalCobro() {
   body.querySelector('#cobro-btn-cancelar').onclick = () => _cobroModal?.cerrar();
   body.querySelector('#cobro-btn-confirmar').onclick = () => confirmarVenta();
 
+  // Atajos de letra (E/T/Q/M/C) para seleccionar el método de pago
+  document.addEventListener('keydown', atajoMetodoPago);
+
   // Activar método por defecto
   seleccionarMetodoPago('efectivo');
+}
+
+/**
+ * Atajos de teclado del modal de cobro: E/T/Q/M/C cambian el método de pago.
+ * No interfiere si el cajero está escribiendo en un input (no usa esas letras
+ * para montos, pero por si acaso) ni con combinaciones (Ctrl/Alt/Cmd).
+ */
+function atajoMetodoPago(e) {
+  if (!_cobroModal) return;
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+  const k = String(e.key || '').toLowerCase();
+
+  // Helper: el foco debe permitir el atajo. Dentro del modal de cobro
+  // permitimos siempre (inputs numéricos, no se escribe letra por error);
+  // fuera, respetamos al cajero si está escribiendo en otro lado.
+  const ae = document.activeElement;
+  const dentroDelModal = ae && _cobroModal.body && _cobroModal.body.contains(ae);
+  const tag = ae && ae.tagName;
+  const escribiendoFuera = !dentroDelModal && ae && (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || ae.isContentEditable);
+  if (escribiendoFuera) return;
+
+  // En modo Mixto, E/D/N/Q enfocan el input de la línea correspondiente
+  // (sin cambiar de método). T/C/M caen al manejo normal de abajo.
+  if (_payMode === 'mixto') {
+    const idLinea = TECLA_LINEA_MIXTO[k];
+    if (idLinea) {
+      e.preventDefault();
+      const inp = _cobroModal.body.querySelector(`.cobro-mixto-input[data-key="${idLinea}"]`);
+      if (inp) {
+        inp.focus();
+        try { inp.select(); } catch (_) { /**/ }
+      }
+      return;
+    }
+  }
+
+  // Si el método activo es "transferencia", D/N seleccionan el banco
+  if (_payMethod === 'transferencia' && (k === 'd' || k === 'n')) {
+    e.preventDefault();
+    seleccionarBancoTransf(k === 'd' ? 'daviplata' : 'nequi');
+    return;
+  }
+
+  // Atajos de método de pago (E/T/Q/M/C)
+  const id = TECLA_METODO[k];
+  if (!id) return;
+  e.preventDefault();
+  seleccionarMetodoPago(id);
+}
+
+/**
+ * Selecciona el banco dentro del método "Transferencia" (Daviplata / Nequi).
+ * Resalta el chip activo con el color corporativo del banco y actualiza el
+ * texto del aviso de "Transferencia por X".
+ */
+function seleccionarBancoTransf(banco) {
+  _transferenciaBanco = banco;
+  if (!_cobroModal) return;
+  const body = _cobroModal.body;
+  body.querySelectorAll('.tb-chip').forEach(btn => {
+    const def = BANCOS_TRANSFERENCIA.find(b => b.id === btn.dataset.tb);
+    const activo = btn.dataset.tb === banco;
+    btn.style.borderColor = activo && def ? def.color : '#e2e8f0';
+    btn.style.boxShadow = activo && def ? `0 0 0 3px ${def.color}22` : 'none';
+    btn.style.background = activo ? '#fafbff' : 'white';
+  });
+  const label = body.querySelector('#cobro-trans-banco');
+  if (label) {
+    const def = BANCOS_TRANSFERENCIA.find(b => b.id === banco);
+    if (def) label.textContent = def.nombre;
+  }
+  // Llevar el foco al botón Confirmar para que ENTER cierre la venta.
+  // Sin esto, el foco se queda en body y el Enter global del Modal lo ignora.
+  enfocarConfirmar();
+}
+
+/** Pone el foco en el botón Confirmar del modal de cobro (si está abierto). */
+function enfocarConfirmar() {
+  if (!_cobroModal) return;
+  const btn = _cobroModal.body.querySelector('#cobro-btn-confirmar');
+  if (btn && !btn.disabled) {
+    try { btn.focus({ preventScroll: true }); } catch (_) { btn.focus(); }
+  }
 }
 
 function seleccionarMetodoPago(metodo) {
@@ -1751,23 +1916,19 @@ function seleccionarMetodoPago(metodo) {
     _payMode = 'mixto';
     area.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:8px">
-        ${[
-          ['efectivo',      'Efectivo'],
-          ['transferencia', 'Transferencia'],
-          ['qr',            'QR'],
-          ['tarjeta',       'Tarjeta'],
-        ].map(([k, label]) => `
+        ${LINEAS_MIXTO.map((m) => `
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="flex:1;font-weight:600;font-size:13.5px;color:#475569">${label}</span>
+            <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#475569;flex-shrink:0">${m.key}</kbd>
+            <span style="flex:1;display:flex;align-items:center;font-weight:600;font-size:13.5px;color:#475569">${m.logo ? m.logo : m.label}</span>
             <input
               class="cobro-mixto-input"
-              data-key="${k}"
+              data-key="${m.id}"
               data-miles
               type="text"
               inputmode="numeric"
               placeholder="0"
-              value="${_payments[k] || ''}"
-              style="width:150px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14.5px;font-weight:600;text-align:right;outline:none;font-family:inherit"
+              value="${_payments[m.id] || ''}"
+              style="width:140px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14.5px;font-weight:600;text-align:right;outline:none;font-family:inherit"
             />
           </div>
         `).join('')}
@@ -1783,6 +1944,8 @@ function seleccionarMetodoPago(metodo) {
       });
     });
     actualizarMixto();
+    // Foco al primer input (Efectivo) para empezar a teclear sin clicar.
+    setTimeout(() => { area.querySelector('.cobro-mixto-input')?.focus(); }, 30);
   } else {
     _payMode = 'simple';
     _payMethod = metodo;
@@ -1816,6 +1979,30 @@ function seleccionarMetodoPago(metodo) {
         actualizarCambio();
       };
       setTimeout(() => inpRec.focus(), 60);
+    } else if (metodo === 'transferencia') {
+      area.innerHTML = `
+        <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:10px">¿Por dónde recibes el pago?</div>
+        <div id="cobro-bancos" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+          ${BANCOS_TRANSFERENCIA.map(b => `
+            <button
+              class="tb-chip"
+              data-tb="${b.id}"
+              style="padding:14px 16px;border:2px solid #e2e8f0;background:white;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:14px;font-family:inherit;transition:all .12s ease"
+            ><kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;font-family:inherit;font-weight:700;font-size:13px;color:#475569">${b.key}</kbd>
+              <span style="flex:1;text-align:left">${b.logo}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;font-size:14px;color:#475569">
+          Transferencia por <b id="cobro-trans-banco">${esc(BANCOS_TRANSFERENCIA.find(b=>b.id===_transferenciaBanco)?.nombre||'')}</b>
+          por <b>${money(totales.total)}</b><br>
+          <span style="color:#94a3b8;font-size:13px">Confirmá cuando recibas el pago.</span>
+        </div>
+      `;
+      area.querySelectorAll('.tb-chip').forEach(btn => {
+        btn.addEventListener('click', () => seleccionarBancoTransf(btn.dataset.tb));
+      });
+      seleccionarBancoTransf(_transferenciaBanco);
     } else {
       area.innerHTML = `
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;text-align:center;font-size:14px;color:#475569">
@@ -1824,6 +2011,8 @@ function seleccionarMetodoPago(metodo) {
           <span style="color:#94a3b8;font-size:13px">Confirmá cuando recibas el pago.</span>
         </div>
       `;
+      // QR (u otro sin input): foco al Confirmar para que ENTER cierre la venta.
+      setTimeout(() => enfocarConfirmar(), 0);
     }
   }
 }
@@ -1854,7 +2043,7 @@ function actualizarMixto() {
   if (!info) return;
 
   const totales = Repo.calcularTotales(_carrito, _descuento);
-  const sum = _payments.efectivo + _payments.transferencia + _payments.qr + _payments.tarjeta;
+  const sum = LINEAS_MIXTO.reduce((s, m) => s + (Number(_payments[m.id]) || 0), 0);
   const falta = totales.total - sum;
   const negativo = falta > 0;
 
@@ -1909,20 +2098,24 @@ async function _confirmarVentaInterno() {
     recibido = abonoInicial;
     cambio = 0;
   } else if (_payMode === 'mixto') {
-    const sum = _payments.efectivo + _payments.transferencia + _payments.qr + _payments.tarjeta;
+    const sum = LINEAS_MIXTO.reduce((s, m) => s + (Number(_payments[m.id]) || 0), 0);
     if (sum < totales.total - 0.5) {
       Toast.warn('El pago mixto no cubre el total');
       return;
     }
-    const detalle = Object.entries(_payments)
-      .filter(([, v]) => v > 0)
-      .map(([k, v]) => `${METODOS_LABEL[k]}: ${money(v)}`)
+    const detalle = LINEAS_MIXTO
+      .filter((m) => (Number(_payments[m.id]) || 0) > 0)
+      .map((m) => `${m.label}: ${money(_payments[m.id])}`)
       .join(', ');
     metodo = `Mixto (${detalle})`;
     recibido = sum;
     cambio = Math.max(0, sum - totales.total);
   } else {
     metodo = METODOS_LABEL[_payMethod] || 'Efectivo';
+    if (_payMethod === 'transferencia') {
+      const banco = BANCOS_TRANSFERENCIA.find(b => b.id === _transferenciaBanco);
+      if (banco) metodo = `Transferencia (${banco.nombre})`;
+    }
     if (_payMethod === 'efectivo') {
       const inp = _cobroModal?.body.querySelector('#cobro-recibido');
       recibido = num(inp?.value);
@@ -1990,8 +2183,8 @@ async function _confirmarVentaInterno() {
       // si el usuario lo pide.
       const quiere = await Confirm.preguntar(`¿Desea imprimir el ticket de la venta ${venta.numero}?`, {
         titulo: 'Imprimir ticket',
-        textoConfirmar: 'Sí, imprimir',
-        textoCancelar: 'No, gracias',
+        textoConfirmar: 'Sí, imprimir (Enter)',
+        textoCancelar: 'No (Esc)',
       });
       if (quiere) lanzarPOS();
     }

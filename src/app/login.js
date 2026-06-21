@@ -18,7 +18,7 @@ export function mostrarLogin(appRoot) {
 
           <!-- Logo / marca -->
           <div style="text-align:center;margin-bottom:24px">
-            <div style="width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;margin:0 auto 12px;box-shadow:0 10px 24px -8px rgba(79,70,229,.5)">P</div>
+            <div style="width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;margin:0 auto 12px;box-shadow:0 10px 24px -8px rgba(79,70,229,.5)">${esc((config.branding?.appName || 'P').trim().charAt(0).toUpperCase())}</div>
             <div style="font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">${esc(config.branding?.appName || 'PosPunto')}</div>
             <div style="font-size:13px;color:#64748b;margin-top:3px">Inicia sesión para continuar</div>
           </div>
