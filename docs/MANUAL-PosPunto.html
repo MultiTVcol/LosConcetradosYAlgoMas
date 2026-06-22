@@ -6,28 +6,26 @@
 <title>Manual de uso · PosPunto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --azul:#2563eb; --azul-d:#1d4ed8; --azul-dd:#1e3a8a;
-    --tinta:#0f172a; --gris:#475569; --gris2:#64748b; --gris3:#94a3b8;
+    --azul:#2563eb; --azul-d:#1d4ed8; --azul-dd:#1e3a8a; --azul-soft:#eff6ff;
+    --tinta:#0f172a; --gris:#475569; --gris2:#64748b; --gris3:#94a3b8; --gris4:#cbd5e1;
     --linea:#e2e8f0; --linea2:#f1f5f9; --bg:#eff3fb; --sidebar:#111827;
     --ok:#16a34a; --okbg:#dcfce7; --warn:#d97706; --warnbg:#fef3c7;
     --dang:#dc2626; --dangbg:#fee2e2; --info:#1d4ed8; --infobg:#dbeafe;
+    --magenta:#FF1F8F; --davi:#E32219;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;
-    color:var(--tinta); line-height:1.6; margin:0; background:#dfe6f3;
+    color:var(--tinta); line-height:1.62; margin:0; background:#dfe6f3;
     -webkit-font-smoothing:antialiased;
   }
-  .page{
-    max-width:920px; margin:0 auto; background:#fff; padding:54px 64px;
-    box-shadow:0 1px 40px -10px rgba(15,23,42,.18);
-  }
+  .page{max-width:920px; margin:0 auto; background:#fff; padding:54px 64px; box-shadow:0 1px 40px -10px rgba(15,23,42,.18)}
   h1,h2,h3,h4{line-height:1.25; letter-spacing:-0.02em; color:var(--tinta); font-weight:800}
-  h2{font-size:27px; margin:0 0 6px; padding-top:6px}
+  h2{font-size:28px; margin:0 0 8px; padding-top:6px}
   h3{font-size:19px; margin:30px 0 10px; font-weight:700}
   h4{font-size:15.5px; margin:20px 0 6px; font-weight:700; color:var(--azul-dd)}
   p{margin:10px 0}
@@ -37,6 +35,8 @@
   code{background:var(--linea2); border:1px solid var(--linea); border-radius:6px; padding:1px 6px; font-size:.86em; font-family:'Courier New',monospace; color:var(--azul-dd)}
   .lead{font-size:16px; color:var(--gris)}
   .muted{color:var(--gris2)}
+  .small{font-size:13px; color:var(--gris2)}
+  hr.sep{border:0; border-top:1px solid var(--linea); margin:34px 0}
 
   /* ---------- Portada ---------- */
   .cover{
@@ -51,6 +51,7 @@
   .cover .desc{color:#cbd5e1; font-size:16px; max-width:560px; margin-top:26px}
   .cover .meta{margin-top:54px; display:flex; gap:30px; flex-wrap:wrap; color:#94a3b8; font-size:13.5px}
   .cover .meta b{color:#e2e8f0; display:block; font-size:15px}
+  .cover .tag{display:inline-block; background:rgba(255,255,255,.1); color:#bfdbfe; border:1px solid rgba(191,219,254,.3); padding:5px 14px; border-radius:999px; font-size:12.5px; font-weight:600; margin-top:22px}
 
   /* ---------- TOC ---------- */
   .toc{columns:2; column-gap:40px; margin:18px 0}
@@ -65,6 +66,8 @@
   .c-warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
   .c-key{background:#f5f3ff; border-color:#ddd6fe; color:#5b21b6}
   .c-info{background:#eff6ff; border-color:#bfdbfe; color:#1e40af}
+  .c-danger{background:#fef2f2; border-color:#fecaca; color:#991b1b}
+  .c-success{background:#f0fdf4; border-color:#bbf7d0; color:#166534}
   .callout .lbl{font-weight:800; text-transform:uppercase; letter-spacing:.05em; font-size:11.5px; display:block; margin-bottom:3px}
 
   /* pasos numerados */
@@ -81,7 +84,7 @@
   table.ref th{background:#f1f5f9; color:var(--gris); text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; padding:9px 12px; border-bottom:1px solid var(--linea)}
   table.ref td{padding:9px 12px; border-bottom:1px solid var(--linea2); vertical-align:top}
   table.ref tr:last-child td{border-bottom:0}
-  kbd{background:#fff; border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:6px; padding:1px 7px; font-size:12.5px; font-family:inherit; font-weight:600; color:var(--gris)}
+  kbd{background:#fff; border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:6px; padding:1px 7px; font-size:12.5px; font-family:inherit; font-weight:600; color:var(--gris); white-space:nowrap}
 
   /* ================= MOCKUPS (las "imágenes") ================= */
   .shot{border:1px solid #d8e0ee; border-radius:14px; overflow:hidden; margin:18px 0 8px; box-shadow:0 12px 34px -16px rgba(15,23,42,.4); background:#fff}
@@ -91,11 +94,13 @@
   .shot .bar .url{margin-left:10px; font-size:11px; color:#94a3b8; background:#fff; border-radius:6px; padding:2px 12px; border:1px solid #dbe3f0}
   .cap{font-size:12.5px; color:var(--gris2); text-align:center; margin:0 0 22px; font-style:italic}
 
+  /* sidebar + contenido */
   .app{display:grid; grid-template-columns:172px 1fr; min-height:360px; background:var(--bg)}
   .sb{background:var(--sidebar); padding:14px 12px; color:#cbd5e1}
   .sb .brand{display:flex; align-items:center; gap:9px; padding:4px 6px 14px; border-bottom:1px solid #1f2937; margin-bottom:10px}
-  .sb .brand .mk{width:28px;height:28px;border-radius:8px;background:var(--azul);display:flex;align-items:center;justify-content:center}
-  .sb .brand b{color:#fff; font-size:15px}
+  .sb .brand .mk{width:28px;height:28px;border-radius:8px;background:var(--azul);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+  .sb .brand b{color:#fff; font-size:15px; flex:1}
+  .sb .brand .dot-sync{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2)}
   .sb .grp{font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; color:#64748b; font-weight:700; margin:12px 6px 5px}
   .sb .it{display:flex; align-items:center; gap:9px; padding:7px 9px; border-radius:8px; font-size:12.5px; color:#cbd5e1; margin-bottom:1px}
   .sb .it.on{background:var(--azul); color:#fff; font-weight:600}
@@ -106,53 +111,74 @@
   .ct .ph .s{font-size:12.5px; color:var(--gris2)}
   .btn{background:var(--azul); color:#fff; border-radius:9px; padding:8px 13px; font-size:12.5px; font-weight:600; display:inline-flex; gap:6px; align-items:center}
   .btn.ghost{background:#fff; color:var(--gris); border:1px solid var(--linea)}
+  .btn.success{background:#15803d}
+  .badge-kbd{display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 6px; background:#f1f5f9; border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:5px; font-family:inherit; font-weight:700; font-size:11.5px; color:var(--gris); margin-right:6px}
   .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:11px; margin-bottom:16px}
   .kpi{background:#fff; border:1px solid var(--linea); border-radius:13px; padding:13px}
-  .kpi .l{font-size:10.5px; color:var(--gris2); font-weight:600; display:flex; justify-content:space-between}
+  .kpi .l{font-size:10.5px; color:var(--gris2); font-weight:700; text-transform:uppercase; letter-spacing:.04em}
   .kpi .v{font-size:21px; font-weight:800; margin-top:7px; letter-spacing:-0.02em}
-  .kpi .h{font-size:10px; color:var(--gris3); margin-top:2px}
   .card{background:#fff; border:1px solid var(--linea); border-radius:14px; overflow:hidden}
   table.ui{width:100%; border-collapse:collapse; font-size:12px}
   table.ui th{background:#f1f5f9; color:var(--gris); text-align:left; font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; padding:8px 12px; border-bottom:1px solid var(--linea)}
   table.ui td{padding:9px 12px; border-bottom:1px solid var(--linea2); color:#334155}
   table.ui tr:last-child td{border-bottom:0}
-  .bdg{display:inline-block; font-size:10.5px; font-weight:600; padding:2px 9px; border-radius:999px}
+  .bdg{display:inline-block; font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:999px}
   .b-ok{background:var(--okbg); color:#166534}.b-warn{background:var(--warnbg); color:#92400e}
   .b-dang{background:var(--dangbg); color:#991b1b}.b-info{background:var(--infobg); color:#1d4ed8}
   .b-neu{background:#f1f5f9; color:#475569}
-  .av{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-  .pill{display:inline-flex; align-items:center; gap:7px; background:#f1f5f9; border:1px solid var(--linea); border-radius:999px; padding:5px 12px; font-size:12.5px; font-weight:600; color:var(--gris); margin:3px 4px 3px 0}
-  .pill .ic{width:16px;height:16px}
+  /* steps badges en mockups */
+  .step-badge{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--azul); color:#fff; font-size:12px; font-weight:700; margin-right:8px}
+
+  /* cobro modal mock */
+  .cobro-mock{background:#fff; border:1px solid var(--linea); border-radius:14px; padding:16px 18px; box-shadow:0 18px 50px -15px rgba(15,23,42,.4)}
+  .cobro-chip{display:flex; align-items:center; gap:9px; padding:10px 12px; border:1.5px solid var(--linea); background:#fff; border-radius:10px; font-size:13.5px; font-weight:600; color:var(--gris)}
+  .cobro-chip.on{background:var(--azul); color:#fff; border-color:var(--azul)}
+  .cobro-chip kbd{background:#f1f5f9; color:var(--gris); border-color:#cbd5e1}
+  .cobro-chip.on kbd{background:rgba(255,255,255,.18); color:#fff; border-color:rgba(255,255,255,.4)}
+
+  /* logos bancos */
+  .logo-davi{font-weight:900; font-size:18px; letter-spacing:-1.2px}
+  .logo-davi .a{color:var(--davi)} .logo-davi .b{color:var(--tinta); font-weight:700}
+  .logo-nequi{display:inline-flex; align-items:center; gap:5px}
+  .logo-nequi .sq{width:8px;height:8px;background:var(--magenta);display:inline-block}
+  .logo-nequi .n{color:#2A0A4A; font-weight:900; font-size:20px; letter-spacing:-0.8px}
 
   /* ticket */
-  .ticket{width:230px; margin:14px auto; background:#fff; border:1px dashed #cbd5e1; border-radius:6px; padding:14px 16px; font-family:'Courier New',monospace; font-size:11px; color:#1e293b}
+  .ticket{width:240px; margin:14px auto; background:#fff; border:1px dashed #cbd5e1; border-radius:6px; padding:14px 16px; font-family:'Courier New',monospace; font-size:11px; color:#1e293b}
   .ticket .c{text-align:center}.ticket hr{border:0; border-top:1px dashed #cbd5e1; margin:7px 0}
   .ticket .row{display:flex; justify-content:space-between}
 
+  /* feature row */
   .feat{display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; margin:12px 0}
   .feat .f{display:flex; gap:10px; font-size:14px}
   .feat .f .ic{flex-shrink:0; width:30px;height:30px; border-radius:9px; background:#eff6ff; color:var(--azul); display:flex; align-items:center; justify-content:center}
   .feat .f b{display:block}
 
-  hr.sep{border:0; border-top:1px solid var(--linea); margin:34px 0}
-  .secnum{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--azul); color:#fff; border-radius:10px; font-weight:800; font-size:16px; margin-right:12px; vertical-align:middle; box-shadow:0 6px 14px -5px rgba(37,99,235,.6)}
   .sectitle{display:flex; align-items:center; margin:0 0 4px}
-  footer{max-width:920px; margin:0 auto; padding:26px 64px 60px; color:#94a3b8; font-size:13px; text-align:center}
+  .secnum{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--azul); color:#fff; border-radius:10px; font-weight:800; font-size:16px; margin-right:12px; vertical-align:middle; box-shadow:0 6px 14px -5px rgba(37,99,235,.6)}
+
+  /* atajos overview */
+  .keys-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:14px 0}
+  .key-card{background:#f8fafc; border:1px solid var(--linea); border-radius:11px; padding:11px 14px; display:flex; align-items:center; gap:12px}
+  .key-card kbd{flex-shrink:0; min-width:38px; text-align:center; font-size:13px; padding:3px 10px; background:#fff}
+  .key-card .desc{font-size:13.5px; color:var(--tinta); line-height:1.35}
+  .key-card .desc small{color:var(--gris2); font-size:11.5px; display:block; margin-top:2px}
+
+  footer{max-width:920px; margin:0 auto; padding:30px 64px 60px; color:#94a3b8; font-size:13px; text-align:center}
 
   @media print{
     body{background:#fff}
     .page,.cover{box-shadow:none; max-width:none; margin:0; padding:34px 40px}
     .cover{padding:80px 48px}
     .section{page-break-before:always}
-    .shot,.callout,ol.steps>li,table.ref tr,.kpi{page-break-inside:avoid}
+    .shot,.callout,ol.steps>li,table.ref tr,.kpi,.key-card{page-break-inside:avoid}
     a{color:inherit}
     .noprint{display:none}
   }
   @media(max-width:680px){
-    .page{padding:30px 20px}.toc{columns:1}.kpis{grid-template-columns:repeat(2,1fr)}
-    .grid2,.feat{grid-template-columns:1fr}.app{grid-template-columns:1fr}.sb{display:none}
+    .page{padding:30px 20px}.toc,.keys-grid{columns:1; grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}
+    .feat{grid-template-columns:1fr}.app{grid-template-columns:1fr}.sb{display:none}
   }
 </style>
 </head>
@@ -166,11 +192,12 @@
   </div>
   <h1>Manual de uso</h1>
   <div class="sub">Sistema de Punto de Venta · Guía completa del operador</div>
-  <p class="desc">Todo lo que necesitas para vender, facturar, controlar inventario, cobrar créditos y cerrar caja con PosPunto. Pensado tanto para el administrador como para el cajero.</p>
+  <p class="desc">Todo lo que necesitas para vender, facturar, controlar inventario, gestionar proveedores, cobrar créditos y cerrar caja con PosPunto. Pensado tanto para el administrador como para el cajero.</p>
+  <span class="tag">Edición Junio 2026 — incluye atajos F2/F9 y rediseño de Compras</span>
   <div class="meta">
-    <div><b>Versión del manual</b>Junio 2026</div>
     <div><b>Aplicación</b>PosPunto (web, offline + nube)</div>
     <div><b>Navegador recomendado</b>Google Chrome / Microsoft Edge</div>
+    <div><b>Resolución</b>1366×768 o superior</div>
   </div>
 </div>
 
@@ -182,54 +209,55 @@
     <a href="#intro"><span>01</span>Qué es PosPunto</a>
     <a href="#acceso"><span>02</span>Acceso y roles</a>
     <a href="#interfaz"><span>03</span>La interfaz y el menú</a>
-    <a href="#dashboard"><span>04</span>Inicio (Dashboard)</a>
-    <a href="#ventas"><span>05</span>Punto de Venta</a>
-    <a href="#cobro"><span>06</span>Cobrar una venta</a>
-    <a href="#facturas"><span>07</span>Facturas (editar / reimprimir)</a>
-    <a href="#cxc"><span>08</span>Cuentas por cobrar</a>
-    <a href="#clientes"><span>09</span>Clientes</a>
-    <a href="#productos"><span>10</span>Productos</a>
-    <a href="#inventario"><span>11</span>Inventario</a>
-    <a href="#compras"><span>12</span>Compras</a>
-    <a href="#facturas-compra"><span>13</span>Facturas de compra / por pagar</a>
-    <a href="#gastos"><span>14</span>Gastos</a>
-    <a href="#cierre"><span>15</span>Cierre de caja</a>
-    <a href="#reportes"><span>16</span>Reportes</a>
-    <a href="#config"><span>17</span>Configuración</a>
-    <a href="#usuarios"><span>18</span>Usuarios y permisos</a>
-    <a href="#fe"><span>19</span>Facturación electrónica</a>
-    <a href="#faq"><span>20</span>Atajos y preguntas frecuentes</a>
+    <a href="#atajos"><span>04</span>Atajos de teclado</a>
+    <a href="#dashboard"><span>05</span>Inicio (Dashboard)</a>
+    <a href="#ventas"><span>06</span>Punto de Venta</a>
+    <a href="#cobro"><span>07</span>Cobrar una venta</a>
+    <a href="#facturas"><span>08</span>Facturas</a>
+    <a href="#cxc"><span>09</span>Cuentas por cobrar</a>
+    <a href="#clientes"><span>10</span>Clientes</a>
+    <a href="#productos"><span>11</span>Productos</a>
+    <a href="#inventario"><span>12</span>Inventario</a>
+    <a href="#compras"><span>13</span>Compras</a>
+    <a href="#proveedores"><span>14</span>Proveedores</a>
+    <a href="#facturas-compra"><span>15</span>Facturas de compra</a>
+    <a href="#gastos"><span>16</span>Gastos</a>
+    <a href="#cierre"><span>17</span>Cierre de Caja</a>
+    <a href="#reportes"><span>18</span>Reportes</a>
+    <a href="#config"><span>19</span>Configuración</a>
+    <a href="#usuarios"><span>20</span>Usuarios y permisos</a>
+    <a href="#fe"><span>21</span>Factura electrónica</a>
+    <a href="#faq"><span>22</span>Preguntas frecuentes</a>
   </nav>
 
   <div class="callout c-tip" style="margin-top:28px">
     <span class="lbl">Cómo leer este manual</span>
-    Cada sección incluye una <b>imagen de la pantalla</b> (cómo se ve), seguida de los <b>pasos</b> para usarla y <b>consejos</b>. Los recuadros morados marcan <b>atajos de teclado</b>; los amarillos, <b>advertencias importantes</b>.
+    Cada sección incluye una <b>imagen de la pantalla</b>, seguida de los <b>pasos</b> y <b>consejos</b>. Recuadros morados marcan <b>atajos de teclado</b>; amarillos, <b>advertencias importantes</b>; verdes, <b>buenas noticias y resultados</b>; rojos, <b>acciones delicadas</b>.
   </div>
 </div>
 
 <!-- ======================= 01 INTRO ======================= -->
 <div class="page section" id="intro">
   <div class="sectitle"><span class="secnum">01</span><h2 style="margin:0">Qué es PosPunto</h2></div>
-  <p class="lead">PosPunto es un punto de venta para tu negocio: registra ventas, imprime tickets, controla el inventario en tiempo real, maneja clientes y créditos, compras a proveedores, gastos y cierres de caja.</p>
+  <p class="lead">PosPunto es un punto de venta para tu negocio: registra ventas, imprime tickets, controla el inventario en tiempo real, maneja clientes, créditos, compras a proveedores, gastos y cierres de caja.</p>
 
-  <h3>Dos cualidades que lo hacen distinto</h3>
+  <h3>Tres cualidades que lo hacen distinto</h3>
   <div class="feat">
     <div class="f"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></div><div><b>Funciona sin internet</b><span class="muted">Los datos se guardan en el equipo. Si se cae la red, sigues vendiendo.</span></div></div>
     <div class="f"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9h-1.8A7 7 0 1 0 4 15.3"/></svg></div><div><b>Sincroniza en la nube</b><span class="muted">Cuando hay internet, todo se sube y se comparte entre cajas al instante.</span></div></div>
-  </div>
-
-  <div class="callout c-info">
-    <span class="lbl">Multi-caja</span>
-    Puedes tener varias cajas (computadores) trabajando a la vez. Una venta hecha en la Caja 1 actualiza el stock en la Caja 2 automáticamente, gracias a la sincronización en tiempo real.
+    <div class="f"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div><b>Diseñado para ir rápido</b><span class="muted">Atajos de teclado F2/F9 + lector de código de barras + flujo de 3 pasos.</span></div></div>
+    <div class="f"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg></div><div><b>Multi-caja en vivo</b><span class="muted">Vende desde varios computadores a la vez con sincronización en tiempo real.</span></div></div>
   </div>
 
   <h3>Lo que aprenderás a hacer</h3>
   <div class="feat">
     <div class="f"><div class="ic">›</div><div>Vender de contado, mixto o a crédito</div></div>
-    <div class="f"><div class="ic">›</div><div>Imprimir y reimprimir tickets / facturas</div></div>
+    <div class="f"><div class="ic">›</div><div>Cobrar con Efectivo · Transferencia (Daviplata/Nequi) · QR</div></div>
+    <div class="f"><div class="ic">›</div><div>Imprimir y reimprimir tickets</div></div>
     <div class="f"><div class="ic">›</div><div>Buscar con la pistola lectora de códigos</div></div>
     <div class="f"><div class="ic">›</div><div>Controlar stock, kardex y conteos físicos</div></div>
     <div class="f"><div class="ic">›</div><div>Registrar compras, gastos y cuentas por pagar</div></div>
+    <div class="f"><div class="ic">›</div><div>Gestionar proveedores con informe por fechas</div></div>
     <div class="f"><div class="ic">›</div><div>Cobrar abonos de ventas a crédito</div></div>
     <div class="f"><div class="ic">›</div><div>Hacer el cierre de caja del día</div></div>
     <div class="f"><div class="ic">›</div><div>Sacar reportes y respaldos</div></div>
@@ -246,31 +274,40 @@
     <div style="background:linear-gradient(150deg,#0b1220,#1e3a8a);padding:40px;display:flex;justify-content:center">
       <div style="background:#fff;border-radius:16px;padding:28px 30px;width:300px;box-shadow:0 20px 50px -15px rgba(0,0,0,.5)">
         <div style="text-align:center;margin-bottom:18px">
-          <div style="width:46px;height:46px;border-radius:12px;background:var(--azul);margin:0 auto 10px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></div>
-          <div style="font-weight:800;font-size:17px">Iniciar sesión</div>
-          <div style="font-size:12px;color:var(--gris2)">Ingresa tus credenciales</div>
+          <div style="width:46px;height:46px;border-radius:12px;background:var(--azul);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px">P</div>
+          <div style="font-weight:800;font-size:17px">PosPunto</div>
+          <div style="font-size:12px;color:var(--gris2)">Inicia sesión para continuar</div>
         </div>
-        <div style="font-size:11px;color:var(--gris2);font-weight:600;margin-bottom:4px">USUARIO</div>
+        <div style="font-size:11px;color:var(--gris2);font-weight:700;margin-bottom:4px">USUARIO</div>
         <div style="border:1px solid var(--linea);border-radius:9px;padding:9px 11px;font-size:13px;color:#334155;margin-bottom:11px">administrador</div>
-        <div style="font-size:11px;color:var(--gris2);font-weight:600;margin-bottom:4px">CONTRASEÑA</div>
+        <div style="font-size:11px;color:var(--gris2);font-weight:700;margin-bottom:4px">CONTRASEÑA</div>
         <div style="border:1px solid var(--linea);border-radius:9px;padding:9px 11px;font-size:13px;color:#94a3b8;margin-bottom:16px">••••••••</div>
-        <div class="btn" style="width:100%;justify-content:center;padding:11px">Entrar</div>
+        <div class="btn" style="width:100%;justify-content:center;padding:11px">Iniciar sesión →</div>
       </div>
     </div>
   </div>
-  <p class="cap">Pantalla de inicio de sesión.</p>
+  <p class="cap">Pantalla de inicio de sesión. La inicial del logo viene del nombre de tu negocio.</p>
 
   <h3>Los dos roles</h3>
   <table class="ref">
-    <tr><th>Rol</th><th>Qué puede hacer</th></tr>
+    <tr><th style="width:25%">Rol</th><th>Qué puede hacer</th></tr>
     <tr><td><b>Administrador</b></td><td>Acceso total: ventas, inventario, compras, reportes, <b>Configuración</b> y <b>Usuarios</b>. Puede editar/eliminar ventas y autorizar acciones restringidas.</td></tr>
-    <tr><td><b>Cajero</b></td><td>Vende, cobra, consulta y registra el día a día. No ve Configuración ni Usuarios, y para acciones sensibles (editar/eliminar una venta) necesita el <b>código de autorización</b>.</td></tr>
+    <tr><td><b>Cajero</b></td><td>Vende, cobra, consulta y registra el día a día. No ve Configuración ni Usuarios; para acciones sensibles (editar/eliminar una venta) debe ingresar el <b>código de autorización del administrador</b>.</td></tr>
   </table>
 
   <div class="callout c-key">
     <span class="lbl">Código de autorización del administrador</span>
-    Es un código corto que el administrador conoce. Cuando un cajero intenta hacer algo restringido (por ejemplo <b>editar una venta</b> para cambiar productos), el sistema le pide ese código. Si lo ingresa correctamente, la acción se permite; si no, se cancela. El administrador lo realiza sin que se le pida nada.
+    Es un código corto que el administrador conoce. Cuando un cajero intenta hacer algo restringido (por ejemplo <b>editar una venta</b>), el sistema le pide ese código. Si lo ingresa correctamente, la acción se permite. Lo cambia el admin desde <b>Usuarios → Cambiar código de autorización</b>.
   </div>
+
+  <h3>Cada cajero, su prefijo de numeración</h3>
+  <p>En un negocio con varios cajeros, cada uno tiene <b>su propio prefijo</b> de factura (A, B, C…) que el administrador le asigna en <b>Usuarios</b>. Sus ventas se numeran en series independientes:</p>
+  <table class="ref">
+    <tr><th>Cajero</th><th>Prefijo</th><th>Numera sus facturas como…</th></tr>
+    <tr><td>Juan</td><td><b>A</b></td><td>A-0001, A-0002, A-0003…</td></tr>
+    <tr><td>María</td><td><b>B</b></td><td>B-0001, B-0002, B-0003…</td></tr>
+  </table>
+  <p>Así, aunque dos cajeros vendan al mismo segundo en computadores distintos, sus folios <b>nunca chocan</b>.</p>
 
   <div class="callout c-warn">
     <span class="lbl">Primer ingreso</span>
@@ -281,13 +318,13 @@
 <!-- ======================= 03 INTERFAZ ======================= -->
 <div class="page section" id="interfaz">
   <div class="sectitle"><span class="secnum">03</span><h2 style="margin:0">La interfaz y el menú</h2></div>
-  <p class="lead">A la izquierda está el <b>menú</b> (siempre visible), organizado por grupos. A la derecha, el contenido del módulo que elijas.</p>
+  <p class="lead">A la izquierda está el <b>menú</b> (siempre visible), organizado por grupos. A la derecha, el módulo activo.</p>
 
   <div class="shot">
     <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto</span></div>
     <div class="app">
       <div class="sb">
-        <div class="brand"><div class="mk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></div><b>PosPunto</b><span title="Sincronización en vivo" style="width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:auto;box-shadow:0 0 0 3px rgba(34,197,94,.2)"></span></div>
+        <div class="brand"><div class="mk">P</div><b>PosPunto</b><span class="dot-sync" title="Sincronizando"></span></div>
         <div class="it"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Inicio</div>
         <div class="grp">Ventas</div>
         <div class="it on"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>Punto de Venta</div>
@@ -315,11 +352,10 @@
           <div class="kpi"><div class="l">Ventas de la semana</div><div class="v">$4.1M</div></div>
           <div class="kpi"><div class="l">Valor inventario</div><div class="v" style="color:#8b5cf6">$3.3M</div></div>
         </div>
-        <div class="card" style="padding:14px"><div style="font-weight:700;font-size:13px;margin-bottom:6px">Últimas ventas</div><div style="font-size:11.5px;color:var(--gris2)">V-0042 · Ana López · $32.000 — V-0041 · Mostrador · $9.700 …</div></div>
       </div>
     </div>
   </div>
-  <p class="cap">Vista general: menú agrupado a la izquierda, módulo activo a la derecha.</p>
+  <p class="cap">Vista general: menú agrupado a la izquierda con el punto verde de sincronización en la cabecera, contenido a la derecha.</p>
 
   <h3>Grupos del menú</h3>
   <table class="ref">
@@ -332,142 +368,246 @@
 
   <div class="callout c-tip">
     <span class="lbl">Indicador de sincronización</span>
-    Junto al logo <b>PosPunto</b>, en la cabecera del menú, hay un <b>punto de color</b>: <b style="color:#16a34a">verde</b> = sincronizando en vivo con la nube; <b>gris</b> = sin conexión en vivo (sigues trabajando local y se subirá solo cuando vuelva el internet). Pasa el cursor encima para ver el detalle.
+    Junto al logo <b>PosPunto</b>, en la cabecera del menú, hay un <b>punto de color</b>: <b style="color:#16a34a">verde</b> = sincronizando en vivo con la nube; <b>gris</b> = sin conexión en vivo (sigues trabajando local; se subirá solo cuando vuelva el internet). Pasa el cursor encima para ver el detalle.
   </div>
 </div>
 
-<!-- ======================= 04 DASHBOARD ======================= -->
+<!-- ======================= 04 ATAJOS ======================= -->
+<div class="page section" id="atajos">
+  <div class="sectitle"><span class="secnum">04</span><h2 style="margin:0">Atajos de teclado</h2></div>
+  <p class="lead">PosPunto se diseñó para ir <b>rápido</b>. Estos son los atajos que más te van a servir.</p>
+
+  <h3>En el Punto de Venta</h3>
+  <div class="keys-grid">
+    <div class="key-card"><kbd>F2</kbd><div class="desc"><b>Enfocar el buscador de productos</b><small>Saltas a buscar sin tocar el mouse, desde cualquier parte de la pantalla</small></div></div>
+    <div class="key-card"><kbd>F9</kbd><div class="desc"><b>Abrir el cobro</b><small>Equivale a hacer clic en el botón verde "Cobrar"</small></div></div>
+    <div class="key-card"><kbd>↑</kbd> <kbd>↓</kbd><div class="desc"><b>Moverte por la lista de productos</b><small>Cuando hay resultados del buscador desplegados</small></div></div>
+    <div class="key-card"><kbd>Enter</kbd><div class="desc"><b>Confirmar</b><small>Agregar producto, guardar cantidad, confirmar cobro</small></div></div>
+    <div class="key-card"><kbd>Esc</kbd><div class="desc"><b>Cerrar lo abierto</b><small>Cierra el dropdown, el modal o limpia el buscador</small></div></div>
+  </div>
+
+  <h3>Dentro del cuadro "Cobrar venta"</h3>
+  <p>Cada método de pago tiene su letra (visible en un recuadro junto al nombre):</p>
+  <div class="keys-grid">
+    <div class="key-card"><kbd>E</kbd><div class="desc"><b>Efectivo</b><small>Salta a "¿Con cuánto paga el cliente?"</small></div></div>
+    <div class="key-card"><kbd>T</kbd><div class="desc"><b>Transferencia</b><small>Abre las sub-opciones D / N</small></div></div>
+    <div class="key-card" style="background:#fef2f2;border-color:#fecaca"><kbd>D</kbd><div class="desc"><b>Daviplata</b> <small>(dentro de Transferencia)</small></div></div>
+    <div class="key-card" style="background:#fdf2f8;border-color:#fbcfe8"><kbd>N</kbd><div class="desc"><b>Nequi</b> <small>(dentro de Transferencia)</small></div></div>
+    <div class="key-card"><kbd>Q</kbd><div class="desc"><b>QR</b></div></div>
+    <div class="key-card"><kbd>M</kbd><div class="desc"><b>Mixto</b><small>Cobra una parte en cada método</small></div></div>
+    <div class="key-card"><kbd>C</kbd><div class="desc"><b>Crédito</b><small>El cliente queda debiendo</small></div></div>
+  </div>
+  <p>Y dentro del modo <b>Mixto</b> hay letras propias para cada línea: <kbd>E</kbd> Efectivo · <kbd>D</kbd> Daviplata · <kbd>N</kbd> Nequi · <kbd>Q</kbd> QR. Cada letra enfoca el campo correspondiente.</p>
+
+  <h3>En el módulo Compras</h3>
+  <p>Los mismos que en Ventas, adaptados:</p>
+  <div class="keys-grid">
+    <div class="key-card"><kbd>F2</kbd><div class="desc"><b>Enfocar el buscador de productos</b></div></div>
+    <div class="key-card"><kbd>F9</kbd><div class="desc"><b>Abrir "Registrar compra"</b></div></div>
+  </div>
+
+  <h3>Generales del navegador</h3>
+  <div class="keys-grid">
+    <div class="key-card"><kbd>Ctrl</kbd>+<kbd>P</kbd><div class="desc"><b>Imprimir / exportar a PDF</b><small>Útil para guardar este manual o cierres en PDF</small></div></div>
+    <div class="key-card"><kbd>Ctrl</kbd>+<kbd>F5</kbd><div class="desc"><b>Recargar forzando versión nueva</b><small>Si después de un deploy algún módulo se ve raro</small></div></div>
+  </div>
+
+  <div class="callout c-key">
+    <span class="lbl">Por qué tantas letras</span>
+    El objetivo es que el cajero <b>no tenga que tocar el mouse</b> en el flujo normal: F2 para buscar, escribe el producto, Enter para agregar, F9 para cobrar, E (Efectivo) o T+D/N (Transferencia con banco), escribe el monto y Enter para confirmar. La venta entera se puede hacer con el teclado.
+  </div>
+</div>
+
+<!-- ======================= 05 DASHBOARD ======================= -->
 <div class="page section" id="dashboard">
-  <div class="sectitle"><span class="secnum">04</span><h2 style="margin:0">Inicio (Dashboard)</h2></div>
+  <div class="sectitle"><span class="secnum">05</span><h2 style="margin:0">Inicio (Dashboard)</h2></div>
   <p class="lead">Es la primera pantalla. Te da el pulso del negocio de un vistazo.</p>
 
   <h3>Tarjetas de resumen</h3>
   <table class="ref">
     <tr><th>Tarjeta</th><th>Qué muestra</th></tr>
     <tr><td>Ventas de hoy</td><td>Total vendido en el día.</td></tr>
-    <tr><td>Utilidad de hoy</td><td>Ganancia estimada del día (venta − costo).</td></tr>
-    <tr><td>Ventas de la semana / del mes</td><td>Acumulados para ver la tendencia.</td></tr>
+    <tr><td>Utilidad de hoy</td><td>Ganancia estimada del día (venta − costo de mercancía).</td></tr>
+    <tr><td>Ventas de la semana</td><td>Acumulado de los últimos 7 días.</td></tr>
+    <tr><td>Ventas del mes</td><td>Acumulado del mes en curso.</td></tr>
     <tr><td>Por pagar a proveedores</td><td>Saldo total de tus cuentas por pagar.</td></tr>
-    <tr><td>Valor inventario (costo)</td><td>Cuánto vale tu mercancía valorizada a costo.</td></tr>
+    <tr><td>Valor inventario (costo)</td><td>Cuánto vale tu mercancía a costo.</td></tr>
   </table>
-
-  <p>Más abajo encuentras <b>Últimas ventas</b> (movimientos recientes) y <b>Alertas de inventario</b> (productos con stock bajo que conviene reponer). También hay un acceso rápido al <b>Cierre de Caja</b>.</p>
+  <p>Más abajo encuentras <b>Últimas ventas</b> (movimientos recientes) y <b>Alertas de inventario</b> (productos con stock bajo). También hay un acceso rápido al <b>Cierre de Caja</b>.</p>
 </div>
 
-<!-- ======================= 05 VENTAS ======================= -->
+<!-- ======================= 06 VENTAS ======================= -->
 <div class="page section" id="ventas">
-  <div class="sectitle"><span class="secnum">05</span><h2 style="margin:0">Punto de Venta</h2></div>
+  <div class="sectitle"><span class="secnum">06</span><h2 style="margin:0">Punto de Venta</h2></div>
   <p class="lead">Es el corazón del sistema. Aquí armas la venta: eliges el cliente, agregas productos y cobras.</p>
 
   <div class="shot">
     <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · punto de venta</span></div>
     <div class="ct" style="background:var(--bg)">
-      <div class="grid2" style="grid-template-columns:1.4fr 1fr">
+      <div style="display:grid;gap:14px;grid-template-columns:1.4fr 1fr">
         <div>
-          <div style="background:#fff;border:1px solid var(--linea);border-radius:12px;padding:13px;margin-bottom:12px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="width:22px;height:22px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">1</span><b style="font-size:13px">Cliente</b></div>
-            <div style="border:1px solid var(--linea);border-radius:9px;padding:9px 11px;font-size:12.5px;color:#334155">🔎 Cliente ocasional ▾</div>
+          <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;padding:13px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="step-badge">1</span><b style="font-size:13px">Cliente</b></div>
+            <div style="border:1px solid var(--linea);border-radius:9px;padding:9px 11px;font-size:12.5px;color:#334155;background:#f8fafc">🔎 Cliente ocasional</div>
           </div>
-          <div style="background:#fff;border:1px solid var(--linea);border-radius:12px;padding:13px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="width:22px;height:22px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">2</span><b style="font-size:13px">Buscar o escanear producto</b></div><span style="font-size:11px;color:var(--azul);font-weight:600">⊟ Pistola lista</span></div>
+          <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;padding:13px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:8px"><span class="step-badge">2</span><b style="font-size:13px">Buscar o escanear producto</b></div>
+              <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--gris2);font-weight:600">
+                <span>⊟ Pistola lista</span>
+                <span style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:999px;padding:2px 8px">Pulsa <kbd style="padding:0 4px;font-size:10px">F2</kbd></span>
+              </div>
+            </div>
             <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:11px;padding:11px"><div style="background:#fff;border:1px solid var(--linea);border-radius:9px;padding:10px 12px;font-size:12.5px;color:#94a3b8">Escanea o escribe (código, nombre, categoría)…</div></div>
           </div>
         </div>
-        <div style="background:#fff;border:1px solid var(--linea);border-radius:12px;padding:13px;display:flex;flex-direction:column">
-          <b style="font-size:13px;margin-bottom:8px">Carrito</b>
-          <div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--linea2)"><span>2 × Concentrado 500g</span><b>$19.400</b></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--linea2)"><span>1 × Pouch 75g</span><b>$2.700</b></div>
-          <div style="margin-top:auto;padding-top:10px">
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gris2)"><span>Utilidad estimada</span><span style="color:#15803d;font-weight:600">$6.100</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:800;margin-top:4px"><span>Total</span><span>$22.100</span></div>
-            <div class="btn" style="width:100%;justify-content:center;padding:11px;margin-top:9px;font-size:14px">Cobrar</div>
+        <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
+          <div style="padding:13px;border-bottom:1px solid var(--linea2);display:flex;align-items:center;gap:8px"><span class="step-badge">3</span><b style="font-size:13px">Borrador de la factura</b></div>
+          <div style="padding:9px 13px;flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--linea2)"><span><b>2</b> × Concentrado 500g</span><b>$19.400</b></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0"><span><b>1</b> × Pouch 75g</span><b>$2.700</b></div>
+          </div>
+          <div style="padding:12px 13px;border-top:1px solid var(--linea2);background:#fafbff">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gris2)"><span>Utilidad estimada</span><span style="color:#15803d;font-weight:700">$6.100</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin-top:6px"><span>TOTAL</span><span style="color:var(--azul-d)">$22.100</span></div>
+            <div class="btn success" style="width:100%;justify-content:center;padding:11px;margin-top:9px;font-size:13.5px">💰 COBRAR <span class="badge-kbd" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35);margin-left:6px">F9</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <p class="cap">Punto de venta: cliente, buscador y carrito con total + utilidad estimada.</p>
+  <p class="cap">Punto de venta: 3 pasos (Cliente · Buscar · Borrador). Total grande en azul y botón verde con atajo F9.</p>
 
   <h3>Paso a paso para vender</h3>
   <ol class="steps">
-    <li><b>Elige el cliente</b> (paso 1). Por defecto es <i>Cliente ocasional</i>. Si es un cliente registrado, búscalo por nombre o documento. <span class="muted">Es obligatorio elegir un cliente real si vas a vender a crédito.</span></li>
-    <li><b>Agrega productos</b> (paso 2). Tienes dos formas, y funcionan al mismo tiempo:
+    <li><b>Elige el cliente</b> (paso 1). Por defecto es <i>Cliente ocasional</i>. Si es un cliente registrado, búscalo por nombre, documento o teléfono. <span class="muted">Es obligatorio elegir un cliente real si vas a vender a crédito.</span></li>
+    <li><b>Agrega productos</b> (paso 2). Tres formas que funcionan a la vez:
       <ul>
-        <li><b>Con la pistola:</b> escanea el código de barras y se abre el cuadro de cantidad.</li>
-        <li><b>Escribiendo:</b> teclea código, nombre o categoría y aparece una lista; usa <kbd>↑</kbd><kbd>↓</kbd> y <kbd>Enter</kbd> para elegir.</li>
+        <li><b>Con la pistola:</b> escanea el código de barras → se abre el cuadro de cantidad automáticamente.</li>
+        <li><b>Escribiendo:</b> teclea código, nombre o categoría; usa <kbd>↑</kbd><kbd>↓</kbd> y <kbd>Enter</kbd>.</li>
+        <li><b>Con <kbd>F2</kbd>:</b> desde donde estés, saltas al buscador (útil después de hacer otra cosa).</li>
       </ul>
     </li>
-    <li>En el <b>cuadro de cantidad</b> indica cuántas unidades (y, si aplica, ajusta el precio) y confirma con <kbd>Enter</kbd>. El producto entra al carrito.</li>
-    <li>Revisa el <b>carrito</b> a la derecha: cantidades, total y la <b>utilidad estimada</b> de la venta <span class="muted">(si la activaste en Configuración → “Mostrar utilidad en ventas”)</span>. Puedes quitar líneas o vaciar el carrito.</li>
-    <li>Cuando esté listo, haz clic en el botón <b>Cobrar</b> para pasar al cobro.</li>
+    <li>En el <b>cuadro de cantidad</b> indica cuántas unidades, ajusta precio si hace falta y confirma con <kbd>Enter</kbd>.</li>
+    <li>Revisa el <b>Borrador de la factura</b> (paso 3): cantidades, total y <b>utilidad estimada</b> de la venta (si activaste "Mostrar utilidad" en Configuración). Puedes quitar líneas o vaciar el carrito.</li>
+    <li>Cuando esté listo, pulsa <kbd>F9</kbd> o haz clic en <b>COBRAR</b> para pasar al cobro.</li>
   </ol>
 
-  <div class="callout c-key">
-    <span class="lbl">Atajos útiles</span>
-    <kbd>Enter</kbd> confirma · <kbd>↑</kbd><kbd>↓</kbd> navegan la lista de productos · <kbd>Esc</kbd> cierra la lista o limpia el buscador · escanear con la pistola agrega al instante.
-  </div>
   <div class="callout c-tip">
     <span class="lbl">Stock en vivo</span>
-    Cada producto muestra su stock disponible. Si vendes el último, en las demás cajas el stock baja al instante por la sincronización.
+    Cada producto muestra su stock disponible. Si vendes el último, en las demás cajas el stock baja al instante por la sincronización en tiempo real.
+  </div>
+  <div class="callout c-warn">
+    <span class="lbl">Anti-duplicados</span>
+    El botón Cobrar se bloquea tras el primer clic para evitar que una venta se registre dos veces por doble clic o doble Enter.
   </div>
 </div>
 
-<!-- ======================= 06 COBRO ======================= -->
+<!-- ======================= 07 COBRO ======================= -->
 <div class="page section" id="cobro">
-  <div class="sectitle"><span class="secnum">06</span><h2 style="margin:0">Cobrar una venta</h2></div>
-  <p class="lead">Al pulsar <b>Cobrar</b> se abre el cuadro de cobro. Eliges el método de pago y confirmas.</p>
+  <div class="sectitle"><span class="secnum">07</span><h2 style="margin:0">Cobrar una venta</h2></div>
+  <p class="lead">Al pulsar <kbd>F9</kbd> (o el botón verde) se abre el cuadro de cobro. Eliges el método y confirmas.</p>
 
-  <h3>Métodos de pago</h3>
-  <div style="margin:8px 0 4px">
-    <span class="pill">💵 Efectivo</span><span class="pill">🏦 Transferencia</span><span class="pill">📱 QR</span><span class="pill">💳 Tarjeta</span><span class="pill">🧮 Mixto</span><span class="pill" style="background:#fef3c7;border-color:#fde68a;color:#92400e">📝 Crédito</span>
+  <div class="shot">
+    <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · cobrar venta</span></div>
+    <div style="background:rgba(15,23,42,.75);padding:34px;display:flex;justify-content:center">
+      <div class="cobro-mock" style="width:560px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--linea);padding-bottom:10px">
+          <span>Cobrar venta</span><span style="color:var(--gris3);cursor:pointer">×</span>
+        </div>
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:20px">
+          <div>
+            <div style="font-size:12px;color:var(--gris2);font-weight:600;text-align:center;margin-bottom:6px">Total a pagar</div>
+            <div style="background:var(--azul-soft);border-radius:11px;padding:16px 10px;text-align:center;margin-bottom:14px">
+              <div style="font-size:24px;font-weight:800;color:var(--azul-d)">$22.100</div>
+            </div>
+            <div style="font-size:11px;color:var(--gris3);text-transform:uppercase;font-weight:700;margin-bottom:7px">Método de pago</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="cobro-chip on"><kbd>E</kbd>Efectivo</div>
+              <div class="cobro-chip"><kbd>T</kbd>Transfer.</div>
+              <div class="cobro-chip"><kbd>Q</kbd>QR</div>
+              <div class="cobro-chip"><kbd>M</kbd>Mixto</div>
+              <div class="cobro-chip"><kbd>C</kbd>Crédito</div>
+            </div>
+          </div>
+          <div style="border-left:1px solid var(--linea);padding-left:18px">
+            <div style="font-size:12.5px;color:var(--gris);font-weight:600;margin-bottom:6px">¿Con cuánto paga el cliente?</div>
+            <div style="background:#fff;border:1.5px solid var(--gris4);border-radius:10px;padding:11px 13px;font-size:17px;font-weight:700;color:#94a3b8;margin-bottom:9px">Ej: 50.000</div>
+            <div style="background:var(--azul-soft);border:2px solid var(--azul);border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--azul-d);margin-bottom:11px">Exacto · $22.100</div>
+            <div style="background:#f8fafc;border:1px solid var(--linea);border-radius:10px;padding:13px;text-align:center;font-size:13px"><b>Cambio:</b> <span style="font-size:18px;font-weight:800;color:#15803d">$0</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px;border-top:1px solid var(--linea);padding-top:13px">
+          <div class="btn ghost" style="flex:1;justify-content:center;padding:10px">Cancelar</div>
+          <div class="btn success" style="flex:1.4;justify-content:center;padding:10px">Confirmar</div>
+        </div>
+      </div>
+    </div>
   </div>
+  <p class="cap">Cuadro de cobro: total + chips de método con letra, área del método activo + Cancelar/Confirmar.</p>
+
+  <h3>Métodos de pago disponibles</h3>
   <table class="ref">
-    <tr><th>Método</th><th>Cómo funciona</th></tr>
-    <tr><td><b>Efectivo</b></td><td>Escribes con cuánto paga el cliente y el sistema calcula el <b>cambio</b>.</td></tr>
-    <tr><td><b>Transferencia / QR / Tarjeta</b></td><td>Se registra el pago electrónico por el total.</td></tr>
-    <tr><td><b>Mixto</b></td><td>Combinas varios medios (p. ej. parte efectivo, parte tarjeta). El sistema verifica que sumen el total.</td></tr>
-    <tr><td><b>Crédito</b></td><td>El cliente <b>queda debiendo</b>. Puedes registrar un <b>abono inicial</b> y una <b>fecha de vencimiento</b>. Requiere un cliente registrado.</td></tr>
+    <tr><th>Método</th><th>Tecla</th><th>Cómo funciona</th></tr>
+    <tr><td><b>Efectivo</b></td><td><kbd>E</kbd></td><td>Escribes con cuánto paga el cliente; el sistema calcula el <b>cambio</b>. Botón "Exacto" rellena el total.</td></tr>
+    <tr><td><b>Transferencia</b></td><td><kbd>T</kbd></td><td>Abre 2 sub-opciones: <span class="logo-davi"><span class="a">DAVI</span><span class="b">plata</span></span> <kbd>D</kbd> y <span class="logo-nequi"><span class="sq"></span><span class="n">Nequi</span></span> <kbd>N</kbd>. Se guarda el banco usado en la factura.</td></tr>
+    <tr><td><b>QR</b></td><td><kbd>Q</kbd></td><td>Pago electrónico por el total.</td></tr>
+    <tr><td><b>Mixto</b></td><td><kbd>M</kbd></td><td>Combinas varios: parte efectivo, parte transferencia… Cada línea con su atajo (<kbd>E</kbd>/<kbd>D</kbd>/<kbd>N</kbd>/<kbd>Q</kbd>).</td></tr>
+    <tr><td><b>Crédito</b></td><td><kbd>C</kbd></td><td>El cliente <b>queda debiendo</b>. Puedes registrar <b>abono inicial</b> y <b>fecha de vencimiento</b>. Requiere cliente registrado.</td></tr>
   </table>
 
+  <h3>Pago con Transferencia (Daviplata o Nequi)</h3>
+  <p>Al pulsar <kbd>T</kbd> se muestran las dos opciones con sus logos. Pulsa <kbd>D</kbd> para Daviplata o <kbd>N</kbd> para Nequi y el sistema marca cuál usaste. El ticket y los reportes muestran "Transferencia (Daviplata)" o "Transferencia (Nequi)" para que sepas exactamente por dónde entró el dinero.</p>
+
+  <h3>Pago Mixto (combinar varios)</h3>
+  <p>Útil cuando el cliente paga parte en efectivo y parte por otro canal. Al elegir <kbd>M</kbd> verás 4 líneas:</p>
+  <ul>
+    <li><kbd>E</kbd> Efectivo</li>
+    <li><kbd>D</kbd> Daviplata</li>
+    <li><kbd>N</kbd> Nequi</li>
+    <li><kbd>Q</kbd> QR</li>
+  </ul>
+  <p>Pulsa una letra para enfocar su campo, escribe el monto, pulsa la siguiente letra y así hasta sumar el total. El sistema te muestra "Recibido" y "Cambio/Sobra" en vivo, y solo deja confirmar cuando llegas al monto exacto o superior.</p>
+
+  <h3>Pasos del cobro</h3>
   <ol class="steps">
-    <li>Elige el <b>método</b> (efectivo viene activo por defecto).</li>
-    <li>Completa los datos del método (monto recibido, o el reparto del mixto, o el abono del crédito).</li>
-    <li>Pulsa <b>Confirmar</b>. La venta se guarda, se descuenta el inventario y se genera la factura.</li>
+    <li>Pulsa <kbd>F9</kbd> con productos en el carrito (abre el cuadro).</li>
+    <li>Elige el <b>método</b> con su letra: <kbd>E</kbd>/<kbd>T</kbd>/<kbd>Q</kbd>/<kbd>M</kbd>/<kbd>C</kbd>.</li>
+    <li>Si <kbd>T</kbd>: pulsa <kbd>D</kbd> o <kbd>N</kbd> para elegir el banco.</li>
+    <li>Completa los datos (monto recibido / abono / reparto del mixto).</li>
+    <li>Pulsa <kbd>Enter</kbd> o haz clic en <b>Confirmar</b>.</li>
     <li>Si tienes <b>cajón de dinero</b> configurado, se abre solo al confirmar.</li>
-    <li>Aparece la opción de <b>imprimir el ticket</b> (o se imprime directo según tu configuración).</li>
+    <li>Aparece "<b>¿Desea imprimir el ticket?</b>" → <kbd>Enter</kbd> imprime · <kbd>Esc</kbd> no imprime.</li>
   </ol>
 
+  <h3>Ejemplo de ticket impreso</h3>
   <div class="ticket">
     <div class="c"><b>MI NEGOCIO</b><br/>NIT 900.123.456-7</div>
     <hr/>
     <div class="row"><span>Nº Documento</span><span>A-0042</span></div>
+    <div class="row"><span>Caja</span><span>Caja principal</span></div>
     <div class="row"><span>Atendió</span><span>Juan</span></div>
     <hr/>
     <div class="row"><span>2 Concentrado 500g</span><span>19.400</span></div>
     <div class="row"><span>1 Pouch 75g</span><span>2.700</span></div>
     <hr/>
     <div class="row"><b>TOTAL</b><b>22.100</b></div>
-    <div class="row"><span>Efectivo</span><span>25.000</span></div>
-    <div class="row"><span>Cambio</span><span>2.900</span></div>
+    <div class="row"><span>Transf. (Nequi)</span><span>22.100</span></div>
     <hr/>
     <div class="c">¡Gracias por su compra!</div>
   </div>
-  <p class="cap">Ejemplo de ticket POS 80 mm (el número lleva la serie del cajero y muestra quién atendió).</p>
+  <p class="cap">Ticket POS 80mm con la caja, quién atendió y el banco usado.</p>
 
   <div class="callout c-warn">
-    <span class="lbl">Venta a crédito</span>
-    Una venta a crédito <b>no cuenta como efectivo</b> en el cierre ni en los reportes hasta que el cliente <b>abone</b>. Su seguimiento se hace en <b>Cuentas por cobrar</b>.
-  </div>
-  <div class="callout c-tip">
-    <span class="lbl">Anti-duplicados</span>
-    El botón Confirmar se bloquea tras el primer clic para evitar que una venta se registre dos veces por doble clic o doble Enter.
+    <span class="lbl">Venta a crédito y caja</span>
+    Una venta a crédito <b>no entra como efectivo</b> en el cierre del día hasta que el cliente <b>abone</b>. El seguimiento de saldos pendientes está en <a href="#cxc">Cuentas por cobrar</a>.
   </div>
 </div>
 
-<!-- ======================= 07 FACTURAS ======================= -->
+<!-- ======================= 08 FACTURAS ======================= -->
 <div class="page section" id="facturas">
-  <div class="sectitle"><span class="secnum">07</span><h2 style="margin:0">Facturas</h2></div>
-  <p class="lead">Lista de todas las ventas registradas. Desde aquí consultas, reimprimes, editas o eliminas una venta.</p>
+  <div class="sectitle"><span class="secnum">08</span><h2 style="margin:0">Facturas</h2></div>
+  <p class="lead">Lista de todas las ventas registradas. Aquí consultas, reimprimes, editas o eliminas una venta.</p>
 
   <div class="shot">
     <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · facturas</span></div>
@@ -475,15 +615,15 @@
       <div class="ph"><div><h1>Facturación</h1><div class="s">Ventas registradas</div></div></div>
       <div class="card">
         <table class="ui">
-          <tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>Pago</th><th style="text-align:right">Total</th><th>Estado</th><th></th></tr>
-          <tr><td>V-0042</td><td>19/06</td><td>Ana López</td><td>Efectivo</td><td style="text-align:right">$32.000</td><td><span class="bdg b-ok">Pagada</span></td><td>⋮</td></tr>
-          <tr><td>V-0041</td><td>19/06</td><td>Mostrador</td><td>Tarjeta</td><td style="text-align:right">$9.700</td><td><span class="bdg b-ok">Pagada</span></td><td>⋮</td></tr>
-          <tr><td>V-0040</td><td>18/06</td><td>Carlos Ruiz</td><td>Crédito</td><td style="text-align:right">$120.000</td><td><span class="bdg b-warn">Crédito</span></td><td>⋮</td></tr>
+          <tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>Cajero</th><th>Pago</th><th style="text-align:right">Total</th><th>Estado</th><th></th></tr>
+          <tr><td>A-0042</td><td>21/06</td><td>Ana López</td><td>Juan</td><td>Transf. (Nequi)</td><td style="text-align:right">$32.000</td><td><span class="bdg b-ok">Pagada</span></td><td>⋮</td></tr>
+          <tr><td>A-0041</td><td>21/06</td><td>Mostrador</td><td>Juan</td><td>Efectivo</td><td style="text-align:right">$9.700</td><td><span class="bdg b-ok">Pagada</span></td><td>⋮</td></tr>
+          <tr><td>B-0019</td><td>21/06</td><td>Carlos Ruiz</td><td>María</td><td>Crédito</td><td style="text-align:right">$120.000</td><td><span class="bdg b-warn">Crédito</span></td><td>⋮</td></tr>
         </table>
       </div>
     </div>
   </div>
-  <p class="cap">Listado de facturas con su estado (Pagada / Crédito / Anulada).</p>
+  <p class="cap">Listado de facturas con número (con prefijo de cajero), cajero, método y estado.</p>
 
   <h3>El menú ⋮ de cada factura</h3>
   <table class="ref">
@@ -495,23 +635,23 @@
   </table>
 
   <h4>Editar una venta (quitar y agregar productos)</h4>
-  <p>Si facturaste un producto equivocado, puedes corregirlo. Al editar puedes:</p>
+  <p>Si facturaste un producto equivocado, puedes corregirlo:</p>
   <ul>
-    <li><b>Quitar</b> una línea (con el botón 🗑). Su stock <b>se devuelve</b> al inventario.</li>
+    <li><b>Quitar</b> una línea (botón 🗑). Su stock <b>se devuelve</b> al inventario.</li>
     <li><b>Agregar</b> otro producto con el buscador. Su stock <b>se descuenta</b>.</li>
     <li><b>Ajustar</b> cantidad, precio o descuento de las líneas existentes.</li>
   </ul>
   <p>Todo queda registrado en el <b>historial de ediciones</b> de la factura, con la fecha y el motivo que escribas.</p>
 
-  <div class="callout c-warn">
+  <div class="callout c-danger">
     <span class="lbl">Permiso requerido</span>
     Editar o eliminar una venta <b>solo lo hace el administrador</b>. Si lo intenta un cajero, el sistema pide el <b>código de autorización del administrador</b> antes de continuar, porque la operación mueve el inventario.
   </div>
 </div>
 
-<!-- ======================= 08 CXC ======================= -->
+<!-- ======================= 09 CXC ======================= -->
 <div class="page section" id="cxc">
-  <div class="sectitle"><span class="secnum">08</span><h2 style="margin:0">Cuentas por cobrar</h2></div>
+  <div class="sectitle"><span class="secnum">09</span><h2 style="margin:0">Cuentas por cobrar</h2></div>
   <p class="lead">El control de tus <b>ventas a crédito</b>: quién te debe, cuánto y desde cuándo.</p>
 
   <div class="shot">
@@ -526,13 +666,13 @@
       <div class="card">
         <table class="ui">
           <tr><th>Venta</th><th>Cliente</th><th style="text-align:right">Saldo</th><th>Vence</th><th></th></tr>
-          <tr><td>V-0040</td><td>Carlos Ruiz</td><td style="text-align:right">$110.000</td><td>19/07</td><td><span class="bdg b-info">Abonar</span></td></tr>
-          <tr><td>V-0035</td><td>Tienda La 50</td><td style="text-align:right">$80.000</td><td><span class="bdg b-dang">Vencida</span></td><td><span class="bdg b-info">Abonar</span></td></tr>
+          <tr><td>B-0019</td><td>Carlos Ruiz</td><td style="text-align:right">$110.000</td><td>21/07</td><td><span class="bdg b-info">Abonar</span></td></tr>
+          <tr><td>A-0035</td><td>Tienda La 50</td><td style="text-align:right">$80.000</td><td><span class="bdg b-dang">Vencida</span></td><td><span class="bdg b-info">Abonar</span></td></tr>
         </table>
       </div>
     </div>
   </div>
-  <p class="cap">Saldos pendientes con su fecha de vencimiento.</p>
+  <p class="cap">Saldos pendientes con su fecha de vencimiento y un botón "Abonar" por línea.</p>
 
   <ol class="steps">
     <li>Busca la venta o el cliente con saldo.</li>
@@ -547,9 +687,9 @@
   </div>
 </div>
 
-<!-- ======================= 09 CLIENTES ======================= -->
+<!-- ======================= 10 CLIENTES ======================= -->
 <div class="page section" id="clientes">
-  <div class="sectitle"><span class="secnum">09</span><h2 style="margin:0">Clientes</h2></div>
+  <div class="sectitle"><span class="secnum">10</span><h2 style="margin:0">Clientes</h2></div>
   <p class="lead">Tu base de clientes. Útil para créditos, precios especiales y datos de facturación.</p>
 
   <ol class="steps">
@@ -561,14 +701,14 @@
 
   <div class="callout c-tip">
     <span class="lbl">Importar desde Excel</span>
-    ¿Tienes muchos clientes? Puedes cargarlos en lote desde un archivo de Excel en <b>Configuración → Productos y clientes en Excel</b>.
+    ¿Tienes muchos clientes? Cárgalos en lote desde un Excel en <b>Configuración → Productos y clientes en Excel</b>.
   </div>
 </div>
 
-<!-- ======================= 10 PRODUCTOS ======================= -->
+<!-- ======================= 11 PRODUCTOS ======================= -->
 <div class="page section" id="productos">
-  <div class="sectitle"><span class="secnum">10</span><h2 style="margin:0">Productos</h2></div>
-  <p class="lead">El catálogo de lo que vendes, con su costo, precio de venta y stock.</p>
+  <div class="sectitle"><span class="secnum">11</span><h2 style="margin:0">Productos</h2></div>
+  <p class="lead">El catálogo de lo que vendes, con costo, precio de venta y stock.</p>
 
   <div class="shot">
     <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · productos</span></div>
@@ -585,18 +725,18 @@
           <tr><th>Producto</th><th>Código</th><th>Categoría</th><th style="text-align:right">Precio compra</th><th style="text-align:right">Precio venta</th><th style="text-align:right">Stock</th><th></th></tr>
           <tr><td>Concentrado 500g</td><td>342</td><td><span class="bdg b-neu">ITALCOL</span></td><td style="text-align:right;color:var(--gris2)">$7.200</td><td style="text-align:right;font-weight:700">$9.700</td><td style="text-align:right">12</td><td>⋮</td></tr>
           <tr><td>Pouch 75g</td><td>312</td><td><span class="bdg b-neu">ITALCOL</span></td><td style="text-align:right;color:var(--gris2)">$2.000</td><td style="text-align:right;font-weight:700">$2.700</td><td style="text-align:right">5</td><td>⋮</td></tr>
-          <tr><td>Sabores del mar 1.3kl</td><td>588</td><td><span class="bdg b-neu">ITALCOL</span></td><td style="text-align:right;color:var(--gris2)">$17.000</td><td style="text-align:right;font-weight:700">$22.500</td><td style="text-align:right"><span class="bdg b-dang">0 · bajo</span></td><td>⋮</td></tr>
+          <tr><td>Sabores del mar 1.3kg</td><td>588</td><td><span class="bdg b-neu">ITALCOL</span></td><td style="text-align:right;color:var(--gris2)">$17.000</td><td style="text-align:right;font-weight:700">$22.500</td><td style="text-align:right"><span class="bdg b-dang">0 · bajo</span></td><td>⋮</td></tr>
         </table>
       </div>
     </div>
   </div>
-  <p class="cap">Catálogo con precio de compra (costo) y precio de venta.</p>
+  <p class="cap">Catálogo con precio de compra (costo) y precio de venta lado a lado.</p>
 
   <h3>Crear un producto</h3>
   <ol class="steps">
     <li>Pulsa <b>+ Nuevo producto</b>. El cursor empieza en <b>Nombre</b>.</li>
     <li>El <b>código</b> se llena solo con el siguiente consecutivo, pero puedes cambiarlo a mano.</li>
-    <li>Para el <b>código de barras</b>, usa el botón de pistola y escanéalo; queda guardado en el campo (sin guardar el producto antes de tiempo).</li>
+    <li>Para el <b>código de barras</b>, usa el botón de pistola y escanéalo; queda guardado sin guardar el producto antes de tiempo.</li>
     <li>Completa <b>costo</b>, <b>precio de venta</b>, <b>categoría</b>, <b>stock</b> y <b>stock mínimo</b> (para las alertas).</li>
     <li>Guarda.</li>
   </ol>
@@ -607,16 +747,16 @@
   </div>
 </div>
 
-<!-- ======================= 11 INVENTARIO ======================= -->
+<!-- ======================= 12 INVENTARIO ======================= -->
 <div class="page section" id="inventario">
-  <div class="sectitle"><span class="secnum">11</span><h2 style="margin:0">Inventario</h2></div>
+  <div class="sectitle"><span class="secnum">12</span><h2 style="margin:0">Inventario</h2></div>
   <p class="lead">Control fino del stock: movimientos por producto (kardex), conteos físicos y ajustes.</p>
 
   <div class="feat">
-    <div class="f"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div><b>Kardex</b><span class="muted">Historial de entradas y salidas de un producto, con el saldo resultante.</span></div></div>
-    <div class="f"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><b>Conteo físico</b><span class="muted">Planilla para contar varios productos a la vez y cuadrar el stock real.</span></div></div>
-    <div class="f"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><div><b>Ajustes</b><span class="muted">Corrige el stock (mermas, sobrantes). Cada ajuste queda con su historial.</span></div></div>
-    <div class="f"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div><div><b>Imprimir inventario</b><span class="muted">En ticket 80 mm, PDF Carta u hoja de auditoría para contar a mano.</span></div></div>
+    <div class="f"><div class="ic">📊</div><div><b>Kardex</b><span class="muted">Historial de entradas y salidas de un producto, con el saldo resultante.</span></div></div>
+    <div class="f"><div class="ic">📋</div><div><b>Conteo físico</b><span class="muted">Planilla para contar varios productos a la vez y cuadrar el stock real.</span></div></div>
+    <div class="f"><div class="ic">✏</div><div><b>Ajustes</b><span class="muted">Corrige el stock (mermas, sobrantes). Cada ajuste queda con su historial.</span></div></div>
+    <div class="f"><div class="ic">🖨</div><div><b>Imprimir inventario</b><span class="muted">En ticket 80 mm, PDF Carta u hoja de auditoría para contar a mano.</span></div></div>
   </div>
 
   <h3>Conteo físico (planilla)</h3>
@@ -636,28 +776,131 @@
   </div>
 </div>
 
-<!-- ======================= 12 COMPRAS ======================= -->
+<!-- ======================= 13 COMPRAS ======================= -->
 <div class="page section" id="compras">
-  <div class="sectitle"><span class="secnum">12</span><h2 style="margin:0">Compras</h2></div>
-  <p class="lead">Registra la mercancía que entra de tus proveedores. Al guardar, <b>suma el stock</b>.</p>
+  <div class="sectitle"><span class="secnum">13</span><h2 style="margin:0">Compras</h2></div>
+  <p class="lead">Registra la mercancía que entra de tus proveedores. Mismo flujo de 3 pasos que el Punto de Venta, adaptado a compras.</p>
 
-  <ol class="steps">
-    <li>Selecciona el <b>proveedor</b>.</li>
-    <li>Agrega los productos del pedido con el buscador o la pistola (igual que en Ventas: se abre el cuadro de cantidad).</li>
-    <li>Indica <b>cantidad</b> y <b>costo de compra</b> de cada uno.</li>
-    <li>Elige si la compra es de <b>contado</b> o a <b>crédito</b> (queda como cuenta por pagar).</li>
-    <li>Registra la compra: el inventario sube y, si aplica, se actualiza el costo del producto.</li>
-  </ol>
-
-  <div class="callout c-info">
-    <span class="lbl">Misma experiencia que Ventas</span>
-    El buscador, la pistola y el cuadro de cantidad funcionan igual que en el Punto de Venta, así que ya sabes usarlos.
+  <div class="shot">
+    <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · compras</span></div>
+    <div class="ct" style="background:var(--bg)">
+      <div class="ph"><div><h1>Compras</h1><div class="s">Seguí los 3 pasos para registrar una compra</div></div><div style="display:flex;gap:8px"><div class="btn ghost">Facturas de compra</div><div class="btn ghost">Proveedores</div><div class="btn">+ Proveedor</div></div></div>
+      <div style="display:grid;gap:14px;grid-template-columns:1.4fr 1fr">
+        <div>
+          <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;padding:13px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="step-badge">1</span><b style="font-size:13px">Proveedor</b></div>
+            <div style="border:1px solid var(--linea);border-radius:9px;padding:9px 11px;font-size:12.5px;color:#334155;background:#f8fafc">Distribuidora Norte · 900.111.222-3</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;padding:13px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:8px"><span class="step-badge">2</span><b style="font-size:13px">Buscar o escanear producto</b></div>
+              <div style="font-size:11px;color:var(--gris2);font-weight:600"><span style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:999px;padding:2px 8px">Pulsa <kbd style="padding:0 4px;font-size:10px">F2</kbd></span></div>
+            </div>
+            <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:11px;padding:11px"><div style="background:#fff;border:1px solid var(--linea);border-radius:9px;padding:10px 12px;font-size:12.5px;color:#94a3b8">Escanea o escribe…</div></div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--linea);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
+          <div style="padding:13px;border-bottom:1px solid var(--linea2);display:flex;align-items:center;gap:8px"><span class="step-badge">3</span><b style="font-size:13px">Borrador de la compra</b></div>
+          <div style="padding:9px 13px;flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--linea2)"><span><b>10</b> × Aceite vegetal 1L</span><b>$55.000</b></div>
+          </div>
+          <div style="padding:12px 13px;border-top:1px solid var(--linea2);background:#fafbff">
+            <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800"><span>TOTAL</span><span style="color:var(--azul-d)">$55.000</span></div>
+            <div class="btn success" style="width:100%;justify-content:center;padding:11px;margin-top:9px;font-size:13.5px">📦 REGISTRAR COMPRA <span class="badge-kbd" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35);margin-left:6px">F9</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <p class="cap">Compras: misma estructura que Ventas, con el campo <b>Costo</b> en vez de Precio y botón "Registrar compra · F9".</p>
+
+  <h3>Diferencias importantes con Ventas</h3>
+  <table class="ref">
+    <tr><th>Aspecto</th><th>En Compras</th></tr>
+    <tr><td>Paso 1</td><td><b>Proveedor</b> (no Cliente)</td></tr>
+    <tr><td>Campo unitario</td><td><b>Costo</b> (lo que pagas, no lo que cobras)</td></tr>
+    <tr><td>Utilidad estimada</td><td>No aplica (es egreso)</td></tr>
+    <tr><td>Al confirmar</td><td><b>Suma al stock</b> (no descuenta)</td></tr>
+    <tr><td>Atajos</td><td><kbd>F2</kbd> buscar · <kbd>F9</kbd> registrar compra</td></tr>
+  </table>
+
+  <h3>Registrar una compra</h3>
+  <ol class="steps">
+    <li>Selecciona el <b>proveedor</b> (paso 1). Si no existe, créalo desde "+ Proveedor".</li>
+    <li>Indica la <b>fecha</b> y el <b>N° de factura/remisión</b>.</li>
+    <li>Agrega los productos (paso 2). Cada uno te pide <b>cantidad</b> y <b>costo unitario</b>.</li>
+    <li>Revisa el borrador y total. Pulsa <kbd>F9</kbd> o <b>REGISTRAR COMPRA</b>.</li>
+    <li>Elige <b>Contado</b> o <b>Crédito</b>:
+      <ul>
+        <li><b>Contado:</b> chips de método igual que en ventas (<kbd>E</kbd> Efectivo · <kbd>T</kbd> Transferencia con <kbd>D</kbd>/<kbd>N</kbd> · <kbd>Q</kbd> QR).</li>
+        <li><b>Crédito:</b> queda como cuenta por pagar al proveedor, con fecha de vencimiento y abono inicial opcional.</li>
+      </ul>
+    </li>
+    <li><b>Confirma</b>. El inventario sube y, si aplica, se actualiza el costo del producto.</li>
+  </ol>
 </div>
 
-<!-- ======================= 13 FACTURAS DE COMPRA ======================= -->
+<!-- ======================= 14 PROVEEDORES ======================= -->
+<div class="page section" id="proveedores">
+  <div class="sectitle"><span class="secnum">14</span><h2 style="margin:0">Proveedores</h2></div>
+  <p class="lead">Gestión completa con informe por proveedor y filtro de fechas. Se abre desde el botón <b>Proveedores</b> en el header de Compras.</p>
+
+  <div class="shot">
+    <div class="bar"><i class="dot1"></i><i class="dot2"></i><i class="dot3"></i><span class="url">pospunto · proveedores</span></div>
+    <div style="background:rgba(15,23,42,.7);padding:24px;display:flex;justify-content:center">
+      <div class="cobro-mock" style="width:640px;padding:18px 20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--linea);padding-bottom:10px"><span>Proveedores</span><span style="color:var(--gris3)">×</span></div>
+        <div style="background:#f8fafc;border:1px solid var(--linea);border-radius:10px;padding:8px 10px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:10.5px">
+          <span style="color:var(--gris2);font-weight:700;text-transform:uppercase">Periodo</span>
+          <span style="padding:4px 10px;border-radius:6px;background:#fff;border:1px solid var(--linea);font-weight:600">Hoy</span>
+          <span style="padding:4px 10px;border-radius:6px;background:#fff;border:1px solid var(--linea);font-weight:600">Esta semana</span>
+          <span style="padding:4px 10px;border-radius:6px;background:var(--azul);color:#fff;font-weight:600">Este mes</span>
+          <span style="padding:4px 10px;border-radius:6px;background:#fff;border:1px solid var(--linea);font-weight:600">Mes pasado</span>
+          <span style="padding:4px 10px;border-radius:6px;background:#fff;border:1px solid var(--linea);font-weight:600">Este año</span>
+          <span style="padding:4px 10px;border-radius:6px;background:#fff;border:1px solid var(--linea);font-weight:600">Todo</span>
+        </div>
+        <div class="kpis" style="grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
+          <div class="kpi" style="padding:9px 11px;background:#eff6ff;border-color:#bfdbfe"><div class="l" style="color:#1d4ed8">Proveedores</div><div class="v" style="font-size:18px">3</div></div>
+          <div class="kpi" style="padding:9px 11px;background:#fef3c7;border-color:#fde68a"><div class="l" style="color:#92400e">Por pagar</div><div class="v" style="font-size:18px;color:#92400e">$310.000</div></div>
+          <div class="kpi" style="padding:9px 11px;background:#dcfce7;border-color:#86efac"><div class="l" style="color:#166534">Compras del periodo</div><div class="v" style="font-size:18px;color:#166534">$460.000</div></div>
+          <div class="kpi" style="padding:9px 11px"><div class="l">Total del periodo</div><div class="v" style="font-size:18px">$460.000</div></div>
+        </div>
+        <div class="card">
+          <table class="ui">
+            <tr><th>Proveedor</th><th>Contacto</th><th style="text-align:right">Compras</th><th style="text-align:right">Por pagar</th><th></th></tr>
+            <tr><td><b>Distribuidora Norte</b><br/><span class="small">900.111.222-3 · Pereira</span></td><td>3001112233</td><td style="text-align:right;font-weight:700">$230.000<br/><span class="small">2 compras</span></td><td style="text-align:right"><span class="bdg b-warn">$80.000</span></td><td>👁 ✏ 🗑</td></tr>
+            <tr><td><b>Importadora Sur</b><br/><span class="small">901.444.555-6 · Cali</span></td><td>3104445566</td><td style="text-align:right;font-weight:700">$230.000<br/><span class="small">1 compra</span></td><td style="text-align:right"><span class="bdg b-warn">$230.000</span></td><td>👁 ✏ 🗑</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cap">Modal de Proveedores: barra de filtro + KPIs + tabla con acciones.</p>
+
+  <h3>Qué puedes hacer</h3>
+  <table class="ref">
+    <tr><th>Acción</th><th>Para qué</th></tr>
+    <tr><td><b>👁 Ver compras</b></td><td>Abre el <b>informe del proveedor</b>: lista de compras del periodo con fecha, n° factura, método, total y estado (Contado / Pagada / Saldo). Mismo filtro de fechas.</td></tr>
+    <tr><td><b>✏ Editar</b></td><td>Cambia datos del proveedor.</td></tr>
+    <tr><td><b>🗑 Eliminar</b></td><td>Pide confirmación. Si el proveedor tiene compras registradas, avisa cuántas y por qué monto. Las compras <b>no se borran</b>; quedan sin proveedor asociado.</td></tr>
+  </table>
+
+  <h3>Filtro de fechas</h3>
+  <p>Disponible en la <b>gestión global</b> (KPIs y columnas "Compras del periodo") y en el <b>informe del proveedor</b> (KPIs y tabla de compras). Presets:</p>
+  <ul>
+    <li><b>Hoy</b> — del día actual</li>
+    <li><b>Esta semana</b> — del lunes a hoy</li>
+    <li><b>Este mes</b> — del día 1 a hoy <span class="muted">(por defecto en la gestión)</span></li>
+    <li><b>Mes pasado</b> — el mes calendario anterior completo</li>
+    <li><b>Este año</b> — del 1 de enero a hoy</li>
+    <li><b>Todo</b> — sin filtro <span class="muted">(por defecto en el informe)</span></li>
+    <li>O escribe un <b>rango personalizado</b> en los inputs Desde/Hasta.</li>
+  </ul>
+</div>
+
+<!-- ======================= 15 FACTURAS DE COMPRA ======================= -->
 <div class="page section" id="facturas-compra">
-  <div class="sectitle"><span class="secnum">13</span><h2 style="margin:0">Facturas de compra / por pagar</h2></div>
+  <div class="sectitle"><span class="secnum">15</span><h2 style="margin:0">Facturas de compra</h2></div>
   <p class="lead">El registro de tus compras y el control de lo que <b>debes a proveedores</b>.</p>
 
   <ul>
@@ -672,9 +915,9 @@
   </div>
 </div>
 
-<!-- ======================= 14 GASTOS ======================= -->
+<!-- ======================= 16 GASTOS ======================= -->
 <div class="page section" id="gastos">
-  <div class="sectitle"><span class="secnum">14</span><h2 style="margin:0">Gastos</h2></div>
+  <div class="sectitle"><span class="secnum">16</span><h2 style="margin:0">Gastos</h2></div>
   <p class="lead">Registra las salidas de dinero que no son compra de mercancía: arriendo, servicios, transporte, etc.</p>
 
   <ol class="steps">
@@ -688,50 +931,44 @@
     Registrar gastos hace que tu <b>utilidad real</b> y el <b>cierre de caja</b> sean correctos. Si gastas de la caja y no lo anotas, el cierre no cuadrará.
   </div>
   <div class="callout c-info">
-    <span class="lbl">Categoría especial “Productos”</span>
+    <span class="lbl">Categoría especial "Productos"</span>
     Si eliges la categoría <b>Productos</b>, el gasto se convierte en una <b>baja de inventario</b>: buscas los productos dañados/vencidos, indicas la cantidad y el sistema <b>descuenta su stock</b> y registra el costo como gasto.
   </div>
 </div>
 
-<!-- ======================= 15 CIERRE ======================= -->
+<!-- ======================= 17 CIERRE ======================= -->
 <div class="page section" id="cierre">
-  <div class="sectitle"><span class="secnum">15</span><h2 style="margin:0">Cierre de Caja</h2></div>
+  <div class="sectitle"><span class="secnum">17</span><h2 style="margin:0">Cierre de Caja</h2></div>
   <p class="lead">Al final del turno o del día, cuadra la caja: cuánto se vendió, en qué medios, gastos, compras y la utilidad.</p>
 
   <ol class="steps">
     <li>Abre <b>Cierre de Caja</b>. Por defecto toma el día de hoy (puedes elegir otra fecha o rango).</li>
-    <li>Si trabajan <b>varios cajeros</b>, elige tu nombre en <b>Cajero</b> (o deja "Todos los cajeros" para el consolidado).</li>
-    <li>Revisa el resumen: <b>ventas por medio de pago</b> (efectivo, tarjeta, transferencia…), <b>abonos de crédito</b> cobrados, <b>gastos</b>, <b>compras</b> y la <b>utilidad</b>.</li>
+    <li>Si trabajan <b>varios cajeros</b>, elige tu nombre en el filtro <b>Cajero</b> (o deja "Todos los cajeros" para el consolidado).</li>
+    <li>Revisa el resumen: <b>ventas por medio de pago</b>, <b>abonos de crédito</b> cobrados, <b>gastos</b>, <b>compras</b> y la <b>utilidad</b>.</li>
     <li>Cuenta el efectivo físico y compáralo con el efectivo esperado.</li>
-    <li><b>Imprime</b> el cierre en ticket 80 mm o en PDF Carta para tu archivo (incluye el nombre del cajero).</li>
+    <li><b>Imprime</b> el cierre en ticket 80 mm o en PDF Carta (incluye el nombre del cajero).</li>
   </ol>
 
   <h3>Cierre por cajero</h3>
-  <p>Cada venta, abono, gasto y compra guarda <b>quién lo registró</b>. Con el filtro <b>Cajero</b> arriba, cada persona saca <b>su propio cierre</b>: solo sus movimientos, su efectivo esperado y su utilidad. El inventario se muestra completo (es del negocio, no de un cajero).</p>
-
-  <div class="callout c-tip">
-    <span class="lbl">Varios cajeros en computadores distintos</span>
-    Si dos cajeros venden a la vez, cada uno en su equipo, todo se separa solo: cada venta queda marcada con el cajero que tiene la sesión iniciada en ese computador. Cada quien elige su nombre y obtiene su cierre, aunque ambos estén vendiendo al mismo tiempo.
-  </div>
-
-  <div class="callout c-warn">
-    <span class="lbl">Ventas anteriores</span>
-    Las ventas hechas <b>antes</b> de activar esta función no tienen cajero asignado, así que solo aparecen con el filtro en <b>"Todos los cajeros"</b>.
-  </div>
+  <p>Cada venta, abono, gasto y compra guarda <b>quién lo registró</b>. Con el filtro <b>Cajero</b>, cada persona saca <b>su propio cierre</b>: solo sus movimientos, su efectivo esperado y su utilidad. El inventario se muestra completo (es del negocio, no de un cajero).</p>
 
   <div class="callout c-info">
     <span class="lbl">El crédito no infla la caja</span>
     Las ventas a crédito <b>no se cuentan como efectivo</b> en el cierre. Solo entran a la caja los <b>abonos</b> el día en que se reciben. Así el efectivo esperado refleja lo que de verdad debe haber en el cajón.
   </div>
+  <div class="callout c-tip">
+    <span class="lbl">Varios cajeros vendiendo a la vez</span>
+    Si dos cajeros venden a la vez en computadores distintos, todo se separa solo: cada venta queda marcada con el cajero de la sesión activa en ese computador. Cada quien elige su nombre y obtiene su cierre, aunque ambos estén vendiendo al mismo tiempo.
+  </div>
 </div>
 
-<!-- ======================= 16 REPORTES ======================= -->
+<!-- ======================= 18 REPORTES ======================= -->
 <div class="page section" id="reportes">
-  <div class="sectitle"><span class="secnum">16</span><h2 style="margin:0">Reportes</h2></div>
+  <div class="sectitle"><span class="secnum">18</span><h2 style="margin:0">Reportes</h2></div>
   <p class="lead">Una mirada más amplia al negocio: ventas por periodo, productos más vendidos, utilidades y saldos.</p>
 
   <ul>
-    <li>Elige el <b>periodo</b> (día, semana, mes o rango).</li>
+    <li>Elige el <b>periodo</b> (día, semana, mes o rango personalizado).</li>
     <li>Consulta totales de <b>ventas</b>, <b>utilidad</b>, <b>cuentas por cobrar</b> y más.</li>
     <li>Genera un <b>informe financiero en PDF</b> o exporta a <b>CSV</b> para Excel.</li>
   </ul>
@@ -742,15 +979,15 @@
   </div>
 </div>
 
-<!-- ======================= 17 CONFIG ======================= -->
+<!-- ======================= 19 CONFIG ======================= -->
 <div class="page section" id="config">
-  <div class="sectitle"><span class="secnum">17</span><h2 style="margin:0">Configuración</h2></div>
-  <p class="lead">Solo para el <b>administrador</b>. Aquí ajustas cómo se comporta el sistema y los datos de tu negocio.</p>
+  <div class="sectitle"><span class="secnum">19</span><h2 style="margin:0">Configuración</h2></div>
+  <p class="lead">Solo para el <b>administrador</b>. Ajustas cómo se comporta el sistema y los datos de tu negocio.</p>
 
   <table class="ref">
-    <tr><th>Sección</th><th>Para qué sirve</th></tr>
-    <tr><td><b>Facturación electrónica (DIAN)</b></td><td>Datos del emisor (tu empresa), resolución de numeración y activación. <span class="muted">Ver sección 19.</span></td></tr>
-    <tr><td><b>Datos para la factura</b></td><td>Nombre del negocio, NIT, dirección, teléfono y mensaje del pie que salen en el ticket.</td></tr>
+    <tr><th style="width:30%">Sección</th><th>Para qué sirve</th></tr>
+    <tr><td><b>Facturación electrónica (DIAN)</b></td><td>Datos del emisor (tu empresa), resolución de numeración y activación. Ver sección 21.</td></tr>
+    <tr><td><b>Datos para la factura</b></td><td>Nombre del negocio, NIT, dirección, teléfono y mensajes del pie del ticket.</td></tr>
     <tr><td><b>Lector de código de barras</b></td><td>Ajustes de la pistola lectora.</td></tr>
     <tr><td><b>Cajón de dinero</b></td><td>Activarlo y conectarlo para que <b>se abra solo</b> al confirmar una venta. Botón de prueba incluido.</td></tr>
     <tr><td><b>Impresora predeterminada</b></td><td>Define la impresora térmica para los tickets.</td></tr>
@@ -760,7 +997,7 @@
     <tr><td><b>Datos del sistema</b></td><td>Borrado selectivo de datos (con cuidado).</td></tr>
   </table>
 
-  <div class="callout c-warn">
+  <div class="callout c-danger">
     <span class="lbl">Cuidado con borrar</span>
     Las opciones de borrado son irreversibles y afectan también la nube. Haz un <b>respaldo</b> antes de usarlas.
   </div>
@@ -768,54 +1005,48 @@
     <span class="lbl">Diseño del ticket</span>
     El diseño del ticket (logo, tamaño, textos) se personaliza desde el <b>editor de plantilla</b>, accesible al imprimir desde Ventas / Reportes.
   </div>
-
-  <div class="callout c-info">
-    <span class="lbl">Numeración por cajero</span>
-    El prefijo de numeración de las facturas (A, B, C…) <b>ya no se configura aquí</b>: lo asigna el administrador a <b>cada cajero</b> desde <b>Usuarios</b>. Así la serie viaja con la persona aunque cambie de computador. Ver la sección 18.
-  </div>
 </div>
 
-<!-- ======================= 18 USUARIOS ======================= -->
+<!-- ======================= 20 USUARIOS ======================= -->
 <div class="page section" id="usuarios">
-  <div class="sectitle"><span class="secnum">18</span><h2 style="margin:0">Usuarios y permisos</h2></div>
-  <p class="lead">Solo para el <b>administrador</b>. Crea las cuentas de tu equipo y decide qué puede hacer cada uno.</p>
+  <div class="sectitle"><span class="secnum">20</span><h2 style="margin:0">Usuarios y permisos</h2></div>
+  <p class="lead">Solo para el <b>administrador</b>. Crea las cuentas de tu equipo, decide qué puede hacer cada uno y asigna sus prefijos de numeración.</p>
 
   <ol class="steps">
     <li>Pulsa <b>Nuevo usuario</b>: nombre, usuario, contraseña y rol (administrador o cajero).</li>
     <li>Asigna el <b>prefijo de numeración</b> del cajero (ver abajo).</li>
     <li>Con <b>Permisos</b> activas o desactivas módulos y acciones para ese usuario.</li>
-    <li>En <b>Cambiar código de autorización</b> defines el código que se pide para las acciones restringidas.</li>
+    <li>En <b>Cambiar código de autorización</b> defines el código que se pide para acciones restringidas.</li>
   </ol>
 
   <h3>Prefijo de numeración por cajero</h3>
-  <p>Cada cajero tiene un <b>prefijo</b> propio (A, B, C…) que define la serie de sus facturas. Lo asigna el administrador en el formulario del usuario. Así, las ventas de cada quien se numeran en series separadas y <b>nunca se repiten</b>, aunque dos cajeros vendan al mismo tiempo o cambien de computador.</p>
+  <p>Cada cajero tiene un <b>prefijo</b> propio (A, B, C…) que define la serie de sus facturas:</p>
   <table class="ref">
     <tr><th>Cajero</th><th>Prefijo</th><th>Numera sus facturas como…</th></tr>
-    <tr><td>Juan</td><td><b>A</b></td><td>A-0001, A-0002, A-0003…</td></tr>
-    <tr><td>María</td><td><b>B</b></td><td>B-0001, B-0002, B-0003…</td></tr>
+    <tr><td>Juan</td><td><b>A</b></td><td>A-0001, A-0002…</td></tr>
+    <tr><td>María</td><td><b>B</b></td><td>B-0001, B-0002…</td></tr>
     <tr><td><span class="muted">Sin prefijo</span></td><td><span class="muted">—</span></td><td>V-0001, V-0002… <span class="muted">(serie por defecto)</span></td></tr>
   </table>
 
   <div class="callout c-key">
     <span class="lbl">La clave del multi-caja</span>
-    Como el prefijo viaja con la <b>persona</b> (no con el equipo), <b>Juan</b> numerará siempre <b>A-####</b> esté en el computador que esté. Dale un prefijo <b>distinto a cada cajero</b> y listo.
+    El prefijo viaja con la <b>persona</b> (no con el equipo). Juan siempre numerará <b>A-####</b> esté en el computador que esté. Dale un prefijo <b>distinto a cada cajero</b> y los folios nunca se repiten.
   </div>
-
   <div class="callout c-info">
     <span class="lbl">Buenas prácticas</span>
     Dale a cada cajero su propia cuenta (no compartan usuario). Así sabrás <b>quién</b> hizo cada venta, cada uno tendrá su serie de facturas y su propio cierre, y mantendrás el código de autorización solo con el administrador.
   </div>
 </div>
 
-<!-- ======================= 19 FE ======================= -->
+<!-- ======================= 21 FE ======================= -->
 <div class="page section" id="fe">
-  <div class="sectitle"><span class="secnum">19</span><h2 style="margin:0">Facturación electrónica (DIAN)</h2></div>
+  <div class="sectitle"><span class="secnum">21</span><h2 style="margin:0">Factura electrónica (DIAN)</h2></div>
   <p class="lead">PosPunto está preparado para emitir <b>factura electrónica</b> ante la DIAN a través de un proveedor tecnológico (Factus).</p>
 
   <h3>Cómo funcionará</h3>
   <ul>
     <li>En <b>Configuración → Facturación electrónica</b> el administrador carga los <b>datos del emisor</b> y la <b>resolución de numeración</b>, y activa la función.</li>
-    <li>En el cobro, una <b>casilla</b> permite marcar la venta como factura electrónica; el sistema toma el <b>consecutivo correcto</b> de forma automática.</li>
+    <li>En el cobro, una <b>casilla</b> permite marcar la venta como factura electrónica; el sistema toma el <b>consecutivo correcto</b> automáticamente.</li>
     <li>La emisión es <b>real ante la DIAN</b>: la factura recibe su <b>CUFE</b> y código QR oficiales, que se imprimen en el ticket.</li>
   </ul>
 
@@ -825,22 +1056,12 @@
   </div>
 </div>
 
-<!-- ======================= 20 FAQ ======================= -->
+<!-- ======================= 22 FAQ ======================= -->
 <div class="page section" id="faq">
-  <div class="sectitle"><span class="secnum">20</span><h2 style="margin:0">Atajos y preguntas frecuentes</h2></div>
+  <div class="sectitle"><span class="secnum">22</span><h2 style="margin:0">Preguntas frecuentes</h2></div>
 
-  <h3>Atajos de teclado</h3>
-  <table class="ref">
-    <tr><th>Tecla</th><th>Acción</th></tr>
-    <tr><td><kbd>Enter</kbd></td><td>Confirmar (agregar producto, guardar, cobrar).</td></tr>
-    <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Moverte por la lista de productos del buscador.</td></tr>
-    <tr><td><kbd>Esc</kbd></td><td>Cerrar la lista, el cuadro abierto o limpiar el buscador.</td></tr>
-    <tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Imprimir / guardar como PDF (este manual también).</td></tr>
-  </table>
-
-  <h3>Preguntas frecuentes</h3>
   <h4>Se fue el internet, ¿puedo seguir vendiendo?</h4>
-  <p>Sí. PosPunto guarda todo en el equipo y sigue funcionando. Cuando vuelva la conexión, se sincroniza solo. Verás el indicador pasar de <b>Sin conexión</b> a <b>Sincronizado</b>.</p>
+  <p>Sí. PosPunto guarda todo en el equipo y sigue funcionando. Cuando vuelva la conexión, se sincroniza solo. El punto verde junto al logo vuelve a aparecer.</p>
 
   <h4>Vendí algo mal, ¿cómo lo corrijo?</h4>
   <p>Ve a <b>Facturas</b>, abre el menú <b>⋮</b> de esa venta y elige <b>Editar</b> para cambiar productos, o <b>Eliminar</b> para anularla (devuelve el stock). Requiere ser administrador o ingresar el código de autorización.</p>
@@ -848,26 +1069,35 @@
   <h4>Un cliente abona su deuda, ¿dónde lo registro?</h4>
   <p>En <b>Cuentas por cobrar</b>, busca la venta y pulsa <b>Abonar</b>. El abono entra a la caja de ese día.</p>
 
-  <h4>Tengo dos cajeros vendiendo a la vez, ¿se enredan los números o el cierre?</h4>
-  <p>No, si cada cajero tiene su <b>prefijo</b>. El administrador se lo asigna en <b>Usuarios</b> (A, B…) y sus facturas irán en series separadas (<b>A-0001</b>, <b>B-0001</b>…) sin repetirse, sin importar en qué computador esté cada uno. Para el cierre, cada cajero elige <b>su nombre</b> en el filtro <b>Cajero</b> y obtiene solo lo suyo. El inventario es compartido y se actualiza en vivo entre las cajas.</p>
-
   <h4>¿Por qué el cierre no cuenta una venta a crédito como efectivo?</h4>
   <p>Porque el dinero aún no ha entrado. Solo cuenta cuando el cliente <b>abona</b>. Así el efectivo esperado del cierre coincide con el real.</p>
+
+  <h4>Tengo dos cajeros vendiendo a la vez, ¿se enredan los números o el cierre?</h4>
+  <p>No, si cada cajero tiene su <b>prefijo</b>. El administrador se lo asigna en <b>Usuarios</b> (A, B…) y sus facturas irán en series separadas (<b>A-0001</b>, <b>B-0001</b>…) sin repetirse, sin importar en qué computador esté cada uno. Para el cierre, cada cajero elige <b>su nombre</b> en el filtro Cajero y obtiene solo lo suyo.</p>
+
+  <h4>El cliente pagó parte en Daviplata y parte en efectivo, ¿cómo lo registro?</h4>
+  <p>Usa <b>Mixto</b> (atajo <kbd>M</kbd>). Verás 4 líneas; pulsa <kbd>E</kbd> y escribe el efectivo, luego <kbd>D</kbd> y escribe lo de Daviplata, hasta que "Recibido" iguale el total. Confirma.</p>
 
   <h4>El stock no me cuadra.</h4>
   <p>Usa <b>Inventario → Conteo físico</b> para contar y dejar el stock igual a lo real. Revisa también el <b>Kardex</b> del producto para ver qué movimientos lo afectaron.</p>
 
+  <h4>¿Cómo veo cuánto le he comprado a un proveedor en el último mes?</h4>
+  <p>En <b>Compras → Proveedores</b>, elige el preset <b>Este mes</b> y la columna "Compras del periodo" te da el total por cada uno. Para el detalle pulsa <b>👁 Ver compras</b>.</p>
+
   <h4>¿Cómo hago una copia de seguridad?</h4>
   <p>En <b>Configuración → Respaldo</b> exporta el archivo. Guárdalo en un lugar seguro; sirve para restaurar si cambias de equipo.</p>
 
-  <div class="callout c-tip" style="margin-top:26px">
+  <h4>Después de un deploy, un módulo no carga.</h4>
+  <p>Pulsa <kbd>Ctrl</kbd>+<kbd>F5</kbd> una vez para forzar la descarga de la versión nueva. El sistema lo detecta y recarga solo en la mayoría de los casos.</p>
+
+  <div class="callout c-success" style="margin-top:30px">
     <span class="lbl">Consejo final</span>
-    Manténlo simple cada día: <b>vende</b> bien, <b>registra los gastos</b>, <b>cobra</b> los créditos y haz tu <b>cierre</b>. Con eso, los reportes y el inventario se mantienen sanos solos.
+    Manténlo simple cada día: <b>vende</b> bien (atajos F2 y F9), <b>registra los gastos</b>, <b>cobra</b> los créditos y haz tu <b>cierre</b>. Con eso, los reportes y el inventario se mantienen sanos solos.
   </div>
 </div>
 
 <footer>
-  PosPunto · Manual de uso — documento de referencia para el operador. &nbsp;|&nbsp; Para exportar a PDF: <kbd>Ctrl</kbd>+<kbd>P</kbd> → «Guardar como PDF».
+  PosPunto · Manual de uso — Edición Junio 2026. &nbsp;|&nbsp; Para exportar a PDF: <kbd>Ctrl</kbd>+<kbd>P</kbd> → «Guardar como PDF».
 </footer>
 
 </body>
