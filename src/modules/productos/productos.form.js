@@ -5,6 +5,7 @@
 import * as Repo from './productos.repo.js';
 import { Modal, Toast } from '../../components/index.js';
 import { esc } from '../../core/strings.js';
+import { money, num } from '../../core/format.js';
 import { refrescarIconos } from '../../app/shell.js';
 
 export async function abrir(opciones = {}) {
@@ -71,6 +72,8 @@ function construirFormulario(datos) {
         ${campo('prod-precio', 'Precio de venta', 'number', datos.precio, '0', true)}
         ${campo('prod-costo', 'Costo', 'number', datos.costo, '0')}
       </div>
+
+      <div id="prod-utilidad" style="display:none;border-radius:10px;padding:11px 14px;font-size:13.5px;font-weight:600;align-items:center;gap:10px"></div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
         ${campo('prod-stock', 'Stock actual', 'number', datos.stock, '0')}
@@ -174,6 +177,59 @@ function configurarEventos(formEl, datosIniciales, modal, opciones) {
     if (inp) inp.addEventListener('input', validarUI);
   });
   validarUI();
+
+  // ----- Indicador de utilidad en vivo (al cambiar precio o costo) -----
+  const utBox = formEl.querySelector('#prod-utilidad');
+  function recalcularUtilidad() {
+    if (!utBox) return;
+    const precio = num(inputs.precio?.value);
+    const costo  = num(inputs.costo?.value);
+    if (precio <= 0) {
+      utBox.style.display = 'none';
+      return;
+    }
+    if (costo <= 0) {
+      utBox.style.display = 'flex';
+      utBox.style.background = '#f1f5f9';
+      utBox.style.border = '1px solid #e2e8f0';
+      utBox.style.color = '#475569';
+      utBox.innerHTML = `<span>Ingresa el <b>costo</b> para ver la utilidad y el margen.</span>`;
+      return;
+    }
+    const utilidad = precio - costo;
+    const margenVenta = (utilidad / precio) * 100;      // sobre precio venta
+    const markupCosto = (utilidad / costo) * 100;       // sobre costo
+    utBox.style.display = 'flex';
+    if (utilidad > 0) {
+      utBox.style.background = '#f0fdf4';
+      utBox.style.border = '1px solid #bbf7d0';
+      utBox.style.color = '#166534';
+      utBox.innerHTML = `
+        <span style="font-size:18px">📈</span>
+        <span>Ganas <b>${money(utilidad)}</b> por unidad</span>
+        <span style="color:#15803d;margin-left:auto;display:flex;gap:14px;font-weight:700">
+          <span title="Utilidad sobre el precio de venta">Margen ${margenVenta.toFixed(1)}%</span>
+          <span title="Cuánto te rinde sobre lo que pagaste" style="color:#0f766e">Markup ${markupCosto.toFixed(1)}%</span>
+        </span>
+      `;
+    } else if (utilidad === 0) {
+      utBox.style.background = '#fffbeb';
+      utBox.style.border = '1px solid #fde68a';
+      utBox.style.color = '#92400e';
+      utBox.innerHTML = `<span style="font-size:18px">⚖️</span><span>Sin utilidad — vendes al costo.</span>`;
+    } else {
+      utBox.style.background = '#fef2f2';
+      utBox.style.border = '1px solid #fecaca';
+      utBox.style.color = '#991b1b';
+      utBox.innerHTML = `
+        <span style="font-size:18px">⚠</span>
+        <span>Pérdida de <b>${money(-utilidad)}</b> por unidad — el costo es mayor que el precio de venta.</span>
+      `;
+    }
+  }
+  inputs.precio?.addEventListener('input', recalcularUtilidad);
+  inputs.costo?.addEventListener('input', recalcularUtilidad);
+  recalcularUtilidad();
 
   Object.values(inputs).forEach((inp) => {
     // El campo de barras se maneja aparte: su Enter viene de la pistola y
