@@ -65,6 +65,15 @@ export async function registrar(datos) {
 
   if (items.length === 0) throw new Error('La compra no tiene items');
 
+  // Costo que tenía cada producto ANTES de esta compra: si la compra se
+  // borra, se le devuelve (sin esto un costo mal digitado quedaba pegado
+  // al producto aunque se eliminara la compra).
+  for (const it of items) {
+    if (!it.producto_id) continue;
+    const prod = await db.get(TABLA_PRODUCTOS, it.producto_id);
+    if (prod) it.costo_anterior = Number(prod.costo) || 0;
+  }
+
   const total = items.reduce((s, it) => s + it.subtotal, 0);
   const tipoPago = datos.tipoPago === 'credito' ? 'credito' : 'contado';
   const abonoIni = Number(datos.abonoInicial) || 0;
@@ -187,7 +196,9 @@ export async function abonar(compraId, abono) {
 }
 
 /**
- * Elimina una compra y devuelve el stock al inventario.
+ * Elimina una compra, devuelve el stock al inventario y, si la compra
+ * fue la última en fijar el costo del producto, le devuelve el costo
+ * que tenía antes.
  */
 export async function eliminar(id) {
   const compra = await db.get(TABLA, id);
@@ -196,9 +207,19 @@ export async function eliminar(id) {
   for (const it of compra.items || []) {
     if (!it.producto_id) continue;
     try {
+      // Solo si el producto conserva el costo que puso esta compra: si
+      // después hubo otra compra o una edición, ese costo manda.
+      // Compras viejas (sin costo_anterior) dejan el costo como está.
+      const opts = {};
+      if (it.costo_anterior != null) {
+        const prod = await db.get(TABLA_PRODUCTOS, it.producto_id);
+        if (prod && Number(prod.costo) === Number(it.costo)) {
+          opts.costo = Number(it.costo_anterior) || 0;
+        }
+      }
       // Permitir negativo (igual que Ventas): si ya se vendió parte de
       // esta mercancía, recortar a 0 inflaría el inventario en silencio.
-      await Sync.ajustarStock(it.producto_id, -(Number(it.cantidad) || 0));
+      await Sync.ajustarStock(it.producto_id, -(Number(it.cantidad) || 0), opts);
     } catch (e) {
       console.warn('Error revirtiendo stock:', e);
     }

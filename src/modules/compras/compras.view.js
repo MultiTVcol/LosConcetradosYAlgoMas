@@ -470,13 +470,31 @@ function pintarItemsCompra() {
 //  MODAL: CANTIDAD / COSTO AL AGREGAR A COMPRA
 // ============================================================
 
+/**
+ * Texto de advertencia si el costo parece mal digitado (mayor que el
+ * precio de venta o más del triple del último costo), o '' si se ve bien.
+ * Un dígito de más o un decimal mal escrito ("724,125" se lee $724.125)
+ * deja el costo pegado al producto y cada venta sale con pérdida.
+ */
+function avisoCostoSospechoso(p, costo) {
+  const precio = Number(p.precio) || 0;
+  const ultimo = Number(p.costo) || 0;
+  const motivos = [];
+  if (precio > 0 && costo > precio) motivos.push(`es mayor que el precio de venta (${money(precio)})`);
+  if (ultimo > 0 && costo > ultimo * 3) motivos.push(`es ${fmt(Math.round(costo / ultimo))} veces el último costo (${money(ultimo)})`);
+  if (motivos.length === 0) return '';
+  return `El costo ${money(costo)} de "${p.nombre}" ${motivos.join(' y ')}. Si quedó así por error, cada venta de este producto saldrá con pérdida en los reportes. ¿Es correcto?`;
+}
+
 function abrirModalCantidadCompra(prodId) {
   const p = _productos.find((x) => x.id === prodId);
   if (!p) return;
 
   const yaEn = _items.find((it) => it.producto_id === prodId);
   const cant = yaEn ? yaEn.cantidad : 1;
-  const costo = yaEn ? yaEn.costo : (Number(p.costo) || 0);
+  // El campo de costo solo admite enteros (formato de miles): un costo con
+  // decimales como 724.125 perdía el punto y se precargaba como $724.125.
+  const costo = Math.round(yaEn ? yaEn.costo : (Number(p.costo) || 0));
 
   const contenido = `
     <div style="text-align:left">
@@ -529,11 +547,25 @@ function abrirModalCantidadCompra(prodId) {
   setTimeout(() => { inpC.select(); inpC.focus(); }, 60);
 
   m.body.querySelector('#comp-mc-cancelar').onclick = () => m.cerrar();
-  m.body.querySelector('#comp-mc-aceptar').onclick = () => {
+  let confirmando = false;
+  m.body.querySelector('#comp-mc-aceptar').onclick = async () => {
+    if (confirmando) return;
     const c = Math.max(0, num(inpC.value));
     const k = Math.max(0, num(inpK.value));
     if (c <= 0) { Toast.warn('La cantidad debe ser mayor a cero'); return; }
     if (k <= 0) { Toast.warn('El costo debe ser mayor a cero'); return; }
+
+    const aviso = avisoCostoSospechoso(p, k);
+    if (aviso) {
+      confirmando = true;
+      const ok = await Confirm.peligro(aviso, {
+        titulo: 'Revisa el costo',
+        textoConfirmar: 'Sí, es correcto',
+        textoCancelar: 'Corregir',
+      });
+      confirmando = false;
+      if (!ok) { setTimeout(() => { inpK.focus(); inpK.select(); }, 60); return; }
+    }
 
     if (yaEn) {
       yaEn.cantidad = c;

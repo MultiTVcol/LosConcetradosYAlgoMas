@@ -582,7 +582,7 @@ async function eliminar(id) {
   const c = _compras.find((x) => x.id === id);
   if (!c) return;
   const ok = await Confirm.peligro(
-    `¿Eliminar esta compra? Se restará del inventario lo que se había sumado (${(c.items || []).length} producto(s)).`,
+    `¿Eliminar esta compra? Se restará del inventario lo que se había sumado (${(c.items || []).length} producto(s)) y cada producto vuelve al costo que tenía antes de esta compra.`,
     { titulo: 'Eliminar compra', textoConfirmar: 'Eliminar' },
   );
   if (!ok) return;

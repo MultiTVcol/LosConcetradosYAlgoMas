@@ -564,6 +564,9 @@ export async function actualizar(id, itemsNuevos, motivo = '') {
     subtotal: totales.subtotal,
     impuesto: totales.impuesto,
     total: totales.total,
+    // La utilidad también cambia con la edición; sin esto quedaba la de la
+    // venta original y los reportes no cuadraban con el total nuevo.
+    utilidad: totales.utilidad,
     ediciones,
   };
 
