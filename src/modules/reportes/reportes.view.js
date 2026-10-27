@@ -1,7 +1,11 @@
 /**
  * modules/reportes/reportes.view.js — Vista del módulo Reportes
  *
- * Replica de renderReportes del legacy:
+ * Carga los datos y muestra el menú de módulos (reportes-modulos.view.js).
+ * Desde el menú se entra a cada módulo o al "Informe financiero general",
+ * que es la vista clásica descrita abajo.
+ *
+ * Informe financiero general (réplica de renderReportes del legacy):
  *   - KPIs de utilidad: día / semana / mes / año
  *   - Reporte por rango con presets
  *   - Tarjetas resumen: Ventas / Compras / Gastos / Utilidad neta
@@ -26,6 +30,7 @@ import { money, fmt, num } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { todayISO } from '../../core/dates.js';
 import { refrescarIconos } from '../../app/shell.js';
+import * as Modulos from './reportes-modulos.view.js';
 
 // ============================================================
 //  ESTADO
@@ -39,6 +44,7 @@ let _productos = [];
 let _clientes = [];
 let _estado = { desde: '', hasta: '', preset: 'mes' };
 let _offRealtime = null;
+let _vista = 'menu';
 
 // ============================================================
 //  RENDER
@@ -59,11 +65,8 @@ export async function render(contenedor) {
 
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
-  contenedor.innerHTML = htmlLayout();
-  refrescarIconos(contenedor);
-  adjuntarEventos(contenedor);
-  pintarReporteRango();
-  pintarGraficos();
+  _vista = 'menu';
+  mostrar('menu');
 
   // Realtime: refrescar reportes cuando llegan cambios remotos
   _offRealtime = Realtime.escucharVarias(
@@ -75,11 +78,53 @@ export async function render(contenedor) {
         _gastos = await GastosRepo.listar();
         _productos = await ProductosRepo.listar();
         _clientes = await ClientesRepo.listar();
-        pintarReporteRango();
-        pintarGraficos();
+        // Si el usuario ya salió de Reportes, el contenedor es de otro módulo
+        if (!_contenedor || !_contenedor.querySelector('[data-reportes]')) return;
+        if (_vista === 'general') {
+          pintarReporteRango();
+          pintarGraficos();
+        } else {
+          Modulos.refrescar(ctxModulos());
+        }
       } catch (err) { console.warn('Realtime reportes:', err); }
     },
   );
+}
+
+// ============================================================
+//  NAVEGACIÓN ENTRE MÓDULOS
+// ============================================================
+
+function ctxModulos() {
+  return {
+    contenedor: _contenedor,
+    datos: { ventas: _ventas, compras: _compras, gastos: _gastos, productos: _productos },
+    navegar: mostrar,
+    abrirPlantilla: (tipo) => EditorPlantilla.abrir(tipo),
+  };
+}
+
+/** 'menu' | 'ventas' | 'utilidades' | 'productos' | 'compras' | 'general' */
+function mostrar(vista) {
+  _vista = vista;
+  if (vista === 'general') {
+    _contenedor.innerHTML = `
+      <div data-reportes style="padding:24px 40px 0">
+        <button id="rep-volver" style="background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#2563eb;display:inline-flex;gap:4px;align-items:center">
+          <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Módulos de reportes
+        </button>
+      </div>
+      ${htmlLayout().replace('padding:32px 40px', 'padding:12px 40px 32px')}`;
+    refrescarIconos(_contenedor);
+    adjuntarEventos(_contenedor);
+    _contenedor.querySelector('#rep-volver')?.addEventListener('click', () => mostrar('menu'));
+    pintarReporteRango();
+    pintarGraficos();
+  } else {
+    Modulos.render(ctxModulos(), vista);
+  }
+  _contenedor.scrollTop = 0;
+  window.scrollTo?.(0, 0);
 }
 
 // ============================================================
