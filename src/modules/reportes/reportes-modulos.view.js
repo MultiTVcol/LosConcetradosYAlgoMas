@@ -247,7 +247,8 @@ const pctTxt = (n, dec = 1) => `${n.toLocaleString('es-CO', { minimumFractionDig
 
 function delta(actual, anterior, invertir = false) {
   if (!anterior) return '';
-  const d = (actual / anterior - 1) * 100;
+  // Sobre el valor absoluto: así una pérdida que se achica cuenta como mejora
+  const d = (actual - anterior) / Math.abs(anterior) * 100;
   if (!isFinite(d)) return '';
   const bueno = invertir ? d <= 0 : d >= 0;
   return `<span style="color:${bueno ? C.verde : C.rojo};font-weight:700">${d >= 0 ? '▲' : '▼'} ${pctTxt(Math.abs(d))}</span>`;
