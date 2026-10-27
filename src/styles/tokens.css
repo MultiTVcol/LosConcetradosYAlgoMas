@@ -13,35 +13,51 @@
 
 :root {
   /* ============================================================
-     PALETA — Neutros zinc con acentos refinados (estilo Stripe/Linear)
+     PALETA — Los Concentrados y Algo Más: café bulto, naranja, crema
      ============================================================ */
 
+  /* Marca */
+  --cafe-900:     #24160D;
+  --cafe-800:     #33200F;
+  --cafe-700:     #4A2E1A;
+  --cafe-600:     #6B4528;
+  --cafe-100:     #F3E8DC;
+  --cafe-50:      #F8F1E8;
+  --naranja:      #EE7623;     /* Solo COBRAR, lo activo y lo destacado */
+  --naranja-d:    #D9620F;
+  --naranja-soft: #FDE9DA;
+  --maiz:         #F5B82E;
+
+  /* Tipografía */
+  --font-ui:      'Figtree', system-ui, -apple-system, sans-serif;
+  --font-marca:   'Fredoka', 'Figtree', sans-serif;
+
   /* Fondos */
-  --bg:           #f8fafc;
+  --bg:           #FAF6EF;
   --surface:      #ffffff;
-  --surface-2:    #f1f5f9;
-  --surface-3:    #e2e8f0;
+  --surface-2:    #F2EBE0;
+  --surface-3:    #EADFD0;
 
   /* Texto */
-  --text:         #0f172a;     /* Casi negro — alto contraste para legibilidad */
-  --text-soft:    #1e293b;     /* Texto secundario aún legible */
-  --muted:        #475569;     /* Subido de #71717a → ya no es "gris fantasma" */
-  --muted-soft:   #64748b;
+  --text:         #2A1A10;     /* Casi negro — alto contraste para legibilidad */
+  --text-soft:    #33200F;     /* Texto secundario aún legible */
+  --muted:        #5C4636;     /* Subido de #71717a → ya no es "gris fantasma" */
+  --muted-soft:   #7D6858;
 
-  /* Primario — Azul corporativo (estilo Stripe/Linear) */
-  --primary:      #2563eb;
-  --primary-d:    #1d4ed8;
-  --primary-soft: #eff6ff;
-  --primary-ring: rgba(37, 99, 235, .15);
+  /* Primario — Café */
+  --primary:      #4A2E1A;
+  --primary-d:    #33200F;
+  --primary-soft: #F8F1E8;
+  --primary-ring: rgba(74, 46, 26, .15);
 
-  /* Acento secundario — Cyan */
-  --accent:       #0ea5e9;
-  --accent-d:     #0284c7;
-  --accent-soft:  #f0f9ff;
+  /* Acento — Naranja */
+  --accent:       #EE7623;
+  --accent-d:     #D9620F;
+  --accent-soft:  #FDE9DA;
 
   /* Bordes con presencia (no fantasmas) */
-  --border:        #e2e8f0;
-  --border-strong: #cbd5e1;
+  --border:        #EADFD0;
+  --border-strong: #DCCFBE;
 
   /* ============================================================
      ESTADOS SEMÁNTICOS
@@ -57,8 +73,8 @@
   --warn:         #d97706;
   --warn-soft:    #fffbeb;
 
-  --info:         #2563eb;
-  --info-soft:    #eff6ff;
+  --info:         #4A2E1A;
+  --info-soft:    #F8F1E8;
 
   --edit:         #ca8a04;
   --edit-soft:    #fefce8;
@@ -66,12 +82,12 @@
   /* ============================================================
      SOMBRAS — Layered, estilo Stripe/Notion (no minimalismo extremo)
      ============================================================ */
-  --shadow-xs:    0 1px 2px rgba(15, 23, 42, .06);
-  --shadow-sm:    0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .05);
-  --shadow-md:    0 4px 6px -1px rgba(15, 23, 42, .08), 0 2px 4px -2px rgba(15, 23, 42, .06);
-  --shadow-lg:    0 10px 15px -3px rgba(15, 23, 42, .10), 0 4px 6px -4px rgba(15, 23, 42, .08);
-  --shadow-xl:    0 20px 25px -5px rgba(15, 23, 42, .12), 0 8px 10px -6px rgba(15, 23, 42, .08);
-  --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, .30);
+  --shadow-xs:    0 1px 2px rgba(42, 26, 16, .06);
+  --shadow-sm:    0 1px 3px rgba(42, 26, 16, .08), 0 1px 2px rgba(42, 26, 16, .05);
+  --shadow-md:    0 4px 6px -1px rgba(42, 26, 16, .08), 0 2px 4px -2px rgba(42, 26, 16, .06);
+  --shadow-lg:    0 10px 15px -3px rgba(42, 26, 16, .10), 0 4px 6px -4px rgba(42, 26, 16, .08);
+  --shadow-xl:    0 20px 25px -5px rgba(42, 26, 16, .12), 0 8px 10px -6px rgba(42, 26, 16, .08);
+  --shadow-modal: 0 25px 50px -12px rgba(42, 26, 16, .30);
 
   /* ============================================================
      RADIOS — Modernos pero no caricaturescos
@@ -105,12 +121,12 @@ html.dark {
   --muted-soft:   #a1a1aa;
 
   --primary:      #818cf8;
-  --primary-d:    #6366f1;
+  --primary-d:    #6B4528;
   --primary-soft: rgba(99, 102, 241, .16);
   --primary-ring: rgba(129, 140, 248, .22);
 
   --accent:       #38bdf8;
-  --accent-d:     #0ea5e9;
+  --accent-d:     #6B4528;
   --accent-soft:  rgba(56, 189, 248, .14);
 
   --border:        #27272a;
@@ -125,7 +141,7 @@ html.dark {
   --warn:         #fbbf24;
   --warn-soft:    rgba(251, 191, 36, .12);
 
-  --info:         #60a5fa;
+  --info:         #D9B98C;
   --info-soft:    rgba(96, 165, 250, .12);
 
   --edit:         #facc15;

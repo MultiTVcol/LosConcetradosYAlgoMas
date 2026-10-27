@@ -95,20 +95,20 @@ export function solicitarAutorizacion(mensaje = '') {
     const contenido = `
       <div style="text-align:center;margin-bottom:14px">
         <div style="width:64px;height:64px;border-radius:50%;background:#fef3c7;color:#a16207;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px">🔒</div>
-        <div style="font-weight:700;font-size:15px;color:#0f172a">Acción restringida</div>
-        ${mensaje ? `<div style="color:#64748b;font-size:13px;margin-top:4px">${mensaje}</div>` : ''}
+        <div style="font-weight:700;font-size:15px;color:#2A1A10">Acción restringida</div>
+        ${mensaje ? `<div style="color:#7D6858;font-size:13px;margin-top:4px">${mensaje}</div>` : ''}
       </div>
 
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Código de autorización del administrador</div>
+      <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Código de autorización del administrador</div>
       <input id="auth-code" type="password" placeholder="Solicita el código al administrador" autocomplete="off"
-        style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
+        style="width:100%;padding:14px 16px;border:1.5px solid #DCCFBE;border-radius:10px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.3em" />
       <div id="auth-error" style="display:none;margin-top:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;color:#991b1b;font-size:12.5px;text-align:center"></div>
 
       <div style="display:flex;gap:10px;margin-top:16px">
         <button id="auth-cancelar"
-          style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+          style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
         <button id="auth-aceptar"
-          style="flex:1.2;padding:11px;background:#4f46e5;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">🔓 Autorizar</button>
+          style="flex:1.2;padding:11px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(79,70,229,.35)">🔓 Autorizar</button>
       </div>
     `;
 
@@ -136,7 +136,7 @@ export function solicitarAutorizacion(mensaje = '') {
         err.style.display = 'block';
         inp.select();
         inp.style.borderColor = '#dc2626';
-        setTimeout(() => { inp.style.borderColor = '#cbd5e1'; }, 600);
+        setTimeout(() => { inp.style.borderColor = '#DCCFBE'; }, 600);
       }
     };
 

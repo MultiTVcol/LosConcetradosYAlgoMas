@@ -38,10 +38,10 @@ export async function render(contenedor) {
   // un cajero navega directo por URL (#/config).
   if (!Auth.esAdmin()) {
     contenedor.innerHTML = `
-      <div style="padding:40px 48px;max-width:560px;margin:40px auto;text-align:center;background:white;border:1px solid #e2e8f0;border-radius:12px">
+      <div style="padding:40px 48px;max-width:560px;margin:40px auto;text-align:center;background:white;border:1px solid #EADFD0;border-radius:12px">
         <div style="font-size:48px">🔒</div>
-        <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin:10px 0 6px">Acceso restringido</h1>
-        <div style="color:#64748b;font-size:14px">Solo el administrador puede acceder a la Configuración.</div>
+        <h1 style="font-size:22px;font-weight:700;color:#2A1A10;margin:10px 0 6px">Acceso restringido</h1>
+        <div style="color:#7D6858;font-size:14px">Solo el administrador puede acceder a la Configuración.</div>
       </div>
     `;
     return;
@@ -248,7 +248,7 @@ function actualizarEstadoSync() {
   if (!ready) {
     html = `
       <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:10px;height:10px;border-radius:50%;background:#94a3b8"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#A8957F"></div>
         <span>Supabase no configurado.</span>
       </div>
     `;
@@ -512,7 +512,7 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
         if (vals.length >= 2) break;
       }
     }
-    return vals.length ? `<span style="color:#94a3b8;font-size:10.5px"> · ej: ${esc(vals.join(', '))}</span>` : '';
+    return vals.length ? `<span style="color:#A8957F;font-size:10.5px"> · ej: ${esc(vals.join(', '))}</span>` : '';
   };
 
   // Detectar campos obligatorios sin mapear
@@ -520,15 +520,15 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
 
   return `
     <!-- Banner: archivo leído -->
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#1d4ed8">
+    <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:9px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:#33200F">
       <b>${fmt(filasRaw.length)}</b> fila(s) detectadas en el archivo · <b>${fmt(columnasArchivo.length)}</b> columna(s) encontradas
     </div>
 
     <!-- PASO 1: Mapeo de columnas -->
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:11px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <div style="font-weight:700;font-size:14px;color:#0f172a">1️⃣ Asigna las columnas del archivo a cada campo</div>
-        <div style="font-size:11.5px;color:#64748b">Elige qué columna del Excel va a qué campo del POS</div>
+        <div style="font-weight:700;font-size:14px;color:#2A1A10">1️⃣ Asigna las columnas del archivo a cada campo</div>
+        <div style="font-size:11.5px;color:#7D6858">Elige qué columna del Excel va a qué campo del POS</div>
       </div>
       <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
         ${columnasModelo.map((cm) => {
@@ -536,12 +536,12 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
           const valActual = mapeo[cm.clave] || '';
           return `
             <div>
-              <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">
+              <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;margin-bottom:3px">
                 ${esc(cm.etiqueta)}${obligatorio ? ' <span style="color:#dc2626">*</span>' : ''}
                 ${sample(valActual)}
               </div>
               <select class="imp-map-sel" data-campo="${esc(cm.clave)}"
-                style="width:100%;padding:8px 10px;border:1px solid ${obligatorio && !valActual ? '#fecaca' : '#cbd5e1'};border-radius:7px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;background:${obligatorio && !valActual ? '#fef2f2' : 'white'}">
+                style="width:100%;padding:8px 10px;border:1px solid ${obligatorio && !valActual ? '#fecaca' : '#DCCFBE'};border-radius:7px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;background:${obligatorio && !valActual ? '#fef2f2' : 'white'}">
                 <option value="">— No importar —</option>
                 ${columnasArchivo.map((col) => `<option value="${esc(col)}" ${col === valActual ? 'selected' : ''}>${esc(col)}</option>`).join('')}
               </select>
@@ -557,9 +557,9 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
     </div>
 
     <!-- PASO 2: Formato numérico -->
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:11px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-        <div style="font-weight:700;font-size:14px;color:#0f172a">2️⃣ Formato de los números</div>
+        <div style="font-weight:700;font-size:14px;color:#2A1A10">2️⃣ Formato de los números</div>
         ${formatoDetectado !== 'auto' ? `<div style="font-size:11px;color:#15803d;font-weight:600">Auto-detectado: <b>${esc(formatoDetectado)}</b></div>` : ''}
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -569,56 +569,56 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
           ['en-US', '🇺🇸 1,500,000 / 1,500.50', 'Coma = miles · Punto = decimal'],
         ].map(([id, label, hint]) => `
           <button class="imp-fmt-btn" data-fmt="${id}"
-            style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#2563eb' : '#e2e8f0'};background:${formato === id ? '#eff6ff' : 'white'};color:${formato === id ? '#1d4ed8' : '#475569'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+            style="flex:1;min-width:160px;padding:10px;border:1.5px solid ${formato === id ? '#4A2E1A' : '#EADFD0'};background:${formato === id ? '#F8F1E8' : 'white'};color:${formato === id ? '#33200F' : '#5C4636'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
             <div style="font-weight:700;font-size:12.5px;font-family:inherit">${label}</div>
-            <div style="font-size:11px;color:#64748b;margin-top:2px">${hint}</div>
+            <div style="font-size:11px;color:#7D6858;margin-top:2px">${hint}</div>
           </button>
         `).join('')}
       </div>
     </div>
 
     <!-- PASO 3: Preview con datos mapeados -->
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:11px;padding:14px;margin-bottom:14px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:11px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <div style="font-weight:700;font-size:14px;color:#0f172a">3️⃣ Vista previa (primeras ${filasMostrar.length})</div>
-        <div style="font-size:12px;color:#64748b">
+        <div style="font-weight:700;font-size:14px;color:#2A1A10">3️⃣ Vista previa (primeras ${filasMostrar.length})</div>
+        <div style="font-size:12px;color:#7D6858">
           <b style="color:#15803d">${fmt(totalUtil)}</b> válidas · ${ignoradas > 0 ? `<b style="color:#a16207">${fmt(ignoradas)}</b> ignoradas` : '0 ignoradas'}
         </div>
       </div>
       ${filasMostrar.length === 0 ? `
-        <div style="text-align:center;padding:24px;color:#94a3b8;font-size:13.5px">
+        <div style="text-align:center;padding:24px;color:#A8957F;font-size:13.5px">
           Sin datos para mostrar. Verifica el mapeo de la columna "Nombre".
         </div>
       ` : `
-        <div style="border:1px solid #e2e8f0;border-radius:8px;overflow:auto;max-height:32vh">
+        <div style="border:1px solid #EADFD0;border-radius:8px;overflow:auto;max-height:32vh">
           <table style="width:100%;border-collapse:collapse;font-size:12px">
             <thead>
-              <tr style="background:#f8fafc;color:#475569;font-weight:700;text-align:left;border-bottom:1px solid #e2e8f0;position:sticky;top:0">
+              <tr style="background:#FBF7F1;color:#5C4636;font-weight:700;text-align:left;border-bottom:1px solid #EADFD0;position:sticky;top:0">
                 ${columnasModelo.map((c) => `<th style="padding:7px 8px;white-space:nowrap">${esc(c.etiqueta)}</th>`).join('')}
               </tr>
             </thead>
             <tbody>
               ${filasMostrar.map((f) => `
-                <tr style="border-bottom:1px solid #f1f5f9">
+                <tr style="border-bottom:1px solid #F2EBE0">
                   ${columnasModelo.map((c) => {
                     const v = f[c.clave];
                     const esNum = ['precio', 'costo', 'stock', 'stock_min', 'impuesto_pct'].includes(c.clave);
                     let str;
                     if (v == null || v === '') {
-                      str = '<span style="color:#cbd5e1">—</span>';
+                      str = '<span style="color:#DCCFBE">—</span>';
                     } else if (esNum) {
-                      str = `<span style="font-family:inherit;color:#1d4ed8">${Number(v).toLocaleString('es-CO')}</span>`;
+                      str = `<span style="font-family:inherit;color:#33200F">${Number(v).toLocaleString('es-CO')}</span>`;
                     } else {
                       str = esc(String(v));
                     }
-                    return `<td style="padding:6px 8px;color:#475569;white-space:nowrap">${str}</td>`;
+                    return `<td style="padding:6px 8px;color:#5C4636;white-space:nowrap">${str}</td>`;
                   }).join('')}
                 </tr>
               `).join('')}
             </tbody>
           </table>
         </div>
-        ${filasProc.length > filasMostrar.length ? `<div style="font-size:11.5px;color:#94a3b8;margin-top:6px;text-align:center">… y ${fmt(filasProc.length - filasMostrar.length)} más se importarán</div>` : ''}
+        ${filasProc.length > filasMostrar.length ? `<div style="font-size:11.5px;color:#A8957F;margin-top:6px;text-align:center">… y ${fmt(filasProc.length - filasMostrar.length)} más se importarán</div>` : ''}
       `}
 
       ${errores.length > 0 ? `
@@ -633,17 +633,17 @@ function htmlImport({ filasRaw, filasProc, filasMostrar, ignoradas, errores, col
     </div>
 
     <!-- Aviso -->
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#1d4ed8;margin-bottom:14px">
+    <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:9px;padding:10px 12px;font-size:12.5px;color:#33200F;margin-bottom:14px">
       Los registros existentes (mismo código o nombre) se <b>actualizarán</b>. Los nuevos se crearán. Todo se sincronizará automáticamente con la nube.
     </div>
 
     <!-- Botones -->
     <div style="display:flex;gap:10px">
       <button id="imp-cancel"
-        style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:11px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
       <button id="imp-confirmar" data-primary
         ${(totalUtil === 0 || sinMapear.length > 0) ? 'disabled' : ''}
-        style="flex:1.4;padding:11px;background:${totalUtil > 0 && sinMapear.length === 0 ? '#15803d' : '#cbd5e1'};color:white;border:0;border-radius:10px;cursor:${totalUtil > 0 && sinMapear.length === 0 ? 'pointer' : 'not-allowed'};font-size:14px;font-weight:700;font-family:inherit;${totalUtil > 0 && sinMapear.length === 0 ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''}">Importar ${fmt(totalUtil)} fila${totalUtil === 1 ? '' : 's'}</button>
+        style="flex:1.4;padding:11px;background:${totalUtil > 0 && sinMapear.length === 0 ? '#15803d' : '#DCCFBE'};color:white;border:0;border-radius:10px;cursor:${totalUtil > 0 && sinMapear.length === 0 ? 'pointer' : 'not-allowed'};font-size:14px;font-weight:700;font-family:inherit;${totalUtil > 0 && sinMapear.length === 0 ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''}">Importar ${fmt(totalUtil)} fila${totalUtil === 1 ? '' : 's'}</button>
     </div>
   `;
 }
@@ -732,19 +732,19 @@ async function borrarSeleccionado() {
 function abrirOverlayProgreso(textoInicial) {
   const overlay = document.createElement('div');
   overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);
+    position:fixed;inset:0;background:rgba(42, 26, 16,.55);backdrop-filter:blur(6px);
     z-index:11000;display:flex;align-items:center;justify-content:center;
   `;
   overlay.innerHTML = `
-    <div style="background:white;border-radius:14px;padding:24px 28px;min-width:300px;max-width:380px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);font-family:Inter,system-ui,sans-serif">
+    <div style="background:white;border-radius:14px;padding:24px 28px;min-width:300px;max-width:380px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);font-family:Figtree,system-ui,sans-serif">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div class="op-spinner" style="width:24px;height:24px;border-radius:50%;border:3px solid #e0e7ff;border-top-color:#2563eb;animation:opspin 0.8s linear infinite"></div>
-        <div id="op-texto" style="flex:1;font-weight:600;color:#0f172a;font-size:14px">${textoInicial || 'Procesando…'}</div>
+        <div class="op-spinner" style="width:24px;height:24px;border-radius:50%;border:3px solid #F3E8DC;border-top-color:#4A2E1A;animation:opspin 0.8s linear infinite"></div>
+        <div id="op-texto" style="flex:1;font-weight:600;color:#2A1A10;font-size:14px">${textoInicial || 'Procesando…'}</div>
       </div>
-      <div id="op-barra-wrap" style="display:none;background:#f1f5f9;border-radius:999px;height:8px;overflow:hidden">
-        <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .2s ease;border-radius:999px"></div>
+      <div id="op-barra-wrap" style="display:none;background:#F2EBE0;border-radius:999px;height:8px;overflow:hidden">
+        <div id="op-barra" style="height:100%;width:0%;background:linear-gradient(90deg,#4A2E1A,#EE7623);transition:width .2s ease;border-radius:999px"></div>
       </div>
-      <div id="op-conteo" style="display:none;font-size:11.5px;color:#64748b;text-align:right;margin-top:5px;font-family:inherit"></div>
+      <div id="op-conteo" style="display:none;font-size:11.5px;color:#7D6858;text-align:right;margin-top:5px;font-family:inherit"></div>
     </div>
     <style>@keyframes opspin{to{transform:rotate(360deg)}}</style>
   `;
@@ -775,18 +775,18 @@ function abrirOverlayProgreso(textoInicial) {
 // ============================================================
 
 function htmlCargando() {
-  return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando configuración…</div>`;
+  return `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando configuración…</div>`;
 }
 
 function htmlLayout(cfg, stats) {
   return `
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <i data-lucide="settings" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
-        <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Configuración</h1>
+        <i data-lucide="settings" style="width:30px;height:30px;color:#4A2E1A;stroke-width:1.75"></i>
+        <h1 style="font-size:26px;font-weight:700;color:#2A1A10;margin:0;letter-spacing:-0.02em">Configuración</h1>
       </div>
 
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
         <span style="font-size:22px">💡</span>
         <div style="font-size:13.5px;color:#1e40af;line-height:1.5">
           <b>La personalización del ticket POS 80mm</b> ya no vive aquí.
@@ -831,16 +831,16 @@ function htmlFacturacionElectronica(cfg) {
     </label>`;
 
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:22px;margin-top:16px;display:flex;flex-direction:column;gap:16px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:22px;margin-top:16px;display:flex;flex-direction:column;gap:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px">
-          <i data-lucide="file-check" style="width:22px;height:22px;color:#2563eb;stroke-width:1.9"></i>
+          <i data-lucide="file-check" style="width:22px;height:22px;color:#4A2E1A;stroke-width:1.9"></i>
           <div>
-            <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Facturación electrónica (DIAN)</h3>
-            <div style="font-size:12.5px;color:#64748b">Datos del emisor y resolución. La conexión con Factus se configura aparte (en el servidor).</div>
+            <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Facturación electrónica (DIAN)</h3>
+            <div style="font-size:12.5px;color:#7D6858">Datos del emisor y resolución. La conexión con Factus se configura aparte (en el servidor).</div>
           </div>
         </div>
-        <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:13.5px;color:#0f172a;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 13px">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:13.5px;color:#2A1A10;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:9px 13px">
           <input id="cfg-fe-activa" type="checkbox" ${fe.activa ? 'checked' : ''} style="width:18px;height:18px"> Activar facturación electrónica
         </label>
       </div>
@@ -855,7 +855,7 @@ function htmlFacturacionElectronica(cfg) {
       </div>
 
       <div>
-        <div style="font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Datos del emisor (tu empresa)</div>
+        <div style="font-size:13px;font-weight:700;color:#5C4636;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Datos del emisor (tu empresa)</div>
         <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
           <div style="grid-column:1/-1">${inp('cfg-fe-razon', 'Razón social', e.razonSocial, 'Como está en el RUT')}</div>
           ${inp('cfg-fe-nit', 'NIT', e.nit, 'Sin dígito de verificación')}
@@ -874,7 +874,7 @@ function htmlFacturacionElectronica(cfg) {
       </div>
 
       <div>
-        <div style="font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Resolución de numeración DIAN</div>
+        <div style="font-size:13px;font-weight:700;color:#5C4636;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Resolución de numeración DIAN</div>
         <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
           ${inp('cfg-fe-prefijo', 'Prefijo', r.prefijo, 'Ej: SETP / FE')}
           ${inp('cfg-fe-numres', 'N° de resolución', r.numeroResolucion)}
@@ -883,11 +883,11 @@ function htmlFacturacionElectronica(cfg) {
           <label class="ui-field" style="gap:5px"><span class="ui-label">Fecha resolución</span><input id="cfg-fe-fecharesol" class="ui-input" type="date" value="${esc(r.fechaResolucion || '')}" /></label>
           <label class="ui-field" style="gap:5px"><span class="ui-label">Vigencia hasta</span><input id="cfg-fe-vigencia" class="ui-input" type="date" value="${esc(r.vigenciaHasta || '')}" /></label>
         </div>
-        <div style="font-size:12px;color:#94a3b8;margin-top:6px">En pruebas, Factus te da una resolución de prueba. En producción usa la que te autorizó la DIAN.</div>
+        <div style="font-size:12px;color:#A8957F;margin-top:6px">En pruebas, Factus te da una resolución de prueba. En producción usa la que te autorizó la DIAN.</div>
       </div>
 
       <button id="cfg-guardar-fe"
-        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+        style="width:100%;padding:13px;background:#4A2E1A;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
         Guardar datos de facturación electrónica
       </button>
     </div>
@@ -898,8 +898,8 @@ function htmlFacturacionElectronica(cfg) {
 function htmlDatosNegocio(cfg) {
   const neg = cfg.negocio;
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Datos para la factura</h3>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Datos para la factura</h3>
 
       <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
         <div style="grid-column:1/-1">${campo('cfg-negocio', 'Nombre del negocio', neg.nombre)}</div>
@@ -915,16 +915,16 @@ function htmlDatosNegocio(cfg) {
       </div>
 
       <div style="display:flex;gap:18px;flex-wrap:wrap;padding-top:6px">
-        <label style="display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer;font-size:13.5px;color:#475569">
+        <label style="display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer;font-size:13.5px;color:#5C4636">
           <input id="cfg-sonido" type="checkbox" ${cfg.sonido ? 'checked' : ''} style="width:18px;height:18px"> Sonidos al vender
         </label>
-        <label style="display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer;font-size:13.5px;color:#475569">
+        <label style="display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer;font-size:13.5px;color:#5C4636">
           <input id="cfg-utilidad" type="checkbox" ${cfg.mostrarUtilidad ? 'checked' : ''} style="width:18px;height:18px"> Mostrar utilidad en ventas
         </label>
       </div>
 
       <button id="cfg-guardar-negocio"
-        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35);margin-top:8px">
+        style="width:100%;padding:13px;background:#4A2E1A;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35);margin-top:8px">
         Guardar configuración
       </button>
     </div>
@@ -934,20 +934,20 @@ function htmlDatosNegocio(cfg) {
 function campo(id, label, valor, placeholder = '') {
   return `
     <div>
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${label}</div>
+      <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${label}</div>
       <input id="${id}" type="text" value="${esc(valor || '')}" placeholder="${esc(placeholder)}"
-        style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+        style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
     </div>
   `;
 }
 
 function htmlLector(cfg) {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Lector de código de barras</h3>
-      <p style="color:#64748b;font-size:13.5px;margin:0">Elige cómo escaneas en la pantalla de Ventas.</p>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Lector de código de barras</h3>
+      <p style="color:#7D6858;font-size:13.5px;margin:0">Elige cómo escaneas en la pantalla de Ventas.</p>
       <select id="cfg-lector"
-        style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+        style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
         <option value="pistola" ${cfg.lector === 'pistola' ? 'selected' : ''}>Pistola / Lector USB (no usa cámara)</option>
         <option value="manual" ${cfg.lector === 'manual' ? 'selected' : ''}>Manual (escribir en el buscador)</option>
       </select>
@@ -958,19 +958,19 @@ function htmlLector(cfg) {
 function htmlCajon(cfg) {
   const c = cfg.cajon || {};
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Cajón de dinero</h3>
-      <p style="color:#64748b;font-size:13.5px;margin:0">Abre la gaveta automáticamente al confirmar cada venta.</p>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Cajón de dinero</h3>
+      <p style="color:#7D6858;font-size:13.5px;margin:0">Abre la gaveta automáticamente al confirmar cada venta.</p>
 
-      <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;font-size:13.5px;color:#475569">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;font-size:13.5px;color:#5C4636">
         <input id="cfg-cajon-activo" type="checkbox" ${c.activo ? 'checked' : ''} style="width:18px;height:18px"> Abrir cajón al confirmar la venta
       </label>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="cfg-cajon-conectar" style="padding:9px 13px;border:1px solid #cbd5e1;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569">Conectar cajón / impresora</button>
-        <button id="cfg-cajon-probar" style="padding:9px 13px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">Probar (abrir cajón)</button>
+        <button id="cfg-cajon-conectar" style="padding:9px 13px;border:1px solid #DCCFBE;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#5C4636">Conectar cajón / impresora</button>
+        <button id="cfg-cajon-probar" style="padding:9px 13px;border:0;background:#4A2E1A;color:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">Probar (abrir cajón)</button>
       </div>
-      <div id="cfg-cajon-estado" style="font-size:12px;color:#94a3b8"></div>
+      <div id="cfg-cajon-estado" style="font-size:12px;color:#A8957F"></div>
 
       <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;font-size:12px;color:#92400e;line-height:1.5">
         Como imprimes con el diálogo del navegador, lo más confiable es configurar tu impresora en Windows para <b>"abrir cajón al imprimir"</b>: así la gaveta salta sola con cada ticket. El botón <b>Probar</b> intenta abrirla por software (Web Serial); si tu impresora no aparece, usa el método del driver.
@@ -981,11 +981,11 @@ function htmlCajon(cfg) {
 
 function htmlImpresora(cfg) {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Impresora predeterminada</h3>
-      <p style="color:#64748b;font-size:13.5px;margin:0">Cuando imprimas una factura, el POS puede ir directo a una impresora o preguntarte cada vez.</p>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Impresora predeterminada</h3>
+      <p style="color:#7D6858;font-size:13.5px;margin:0">Cuando imprimas una factura, el POS puede ir directo a una impresora o preguntarte cada vez.</p>
       <select id="cfg-impresora"
-        style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+        style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
         <option value="preguntar" ${cfg.impresoraDefault === 'preguntar' ? 'selected' : ''}>Preguntar cada vez (recomendado)</option>
         <option value="pos" ${cfg.impresoraDefault === 'pos' ? 'selected' : ''}>POS 80mm (térmica)</option>
         <option value="carta" ${cfg.impresoraDefault === 'carta' ? 'selected' : ''}>Carta empresarial</option>
@@ -996,33 +996,33 @@ function htmlImpresora(cfg) {
 
 function htmlSync() {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Sincronización con la nube</h3>
-      <div id="cfg-sync-estado" style="font-size:14px;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:11px 13px">Cargando estado…</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Sincronización con la nube</h3>
+      <div id="cfg-sync-estado" style="font-size:14px;color:#5C4636;background:#FBF7F1;border:1px solid #EADFD0;border-radius:9px;padding:11px 13px">Cargando estado…</div>
       <button id="cfg-sync-flush"
-        style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569">
+        style="padding:10px 14px;border:1px solid #EADFD0;background:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#5C4636">
         Reintentar pendientes
       </button>
-      <p style="color:#94a3b8;font-size:12.5px;margin:0">El POS sigue funcionando aunque la nube esté caída. Los registros locales se subirán cuando vuelva la conexión.</p>
+      <p style="color:#A8957F;font-size:12.5px;margin:0">El POS sigue funcionando aunque la nube esté caída. Los registros locales se subirán cuando vuelva la conexión.</p>
     </div>
   `;
 }
 
 function htmlExcel(stats) {
   const cardLado = (titulo, icono, count, idExp, idTpl, idImp) => `
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px;padding:14px">
-      <div style="font-weight:700;font-size:14.5px;color:#0f172a;margin-bottom:10px">${icono} ${esc(titulo)}</div>
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:11px;padding:14px">
+      <div style="font-weight:700;font-size:14.5px;color:#2A1A10;margin-bottom:10px">${icono} ${esc(titulo)}</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <button id="${idExp}"
-          style="padding:10px 12px;background:#0f172a;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+          style="padding:10px 12px;background:#2A1A10;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
           Exportar (${fmt(count)})
         </button>
         <button id="${idTpl}"
-          style="padding:10px 12px;background:white;border:1px solid #e2e8f0;color:#475569;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+          style="padding:10px 12px;background:white;border:1px solid #EADFD0;color:#5C4636;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
           Descargar plantilla
         </button>
         <label
-          style="padding:10px 12px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+          style="padding:10px 12px;background:#4A2E1A;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
           Importar Excel/CSV
           <input id="${idImp}" type="file" accept=".xlsx,.xls,.csv,.txt" style="display:none" />
         </label>
@@ -1031,9 +1031,9 @@ function htmlExcel(stats) {
   `;
 
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Productos y clientes en Excel</h3>
-      <p style="color:#64748b;font-size:13.5px;margin:0">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Productos y clientes en Excel</h3>
+      <p style="color:#7D6858;font-size:13.5px;margin:0">
         Exporta tus datos, descarga una <b>plantilla lista para llenar</b>, o importa desde Excel/CSV.
         Al importar se sincronizará automáticamente en la nube y en las otras terminales conectadas.
       </p>
@@ -1041,7 +1041,7 @@ function htmlExcel(stats) {
         ${cardLado('Productos', '📦', stats.productos, 'cfg-exp-productos', 'cfg-tpl-productos', 'cfg-imp-productos')}
         ${cardLado('Clientes', '👥', stats.clientes, 'cfg-exp-clientes', 'cfg-tpl-clientes', 'cfg-imp-clientes')}
       </div>
-      <p style="color:#94a3b8;font-size:12px;margin:4px 0 0">
+      <p style="color:#A8957F;font-size:12px;margin:4px 0 0">
         Descarga la plantilla, llénala en Excel y vuelve a importarla. También puedes exportar lo que ya tienes, editarlo y reimportarlo.
       </p>
     </div>
@@ -1050,15 +1050,15 @@ function htmlExcel(stats) {
 
 function htmlRespaldo() {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Respaldo (copia de seguridad)</h3>
-      <p style="color:#64748b;font-size:13.5px;margin:0">Guarda todo tu sistema en un archivo, o restáuralo cuando quieras.</p>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Respaldo (copia de seguridad)</h3>
+      <p style="color:#7D6858;font-size:13.5px;margin:0">Guarda todo tu sistema en un archivo, o restáuralo cuando quieras.</p>
       <button id="cfg-export-json"
-        style="padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+        style="padding:12px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
         Exportar respaldo (JSON)
       </button>
       <label
-        style="padding:12px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569;text-align:center">
+        style="padding:12px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636;text-align:center">
         Importar respaldo (JSON)
         <input id="cfg-import-json" type="file" accept=".json" style="display:none" />
       </label>
@@ -1068,7 +1068,7 @@ function htmlRespaldo() {
 
 function htmlDatosSistema(stats) {
   const badge = (icono, label, count) => `
-    <span style="background:#e0e7ff;color:#1d4ed8;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:7px">
+    <span style="background:#F3E8DC;color:#33200F;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:7px">
       ${icono} ${fmt(count)} ${label}
     </span>
   `;
@@ -1084,8 +1084,8 @@ function htmlDatosSistema(stats) {
   ];
 
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:11px">
-      <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Datos del sistema</h3>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:11px">
+      <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Datos del sistema</h3>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         ${badge('📦', 'productos', stats.productos)}
         ${badge('👥', 'clientes', stats.clientes)}
@@ -1095,14 +1095,14 @@ function htmlDatosSistema(stats) {
         ${badge('💸', 'gastos', stats.gastos)}
       </div>
 
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:9px;margin-top:6px">
-        <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Borrado selectivo</div>
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:9px;margin-top:6px">
+        <div style="font-size:12.5px;color:#7D6858;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Borrado selectivo</div>
         ${tipos.map(([tipo, label, desc]) => `
           <label style="display:flex;gap:9px;cursor:pointer;align-items:flex-start">
             <input class="cfg-bd" type="checkbox" data-tipo="${tipo}" style="margin-top:3px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
             <div>
-              <div style="font-weight:700;font-size:13.5px;color:#0f172a">${label}</div>
-              <div style="font-size:11.5px;color:#64748b">${desc}</div>
+              <div style="font-weight:700;font-size:13.5px;color:#2A1A10">${label}</div>
+              <div style="font-size:11.5px;color:#7D6858">${desc}</div>
             </div>
           </label>
         `).join('')}

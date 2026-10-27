@@ -121,12 +121,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     if (Services.Supa.isReady()) {
       app.innerHTML = `
-        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;font-family:Inter,system-ui,sans-serif">
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FBF7F1;font-family:Figtree,system-ui,sans-serif">
           <div style="text-align:center">
-            <div style="width:54px;height:54px;border:4px solid #e2e8f0;border-top-color:#4f46e5;border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite"></div>
+            <div style="width:54px;height:54px;border:4px solid #EADFD0;border-top-color:#EE7623;border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite"></div>
             <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-            <div style="font-size:15px;font-weight:700;color:#0f172a">Sincronizando con la nube…</div>
-            <div style="font-size:12.5px;color:#64748b;margin-top:4px">Bajando ventas y cambios de otras terminales</div>
+            <div style="font-size:15px;font-weight:700;color:#2A1A10">Sincronizando con la nube…</div>
+            <div style="font-size:12.5px;color:#7D6858;margin-top:4px">Bajando ventas y cambios de otras terminales</div>
           </div>
         </div>
       `;
@@ -279,19 +279,19 @@ function mostrarPlaceholder(titulo, icono, descripcion) {
   setContenido(`
     <div style="padding:40px 48px;max-width:980px">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
-        <i data-lucide="${icono}" style="width:32px;height:32px;stroke-width:1.75;color:#4f46e5"></i>
-        <h1 style="font-size:28px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">${titulo}</h1>
+        <i data-lucide="${icono}" style="width:32px;height:32px;stroke-width:1.75;color:#4A2E1A"></i>
+        <h1 style="font-size:28px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#2A1A10">${titulo}</h1>
       </div>
-      <p style="color:#64748b;font-size:15px;line-height:1.6;margin:0 0 28px">
+      <p style="color:#7D6858;font-size:15px;line-height:1.6;margin:0 0 28px">
         ${descripcion || 'Este módulo se construirá en los próximos pasos de la Fase 6.'}
       </p>
-      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;display:flex;align-items:center;gap:14px">
+      <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:24px;display:flex;align-items:center;gap:14px">
         <div style="width:42px;height:42px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center">
           <i data-lucide="construction" style="width:22px;height:22px;color:#d97706;stroke-width:1.75"></i>
         </div>
         <div>
-          <div style="font-weight:600;color:#0f172a;margin-bottom:2px">En construcción</div>
-          <div style="font-size:13.5px;color:#64748b">Mientras tanto, podés navegar entre módulos usando el sidebar a la izquierda.</div>
+          <div style="font-weight:600;color:#2A1A10;margin-bottom:2px">En construcción</div>
+          <div style="font-size:13.5px;color:#7D6858">Mientras tanto, podés navegar entre módulos usando el sidebar a la izquierda.</div>
         </div>
       </div>
     </div>

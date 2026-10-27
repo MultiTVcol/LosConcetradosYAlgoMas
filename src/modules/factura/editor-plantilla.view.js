@@ -128,9 +128,9 @@ function htmlEditor(p) {
       <div style="display:flex;flex-direction:column;gap:14px">
         <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tipografía</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tipografía</div>
             <select id="pl-fuente"
-              style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+              style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
               <option value="'Courier New','Roboto Mono',monospace" ${p.fuente.includes('Courier') ? 'selected' : ''}>Courier (clásica)</option>
               <option value="'Roboto Mono',monospace" ${p.fuente.includes('Roboto') && !p.fuente.includes('Courier') ? 'selected' : ''}>Roboto Mono</option>
               <option value="'JetBrains Mono',monospace" ${p.fuente.includes('JetBrains') ? 'selected' : ''}>JetBrains Mono</option>
@@ -139,45 +139,45 @@ function htmlEditor(p) {
             </select>
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tamaño base (px)</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Tamaño base (px)</div>
             <input id="pl-tam" type="number" min="9" max="20" value="${p.tamBase}"
-              style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Interlineado</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Interlineado</div>
             <input id="pl-line" type="number" step="0.1" min="1" max="2.5" value="${p.interlineado}"
-              style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Separador entre secciones</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Separador entre secciones</div>
             <select id="pl-sep"
-              style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+              style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
               <option value="dashed" ${p.separador === 'dashed' ? 'selected' : ''}>Línea punteada — — —</option>
               <option value="solid" ${p.separador === 'solid' ? 'selected' : ''}>Línea continua ───</option>
               <option value="none" ${p.separador === 'none' ? 'selected' : ''}>Sin línea (solo espacio)</option>
             </select>
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Ancho del papel</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Ancho del papel</div>
             <select id="pl-ancho"
-              style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+              style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
               <option value="58" ${p.anchoMm === 58 ? 'selected' : ''}>58 mm</option>
               <option value="76" ${p.anchoMm === 76 ? 'selected' : ''}>76 mm</option>
               <option value="80" ${p.anchoMm === 80 ? 'selected' : ''}>80 mm (estándar)</option>
             </select>
           </div>
           <div style="display:flex;align-items:center;gap:18px;padding-top:18px;flex-wrap:wrap">
-            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;font-weight:600;cursor:pointer">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#5C4636;font-weight:600;cursor:pointer">
               <input id="pl-mayus" type="checkbox" ${p.mayusculas ? 'checked' : ''} style="width:16px;height:16px"> Mayúsculas
             </label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;font-weight:600;cursor:pointer">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#5C4636;font-weight:600;cursor:pointer">
               <input id="pl-neg" type="checkbox" ${p.encNegrita ? 'checked' : ''} style="width:16px;height:16px"> Títulos en negrita
             </label>
           </div>
         </div>
 
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px">
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Secciones visibles</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:12px">
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Secciones visibles</div>
           <div style="display:grid;gap:6px;grid-template-columns:1fr 1fr">
             ${[
               ['pl-mNombre', 'mostrarNombre', 'Nombre del negocio'],
@@ -200,7 +200,7 @@ function htmlEditor(p) {
               ['pl-mRec', 'mostrarRecibidoCambio', 'Recibido / Cambio'],
               ['pl-mPie', 'mostrarPieRepetido', 'Pie con N° / Nombre'],
             ].map(([id, key, label]) => `
-              <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:#475569;cursor:pointer">
+              <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:#5C4636;cursor:pointer">
                 <input class="pl-toggle" id="${id}" data-key="${key}" type="checkbox" ${p[key] ? 'checked' : ''} style="width:15px;height:15px">
                 ${label}
               </label>
@@ -210,45 +210,45 @@ function htmlEditor(p) {
 
         <div style="display:grid;gap:10px">
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Título del documento</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Título del documento</div>
             <input id="pl-tituloDoc" type="text" value="${esc(p.tituloDocumento || '')}" placeholder="FACTURA, CIERRE DE CAJA, REPORTE..."
-              style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;font-weight:700;letter-spacing:.04em" />
+              style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;font-weight:700;letter-spacing:.04em" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 1 (pie)</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 1 (pie)</div>
             <input id="pl-msg1" type="text" value="${esc(p.mensaje1 || '')}"
-              style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 2</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Mensaje 2</div>
             <input id="pl-msg2" type="text" value="${esc(p.mensaje2 || '')}"
-              style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button id="ed-pl-guardar" data-primary
-            style="flex:1;min-width:140px;padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+            style="flex:1;min-width:140px;padding:12px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
             Guardar diseño
           </button>
           <button id="ed-pl-prueba"
-            style="flex:1;min-width:140px;padding:12px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
+            style="flex:1;min-width:140px;padding:12px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">
             Imprimir prueba
           </button>
           <button id="ed-pl-restablecer"
-            style="flex:0 0 auto;padding:12px 16px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:#475569;font-family:inherit">
+            style="flex:0 0 auto;padding:12px 16px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:#5C4636;font-family:inherit">
             ↺ Restablecer
           </button>
           <button id="ed-pl-cancelar"
-            style="flex:0 0 auto;padding:12px 16px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:#475569;font-family:inherit">
+            style="flex:0 0 auto;padding:12px 16px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:#5C4636;font-family:inherit">
             Cancelar
           </button>
         </div>
       </div>
 
       <div>
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Vista previa</div>
-        <div style="background:#f1f5f9;border-radius:10px;padding:14px;display:flex;justify-content:center">
+        <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Vista previa</div>
+        <div style="background:#F2EBE0;border-radius:10px;padding:14px;display:flex;justify-content:center">
           <div id="ed-pl-preview" style="background:white;width:280px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08);max-height:600px;overflow:auto"></div>
         </div>
       </div>

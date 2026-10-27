@@ -234,8 +234,8 @@ function porMes12(arr, hasta, valor) {
 //  FORMATO Y COMPONENTES
 // ============================================================
 
-const C = { azul: '#2563eb', verde: '#15803d', rojo: '#dc2626', ambar: '#a16207', morado: '#7c3aed', gris: '#64748b', tinta: '#0f172a' };
-const PALETA = ['#2563eb', '#7c3aed', '#0891b2', '#db2777', '#a16207', '#15803d', '#94a3b8'];
+const C = { azul: '#4A2E1A', verde: '#15803d', rojo: '#dc2626', ambar: '#a16207', morado: '#EE7623', gris: '#7D6858', tinta: '#2A1A10' };
+const PALETA = ['#4A2E1A', '#EE7623', '#0891b2', '#db2777', '#a16207', '#15803d', '#A8957F'];
 
 function corto(n) {
   const a = Math.abs(n);
@@ -255,19 +255,19 @@ function delta(actual, anterior, invertir = false) {
 
 function kpi(label, valor, color, nota, d = '') {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;min-width:0">
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${label}</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:16px 18px;min-width:0">
+      <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${label}</div>
       <div style="font-size:22px;font-weight:700;color:${color || C.tinta};letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${valor}</div>
-      <div style="font-size:12.5px;margin-top:6px;color:#64748b">${d ? d + ' ' : ''}${nota || ''}</div>
+      <div style="font-size:12.5px;margin-top:6px;color:#7D6858">${d ? d + ' ' : ''}${nota || ''}</div>
     </div>`;
 }
 
 function card(titulo, sub, cuerpo, extra = '') {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;min-width:0">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;min-width:0">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:14px">
         <div><h3 style="font-size:15.5px;font-weight:700;margin:0;color:${C.tinta}">${titulo}</h3>
-        ${sub ? `<div style="font-size:12.5px;color:#64748b;margin-top:3px">${sub}</div>` : ''}</div>
+        ${sub ? `<div style="font-size:12.5px;color:#7D6858;margin-top:3px">${sub}</div>` : ''}</div>
         ${extra}
       </div>
       ${cuerpo}
@@ -277,27 +277,27 @@ function card(titulo, sub, cuerpo, extra = '') {
 const grid = (cols, html, mb = 16) => `<div style="display:grid;gap:16px;grid-template-columns:${cols};margin-bottom:${mb}px">${html}</div>`;
 const kpis = (html) => grid('repeat(auto-fit,minmax(170px,1fr))', html);
 const dos = (html) => grid('repeat(auto-fit,minmax(min(380px,100%),1fr))', html);
-const vacio = (msg) => `<div style="text-align:center;padding:28px;color:#94a3b8;font-size:13.5px">${msg}</div>`;
+const vacio = (msg) => `<div style="text-align:center;padding:28px;color:#A8957F;font-size:13.5px">${msg}</div>`;
 
 function tabla(cab, filas, nums = [], pie = null) {
   if (!filas.length) return vacio('Sin datos en este periodo');
-  const th = (c, i) => `<th style="text-align:${nums.includes(i) ? 'right' : 'left'};font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:8px 10px;border-bottom:1px solid #e2e8f0;background:#f8fafc;white-space:nowrap">${c}</th>`;
-  const td = (c, i, extra = '') => `<td style="padding:9px 10px;border-bottom:1px solid #f1f5f9;text-align:${nums.includes(i) ? 'right' : 'left'};font-variant-numeric:tabular-nums;${nums.includes(i) ? 'white-space:nowrap;' : ''}${extra}">${c}</td>`;
+  const th = (c, i) => `<th style="text-align:${nums.includes(i) ? 'right' : 'left'};font-size:11px;color:#7D6858;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:8px 10px;border-bottom:1px solid #EADFD0;background:#FBF7F1;white-space:nowrap">${c}</th>`;
+  const td = (c, i, extra = '') => `<td style="padding:9px 10px;border-bottom:1px solid #F2EBE0;text-align:${nums.includes(i) ? 'right' : 'left'};font-variant-numeric:tabular-nums;${nums.includes(i) ? 'white-space:nowrap;' : ''}${extra}">${c}</td>`;
   return `
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead><tr>${cab.map(th).join('')}</tr></thead>
         <tbody>${filas.map((f) => `<tr>${f.map((c, i) => td(c, i)).join('')}</tr>`).join('')}</tbody>
-        ${pie ? `<tfoot><tr>${pie.map((c, i) => td(c, i, 'font-weight:800;background:#f8fafc')).join('')}</tr></tfoot>` : ''}
+        ${pie ? `<tfoot><tr>${pie.map((c, i) => td(c, i, 'font-weight:800;background:#FBF7F1')).join('')}</tr></tfoot>` : ''}
       </table>
     </div>`;
 }
 
-const barrita = (v, max, color) => `<div style="width:90px;height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden;display:inline-block;vertical-align:middle"><div style="width:${max > 0 ? Math.max(0, v / max * 100) : 0}%;height:100%;background:${color};border-radius:99px"></div></div>`;
+const barrita = (v, max, color) => `<div style="width:90px;height:8px;border-radius:99px;background:#EADFD0;overflow:hidden;display:inline-block;vertical-align:middle"><div style="width:${max > 0 ? Math.max(0, v / max * 100) : 0}%;height:100%;background:${color};border-radius:99px"></div></div>`;
 const etiqueta = (txt, bg, fg) => `<span style="display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${bg};color:${fg};white-space:nowrap">${txt}</span>`;
 
 function leyenda(items) {
-  return `<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#64748b;margin-top:8px">${items.map(([c, t]) => `<span style="display:inline-flex;gap:6px;align-items:center"><span style="width:10px;height:10px;border-radius:3px;background:${c}"></span>${t}</span>`).join('')}</div>`;
+  return `<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#7D6858;margin-top:8px">${items.map(([c, t]) => `<span style="display:inline-flex;gap:6px;align-items:center"><span style="width:10px;height:10px;border-radius:3px;background:${c}"></span>${t}</span>`).join('')}</div>`;
 }
 
 /** Barras SVG. `comp` (opcional) se dibuja detrás en gris. */
@@ -310,17 +310,17 @@ function barras(datos, etiquetas, { comp = null, color = C.azul, W = 760, H = 19
   let s = `<svg viewBox="0 0 ${W} ${H + 22}" width="100%" style="display:block" font-family="inherit">`;
   for (let k = 0; k <= 3; k++) {
     const y = H - (H - 10) * k / 3;
-    s += `<line x1="${pad}" x2="${W}" y1="${y}" y2="${y}" stroke="#f1f5f9"/><text x="0" y="${y + 4}" font-size="10" fill="#94a3b8">${corto(max * k / 3)}</text>`;
+    s += `<line x1="${pad}" x2="${W}" y1="${y}" y2="${y}" stroke="#F2EBE0"/><text x="0" y="${y + 4}" font-size="10" fill="#A8957F">${corto(max * k / 3)}</text>`;
   }
   datos.forEach((v, i) => {
     const x = pad + i * bw;
     if (comp && comp[i]) {
       const hc = (H - 10) * Math.max(0, comp[i]) / max;
-      s += `<rect x="${x + bw * 0.12}" y="${H - hc}" width="${bw * 0.76}" height="${hc}" rx="3" fill="#cbd5e1" opacity=".6"><title>Anterior: ${fmtTip(comp[i])}</title></rect>`;
+      s += `<rect x="${x + bw * 0.12}" y="${H - hc}" width="${bw * 0.76}" height="${hc}" rx="3" fill="#DCCFBE" opacity=".6"><title>Anterior: ${fmtTip(comp[i])}</title></rect>`;
     }
     const h = (H - 10) * Math.max(0, v) / max;
     s += `<rect x="${x + bw * 0.24}" y="${H - h}" width="${bw * 0.52}" height="${h}" rx="3" fill="${v < 0 ? C.rojo : color}"><title>${esc(etiquetas[i])}: ${fmtTip(v)}</title></rect>`;
-    if (i % cada === 0) s += `<text x="${x + bw / 2}" y="${H + 16}" font-size="10.5" fill="#64748b" text-anchor="middle">${esc(etiquetas[i])}</text>`;
+    if (i % cada === 0) s += `<text x="${x + bw / 2}" y="${H + 16}" font-size="10.5" fill="#7D6858" text-anchor="middle">${esc(etiquetas[i])}</text>`;
   });
   return s + '</svg>';
 }
@@ -340,7 +340,7 @@ function dona(partes) {
 }
 
 function consejo(txt, tono = 'info') {
-  const t = { info: ['#eff6ff', '#1e40af', 'lightbulb'], bien: ['#f0fdf4', '#166534', 'trending-up'], mal: ['#fef2f2', '#991b1b', 'alert-circle'], ojo: ['#fffbeb', '#92400e', 'alert-triangle'] }[tono];
+  const t = { info: ['#F8F1E8', '#1e40af', 'lightbulb'], bien: ['#f0fdf4', '#166534', 'trending-up'], mal: ['#fef2f2', '#991b1b', 'alert-circle'], ojo: ['#fffbeb', '#92400e', 'alert-triangle'] }[tono];
   return `<div style="margin-top:12px;padding:10px 12px;background:${t[0]};border-radius:9px;font-size:12.5px;color:${t[1]};font-weight:600;display:flex;gap:8px;align-items:flex-start"><i data-lucide="${t[2]}" style="width:15px;height:15px;flex-shrink:0;margin-top:1px"></i><span>${txt}</span></div>`;
 }
 
@@ -395,13 +395,13 @@ function htmlEncabezado(info) {
         </div>
         <div>
           <h1 style="font-size:25px;font-weight:700;margin:0;color:${C.tinta};letter-spacing:-0.02em">${info.titulo}</h1>
-          <div style="color:#64748b;font-size:13.5px;margin-top:2px">${info.sub}</div>
+          <div style="color:#7D6858;font-size:13.5px;margin-top:2px">${info.sub}</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button data-acc="csv" style="${estiloBtn('#e2e8f0', 'white', '#475569')}"><i data-lucide="file-spreadsheet" style="width:15px;height:15px"></i> Excel</button>
-        <button data-acc="pos" style="${estiloBtn('#bfdbfe', '#eff6ff', '#1d4ed8')}"><i data-lucide="printer" style="width:15px;height:15px"></i> POS 80 mm</button>
-        <button data-acc="pdf" style="${estiloBtn(C.azul, C.azul, 'white')};box-shadow:0 4px 12px -2px rgba(37,99,235,.35)"><i data-lucide="file-text" style="width:15px;height:15px"></i> Informe PDF</button>
+        <button data-acc="csv" style="${estiloBtn('#EADFD0', 'white', '#5C4636')}"><i data-lucide="file-spreadsheet" style="width:15px;height:15px"></i> Excel</button>
+        <button data-acc="pos" style="${estiloBtn('#E3CDB4', '#F8F1E8', '#33200F')}"><i data-lucide="printer" style="width:15px;height:15px"></i> POS 80 mm</button>
+        <button data-acc="pdf" style="${estiloBtn(C.azul, C.azul, 'white')};box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)"><i data-lucide="file-text" style="width:15px;height:15px"></i> Informe PDF</button>
       </div>
     </div>`;
 }
@@ -409,16 +409,16 @@ function htmlEncabezado(info) {
 const estiloBtn = (borde, fondo, texto) => `padding:9px 14px;border:1px solid ${borde};background:${fondo};color:${texto};border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px`;
 
 function htmlPeriodo() {
-  const inp = 'padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:inherit;outline:none';
+  const inp = 'padding:8px 10px;border:1px solid #DCCFBE;border-radius:8px;font-size:13px;font-family:inherit;outline:none';
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between">
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         ${PRESETS.map(([k, t]) => {
           const on = _per.preset === k;
-          return `<button data-preset="${k}" style="padding:8px 13px;border:1px solid ${on ? C.azul : '#e2e8f0'};background:${on ? C.azul : 'white'};color:${on ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${t}</button>`;
+          return `<button data-preset="${k}" style="padding:8px 13px;border:1px solid ${on ? C.azul : '#EADFD0'};background:${on ? C.azul : 'white'};color:${on ? 'white' : '#5C4636'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${t}</button>`;
         }).join('')}
       </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#475569">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#5C4636">
         <input type="date" data-fecha="desde" value="${esc(_per.desde)}" style="${inp}">
         <span>a</span>
         <input type="date" data-fecha="hasta" value="${esc(_per.hasta)}" style="${inp}">
@@ -464,7 +464,7 @@ function htmlMenu() {
     ['wallet', 'Caja y gastos', 'Cierres, faltantes por cajero y gastos.'],
   ];
 
-  const chip = (x) => `<span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#f1f5f9;color:#475569;font-weight:600">${x}</span>`;
+  const chip = (x) => `<span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#F2EBE0;color:#5C4636;font-weight:600">${x}</span>`;
 
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px">
@@ -473,11 +473,11 @@ function htmlMenu() {
         <h1 style="font-size:26px;font-weight:700;color:${C.tinta};margin:0;letter-spacing:-0.02em">Reportes</h1>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button data-plantilla="reporte" title="Personaliza tu ticket de reporte POS 80mm" style="${estiloBtn('#bfdbfe', '#eff6ff', '#1d4ed8')}">Ticket de reporte</button>
+        <button data-plantilla="reporte" title="Personaliza tu ticket de reporte POS 80mm" style="${estiloBtn('#E3CDB4', '#F8F1E8', '#33200F')}">Ticket de reporte</button>
         <button data-plantilla="cierre" title="Personaliza tu ticket de cierre de caja POS 80mm" style="${estiloBtn('#fde68a', '#fffbeb', '#92400e')}">Ticket de cierre</button>
       </div>
     </div>
-    <div style="color:#64748b;font-size:14px;margin:0 0 18px 42px">Elige un módulo para ver sus reportes.</div>
+    <div style="color:#7D6858;font-size:14px;margin:0 0 18px 42px">Elige un módulo para ver sus reportes.</div>
 
     ${kpis(`
       ${kpi('Ventas hoy', money(vh.total), C.azul, `vs ayer · ${vh.n} venta(s)`, delta(vh.total, va.total))}
@@ -487,30 +487,30 @@ function htmlMenu() {
     `)}
 
     ${grid('repeat(auto-fit,minmax(250px,1fr))', mods.map(([k, ic, col, t, d, chips, alerta]) => `
-      <button data-nav="${k}" style="text-align:left;font-family:inherit;cursor:pointer;background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,border-color .15s"
-        onmouseover="this.style.borderColor='${col}';this.style.boxShadow='0 6px 18px -8px ${col}66'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+      <button data-nav="${k}" style="text-align:left;font-family:inherit;cursor:pointer;background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,border-color .15s"
+        onmouseover="this.style.borderColor='${col}';this.style.boxShadow='0 6px 18px -8px ${col}66'" onmouseout="this.style.borderColor='#EADFD0';this.style.boxShadow='none'">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;gap:8px">
           <div style="width:42px;height:42px;border-radius:11px;background:${col}1a;display:flex;align-items:center;justify-content:center"><i data-lucide="${ic}" style="width:22px;height:22px;color:${col}"></i></div>
           ${alerta ? etiqueta(alerta[0], alerta[1], alerta[2]) : ''}
         </div>
-        <div><div style="font-weight:700;font-size:16px;color:${C.tinta}">${t}</div><div style="font-size:12.5px;color:#64748b;margin-top:3px;line-height:1.4">${d}</div></div>
+        <div><div style="font-weight:700;font-size:16px;color:${C.tinta}">${t}</div><div style="font-size:12.5px;color:#7D6858;margin-top:3px;line-height:1.4">${d}</div></div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">${chips.map(chip).join('')}</div>
         <div style="margin-top:auto;font-size:13px;font-weight:700;color:${col};display:flex;gap:4px;align-items:center">Ver reportes <i data-lucide="arrow-right" style="width:14px;height:14px"></i></div>
       </button>`).join(''))}
 
     ${grid('repeat(auto-fit,minmax(250px,1fr))', `
-      <button data-nav="general" style="text-align:left;font-family:inherit;cursor:pointer;background:#0f172a;border:1px solid #0f172a;border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;color:white;grid-column:1/-1">
+      <button data-nav="general" style="text-align:left;font-family:inherit;cursor:pointer;background:#2A1A10;border:1px solid #2A1A10;border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;color:white;grid-column:1/-1">
         <div style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="clipboard-list" style="width:22px;height:22px;color:white"></i></div>
-        <div style="flex:1"><div style="font-weight:700;font-size:15px">Informe financiero general</div><div style="font-size:12.5px;color:#94a3b8;margin-top:2px">El reporte de siempre: estado de resultados, flujo de caja, por pagar, inventario y gastos, con su PDF y ticket.</div></div>
-        <i data-lucide="arrow-right" style="width:18px;height:18px;color:#93c5fd"></i>
+        <div style="flex:1"><div style="font-weight:700;font-size:15px">Informe financiero general</div><div style="font-size:12.5px;color:#A8957F;margin-top:2px">El reporte de siempre: estado de resultados, flujo de caja, por pagar, inventario y gastos, con su PDF y ticket.</div></div>
+        <i data-lucide="arrow-right" style="width:18px;height:18px;color:#E3CDB4"></i>
       </button>
       ${proximos.map(([ic, t, d]) => `
-        <div style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;opacity:.85">
+        <div style="background:#FBF7F1;border:1px dashed #DCCFBE;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;opacity:.85">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-            <div style="width:36px;height:36px;border-radius:10px;background:#e2e8f0;display:flex;align-items:center;justify-content:center"><i data-lucide="${ic}" style="width:18px;height:18px;color:#64748b"></i></div>
-            ${etiqueta('Próximamente', '#e2e8f0', '#475569')}
+            <div style="width:36px;height:36px;border-radius:10px;background:#EADFD0;display:flex;align-items:center;justify-content:center"><i data-lucide="${ic}" style="width:18px;height:18px;color:#7D6858"></i></div>
+            ${etiqueta('Próximamente', '#EADFD0', '#5C4636')}
           </div>
-          <div><div style="font-weight:700;font-size:14px;color:#475569">${t}</div><div style="font-size:12px;color:#94a3b8;margin-top:2px">${d}</div></div>
+          <div><div style="font-weight:700;font-size:14px;color:#5C4636">${t}</div><div style="font-size:12px;color:#A8957F;margin-top:2px">${d}</div></div>
         </div>`).join('')}
     `, 0)}
   `;
@@ -566,9 +566,9 @@ function modVentas(p) {
 
   const filasCaj = cajeros.map(([k, a]) => [esc(k), money(a.total), fmt(a.n), money(a.n ? a.total / a.n : 0), money(a.desc), r.total ? pctTxt(a.total / r.total * 100, 0) : '—']);
   const listaMet = metodos.map(([k, v, c]) => `
-    <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid #f1f5f9">
+    <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid #F2EBE0">
       <span style="display:inline-flex;gap:8px;align-items:center"><span style="width:10px;height:10px;border-radius:3px;background:${c}"></span>${esc(k)}</span>
-      <span><b>${money(v)}</b> <span style="color:#94a3b8">· ${r.total ? pctTxt(v / r.total * 100, 0) : ''}</span></span>
+      <span><b>${money(v)}</b> <span style="color:#A8957F">· ${r.total ? pctTxt(v / r.total * 100, 0) : ''}</span></span>
     </div>`).join('');
 
   const kpiHtml = kpis(`
@@ -580,9 +580,9 @@ function modVentas(p) {
   `);
 
   const graf = card(unDia ? 'Ventas por hora' : cub.porDia ? 'Ventas por día' : 'Ventas por mes', p.comparar ? `Comparado con ${textoRango(p.pd, p.ph)} (gris)` : textoRango(p.desde, p.hasta),
-    barras(datos, cub.etiquetas, { comp }) + (p.comparar ? leyenda([[C.azul, 'Periodo actual'], ['#cbd5e1', 'Periodo anterior']]) : ''));
+    barras(datos, cub.etiquetas, { comp }) + (p.comparar ? leyenda([[C.azul, 'Periodo actual'], ['#DCCFBE', 'Periodo anterior']]) : ''));
   const meses = card('Por meses', `Últimos 12 meses hasta ${MESES[Number(p.hasta.slice(5, 7)) - 1]} ${p.hasta.slice(0, 4)}`,
-    barras(m12.datos, m12.cub.etiquetas, { color: '#1d4ed8', W: 470, H: 200 }));
+    barras(m12.datos, m12.cub.etiquetas, { color: '#33200F', W: 470, H: 200 }));
   const calorCard = card('¿A qué hora se vende más?', 'Más oscuro = más ventas en ese día y hora', calor.html + (calor.pico ? consejo(calor.pico) : ''));
   const metCard = card('Métodos de pago', textoRango(p.desde, p.hasta),
     metodos.length ? `<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">${dona(metodos)}<div style="flex:1;min-width:200px">${listaMet}</div></div>` : vacio('Sin ventas en este periodo'));
@@ -638,14 +638,14 @@ function mapaCalor(vs) {
   const horas = [];
   for (let h = hMin; h <= hMax; h++) horas.push(h);
 
-  let html = `<div style="overflow-x:auto"><div style="display:grid;grid-template-columns:34px repeat(${horas.length},minmax(22px,1fr));gap:3px;font-size:10.5px;color:#64748b;min-width:${34 + horas.length * 25}px">`;
+  let html = `<div style="overflow-x:auto"><div style="display:grid;grid-template-columns:34px repeat(${horas.length},minmax(22px,1fr));gap:3px;font-size:10.5px;color:#7D6858;min-width:${34 + horas.length * 25}px">`;
   html += '<div></div>' + horas.map((h) => `<div style="text-align:center">${h}h</div>`).join('');
   dias.forEach((d, j) => {
     html += `<div style="display:flex;align-items:center">${d}</div>`;
     html += horas.map((h) => {
       const v = m[j][h];
       const a = v > 0 ? (0.12 + v / max * 0.88).toFixed(2) : 0;
-      return `<div title="${d} ${h}:00 · ${money(v)}" style="height:24px;border-radius:4px;background:${v > 0 ? `rgba(37,99,235,${a})` : '#f1f5f9'}"></div>`;
+      return `<div title="${d} ${h}:00 · ${money(v)}" style="height:24px;border-radius:4px;background:${v > 0 ? `rgba(74, 46, 26,${a})` : '#F2EBE0'}"></div>`;
     }).join('');
   });
   html += '</div></div>';
@@ -704,7 +704,7 @@ function modUtilidades(p) {
 
   const cascada = card('De las ventas a la utilidad neta', 'Cómo se va el dinero en el periodo', htmlCascada(r.total, r.costo, r.utilidad, g, neta));
   const porMes = card('Utilidad por mes', 'Utilidad neta (verde) sobre la utilidad bruta (gris) · últimos 12 meses',
-    barras(netaMes, ub.cub.etiquetas, { comp: ub.datos, color: C.verde, W: 470, H: 200 }) + leyenda([[C.verde, 'Neta'], ['#cbd5e1', 'Bruta']]));
+    barras(netaMes, ub.cub.etiquetas, { comp: ub.datos, color: C.verde, W: 470, H: 200 }) + leyenda([[C.verde, 'Neta'], ['#DCCFBE', 'Bruta']]));
 
   const catCard = card('Por categoría', 'Ventas, utilidad y margen', tabla(['Categoría', 'Ventas', 'Utilidad', 'Margen'],
     listaCats.map(([c, a]) => {
@@ -754,15 +754,15 @@ function htmlCascada(ventas, costo, bruta, gastos, neta) {
   const max = Math.max(ventas, gastos, 1) * 1.08;
   const min = Math.min(0, neta);
   const y = (v) => 10 + (H - 10) * (max - v) / (max - min);
-  const pasos = [['Ventas', 0, ventas, C.azul], ['Costo', bruta, ventas, '#94a3b8'], ['Utilidad bruta', 0, bruta, C.verde], ['Gastos', neta, bruta, C.rojo], ['Utilidad neta', 0, neta, neta >= 0 ? C.tinta : C.rojo]];
+  const pasos = [['Ventas', 0, ventas, C.azul], ['Costo', bruta, ventas, '#A8957F'], ['Utilidad bruta', 0, bruta, C.verde], ['Gastos', neta, bruta, C.rojo], ['Utilidad neta', 0, neta, neta >= 0 ? C.tinta : C.rojo]];
   let s = `<svg viewBox="0 0 ${W} ${H + 40}" width="100%" style="display:block" font-family="inherit">`;
-  s += `<line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="#e2e8f0"/>`;
+  s += `<line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="#EADFD0"/>`;
   pasos.forEach(([t, a, b, c], i) => {
     const x = 18 + i * 100;
     const top = Math.min(y(a), y(b)), alto = Math.max(2, Math.abs(y(a) - y(b)));
     s += `<rect x="${x}" y="${top}" width="70" height="${alto}" rx="4" fill="${c}"><title>${t}: ${money(b - a)}</title></rect>`;
     s += `<text x="${x + 35}" y="${top - 6}" font-size="11" font-weight="700" fill="${C.tinta}" text-anchor="middle">${corto(b - a)}</text>`;
-    s += `<text x="${x + 35}" y="${H + 26}" font-size="11" fill="#64748b" text-anchor="middle">${t}</text>`;
+    s += `<text x="${x + 35}" y="${H + 26}" font-size="11" fill="#7D6858" text-anchor="middle">${t}</text>`;
   });
   return s + '</svg>';
 }
@@ -835,15 +835,15 @@ function modProductos(p) {
   const cabProd = ['#', 'Producto', 'Categoría', 'Und', 'Ventas', '', 'Utilidad', 'Margen', p.comparar ? 'Vs ant.' : ''];
 
   const tabs = [['vendidos', 'Más vendidos'], ['utilidad', 'Más utilidad'], ['menos', 'Menos vendidos'], ['quietos', 'Sin movimiento'], ['abc', 'Clasificación ABC']];
-  const htmlTabs = `<div style="display:flex;gap:4px;background:#e2e8f0;padding:4px;border-radius:10px;width:fit-content;max-width:100%;overflow-x:auto;margin-bottom:14px">
-    ${tabs.map(([k, t]) => `<button data-tab="${k}" style="padding:7px 14px;border:0;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;background:${_tabProd === k ? 'white' : 'transparent'};color:${_tabProd === k ? C.tinta : '#64748b'};${_tabProd === k ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">${t}</button>`).join('')}
+  const htmlTabs = `<div style="display:flex;gap:4px;background:#EADFD0;padding:4px;border-radius:10px;width:fit-content;max-width:100%;overflow-x:auto;margin-bottom:14px">
+    ${tabs.map(([k, t]) => `<button data-tab="${k}" style="padding:7px 14px;border:0;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;background:${_tabProd === k ? 'white' : 'transparent'};color:${_tabProd === k ? C.tinta : '#7D6858'};${_tabProd === k ? 'box-shadow:0 1px 3px rgba(0,0,0,.08)' : ''}">${t}</button>`).join('')}
   </div>`;
 
   const secciones = {};
 
   const porUnd = _ordenProd === 'unidades';
   const topV = [...prods].sort((a, b) => (porUnd ? b.und - a.und : b.venta - a.venta)).slice(0, 20);
-  const toggle = `<div style="display:flex;gap:4px">${[['dinero', 'Por dinero'], ['unidades', 'Por unidades']].map(([k, t]) => `<button data-orden="${k}" style="padding:6px 11px;border:1px solid ${_ordenProd === k ? C.morado : '#e2e8f0'};background:${_ordenProd === k ? '#f5f3ff' : 'white'};color:${_ordenProd === k ? C.morado : '#64748b'};border-radius:7px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">${t}</button>`).join('')}</div>`;
+  const toggle = `<div style="display:flex;gap:4px">${[['dinero', 'Por dinero'], ['unidades', 'Por unidades']].map(([k, t]) => `<button data-orden="${k}" style="padding:6px 11px;border:1px solid ${_ordenProd === k ? C.morado : '#EADFD0'};background:${_ordenProd === k ? '#f5f3ff' : 'white'};color:${_ordenProd === k ? C.morado : '#7D6858'};border-radius:7px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">${t}</button>`).join('')}</div>`;
   secciones.vendidos = card('Top 20 más vendidos', `Ordenado ${porUnd ? 'por unidades' : 'por dinero'} · ${textoRango(p.desde, p.hasta)}`,
     tabla(cabProd, topV.map((x, i) => filaProd(x, i, C.morado)), [3, 4, 6, 7, 8]), toggle);
 
@@ -858,7 +858,7 @@ function modProductos(p) {
   secciones.menos = card('Menos vendidos', 'Productos con existencias que menos salieron en el periodo',
     tabla(['Producto', 'Categoría', 'Existencias', 'Und vendidas', 'Ventas'], menos.map((x) => [esc(x.nombre), esc(x.categoria), fmt(x.stock), x.und ? fmt(x.und) : `<span style="color:${C.rojo};font-weight:700">0</span>`, money(x.venta)]), [2, 3, 4]));
 
-  secciones.quietos = card(`<span style="display:inline-flex;gap:8px;align-items:center"><i data-lucide="moon" style="width:17px;height:17px;color:#64748b"></i> Sin movimiento · plata quieta</span>`,
+  secciones.quietos = card(`<span style="display:inline-flex;gap:8px;align-items:center"><i data-lucide="moon" style="width:17px;height:17px;color:#7D6858"></i> Sin movimiento · plata quieta</span>`,
     `Con existencias y sin venderse hace más de 45 días · <b style="color:${C.tinta}">${money(valorQuieto)} inmovilizados a costo</b>`,
     tabla(['Producto', 'Categoría', 'Última venta', 'Días', 'Existencias', 'Valor a costo'],
       quietos.slice(0, 40).map((x) => [esc(x.nombre), esc(x.categoria), x.ultima ? fechaBonita(x.ultima) : 'Nunca', x.dias == null ? '—' : fmt(x.dias), fmt(x.stock), money(x.valor)]), [3, 4, 5])
@@ -869,10 +869,10 @@ function modProductos(p) {
     card('Clasificación ABC', 'Pocos productos hacen casi toda la venta', grupos.map((g) => {
       const [bg, fg, txt] = coloresABC[g.k];
       const pv = totalVenta ? g.venta / totalVenta * 100 : 0;
-      return `<div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9">
+      return `<div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #F2EBE0">
         <div style="width:40px;height:40px;border-radius:10px;background:${bg};color:${fg};font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${g.k}</div>
-        <div style="flex:1"><div style="font-size:13.5px;font-weight:700">${fmt(g.n)} producto(s) → ${pctTxt(pv, 0)} de las ventas</div><div style="font-size:12px;color:#64748b">${txt}</div>
-        <div style="height:8px;border-radius:99px;background:#e2e8f0;margin-top:6px;overflow:hidden"><div style="width:${pv}%;height:100%;background:${bg}"></div></div></div></div>`;
+        <div style="flex:1"><div style="font-size:13.5px;font-weight:700">${fmt(g.n)} producto(s) → ${pctTxt(pv, 0)} de las ventas</div><div style="font-size:12px;color:#7D6858">${txt}</div>
+        <div style="height:8px;border-radius:99px;background:#EADFD0;margin-top:6px;overflow:hidden"><div style="width:${pv}%;height:100%;background:${bg}"></div></div></div></div>`;
     }).join(''))
     + card('Productos clase A', 'Los que sostienen el negocio', tabla(['Producto', 'Ventas', '% acum.'],
       (() => { let ac = 0; return abc.filter((x) => x.clase === 'A').map((x) => { ac += x.venta; return [esc(x.nombre), money(x.venta), pctTxt(totalVenta ? ac / totalVenta * 100 : 0, 0)]; }); })(), [1, 2])),
@@ -978,7 +978,7 @@ function modCompras(p) {
       [1, 2, 3, 4, 6], provs.length ? ['Total', fmt(cs.length), money(provs.reduce((s, [, a]) => s + a.contado, 0)), money(provs.reduce((s, [, a]) => s + a.credito, 0)), money(total), '', money(provs.reduce((s, [, a]) => s + a.saldo, 0))] : null));
 
   const globalCard = card('Globalizado · compras vs ventas', 'Compras (dorado) sobre ventas (gris) · últimos 12 meses',
-    barras(globalC.datos, globalC.cub.etiquetas, { comp: globalV.datos, color: C.ambar, W: 470, H: 200 }) + leyenda([[C.ambar, 'Compras'], ['#cbd5e1', 'Ventas']]));
+    barras(globalC.datos, globalC.cub.etiquetas, { comp: globalV.datos, color: C.ambar, W: 470, H: 200 }) + leyenda([[C.ambar, 'Compras'], ['#DCCFBE', 'Ventas']]));
 
   const cambiosCard = card(`<span style="display:inline-flex;gap:8px;align-items:center"><i data-lucide="trending-up" style="width:17px;height:17px;color:${C.rojo}"></i> Cambios de costo</span>`,
     'Productos cuyo costo cambió en las compras del periodo',
@@ -996,7 +996,7 @@ function modCompras(p) {
   const cxpCard = card('Cuentas por pagar', `Todas las facturas a crédito con saldo, a hoy · ${money(cxpTotal)}`, tabla(['Proveedor', 'Factura', 'Fecha', 'Vence', 'Saldo'],
     cxp.slice(0, 25).map((c) => {
       const venc = c.vence && c.vence < hoy;
-      const estado = !c.vence ? '<span style="color:#94a3b8">Sin fecha</span>'
+      const estado = !c.vence ? '<span style="color:#A8957F">Sin fecha</span>'
         : venc ? `<span style="color:${C.rojo};font-weight:700">Vencida (${diasEntre(c.vence, hoy)} d)</span>`
           : c.vence === hoy ? `<span style="color:${C.ambar};font-weight:700">Hoy</span>` : fechaBonita(c.vence);
       return [esc(c.proveedor || 'Sin proveedor'), esc(c.ref || '—'), fechaBonita(dia(c)), estado, money(c.saldo)];
@@ -1122,18 +1122,18 @@ function htmlInformeCarta(info, p, neg, cuerpo) {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${info.color};padding-bottom:12px;margin-bottom:14px">
         <div>
           <div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${esc(neg.nombre || 'PosPunto')}</div>
-          ${neg.nit ? `<div style="font-size:11px;color:#475569">NIT/CC: ${esc(neg.nit)}</div>` : ''}
-          ${neg.direccion ? `<div style="font-size:11px;color:#475569">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
+          ${neg.nit ? `<div style="font-size:11px;color:#5C4636">NIT/CC: ${esc(neg.nit)}</div>` : ''}
+          ${neg.direccion ? `<div style="font-size:11px;color:#5C4636">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
         </div>
         <div style="text-align:right">
           <div style="font-size:15px;font-weight:800;color:${info.color};text-transform:uppercase">Informe de ${esc(info.titulo)}</div>
-          <div style="font-size:11px;color:#475569">Periodo: ${textoRango(p.desde, p.hasta)}</div>
-          ${p.comparar ? `<div style="font-size:11px;color:#475569">Comparado con: ${textoRango(p.pd, p.ph)}</div>` : ''}
-          <div style="font-size:11px;color:#94a3b8">Generado: ${esc(generado)}</div>
+          <div style="font-size:11px;color:#5C4636">Periodo: ${textoRango(p.desde, p.hasta)}</div>
+          ${p.comparar ? `<div style="font-size:11px;color:#5C4636">Comparado con: ${textoRango(p.pd, p.ph)}</div>` : ''}
+          <div style="font-size:11px;color:#A8957F">Generado: ${esc(generado)}</div>
         </div>
       </div>
       ${cuerpo}
-      <div style="border-top:1px solid #cbd5e1;margin-top:16px;padding-top:8px;font-size:9.5px;color:#94a3b8;text-align:center">
+      <div style="border-top:1px solid #DCCFBE;margin-top:16px;padding-top:8px;font-size:9.5px;color:#A8957F;text-align:center">
         Reporte generado automáticamente por PosPunto · ${esc(generado)}
       </div>
     </div>`;

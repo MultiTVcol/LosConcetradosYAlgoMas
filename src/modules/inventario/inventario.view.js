@@ -33,7 +33,7 @@ export async function render(contenedor) {
   _verTodos = false;
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
-  contenedor.innerHTML = `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando inventario…</div>`;
+  contenedor.innerHTML = `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando inventario…</div>`;
   await refrescar();
 
   _offRealtime = Realtime.escucharVarias(['productos', 'compras', 'ventas', 'gastos'], async () => {
@@ -66,10 +66,10 @@ function adjuntarEventos(c) {
 
 function htmlLayout(r) {
   const kpi = (label, valor, color, sub) => `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px">
-      <div style="font-size:13px;color:#475569;font-weight:600;margin-bottom:6px">${label}</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:16px 18px">
+      <div style="font-size:13px;color:#5C4636;font-weight:600;margin-bottom:6px">${label}</div>
       <div style="font-size:22px;font-weight:800;color:${color};letter-spacing:-0.02em">${valor}</div>
-      <div style="color:#64748b;font-size:12px;margin-top:6px">${sub}</div>
+      <div style="color:#7D6858;font-size:12px;margin-top:6px">${sub}</div>
     </div>
   `;
 
@@ -77,32 +77,32 @@ function htmlLayout(r) {
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:12px">
-          <i data-lucide="boxes" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
-          <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Inventario</h1>
+          <i data-lucide="boxes" style="width:30px;height:30px;color:#4A2E1A;stroke-width:1.75"></i>
+          <h1 style="font-size:26px;font-weight:700;color:#2A1A10;margin:0;letter-spacing:-0.02em">Inventario</h1>
         </div>
         <div style="display:flex;gap:8px">
           <button id="inv-btn-ajustes"
-            style="padding:10px 16px;background:white;color:#2563eb;border:1px solid #bfdbfe;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Ajustes</button>
+            style="padding:10px 16px;background:white;color:#4A2E1A;border:1px solid #E3CDB4;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Ajustes</button>
           <button id="inv-btn-conteo"
-            style="padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">Conteo físico</button>
+            style="padding:10px 16px;background:#4A2E1A;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">Conteo físico</button>
         </div>
       </div>
 
       <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:18px">
-        ${kpi('Valor a costo', money(r.valorCosto), '#8b5cf6', `${fmt(r.unidades)} unidades · ${fmt(r.skus)} productos`)}
-        ${kpi('Valor a venta', money(r.valorVenta), '#0f172a', 'Si se vendiera todo hoy')}
+        ${kpi('Valor a costo', money(r.valorCosto), '#D9620F', `${fmt(r.unidades)} unidades · ${fmt(r.skus)} productos`)}
+        ${kpi('Valor a venta', money(r.valorVenta), '#2A1A10', 'Si se vendiera todo hoy')}
         ${kpi('Utilidad potencial', money(r.utilidadPotencial), '#15803d', 'Venta − costo')}
         ${kpi('Alertas', `${fmt(r.bajoStock)} bajos · ${fmt(r.agotados)} agotados`, r.bajoStock + r.agotados > 0 ? '#dc2626' : '#15803d', 'Stock bajo mínimo / en cero')}
       </div>
 
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:18px 20px">
+      <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:18px 20px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap">
           <div>
-            <h3 style="font-size:16px;font-weight:700;margin:0;color:#0f172a">Productos</h3>
-            <div style="font-size:12.5px;color:#64748b;margin-top:2px">Haz click en un producto para ver su <b>kardex</b> (toda su historia)</div>
+            <h3 style="font-size:16px;font-weight:700;margin:0;color:#2A1A10">Productos</h3>
+            <div style="font-size:12.5px;color:#7D6858;margin-top:2px">Haz click en un producto para ver su <b>kardex</b> (toda su historia)</div>
           </div>
           <input id="inv-buscar" type="text" placeholder="Buscar por nombre o código…" autocomplete="off"
-            style="padding:10px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;font-family:inherit;min-width:260px" />
+            style="padding:10px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;font-family:inherit;min-width:260px" />
         </div>
         <div id="inv-tabla" style="overflow-x:auto"></div>
       </div>
@@ -120,14 +120,14 @@ function pintarTabla() {
     : ProductosRepo.filtrarConPrioridad(_res.productos, _q);
 
   if (filas.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:32px;color:#94a3b8;font-size:13.5px">Sin productos${String(_q || '').trim() ? ` para "${esc(_q)}"` : ''}.</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:32px;color:#A8957F;font-size:13.5px">Sin productos${String(_q || '').trim() ? ` para "${esc(_q)}"` : ''}.</div>`;
     return;
   }
 
   box.innerHTML = `
     <table style="width:100%;border-collapse:collapse;font-size:13.5px">
       <thead>
-        <tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left">
+        <tr style="border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left">
           <th style="padding:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Código</th>
           <th style="padding:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Producto</th>
           <th style="padding:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:right">Stock</th>
@@ -138,14 +138,14 @@ function pintarTabla() {
       <tbody>
         ${(_verTodos ? filas : filas.slice(0, TOPE_FILAS)).map((p) => {
           const st = num(p.stock);
-          const alerta = st <= 0 ? '#dc2626' : (st <= num(p.stock_min) ? '#d97706' : '#0f172a');
+          const alerta = st <= 0 ? '#dc2626' : (st <= num(p.stock_min) ? '#d97706' : '#2A1A10');
           return `
-          <tr class="inv-fila" data-id="${esc(p.id)}" style="border-bottom:1px solid #f1f5f9;cursor:pointer">
-            <td style="padding:10px 8px;color:#64748b;font-family:inherit;font-size:12.5px">${esc(p.codigo || '—')}</td>
-            <td style="padding:10px 8px;font-weight:600;color:#0f172a">${esc(p.nombre)}</td>
+          <tr class="inv-fila" data-id="${esc(p.id)}" style="border-bottom:1px solid #F2EBE0;cursor:pointer">
+            <td style="padding:10px 8px;color:#7D6858;font-family:inherit;font-size:12.5px">${esc(p.codigo || '—')}</td>
+            <td style="padding:10px 8px;font-weight:600;color:#2A1A10">${esc(p.nombre)}</td>
             <td style="padding:10px 8px;text-align:right;font-weight:800;color:${alerta}">${fmt(st)}</td>
-            <td style="padding:10px 8px;text-align:right;color:#475569">${money(p.costo)}</td>
-            <td style="padding:10px 8px;text-align:right;font-weight:700;color:#0f172a">${money(st > 0 ? st * num(p.costo) : 0)}</td>
+            <td style="padding:10px 8px;text-align:right;color:#5C4636">${money(p.costo)}</td>
+            <td style="padding:10px 8px;text-align:right;font-weight:700;color:#2A1A10">${money(st > 0 ? st * num(p.costo) : 0)}</td>
           </tr>
         `;
         }).join('')}
@@ -154,10 +154,10 @@ function pintarTabla() {
     ${filas.length > TOPE_FILAS ? `
       <div style="text-align:center;padding:14px 10px 4px">
         ${_verTodos
-          ? `<span style="color:#94a3b8;font-size:12.5px">Mostrando los ${fmt(filas.length)} productos · </span>
-             <button id="inv-vermenos" style="background:none;border:0;color:#2563eb;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;text-decoration:underline">Mostrar menos</button>`
-          : `<span style="color:#94a3b8;font-size:12.5px">Mostrando ${TOPE_FILAS} de ${fmt(filas.length)} · </span>
-             <button id="inv-vertodos" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;border-radius:8px;padding:6px 12px;margin-left:4px">Mostrar todos (${fmt(filas.length)})</button>`}
+          ? `<span style="color:#A8957F;font-size:12.5px">Mostrando los ${fmt(filas.length)} productos · </span>
+             <button id="inv-vermenos" style="background:none;border:0;color:#4A2E1A;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;text-decoration:underline">Mostrar menos</button>`
+          : `<span style="color:#A8957F;font-size:12.5px">Mostrando ${TOPE_FILAS} de ${fmt(filas.length)} · </span>
+             <button id="inv-vertodos" style="background:#F8F1E8;border:1px solid #E3CDB4;color:#33200F;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;border-radius:8px;padding:6px 12px;margin-left:4px">Mostrar todos (${fmt(filas.length)})</button>`}
       </div>` : ''}
   `;
 
@@ -182,22 +182,22 @@ async function abrirKardex(productoId) {
     return;
   }
 
-  const colorTipo = { Compra: '#15803d', Venta: '#2563eb', Baja: '#dc2626', 'Conteo físico': '#a16207' };
+  const colorTipo = { Compra: '#15803d', Venta: '#4A2E1A', Baja: '#dc2626', 'Conteo físico': '#a16207' };
 
   const contenido = `
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
       <div>
-        <div style="font-size:12px;color:#94a3b8">${esc(k.producto.codigo || '')}</div>
-        <div style="font-weight:800;font-size:17px;color:#0f172a">${esc(k.producto.nombre)}</div>
+        <div style="font-size:12px;color:#A8957F">${esc(k.producto.codigo || '')}</div>
+        <div style="font-weight:800;font-size:17px;color:#2A1A10">${esc(k.producto.nombre)}</div>
       </div>
       <div style="text-align:right">
-        <div style="font-size:12px;color:#94a3b8">Stock actual</div>
-        <div style="font-weight:800;font-size:20px;color:#0f172a">${fmt(k.producto.stock)} <span style="font-size:12px;color:#64748b">unidades</span></div>
+        <div style="font-size:12px;color:#A8957F">Stock actual</div>
+        <div style="font-weight:800;font-size:20px;color:#2A1A10">${fmt(k.producto.stock)} <span style="font-size:12px;color:#7D6858">unidades</span></div>
       </div>
     </div>
 
     ${k.movimientos.length === 0 ? `
-      <div style="text-align:center;padding:30px;color:#94a3b8;font-size:13.5px">
+      <div style="text-align:center;padding:30px;color:#A8957F;font-size:13.5px">
         Sin movimientos registrados todavía.<br>
         <span style="font-size:12px">El stock actual (${fmt(k.producto.stock)}) proviene de la creación del producto o de un import.</span>
       </div>
@@ -205,7 +205,7 @@ async function abrirKardex(productoId) {
       <div style="max-height:48vh;overflow:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
-            <tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0;background:white">
+            <tr style="border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left;position:sticky;top:0;background:white">
               <th style="padding:7px 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Fecha</th>
               <th style="padding:7px 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Tipo</th>
               <th style="padding:7px 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Doc</th>
@@ -215,18 +215,18 @@ async function abrirKardex(productoId) {
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom:1px dashed #e2e8f0;color:#94a3b8">
+            <tr style="border-bottom:1px dashed #EADFD0;color:#A8957F">
               <td colspan="5" style="padding:8px">Saldo inicial</td>
               <td style="padding:8px;text-align:right;font-weight:700">${fmt(k.saldoInicial)}</td>
             </tr>
             ${k.movimientos.map((m) => `
-              <tr style="border-bottom:1px solid #f1f5f9" title="${esc(m.detalle || '')}">
-                <td style="padding:8px;color:#64748b;white-space:nowrap">${esc(fmtDate(m.fecha))}</td>
-                <td style="padding:8px"><span style="color:${colorTipo[m.tipo] || '#475569'};font-weight:700;font-size:12px">${esc(m.tipo)}</span></td>
-                <td style="padding:8px"><span style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px">${esc(m.doc || '—')}</span></td>
+              <tr style="border-bottom:1px solid #F2EBE0" title="${esc(m.detalle || '')}">
+                <td style="padding:8px;color:#7D6858;white-space:nowrap">${esc(fmtDate(m.fecha))}</td>
+                <td style="padding:8px"><span style="color:${colorTipo[m.tipo] || '#5C4636'};font-weight:700;font-size:12px">${esc(m.tipo)}</span></td>
+                <td style="padding:8px"><span style="background:#F2EBE0;color:#5C4636;font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px">${esc(m.doc || '—')}</span></td>
                 <td style="padding:8px;text-align:right;color:#15803d;font-weight:700">${m.entrada > 0 ? '+' + fmt(m.entrada) : ''}</td>
                 <td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">${m.salida > 0 ? '−' + fmt(m.salida) : ''}</td>
-                <td style="padding:8px;text-align:right;font-weight:800;color:#0f172a">${fmt(m.saldo)}</td>
+                <td style="padding:8px;text-align:right;font-weight:800;color:#2A1A10">${fmt(m.saldo)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -252,25 +252,25 @@ function abrirConteo() {
       <div style="display:flex;gap:8px;align-items:stretch;position:relative">
         <div style="flex:1;position:relative">
           <input id="ct-buscar" type="text" placeholder="Agregar producto por nombre o código…" autocomplete="off"
-            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+            style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           <div id="ct-resultados" style="position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;display:flex;flex-direction:column;gap:4px;max-height:230px;overflow:auto;background:white;border-radius:8px"></div>
         </div>
-        <button id="ct-todos" style="padding:0 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap">Cargar todos</button>
+        <button id="ct-todos" style="padding:0 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap">Cargar todos</button>
       </div>
 
       <div id="ct-sheet"></div>
 
       <div>
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
+        <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
         <input id="ct-nota" type="text" placeholder="Ej: conteo de fin de mes"
-          style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
 
-      <div id="ct-footer" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px 14px;font-size:13px;color:#334155"></div>
+      <div id="ct-footer" style="display:none;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:11px 14px;font-size:13px;color:#4A3628"></div>
 
       <div style="display:flex;gap:10px;margin-top:4px">
-        <button id="ct-cancelar" style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="ct-confirmar" data-primary disabled style="flex:1.4;padding:12px;border:0;background:#94a3b8;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">Registrar ajustes</button>
+        <button id="ct-cancelar" style="flex:1;padding:12px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
+        <button id="ct-confirmar" data-primary disabled style="flex:1.4;padding:12px;border:0;background:#A8957F;color:white;border-radius:10px;cursor:not-allowed;font-size:14px;font-weight:700;font-family:inherit">Registrar ajustes</button>
       </div>
     </div>
   `;
@@ -298,9 +298,9 @@ function abrirConteo() {
         .slice(0, 8);
     boxRes.innerHTML = lista.map((p) => `
       <button class="ct-res" data-id="${esc(p.id)}"
-        style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border:1px solid #e2e8f0;background:white;border-radius:8px;cursor:pointer;font-family:inherit;text-align:left;font-size:13px">
-        <span style="font-weight:600;color:#0f172a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</span>
-        <span style="color:#64748b;flex-shrink:0">Sistema: <b>${fmt(p.stock)}</b></span>
+        style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border:1px solid #EADFD0;background:white;border-radius:8px;cursor:pointer;font-family:inherit;text-align:left;font-size:13px">
+        <span style="font-weight:600;color:#2A1A10;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</span>
+        <span style="color:#7D6858;flex-shrink:0">Sistema: <b>${fmt(p.stock)}</b></span>
       </button>
     `).join('');
     boxRes.querySelectorAll('.ct-res').forEach((b) => {
@@ -316,16 +316,16 @@ function abrirConteo() {
 
   const pintarSheet = () => {
     if (hoja.length === 0) {
-      sheet.innerHTML = `<div style="text-align:center;padding:26px;color:#94a3b8;font-size:13.5px;border:1px dashed #e2e8f0;border-radius:10px">
+      sheet.innerHTML = `<div style="text-align:center;padding:26px;color:#A8957F;font-size:13.5px;border:1px dashed #EADFD0;border-radius:10px">
         Busca productos para agregarlos, o usa <b>Cargar todos</b> para contar el inventario completo.</div>`;
       actualizarFooter();
       return;
     }
     sheet.innerHTML = `
-      <div style="max-height:46vh;overflow:auto;border:1px solid #e2e8f0;border-radius:10px">
+      <div style="max-height:46vh;overflow:auto;border:1px solid #EADFD0;border-radius:10px">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
-            <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0;z-index:1">
+            <tr style="background:#FBF7F1;border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left;position:sticky;top:0;z-index:1">
               <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Producto</th>
               <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Sistema</th>
               <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:center;width:110px">Contado</th>
@@ -335,15 +335,15 @@ function abrirConteo() {
           </thead>
           <tbody>
             ${hoja.map((it, i) => `
-              <tr class="ct-row" data-i="${i}" style="border-bottom:1px solid #f1f5f9">
-                <td style="padding:7px 10px;font-weight:600;color:#0f172a">${esc(it.nombre)}${it.codigo ? `<span style="color:#94a3b8;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
-                <td style="padding:7px 10px;text-align:right;color:#475569">${fmt(it.sistema)}</td>
+              <tr class="ct-row" data-i="${i}" style="border-bottom:1px solid #F2EBE0">
+                <td style="padding:7px 10px;font-weight:600;color:#2A1A10">${esc(it.nombre)}${it.codigo ? `<span style="color:#A8957F;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
+                <td style="padding:7px 10px;text-align:right;color:#5C4636">${fmt(it.sistema)}</td>
                 <td style="padding:7px 10px;text-align:center">
                   <input class="ct-fis" inputmode="numeric" value="${it.fisico === '' ? '' : esc(String(it.fisico))}" placeholder="—"
-                    style="width:90px;padding:7px 8px;border:1.5px solid #cbd5e1;border-radius:7px;font-size:14px;font-weight:700;text-align:center;outline:none;font-family:inherit;box-sizing:border-box" />
+                    style="width:90px;padding:7px 8px;border:1.5px solid #DCCFBE;border-radius:7px;font-size:14px;font-weight:700;text-align:center;outline:none;font-family:inherit;box-sizing:border-box" />
                 </td>
-                <td class="ct-dif" style="padding:7px 10px;text-align:right;font-weight:700;color:#cbd5e1">—</td>
-                <td style="text-align:center"><button class="ct-del" title="Quitar" style="border:0;background:none;cursor:pointer;color:#cbd5e1;font-size:16px;line-height:1;padding:4px">✕</button></td>
+                <td class="ct-dif" style="padding:7px 10px;text-align:right;font-weight:700;color:#DCCFBE">—</td>
+                <td style="text-align:center"><button class="ct-del" title="Quitar" style="border:0;background:none;cursor:pointer;color:#DCCFBE;font-size:16px;line-height:1;padding:4px">✕</button></td>
               </tr>
             `).join('')}
           </tbody>
@@ -359,10 +359,10 @@ function abrirConteo() {
       const refrescarDif = () => {
         it.fisico = inp.value;
         const has = inp.value.trim() !== '';
-        if (!has) { cel.textContent = '—'; cel.style.color = '#cbd5e1'; actualizarFooter(); return; }
+        if (!has) { cel.textContent = '—'; cel.style.color = '#DCCFBE'; actualizarFooter(); return; }
         const delta = num(inp.value) - it.sistema;
         if (delta === 0) { cel.textContent = '0'; cel.style.color = '#15803d'; }
-        else { cel.textContent = (delta > 0 ? '+' : '−') + fmt(Math.abs(delta)); cel.style.color = delta > 0 ? '#1d4ed8' : '#dc2626'; }
+        else { cel.textContent = (delta > 0 ? '+' : '−') + fmt(Math.abs(delta)); cel.style.color = delta > 0 ? '#33200F' : '#dc2626'; }
         actualizarFooter();
       };
       inp.addEventListener('input', refrescarDif);
@@ -382,14 +382,14 @@ function abrirConteo() {
 
     const habilitado = difs.length > 0;
     btnOk.disabled = !habilitado;
-    btnOk.style.background = habilitado ? '#2563eb' : '#94a3b8';
+    btnOk.style.background = habilitado ? '#4A2E1A' : '#A8957F';
     btnOk.style.cursor = habilitado ? 'pointer' : 'not-allowed';
     btnOk.textContent = habilitado ? `Registrar ${difs.length} ajuste(s)` : 'Registrar ajustes';
 
     if (hoja.length === 0) { footer.style.display = 'none'; return; }
     footer.style.display = 'block';
     footer.innerHTML = `
-      <b>${fmt(hoja.length)}</b> producto(s) en la planilla · <b style="color:#1d4ed8">${sobra}</b> sobrante(s) · <b style="color:#dc2626">${falta}</b> faltante(s)
+      <b>${fmt(hoja.length)}</b> producto(s) en la planilla · <b style="color:#33200F">${sobra}</b> sobrante(s) · <b style="color:#dc2626">${falta}</b> faltante(s)
       ${difs.length ? ` · ajuste neto <b style="color:${valorNeto >= 0 ? '#15803d' : '#dc2626'}">${money(Math.abs(valorNeto))}</b> ${valorNeto >= 0 ? '(sobra)' : '(falta)'}` : ''}
     `;
   };
@@ -442,7 +442,7 @@ let _histModal = null;
 async function abrirHistorial() {
   _histModal = Modal.abrir({
     titulo: 'Ajustes de inventario',
-    contenido: '<div style="padding:24px;text-align:center;color:#64748b;font-size:13.5px">Cargando…</div>',
+    contenido: '<div style="padding:24px;text-align:center;color:#7D6858;font-size:13.5px">Cargando…</div>',
     ancho: 'lg',
     onClose: () => { _histModal = null; },
   });
@@ -455,9 +455,9 @@ async function pintarHistorial() {
 
   if (ajustes.length === 0) {
     _histModal.body.innerHTML = `
-      <div style="text-align:center;padding:36px;color:#94a3b8;font-size:13.5px">
+      <div style="text-align:center;padding:36px;color:#A8957F;font-size:13.5px">
         <div style="font-size:34px">📭</div>
-        <div style="margin-top:8px;font-weight:600;color:#475569">Aún no hay ajustes de inventario</div>
+        <div style="margin-top:8px;font-weight:600;color:#5C4636">Aún no hay ajustes de inventario</div>
         <div style="font-size:12px;margin-top:2px">Usa <b>Conteo físico</b> para registrar el primero.</div>
       </div>`;
     return;
@@ -467,7 +467,7 @@ async function pintarHistorial() {
     <div style="max-height:60vh;overflow:auto">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
-          <tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0;background:white">
+          <tr style="border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left;position:sticky;top:0;background:white">
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Ajuste</th>
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Fecha</th>
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Productos</th>
@@ -480,10 +480,10 @@ async function pintarHistorial() {
             const nProd = (a.items || []).length;
             const neto = num(a.valor);
             return `
-            <tr style="border-bottom:1px solid #f1f5f9">
-              <td style="padding:9px 10px"><b style="color:#2563eb">${esc(a.numero || '—')}</b>${a.nota ? `<div style="font-size:11.5px;color:#94a3b8">${esc(a.nota)}</div>` : ''}</td>
-              <td style="padding:9px 10px;color:#64748b;white-space:nowrap">${esc(fmtDate(a.fecha))}</td>
-              <td style="padding:9px 10px;text-align:right;color:#475569">${fmt(nProd)}</td>
+            <tr style="border-bottom:1px solid #F2EBE0">
+              <td style="padding:9px 10px"><b style="color:#4A2E1A">${esc(a.numero || '—')}</b>${a.nota ? `<div style="font-size:11.5px;color:#A8957F">${esc(a.nota)}</div>` : ''}</td>
+              <td style="padding:9px 10px;color:#7D6858;white-space:nowrap">${esc(fmtDate(a.fecha))}</td>
+              <td style="padding:9px 10px;text-align:right;color:#5C4636">${fmt(nProd)}</td>
               <td style="padding:9px 10px;text-align:right;font-weight:700;color:${neto >= 0 ? '#15803d' : '#dc2626'}">${neto >= 0 ? '+' : '−'}${money(Math.abs(neto))}</td>
               <td style="padding:9px 10px;text-align:right;white-space:nowrap">
                 <button class="hist-ver" data-id="${esc(a.id)}" title="Ver detalle" style="border:0;background:none;cursor:pointer;font-size:15px;padding:3px 5px">👁️</button>
@@ -509,11 +509,11 @@ async function verAjuste(id) {
   const filas = (a.items || []).map((it) => {
     const d = num(it.delta);
     return `
-      <tr style="border-bottom:1px solid #f1f5f9">
-        <td style="padding:8px 10px;font-weight:600;color:#0f172a">${esc(it.nombre)}${it.codigo ? `<span style="color:#94a3b8;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
-        <td style="padding:8px 10px;text-align:right;color:#475569">${fmt(it.sistema)}</td>
-        <td style="padding:8px 10px;text-align:right;color:#0f172a;font-weight:700">${fmt(it.fisico)}</td>
-        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${d >= 0 ? '#1d4ed8' : '#dc2626'}">${d >= 0 ? '+' : '−'}${fmt(Math.abs(d))}</td>
+      <tr style="border-bottom:1px solid #F2EBE0">
+        <td style="padding:8px 10px;font-weight:600;color:#2A1A10">${esc(it.nombre)}${it.codigo ? `<span style="color:#A8957F;font-weight:400;font-size:11.5px"> · ${esc(it.codigo)}</span>` : ''}</td>
+        <td style="padding:8px 10px;text-align:right;color:#5C4636">${fmt(it.sistema)}</td>
+        <td style="padding:8px 10px;text-align:right;color:#2A1A10;font-weight:700">${fmt(it.fisico)}</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${d >= 0 ? '#33200F' : '#dc2626'}">${d >= 0 ? '+' : '−'}${fmt(Math.abs(d))}</td>
         <td style="padding:8px 10px;text-align:right;color:${num(it.valor) >= 0 ? '#15803d' : '#dc2626'}">${num(it.valor) >= 0 ? '+' : '−'}${money(Math.abs(num(it.valor)))}</td>
       </tr>`;
   }).join('');
@@ -522,18 +522,18 @@ async function verAjuste(id) {
   const contenido = `
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">
       <div>
-        <div style="font-weight:800;font-size:17px;color:#0f172a">${esc(a.numero || '')}</div>
-        <div style="font-size:12.5px;color:#64748b">${esc(fmtDate(a.fecha))}${a.nota ? ` · ${esc(a.nota)}` : ''}</div>
+        <div style="font-weight:800;font-size:17px;color:#2A1A10">${esc(a.numero || '')}</div>
+        <div style="font-size:12.5px;color:#7D6858">${esc(fmtDate(a.fecha))}${a.nota ? ` · ${esc(a.nota)}` : ''}</div>
       </div>
       <div style="text-align:right">
-        <div style="font-size:12px;color:#94a3b8">Ajuste neto</div>
+        <div style="font-size:12px;color:#A8957F">Ajuste neto</div>
         <div style="font-weight:800;font-size:18px;color:${neto >= 0 ? '#15803d' : '#dc2626'}">${neto >= 0 ? '+' : '−'}${money(Math.abs(neto))}</div>
       </div>
     </div>
-    <div style="max-height:46vh;overflow:auto;border:1px solid #e2e8f0;border-radius:10px">
+    <div style="max-height:46vh;overflow:auto;border:1px solid #EADFD0;border-radius:10px">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
-          <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left;position:sticky;top:0">
+          <tr style="background:#FBF7F1;border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left;position:sticky;top:0">
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase">Producto</th>
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Sistema</th>
             <th style="padding:8px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;text-align:right">Contado</th>
@@ -546,7 +546,7 @@ async function verAjuste(id) {
     </div>
     <div style="display:flex;gap:10px;margin-top:16px">
       <button id="det-del" style="flex:1;padding:11px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Eliminar ajuste</button>
-      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#2563eb;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Imprimir</button>
+      <button id="det-print" data-primary style="flex:1.4;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Imprimir</button>
     </div>
   `;
 

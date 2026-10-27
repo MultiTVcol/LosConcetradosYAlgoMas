@@ -31,9 +31,9 @@ import * as Modal from './modal.js';
  * @param {string} opciones.mensaje - Pregunta/mensaje principal
  * @param {string} [opciones.textoConfirmar='Confirmar'] - Texto del botón positivo
  * @param {string} [opciones.textoCancelar='Cancelar'] - Texto del botón negativo
- * @param {string} [opciones.colorConfirmar='#2563eb'] - Color del botón positivo
+ * @param {string} [opciones.colorConfirmar='#4A2E1A'] - Color del botón positivo
  * @param {string} [opciones.icono='?'] - Ícono central
- * @param {string} [opciones.colorIcono='#2563eb'] - Color del ícono
+ * @param {string} [opciones.colorIcono='#4A2E1A'] - Color del ícono
  * @returns {Promise<boolean>} - true si confirmó, false si canceló
  */
 function crearDialog(opciones) {
@@ -67,7 +67,7 @@ function crearDialog(opciones) {
     const mensajeEl = document.createElement('div');
     mensajeEl.style.cssText = `
       font-size: 15px;
-      color: #334155;
+      color: #4A3628;
       line-height: 1.55;
       margin-bottom: 24px;
       max-width: 360px;
@@ -91,8 +91,8 @@ function crearDialog(opciones) {
     btnCancelar.style.cssText = `
       padding: 11px 22px;
       background: white;
-      border: 1px solid #cbd5e1;
-      color: #475569;
+      border: 1px solid #DCCFBE;
+      color: #5C4636;
       border-radius: 10px;
       cursor: pointer;
       font-size: 14px;
@@ -101,7 +101,7 @@ function crearDialog(opciones) {
       min-width: 110px;
       transition: background .15s;
     `;
-    btnCancelar.onmouseenter = () => { btnCancelar.style.background = '#f1f5f9'; };
+    btnCancelar.onmouseenter = () => { btnCancelar.style.background = '#F2EBE0'; };
     btnCancelar.onmouseleave = () => { btnCancelar.style.background = 'white'; };
 
     // Botón Confirmar (marcado como primary para que Enter lo dispare)
@@ -110,7 +110,7 @@ function crearDialog(opciones) {
     btnConfirmar.setAttribute('data-primary', '');
     btnConfirmar.style.cssText = `
       padding: 11px 22px;
-      background: ${opciones.colorConfirmar || '#2563eb'};
+      background: ${opciones.colorConfirmar || '#4A2E1A'};
       border: 0;
       color: white;
       border-radius: 10px;
@@ -120,7 +120,7 @@ function crearDialog(opciones) {
       font-family: inherit;
       min-width: 110px;
       transition: filter .15s;
-      box-shadow: 0 4px 8px -2px ${opciones.colorConfirmar || '#2563eb'}40;
+      box-shadow: 0 4px 8px -2px ${opciones.colorConfirmar || '#4A2E1A'}40;
     `;
     btnConfirmar.onmouseenter = () => { btnConfirmar.style.filter = 'brightness(.92)'; };
     btnConfirmar.onmouseleave = () => { btnConfirmar.style.filter = 'brightness(1)'; };
@@ -183,8 +183,8 @@ export function preguntar(mensaje, opciones = {}) {
     titulo: opciones.titulo || 'Confirmación',
     mensaje,
     icono: '?',
-    colorIcono: '#2563eb',
-    colorConfirmar: '#2563eb',
+    colorIcono: '#4A2E1A',
+    colorConfirmar: '#4A2E1A',
     textoConfirmar: opciones.textoConfirmar || 'Confirmar',
     textoCancelar: opciones.textoCancelar || 'Cancelar',
   });
@@ -258,7 +258,7 @@ export function aviso(mensaje, opciones = {}) {
     const iconoBox = document.createElement('div');
     iconoBox.style.cssText = `
       width: 56px; height: 56px; border-radius: 50%;
-      background: #0284c715; color: #0284c7;
+      background: #0284c715; color: #6B4528;
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 16px; font-size: 28px; font-weight: 700;
     `;
@@ -267,7 +267,7 @@ export function aviso(mensaje, opciones = {}) {
 
     const mensajeEl = document.createElement('div');
     mensajeEl.style.cssText = `
-      font-size: 15px; color: #334155; line-height: 1.55;
+      font-size: 15px; color: #4A3628; line-height: 1.55;
       margin-bottom: 24px; max-width: 360px;
       margin-left: auto; margin-right: auto;
     `;
@@ -277,7 +277,7 @@ export function aviso(mensaje, opciones = {}) {
     const btnOk = document.createElement('button');
     btnOk.textContent = opciones.textoOk || 'Entendido';
     btnOk.style.cssText = `
-      padding: 11px 22px; background: #2563eb; border: 0; color: white;
+      padding: 11px 22px; background: #4A2E1A; border: 0; color: white;
       border-radius: 10px; cursor: pointer; font-size: 14px;
       font-weight: 600; font-family: inherit; min-width: 110px;
     `;

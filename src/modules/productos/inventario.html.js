@@ -187,43 +187,43 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
       : 'Inventario completo';
 
   return `
-    <div style="font-family:'Helvetica','Arial',sans-serif;color:#0f172a;font-size:11.5px;line-height:1.45">
+    <div style="font-family:'Helvetica','Arial',sans-serif;color:#2A1A10;font-size:11.5px;line-height:1.45">
 
       <!-- ENCABEZADO -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #0f172a;padding-bottom:10px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #2A1A10;padding-bottom:10px;margin-bottom:14px">
         <div>
           <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em">${esc(neg.nombre || 'PosPunto')}</div>
-          ${neg.nit ? `<div style="font-size:11px;color:#475569;margin-top:1px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
-          ${neg.direccion ? `<div style="font-size:11px;color:#475569">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
-          ${neg.telefono ? `<div style="font-size:11px;color:#475569">Tel: ${esc(neg.telefono)}</div>` : ''}
+          ${neg.nit ? `<div style="font-size:11px;color:#5C4636;margin-top:1px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
+          ${neg.direccion ? `<div style="font-size:11px;color:#5C4636">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
+          ${neg.telefono ? `<div style="font-size:11px;color:#5C4636">Tel: ${esc(neg.telefono)}</div>` : ''}
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Inventario</div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px">Generado: ${esc(fechaCorta())}</div>
+          <div style="font-size:11px;color:#7D6858;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Inventario</div>
+          <div style="font-size:11px;color:#A8957F;margin-top:2px">Generado: ${esc(fechaCorta())}</div>
         </div>
       </div>
 
       <!-- BANNER PERIODO/TITULO -->
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;text-align:center;font-weight:700;color:#1d4ed8">
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:8px;padding:10px 14px;margin-bottom:14px;text-align:center;font-weight:700;color:#33200F">
         📦 ${esc(subtitulo)}
       </div>
 
       <!-- RESUMEN EJECUTIVO -->
       <div style="display:grid;gap:8px;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">SKUs</div>
-          <div style="font-size:14px;font-weight:800;color:#1d4ed8;font-family:'Courier New',monospace">${fmt(t.nSKUs)}</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">SKUs</div>
+          <div style="font-size:14px;font-weight:800;color:#33200F;font-family:'Courier New',monospace">${fmt(t.nSKUs)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Unidades</div>
-          <div style="font-size:14px;font-weight:800;color:#0369a1;font-family:'Courier New',monospace">${fmt(t.nUnidades)}</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Unidades</div>
+          <div style="font-size:14px;font-weight:800;color:#6B4528;font-family:'Courier New',monospace">${fmt(t.nUnidades)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Valor costo</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Valor costo</div>
           <div style="font-size:14px;font-weight:800;color:#15803d;font-family:'Courier New',monospace">${money(t.valorCosto)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Valor venta</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Valor venta</div>
           <div style="font-size:14px;font-weight:800;color:#a16207;font-family:'Courier New',monospace">${money(t.valorVenta)}</div>
         </div>
       </div>
@@ -242,10 +242,10 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
         const subUds = prods.reduce((s, p) => s + num(p.stock), 0);
         return `
           <div style="margin-bottom:16px;page-break-inside:avoid">
-            <h2 style="font-size:13px;font-weight:800;color:white;background:#0f172a;padding:5px 10px;margin:0 0 4px;letter-spacing:.04em">${esc(cat.toUpperCase())}</h2>
+            <h2 style="font-size:13px;font-weight:800;color:white;background:#2A1A10;padding:5px 10px;margin:0 0 4px;letter-spacing:.04em">${esc(cat.toUpperCase())}</h2>
             <table style="width:100%;border-collapse:collapse;font-size:10.5px">
               <thead>
-                <tr style="border-bottom:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
+                <tr style="border-bottom:1px solid #DCCFBE;color:#7D6858;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
                   <th style="padding:5px 4px;width:14%">Código</th>
                   <th style="padding:5px 4px">Producto</th>
                   <th style="padding:5px 4px;text-align:right;width:8%">Stock</th>
@@ -263,10 +263,10 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
                   const stockBajo = st > 0 && st <= num(p.stock_min || 0);
                   const agotado = st <= 0;
                   return `
-                    <tr style="border-bottom:1px solid #f1f5f9">
-                      <td style="padding:4px;font-family:'Courier New',monospace;font-size:10px;color:#475569">${esc(p.codigo || '—')}</td>
+                    <tr style="border-bottom:1px solid #F2EBE0">
+                      <td style="padding:4px;font-family:'Courier New',monospace;font-size:10px;color:#5C4636">${esc(p.codigo || '—')}</td>
                       <td style="padding:4px">${esc(p.nombre)}</td>
-                      <td style="padding:4px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:${agotado ? '#dc2626' : (stockBajo ? '#a16207' : '#0f172a')}">
+                      <td style="padding:4px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:${agotado ? '#dc2626' : (stockBajo ? '#a16207' : '#2A1A10')}">
                         ${fmt(st)}${stockBajo ? ' ⚠' : ''}${agotado ? ' 🚫' : ''}
                       </td>
                       <td style="padding:4px;text-align:right;font-family:'Courier New',monospace">${money(p.costo)}</td>
@@ -276,12 +276,12 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
                     </tr>
                   `;
                 }).join('')}
-                <tr style="background:#f1f5f9;font-weight:700">
+                <tr style="background:#F2EBE0;font-weight:700">
                   <td colspan="2" style="padding:5px 4px">${prods.length} producto(s) · ${fmt(subUds)} unidades</td>
                   <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace">${fmt(subUds)}</td>
                   <td colspan="2"></td>
                   <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace">${money(subCosto)}</td>
-                  <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace;color:#1d4ed8">${money(subVal)}</td>
+                  <td style="padding:5px 4px;text-align:right;font-family:'Courier New',monospace;color:#33200F">${money(subVal)}</td>
                 </tr>
               </tbody>
             </table>
@@ -290,25 +290,25 @@ export function htmlInventarioCarta(productos, cfg, opts = {}) {
       }).join('')}
 
       <!-- TOTAL GENERAL -->
-      <div style="background:#0f172a;color:white;border-radius:8px;padding:14px 16px;margin-top:18px">
+      <div style="background:#2A1A10;color:white;border-radius:8px;padding:14px 16px;margin-top:18px">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center">
           <div>
-            <div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Total unidades</div>
+            <div style="font-size:10.5px;color:#A8957F;text-transform:uppercase;letter-spacing:.05em">Total unidades</div>
             <div style="font-size:18px;font-weight:800;font-family:'Courier New',monospace;margin-top:2px">${fmt(t.nUnidades)}</div>
           </div>
           <div>
-            <div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Valor a costo</div>
+            <div style="font-size:10.5px;color:#A8957F;text-transform:uppercase;letter-spacing:.05em">Valor a costo</div>
             <div style="font-size:18px;font-weight:800;font-family:'Courier New',monospace;margin-top:2px;color:#4ade80">${money(t.valorCosto)}</div>
           </div>
           <div>
-            <div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Valor a venta</div>
+            <div style="font-size:10.5px;color:#A8957F;text-transform:uppercase;letter-spacing:.05em">Valor a venta</div>
             <div style="font-size:18px;font-weight:800;font-family:'Courier New',monospace;margin-top:2px;color:#fbbf24">${money(t.valorVenta)}</div>
           </div>
         </div>
       </div>
 
       <!-- PIE -->
-      <div style="border-top:1px solid #cbd5e1;margin-top:18px;padding-top:8px;font-size:9.5px;color:#94a3b8;font-style:italic;text-align:center">
+      <div style="border-top:1px solid #DCCFBE;margin-top:18px;padding-top:8px;font-size:9.5px;color:#A8957F;font-style:italic;text-align:center">
         Inventario generado por PosPunto · ${esc(fechaCorta())}
       </div>
     </div>
@@ -329,17 +329,17 @@ export function htmlHojaAuditoria(productos, cfg) {
   const t = calcularTotales(productos);
 
   return `
-    <div style="font-family:'Helvetica','Arial',sans-serif;color:#0f172a;font-size:11px;line-height:1.45">
+    <div style="font-family:'Helvetica','Arial',sans-serif;color:#2A1A10;font-size:11px;line-height:1.45">
 
       <!-- ENCABEZADO -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #0f172a;padding-bottom:10px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #2A1A10;padding-bottom:10px;margin-bottom:14px">
         <div>
           <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em">${esc(neg.nombre || 'PosPunto')}</div>
-          ${neg.direccion ? `<div style="font-size:11px;color:#475569">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
+          ${neg.direccion ? `<div style="font-size:11px;color:#5C4636">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Hoja de auditoría</div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px">Generada: ${esc(fechaCorta())}</div>
+          <div style="font-size:11px;color:#7D6858;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Hoja de auditoría</div>
+          <div style="font-size:11px;color:#A8957F;margin-top:2px">Generada: ${esc(fechaCorta())}</div>
         </div>
       </div>
 
@@ -353,37 +353,37 @@ export function htmlHojaAuditoria(productos, cfg) {
       <!-- DATOS DE LA AUDITORÍA -->
       <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11px">
         <tr>
-          <td style="padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;width:18%;font-weight:700">Auditor:</td>
-          <td style="padding:6px 8px;border:1px solid #e2e8f0;width:32%;border-left:0">&nbsp;</td>
-          <td style="padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;width:18%;font-weight:700;border-left:0">Fecha:</td>
-          <td style="padding:6px 8px;border:1px solid #e2e8f0;width:32%;border-left:0">&nbsp;</td>
+          <td style="padding:6px 8px;background:#FBF7F1;border:1px solid #EADFD0;width:18%;font-weight:700">Auditor:</td>
+          <td style="padding:6px 8px;border:1px solid #EADFD0;width:32%;border-left:0">&nbsp;</td>
+          <td style="padding:6px 8px;background:#FBF7F1;border:1px solid #EADFD0;width:18%;font-weight:700;border-left:0">Fecha:</td>
+          <td style="padding:6px 8px;border:1px solid #EADFD0;width:32%;border-left:0">&nbsp;</td>
         </tr>
         <tr>
-          <td style="padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;border-top:0;font-weight:700">Sucursal:</td>
-          <td style="padding:6px 8px;border:1px solid #e2e8f0;border-top:0;border-left:0">&nbsp;</td>
-          <td style="padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;border-top:0;border-left:0;font-weight:700">Hora inicio:</td>
-          <td style="padding:6px 8px;border:1px solid #e2e8f0;border-top:0;border-left:0">&nbsp;</td>
+          <td style="padding:6px 8px;background:#FBF7F1;border:1px solid #EADFD0;border-top:0;font-weight:700">Sucursal:</td>
+          <td style="padding:6px 8px;border:1px solid #EADFD0;border-top:0;border-left:0">&nbsp;</td>
+          <td style="padding:6px 8px;background:#FBF7F1;border:1px solid #EADFD0;border-top:0;border-left:0;font-weight:700">Hora inicio:</td>
+          <td style="padding:6px 8px;border:1px solid #EADFD0;border-top:0;border-left:0">&nbsp;</td>
         </tr>
       </table>
 
       <!-- RESUMEN DE LO QUE SE VA A CONTAR -->
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#1d4ed8">
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#33200F">
         🔢 Productos a auditar: <b>${fmt(t.nSKUs)}</b> SKUs · <b>${fmt(t.nUnidades)}</b> unidades esperadas
       </div>
 
       <!-- LISTADO POR CATEGORÍA -->
       ${cats.map(([cat, prods]) => `
         <div style="margin-bottom:14px;page-break-inside:avoid">
-          <h2 style="font-size:13px;font-weight:800;color:white;background:#0f172a;padding:5px 10px;margin:0 0 4px;letter-spacing:.04em">${esc(cat.toUpperCase())}</h2>
+          <h2 style="font-size:13px;font-weight:800;color:white;background:#2A1A10;padding:5px 10px;margin:0 0 4px;letter-spacing:.04em">${esc(cat.toUpperCase())}</h2>
           <table style="width:100%;border-collapse:collapse;font-size:10.5px">
             <thead>
-              <tr style="background:#f1f5f9;color:#475569;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
-                <th style="padding:5px 4px;border:1px solid #cbd5e1;width:13%">Código</th>
-                <th style="padding:5px 4px;border:1px solid #cbd5e1">Producto</th>
-                <th style="padding:5px 4px;border:1px solid #cbd5e1;text-align:center;width:10%">Stock<br>sistema</th>
-                <th style="padding:5px 4px;border:1px solid #cbd5e1;text-align:center;width:13%;background:#dcfce7;color:#15803d">Conteo<br>físico</th>
-                <th style="padding:5px 4px;border:1px solid #cbd5e1;text-align:center;width:10%">Dif.</th>
-                <th style="padding:5px 4px;border:1px solid #cbd5e1;width:20%">Observación</th>
+              <tr style="background:#F2EBE0;color:#5C4636;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
+                <th style="padding:5px 4px;border:1px solid #DCCFBE;width:13%">Código</th>
+                <th style="padding:5px 4px;border:1px solid #DCCFBE">Producto</th>
+                <th style="padding:5px 4px;border:1px solid #DCCFBE;text-align:center;width:10%">Stock<br>sistema</th>
+                <th style="padding:5px 4px;border:1px solid #DCCFBE;text-align:center;width:13%;background:#dcfce7;color:#15803d">Conteo<br>físico</th>
+                <th style="padding:5px 4px;border:1px solid #DCCFBE;text-align:center;width:10%">Dif.</th>
+                <th style="padding:5px 4px;border:1px solid #DCCFBE;width:20%">Observación</th>
               </tr>
             </thead>
             <tbody>
@@ -391,12 +391,12 @@ export function htmlHojaAuditoria(productos, cfg) {
                 const st = num(p.stock);
                 return `
                   <tr style="height:26px">
-                    <td style="padding:4px;border:1px solid #cbd5e1;font-family:'Courier New',monospace;font-size:10px;color:#475569">${esc(p.codigo || '—')}</td>
-                    <td style="padding:4px;border:1px solid #cbd5e1">${esc(p.nombre)}</td>
-                    <td style="padding:4px;border:1px solid #cbd5e1;text-align:center;font-family:'Courier New',monospace;font-weight:700;background:#f8fafc">${fmt(st)}</td>
-                    <td style="padding:4px;border:1px solid #cbd5e1;background:#f0fdf4">&nbsp;</td>
-                    <td style="padding:4px;border:1px solid #cbd5e1">&nbsp;</td>
-                    <td style="padding:4px;border:1px solid #cbd5e1">&nbsp;</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE;font-family:'Courier New',monospace;font-size:10px;color:#5C4636">${esc(p.codigo || '—')}</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE">${esc(p.nombre)}</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE;text-align:center;font-family:'Courier New',monospace;font-weight:700;background:#FBF7F1">${fmt(st)}</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE;background:#f0fdf4">&nbsp;</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE">&nbsp;</td>
+                    <td style="padding:4px;border:1px solid #DCCFBE">&nbsp;</td>
                   </tr>
                 `;
               }).join('')}
@@ -408,21 +408,21 @@ export function htmlHojaAuditoria(productos, cfg) {
       <!-- FIRMAS -->
       <div style="margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:30px;page-break-inside:avoid">
         <div style="text-align:center">
-          <div style="border-top:1px solid #0f172a;padding-top:6px;font-size:11px;color:#475569">
+          <div style="border-top:1px solid #2A1A10;padding-top:6px;font-size:11px;color:#5C4636">
             <b>Firma del auditor</b><br>
-            <span style="font-size:10px;color:#94a3b8">Nombre + CC</span>
+            <span style="font-size:10px;color:#A8957F">Nombre + CC</span>
           </div>
         </div>
         <div style="text-align:center">
-          <div style="border-top:1px solid #0f172a;padding-top:6px;font-size:11px;color:#475569">
+          <div style="border-top:1px solid #2A1A10;padding-top:6px;font-size:11px;color:#5C4636">
             <b>Firma de aprobación</b><br>
-            <span style="font-size:10px;color:#94a3b8">Administrador / Dueño</span>
+            <span style="font-size:10px;color:#A8957F">Administrador / Dueño</span>
           </div>
         </div>
       </div>
 
       <!-- PIE -->
-      <div style="border-top:1px solid #cbd5e1;margin-top:18px;padding-top:8px;font-size:9.5px;color:#94a3b8;font-style:italic;text-align:center">
+      <div style="border-top:1px solid #DCCFBE;margin-top:18px;padding-top:8px;font-size:9.5px;color:#A8957F;font-style:italic;text-align:center">
         Hoja de auditoría generada por PosPunto · ${esc(fechaCorta())}
       </div>
     </div>

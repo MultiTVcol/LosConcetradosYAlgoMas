@@ -20,6 +20,7 @@ import { Router } from '../../core/index.js';
 import { money, fmt, num } from '../../core/format.js';
 import { esc } from '../../core/strings.js';
 import { refrescarIconos } from '../../app/shell.js';
+import { patron } from '../../app/marca.js';
 
 let _offRealtime = null;
 let _offEstado = null;
@@ -179,15 +180,15 @@ function cablearEstadoSync(contenedor) {
     if (linea && linea.isConnected) {
       linea.innerHTML = activo
         ? `<span style="width:8px;height:8px;border-radius:50%;background:#15803d;display:inline-block"></span> Sistema sincronizado — listo para cerrar`
-        : `<span style="width:8px;height:8px;border-radius:50%;background:#cbd5e1;display:inline-block"></span> Sin conexión en vivo — el cierre usará datos locales`;
-      linea.style.color = activo ? '#15803d' : '#94a3b8';
+        : `<span style="width:8px;height:8px;border-radius:50%;background:#DCCFBE;display:inline-block"></span> Sin conexión en vivo — el cierre usará datos locales`;
+      linea.style.color = activo ? '#15803d' : '#A8957F';
     }
     if (punto && punto.isConnected) {
-      punto.style.background = activo ? '#22c55e' : '#cbd5e1';
+      punto.style.background = activo ? '#22c55e' : '#DCCFBE';
     }
     if (textoLinea && textoLinea.isConnected) {
       textoLinea.textContent = activo ? 'En línea' : 'Sin conexión';
-      textoLinea.style.color = activo ? '#15803d' : '#94a3b8';
+      textoLinea.style.color = activo ? '#15803d' : '#A8957F';
     }
   };
   try {
@@ -200,7 +201,7 @@ function cablearEstadoSync(contenedor) {
 // ============================================================
 
 function htmlCargando() {
-  return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando dashboard…</div>`;
+  return `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando dashboard…</div>`;
 }
 
 function htmlLayout(d) {
@@ -229,30 +230,38 @@ function htmlLayout(d) {
   `;
 }
 
-/** Header estilo legacy: título + reloj en vivo + chip del usuario. */
+function saludo() {
+  const h = new Date().getHours();
+  return h < 12 ? '¡Buenos días!' : h < 19 ? '¡Buenas tardes!' : '¡Buenas noches!';
+}
+
+/** Header: saludo + reloj en vivo + chip del usuario. */
 function htmlHeader() {
   const u = Auth.usuarioActual();
   const nombre = u?.nombre || 'Usuario';
   const iniciales = nombre.trim().split(/\s+/).slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join('') || '?';
 
   return `
-    <div style="background:white;border-bottom:1px solid #e2e8f0;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-      <h1 style="font-size:20px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.015em">Inicio</h1>
+    <div style="padding:26px 40px 4px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <h1 style="font-size:32px;color:#2A1A10;margin:0;line-height:1.05">${esc(saludo())}</h1>
+        <div style="font-size:13.5px;color:#8C7766;margin-top:4px">Así va la tienda hoy</div>
+      </div>
 
       <div style="display:flex;align-items:center;gap:18px">
         <div style="text-align:right">
-          <div id="dash-reloj" style="font-size:15px;font-weight:700;color:#0f172a;letter-spacing:-0.01em">${esc(horaBonita())}</div>
-          <div id="dash-fecha" style="font-size:12px;color:#64748b;margin-top:1px">${esc(fechaBonita())}</div>
+          <div id="dash-reloj" style="font-size:15px;font-weight:700;color:#2A1A10;letter-spacing:-0.01em">${esc(horaBonita())}</div>
+          <div id="dash-fecha" style="font-size:12px;color:#7D6858;margin-top:1px">${esc(fechaBonita())}</div>
         </div>
 
-        <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:999px;padding:6px 16px 6px 7px">
+        <div style="display:flex;align-items:center;gap:10px;background:#FBF7F1;border:1px solid #EADFD0;border-radius:999px;padding:6px 16px 6px 7px">
           <div style="position:relative;flex-shrink:0">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${esc(iniciales)}</div>
-            <span id="dash-user-punto" style="position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:#cbd5e1;border:2px solid white"></span>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4A2E1A,#33200F);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${esc(iniciales)}</div>
+            <span id="dash-user-punto" style="position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:#DCCFBE;border:2px solid white"></span>
           </div>
           <div>
-            <div style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.2">${esc(nombre)}</div>
-            <div id="dash-user-estado" style="font-size:11.5px;color:#94a3b8;font-weight:600">Sin conexión</div>
+            <div style="font-size:13.5px;font-weight:700;color:#2A1A10;line-height:1.2">${esc(nombre)}</div>
+            <div id="dash-user-estado" style="font-size:11.5px;color:#A8957F;font-weight:600">Sin conexión</div>
           </div>
         </div>
       </div>
@@ -262,19 +271,19 @@ function htmlHeader() {
 
 function htmlCardCierre() {
   return `
-    <div data-ir="cierre" style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:18px 22px;margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:16px;flex-wrap:wrap;transition:all .2s ease">
-      <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(37, 99, 235,.15)">
+    <div data-ir="cierre" style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:18px 22px;margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:16px;flex-wrap:wrap;transition:all .2s ease">
+      <div style="width:48px;height:48px;border-radius:12px;background:#F8F1E8;color:#4A2E1A;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(74, 46, 26,.15)">
         <i data-lucide="shield-check" style="width:24px;height:24px;stroke-width:2"></i>
       </div>
       <div style="flex:1;min-width:200px">
-        <div style="font-size:16px;font-weight:700;color:#0f172a;letter-spacing:-0.012em">Cierre de Caja</div>
-        <div style="font-size:13px;color:#64748b;margin-top:2px">Genera el informe del día e imprime el ticket de cierre</div>
-        <div id="dash-sync-estado" style="font-size:12.5px;font-weight:600;color:#94a3b8;margin-top:5px;display:flex;align-items:center;gap:6px">
-          <span style="width:8px;height:8px;border-radius:50%;background:#cbd5e1;display:inline-block"></span> Verificando sincronización…
+        <div style="font-size:16px;font-weight:700;color:#2A1A10;letter-spacing:-0.012em">Cierre de Caja</div>
+        <div style="font-size:13px;color:#7D6858;margin-top:2px">Genera el informe del día e imprime el ticket de cierre</div>
+        <div id="dash-sync-estado" style="font-size:12.5px;font-weight:600;color:#A8957F;margin-top:5px;display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#DCCFBE;display:inline-block"></span> Verificando sincronización…
         </div>
       </div>
       <button data-ir="cierre"
-        style="white-space:nowrap;padding:12px 20px;background:#2563eb;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+        style="white-space:nowrap;padding:12px 20px;background:#4A2E1A;color:white;border:0;border-radius:11px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
         <i data-lucide="shield-check" style="width:16px;height:16px"></i>
         Hacer Cierre
       </button>
@@ -285,26 +294,27 @@ function htmlCardCierre() {
 function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFacturas) {
   // Tarjeta KPI estilo legacy: etiqueta normal (sin mayúsculas), número
   // grande en Inter (sin monospace), badge de conteo + texto abajo.
-  const kpi = ({ label, valor, colorValor = '#0f172a', sub, icono, emoji, colorBg, colorFg, borde = '#e2e8f0', ir = '' }) => `
-    <div ${ir ? `data-ir="${ir}"` : ''} style="background:white;border:1px solid ${borde};border-radius:14px;padding:18px 20px;position:relative;overflow:hidden${ir ? ';cursor:pointer' : ''}">
-      <div style="position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:10px;background:${colorBg};color:${colorFg};display:flex;align-items:center;justify-content:center;${emoji ? 'font-size:18px' : ''}">
+  const kpi = ({ label, valor, colorValor = '#2A1A10', sub, icono, emoji, colorBg, colorFg, borde = '#EADFD0', ir = '', hero = false }) => `
+    <div ${ir ? `data-ir="${ir}"` : ''} style="${hero ? 'background:linear-gradient(135deg,#4A2E1A,#24160D);border:0' : `background:white;border:1px solid ${borde}`};border-radius:16px;padding:18px 20px;position:relative;overflow:hidden${ir ? ';cursor:pointer' : ''}">
+      ${hero ? patron('#fff', 0.1) : ''}
+      <div style="position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:10px;background:${hero ? 'rgba(255,255,255,.1)' : colorBg};color:${hero ? '#EE7623' : colorFg};display:flex;align-items:center;justify-content:center;${emoji ? 'font-size:18px' : ''}">
         ${emoji ? emoji : `<i data-lucide="${icono}" style="width:17px;height:17px"></i>`}
       </div>
-      <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:10px;letter-spacing:-0.005em">${label}</div>
-      <div style="font-size:27px;font-weight:800;color:${colorValor};letter-spacing:-0.025em;line-height:1.1">${valor}</div>
-      <div style="color:#64748b;font-weight:500;margin-top:10px;font-size:13px;display:flex;align-items:center;gap:7px">${sub}</div>
+      <div style="font-size:13.5px;color:${hero ? '#D9C2AC' : '#5C4636'};font-weight:600;margin-bottom:10px;position:relative">${label}</div>
+      <div style="${hero ? 'font-family:var(--font-marca);font-weight:600;font-size:32px;color:#EE7623' : `font-size:27px;font-weight:800;color:${colorValor}`};letter-spacing:-0.02em;line-height:1.1;position:relative">${valor}</div>
+      <div style="color:${hero ? '#D9C2AC' : '#7D6858'};font-weight:500;margin-top:10px;font-size:13px;display:flex;align-items:center;gap:7px;position:relative">${sub}</div>
     </div>
   `;
 
-  const badge = (n, bg = '#eff6ff', fg = '#1d4ed8') =>
+  const badge = (n, bg = '#F8F1E8', fg = '#33200F') =>
     `<span style="background:${bg};color:${fg};font-size:12px;font-weight:700;padding:2px 9px;border-radius:7px">${fmt(n)}</span>`;
 
   return `
     <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));margin-bottom:18px">
       ${kpi({
         label: 'Ventas de hoy', valor: money(tHoy.total),
-        sub: `${badge(tHoy.n)} factura(s) emitidas`,
-        icono: 'dollar-sign', colorBg: '#eff6ff', colorFg: '#2563eb',
+        sub: `${badge(tHoy.n, '#EE7623', '#24160D')} factura(s) emitidas`,
+        icono: 'dollar-sign', colorBg: '#F8F1E8', colorFg: '#4A2E1A', hero: true,
       })}
       ${kpi({
         label: 'Utilidad de hoy', valor: money(tHoy.utilidad), colorValor: '#15803d',
@@ -314,12 +324,12 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
       ${kpi({
         label: 'Ventas de la semana', valor: money(tSem.total),
         sub: `${badge(tSem.n)} facturas`,
-        icono: 'calendar', colorBg: '#e0f2fe', colorFg: '#0284c7',
+        icono: 'calendar', colorBg: '#F3E8DC', colorFg: '#6B4528',
       })}
       ${kpi({
         label: 'Ventas del mes', valor: money(tMes.total),
         sub: `${badge(tMes.n)} facturas`,
-        icono: 'bar-chart-3', colorBg: '#eff6ff', colorFg: '#2563eb',
+        icono: 'bar-chart-3', colorBg: '#F8F1E8', colorFg: '#4A2E1A',
       })}
       ${kpi({
         label: 'Por pagar a proveedores', valor: money(cxpTotal), colorValor: '#d97706',
@@ -328,10 +338,10 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
         borde: '#fde68a', ir: 'compras',
       })}
       ${kpi({
-        label: 'Valor inventario (costo)', valor: money(invValorCosto), colorValor: '#8b5cf6',
-        sub: `${badge(invUnidades, 'rgba(139,92,246,.14)', '#7c3aed')} unidades en bodega`,
-        emoji: '📦', colorBg: 'rgba(139,92,246,.14)', colorFg: '#8b5cf6',
-        borde: '#ddd6fe', ir: 'productos',
+        label: 'Valor inventario (costo)', valor: money(invValorCosto), colorValor: '#D9620F',
+        sub: `${badge(invUnidades, '#FDE9DA', '#EE7623')} unidades en bodega`,
+        emoji: '📦', colorBg: '#FDE9DA', colorFg: '#D9620F',
+        borde: '#F6CBA8', ir: 'productos',
       })}
     </div>
   `;
@@ -340,7 +350,7 @@ function htmlKPIs(tHoy, tSem, tMes, invValorCosto, invUnidades, cxpTotal, cxpFac
 function htmlAtajos() {
   const btn = (ruta, icono, label, primario = false) => `
     <button data-ir="${ruta}"
-      style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;${primario ? 'background:#2563eb;color:white;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)' : 'background:white;color:#0f172a;border:1px solid #e2e8f0'}">
+      style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;${primario ? 'background:#EE7623;color:#24160D;font-weight:800;box-shadow:0 10px 20px -10px rgba(217,98,15,.9)' : 'background:white;color:#2A1A10;border:1px solid #EADFD0'}">
       <i data-lucide="${icono}" style="width:18px;height:18px"></i>
       ${label}
     </button>
@@ -358,27 +368,27 @@ function htmlAtajos() {
 
 function htmlUltimasVentas(ultimas) {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:22px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:22px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div>
-          <h3 style="font-size:16.5px;font-weight:700;margin:0;color:#0f172a;letter-spacing:-0.01em">Últimas ventas</h3>
-          <div style="font-size:12.5px;color:#64748b;margin-top:2px">Movimientos más recientes</div>
+          <h3 style="font-size:16.5px;font-weight:700;margin:0;color:#2A1A10;letter-spacing:-0.01em">Últimas ventas</h3>
+          <div style="font-size:12.5px;color:#7D6858;margin-top:2px">Movimientos más recientes</div>
         </div>
         <button data-ir="facturas"
-          style="background:white;border:1px solid #e2e8f0;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:12.5px;font-weight:600;color:#475569;font-family:inherit">
+          style="background:white;border:1px solid #EADFD0;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:12.5px;font-weight:600;color:#5C4636;font-family:inherit">
           Ver todas →
         </button>
       </div>
       ${ultimas.length === 0 ? `
-        <div style="text-align:center;padding:32px 12px;color:#64748b">
+        <div style="text-align:center;padding:32px 12px;color:#7D6858">
           <div style="font-size:48px;opacity:.5">🧾</div>
           <div style="margin-top:8px;font-weight:500">Aún no hay ventas registradas hoy</div>
-          <div style="font-size:13px;margin-top:4px;color:#94a3b8">¡Crea tu primera venta!</div>
+          <div style="font-size:13px;margin-top:4px;color:#A8957F">¡Crea tu primera venta!</div>
         </div>
       ` : `
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           <thead>
-            <tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;text-align:left">
+            <tr style="border-bottom:1px solid #EADFD0;color:#A8957F;text-align:left">
               <th style="padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Factura</th>
               <th style="padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Cliente</th>
               <th style="padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:right">Total</th>
@@ -390,13 +400,13 @@ function htmlUltimasVentas(ultimas) {
                 ? new Date(f.data.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false })
                 : '';
               return `
-              <tr style="border-bottom:1px solid #f1f5f9">
+              <tr style="border-bottom:1px solid #F2EBE0">
                 <td style="padding:13px 10px">
-                  <b style="color:#2563eb;font-size:14px">${esc(f.numero || '—')}</b><br>
-                  <span style="color:#94a3b8;font-size:12px">${esc((f.fecha || '').slice(0, 10))}${hora ? ' ' + hora : ''}</span>
+                  <b style="color:#4A2E1A;font-size:14px">${esc(f.numero || '—')}</b><br>
+                  <span style="color:#A8957F;font-size:12px">${esc((f.fecha || '').slice(0, 10))}${hora ? ' ' + hora : ''}</span>
                 </td>
-                <td style="padding:13px 10px;color:#0f172a;font-weight:500">${esc(f.cliente_nombre || 'Cliente ocasional')}</td>
-                <td style="padding:13px 10px;text-align:right;font-weight:700;color:#0f172a;font-size:14.5px">
+                <td style="padding:13px 10px;color:#2A1A10;font-weight:500">${esc(f.cliente_nombre || 'Cliente ocasional')}</td>
+                <td style="padding:13px 10px;text-align:right;font-weight:700;color:#2A1A10;font-size:14.5px">
                   ${money(f.total)}
                 </td>
               </tr>
@@ -411,32 +421,32 @@ function htmlUltimasVentas(ultimas) {
 
 function htmlAlertasStock(bajos) {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:22px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:22px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div>
-          <h3 style="font-size:16.5px;font-weight:700;margin:0;color:#0f172a;letter-spacing:-0.01em">Alertas de inventario</h3>
-          <div style="font-size:12.5px;color:#64748b;margin-top:2px">Productos con stock bajo</div>
+          <h3 style="font-size:16.5px;font-weight:700;margin:0;color:#2A1A10;letter-spacing:-0.01em">Alertas de inventario</h3>
+          <div style="font-size:12.5px;color:#7D6858;margin-top:2px">Productos con stock bajo</div>
         </div>
         ${bajos.length ? `<span style="background:#fef2f2;color:#dc2626;font-size:12px;font-weight:700;padding:4px 10px;border-radius:7px">${fmt(bajos.length)}</span>` : ''}
       </div>
       ${bajos.length === 0 ? `
-        <div style="text-align:center;padding:38px 12px;color:#64748b">
+        <div style="text-align:center;padding:38px 12px;color:#7D6858">
           <i data-lucide="check-circle-2" style="width:44px;height:44px;color:#22c55e;stroke-width:1.5"></i>
           <div style="margin-top:12px;font-weight:700;color:#15803d;font-size:14.5px">Inventario saludable</div>
-          <div style="font-size:13px;margin-top:4px;color:#94a3b8">Todo está en niveles correctos</div>
+          <div style="font-size:13px;margin-top:4px;color:#A8957F">Todo está en niveles correctos</div>
         </div>
       ` : `
         <div style="display:flex;flex-direction:column;gap:8px;max-height:340px;overflow:auto;padding-right:4px">
           ${bajos.slice(0, 15).map((p) => `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:#FBF7F1;border-radius:10px;border:1px solid #EADFD0">
               <div style="min-width:0;flex:1">
-                <b style="font-size:13.5px;color:#0f172a;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</b>
-                <span style="color:#94a3b8;font-size:12px">${esc(p.codigo || '—')}</span>
+                <b style="font-size:13.5px;color:#2A1A10;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</b>
+                <span style="color:#A8957F;font-size:12px">${esc(p.codigo || '—')}</span>
               </div>
               <span style="background:#fef2f2;color:#dc2626;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:7px;flex-shrink:0">${fmt(p.stock)} uds</span>
             </div>
           `).join('')}
-          ${bajos.length > 15 ? `<div style="text-align:center;color:#94a3b8;font-size:12.5px;padding:8px">+${bajos.length - 15} más…</div>` : ''}
+          ${bajos.length > 15 ? `<div style="text-align:center;color:#A8957F;font-size:12.5px;padding:8px">+${bajos.length - 15} más…</div>` : ''}
         </div>
       `}
     </div>
@@ -445,22 +455,22 @@ function htmlAlertasStock(bajos) {
 
 function htmlStats(totalProd, totalCli, totalCompras, totalBajos) {
   const card = (icono, label, valor, colorBg, colorFg) => `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:13px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:13px">
       <div style="width:38px;height:38px;border-radius:10px;background:${colorBg};color:${colorFg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <i data-lucide="${icono}" style="width:18px;height:18px"></i>
       </div>
       <div>
-        <div style="font-size:12.5px;color:#64748b;font-weight:500">${label}</div>
-        <div style="font-size:19px;font-weight:800;line-height:1.15;letter-spacing:-0.02em;color:#0f172a">${valor}</div>
+        <div style="font-size:12.5px;color:#7D6858;font-weight:500">${label}</div>
+        <div style="font-size:19px;font-weight:800;line-height:1.15;letter-spacing:-0.02em;color:#2A1A10">${valor}</div>
       </div>
     </div>
   `;
 
   return `
     <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:6px">
-      ${card('package', 'Productos', fmt(totalProd), '#eff6ff', '#2563eb')}
+      ${card('package', 'Productos', fmt(totalProd), '#F8F1E8', '#4A2E1A')}
       ${card('users', 'Clientes', fmt(totalCli), '#fef3c7', '#a16207')}
-      ${card('truck', 'Compras registradas', fmt(totalCompras), '#e0f2fe', '#0284c7')}
+      ${card('truck', 'Compras registradas', fmt(totalCompras), '#e0f2fe', '#6B4528')}
       ${card('triangle-alert', 'Stock crítico', fmt(totalBajos), '#fef2f2', '#dc2626')}
     </div>
   `;

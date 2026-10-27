@@ -265,7 +265,7 @@ html.dark .btn-accent { background: var(--surface-3); color: var(--text) }
 html.dark .badge-ok     { color: #86efac; background: rgba(74,222,128,.14) }
 html.dark .badge-warn   { color: #fcd34d; background: rgba(251,191,36,.14) }
 html.dark .badge-danger { color: #fca5a5; background: rgba(248,113,113,.14) }
-html.dark .badge-info   { color: #93c5fd; background: rgba(96,165,250,.14) }
+html.dark .badge-info   { color: #E3CDB4; background: rgba(96,165,250,.14) }
 
 /* ============================================================
    KPIs — Tarjetas de métricas (dashboard)
@@ -505,7 +505,7 @@ html.dark .btn-ghost          { border-color: var(--border-strong); color: var(-
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: rgba(15, 23, 42, .55);
+  background: rgba(42, 26, 16, .55);
   backdrop-filter: blur(8px) saturate(140%);
   -webkit-backdrop-filter: blur(8px) saturate(140%);
 }

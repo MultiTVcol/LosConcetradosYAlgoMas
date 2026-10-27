@@ -24,11 +24,11 @@ export function pageHeader({ icono = '', titulo = '', descripcion = '', acciones
   return `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
       <div style="min-width:0">
-        <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.02em;margin:0;color:#111827;display:flex;align-items:center;gap:10px">
-          ${icono ? `<i data-lucide="${esc(icono)}" style="width:24px;height:24px;color:#2563eb;stroke-width:2"></i>` : ''}
+        <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.02em;margin:0;color:#2A1A10;display:flex;align-items:center;gap:10px">
+          ${icono ? `<i data-lucide="${esc(icono)}" style="width:24px;height:24px;color:#4A2E1A;stroke-width:2"></i>` : ''}
           ${esc(titulo)}
         </h1>
-        ${descripcion ? `<p style="margin:6px 0 0;color:#6b7280;font-size:14px;line-height:1.5">${esc(descripcion)}</p>` : ''}
+        ${descripcion ? `<p style="margin:6px 0 0;color:#7D6858;font-size:14px;line-height:1.5">${esc(descripcion)}</p>` : ''}
       </div>
       ${acciones ? `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${acciones}</div>` : ''}
     </div>
@@ -45,16 +45,16 @@ export function pageHeader({ icono = '', titulo = '', descripcion = '', acciones
  * @param {string} [o.icono]  - Ícono Lucide discreto
  * @param {string} [o.color]  - Color hex de 6 dígitos para el acento del ícono
  */
-export function kpiCard({ label = '', valor = '', sub = '', icono = '', color = '#2563eb' } = {}) {
+export function kpiCard({ label = '', valor = '', sub = '', icono = '', color = '#4A2E1A' } = {}) {
   return `
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(15,23,42,.04)">
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(42, 26, 16,.04)">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px">
-        <span style="font-size:12.5px;color:#6b7280;font-weight:600">${esc(label)}</span>
+        <span style="font-size:12.5px;color:#7D6858;font-weight:600">${esc(label)}</span>
         ${icono ? `<span style="width:30px;height:30px;border-radius:9px;background:${color}14;display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <i data-lucide="${esc(icono)}" style="width:16px;height:16px;color:${color};stroke-width:2"></i></span>` : ''}
       </div>
-      <div style="font-size:27px;font-weight:700;color:#111827;letter-spacing:-0.02em;line-height:1.1">${valor}</div>
-      ${sub ? `<div style="font-size:12px;color:#9ca3af;margin-top:6px">${sub}</div>` : ''}
+      <div style="font-size:27px;font-weight:700;color:#2A1A10;letter-spacing:-0.02em;line-height:1.1">${valor}</div>
+      ${sub ? `<div style="font-size:12px;color:#A8957F;margin-top:6px">${sub}</div>` : ''}
     </div>
   `;
 }
@@ -86,7 +86,7 @@ export function badge(label, tipo = 'neutral') {
 
 /* Paleta de avatares (bg suave + texto fuerte) — asignada por nombre */
 const AVATAR_COLORS = [
-  ['#dbeafe', '#1d4ed8'], // azul
+  ['#F3E8DC', '#33200F'], // azul
   ['#dcfce7', '#166534'], // verde
   ['#ede9fe', '#6d28d9'], // violeta
   ['#fef3c7', '#92400e'], // ámbar

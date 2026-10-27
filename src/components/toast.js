@@ -88,7 +88,7 @@ function crearToast(mensaje, tipo = 'info', duracion = DURACION_DEFAULT) {
   toast.className = `toast toast-${tipo}`;
   toast.style.cssText = `
     background: #ffffff;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #EADFD0;
     border-radius: 10px;
     padding: 12px 16px;
     box-shadow: 0 10px 25px -5px rgba(0,0,0,.15), 0 8px 10px -6px rgba(0,0,0,.10);
@@ -97,9 +97,9 @@ function crearToast(mensaje, tipo = 'info', duracion = DURACION_DEFAULT) {
     gap: 12px;
     min-width: 280px;
     max-width: 420px;
-    font-family: Inter, system-ui, sans-serif;
+    font-family: var(--font-ui);
     font-size: 14px;
-    color: #0f172a;
+    color: #2A1A10;
     pointer-events: auto;
     opacity: 0;
     transform: translateY(-20px);
@@ -111,7 +111,7 @@ function crearToast(mensaje, tipo = 'info', duracion = DURACION_DEFAULT) {
     ok: '#15803d',
     error: '#dc2626',
     warn: '#d97706',
-    info: '#0284c7',
+    info: '#6B4528',
   };
   toast.style.borderLeft = `4px solid ${colorBorde[tipo] || colorBorde.info}`;
 
@@ -143,7 +143,7 @@ function crearToast(mensaje, tipo = 'info', duracion = DURACION_DEFAULT) {
   cerrar.style.cssText = `
     background: transparent;
     border: 0;
-    color: #94a3b8;
+    color: #A8957F;
     font-size: 20px;
     cursor: pointer;
     padding: 0 4px;

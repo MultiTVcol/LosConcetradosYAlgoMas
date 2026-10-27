@@ -110,7 +110,7 @@ function mostrar(vista) {
   if (vista === 'general') {
     _contenedor.innerHTML = `
       <div data-reportes style="padding:24px 40px 0">
-        <button id="rep-volver" style="background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#2563eb;display:inline-flex;gap:4px;align-items:center">
+        <button id="rep-volver" style="background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#4A2E1A;display:inline-flex;gap:4px;align-items:center">
           <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Módulos de reportes
         </button>
       </div>
@@ -265,7 +265,7 @@ function reporteRango(desde, hasta) {
 // ============================================================
 
 function htmlCargando() {
-  return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando reportes…</div>`;
+  return `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando reportes…</div>`;
 }
 
 function htmlLayout() {
@@ -292,13 +292,13 @@ function htmlLayout() {
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:12px">
-          <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#2563eb;stroke-width:1.75"></i>
-          <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Reportes</h1>
+          <i data-lucide="bar-chart-3" style="width:30px;height:30px;color:#4A2E1A;stroke-width:1.75"></i>
+          <h1 style="font-size:26px;font-weight:700;color:#2A1A10;margin:0;letter-spacing:-0.02em">Reportes</h1>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button id="rep-btn-pers-reporte"
             title="Personaliza tu ticket de reporte POS 80mm"
-            style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+            style="padding:9px 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
             Ticket de reporte
           </button>
           <button id="rep-btn-pers-cierre"
@@ -310,26 +310,26 @@ function htmlLayout() {
       </div>
 
       <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px">
-        ${kpiUtilidad('Día', dia, '#2563eb')}
-        ${kpiUtilidad('Semana', sem, '#0284c7')}
+        ${kpiUtilidad('Día', dia, '#4A2E1A')}
+        ${kpiUtilidad('Semana', sem, '#6B4528')}
         ${kpiUtilidad('Mes', mes, '#a16207')}
         ${kpiUtilidad('Año', anio, '#15803d')}
       </div>
 
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:18px">
+      <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-          <h3 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">Reporte por fechas</h3>
+          <h3 style="font-size:18px;font-weight:700;margin:0;color:#2A1A10">Reporte por fechas</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="rep-btn-csv"
-              style="padding:9px 14px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#475569;display:flex;align-items:center;gap:6px">
+              style="padding:9px 14px;border:1px solid #EADFD0;background:white;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:#5C4636;display:flex;align-items:center;gap:6px">
               Exportar CSV
             </button>
             <button id="rep-btn-pos"
-              style="padding:9px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+              style="padding:9px 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
               Imprimir POS 80mm
             </button>
             <button id="rep-btn-pdf"
-              style="padding:9px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+              style="padding:9px 14px;background:#4A2E1A;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
               Generar informe PDF
             </button>
           </div>
@@ -338,7 +338,7 @@ function htmlLayout() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
           ${presets.map((p) => `
             <button class="rep-preset" data-preset="${p[0]}"
-              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#2563eb' : '#e2e8f0'};background:${_estado.preset === p[0] ? '#2563eb' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#475569'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
+              style="padding:8px 14px;border:1px solid ${_estado.preset === p[0] ? '#4A2E1A' : '#EADFD0'};background:${_estado.preset === p[0] ? '#4A2E1A' : 'white'};color:${_estado.preset === p[0] ? 'white' : '#5C4636'};border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
               ${p[1]}
             </button>
           `).join('')}
@@ -346,14 +346,14 @@ function htmlLayout() {
 
         <div style="display:grid;gap:14px;grid-template-columns:1fr 1fr;margin-bottom:14px">
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Desde</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Desde</div>
             <input id="rep-desde" type="date" value="${esc(_estado.desde)}"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Hasta</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Hasta</div>
             <input id="rep-hasta" type="date" value="${esc(_estado.hasta)}"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
         </div>
 
@@ -361,23 +361,23 @@ function htmlLayout() {
       </div>
 
       <div style="display:grid;gap:16px;grid-template-columns:1.5fr 1fr;margin-bottom:18px">
-        <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Ventas últimos 14 días</h3>
+        <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px">
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#2A1A10">Ventas últimos 14 días</h3>
           <div id="rep-ventas-bars" style="display:flex;align-items:flex-end;gap:6px;height:160px"></div>
         </div>
-        <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Métodos de pago</h3>
+        <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px">
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#2A1A10">Métodos de pago</h3>
           <div id="rep-metodos"></div>
         </div>
       </div>
 
       <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr">
-        <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Productos más vendidos</h3>
+        <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px">
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#2A1A10">Productos más vendidos</h3>
           <div id="rep-top-prod"></div>
         </div>
-        <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
-          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#0f172a">Clientes frecuentes</h3>
+        <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:20px">
+          <h3 style="font-size:16px;font-weight:700;margin:0 0 14px;color:#2A1A10">Clientes frecuentes</h3>
           <div id="rep-top-cli"></div>
         </div>
       </div>
@@ -387,10 +387,10 @@ function htmlLayout() {
 
 function kpiUtilidad(label, r, color) {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
-      <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Utilidad ${label}</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px 20px">
+      <div style="font-size:12.5px;color:#7D6858;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Utilidad ${label}</div>
       <div style="font-size:22px;font-weight:700;color:${color};font-family:inherit;letter-spacing:-0.02em">${money(r.utilidad)}</div>
-      <div style="color:#64748b;font-weight:500;margin-top:6px;font-size:12.5px">Ventas: ${money(r.total)} · ${r.n} fac.</div>
+      <div style="color:#7D6858;font-weight:500;margin-top:6px;font-size:12.5px">Ventas: ${money(r.total)} · ${r.n} fac.</div>
     </div>
   `;
 }
@@ -459,9 +459,9 @@ function aplicarPreset(p) {
 function marcarPreset() {
   _contenedor?.querySelectorAll('.rep-preset').forEach((btn) => {
     const activo = btn.dataset.preset === _estado.preset;
-    btn.style.background = activo ? '#2563eb' : 'white';
-    btn.style.color = activo ? 'white' : '#475569';
-    btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
+    btn.style.background = activo ? '#4A2E1A' : 'white';
+    btn.style.color = activo ? 'white' : '#5C4636';
+    btn.style.borderColor = activo ? '#4A2E1A' : '#EADFD0';
   });
 }
 
@@ -490,45 +490,45 @@ function pintarReporteRango() {
   const colProy = r.flujoCajaProyectado >= 0 ? '#15803d' : '#dc2626';
 
   box.innerHTML = `
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;text-align:center;font-weight:700;color:#475569;margin-bottom:14px">
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:11px;text-align:center;font-weight:700;color:#5C4636;margin-bottom:14px">
       Periodo: ${fechaBonita(r.desde)} → ${fechaBonita(r.hasta)} · ${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)
     </div>
 
     <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
-      ${tarjeta('Ventas', money(r.ventas), '#eff6ff', '#1d4ed8')}
-      ${tarjeta('Compras', money(r.compras), '#dbeafe', '#0369a1')}
+      ${tarjeta('Ventas', money(r.ventas), '#F8F1E8', '#33200F')}
+      ${tarjeta('Compras', money(r.compras), '#F3E8DC', '#6B4528')}
       ${tarjeta('Gastos', money(r.gastos), '#fef2f2', '#dc2626')}
       ${tarjeta('Utilidad neta', money(r.utilidadNeta), r.utilidadNeta >= 0 ? '#dcfce7' : '#fef2f2', colNeta)}
     </div>
 
     <div style="display:grid;gap:14px;grid-template-columns:1fr 1fr;align-items:start">
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">
-        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Utilidad por margen (rentabilidad)</h4>
-        ${repFila('Ventas del periodo', r.ventas, '#0f172a')}
-        ${repFila('− Costo de lo vendido', -r.costoVenta, '#64748b')}
-        <div style="border-top:2px solid #e2e8f0;margin:6px 0"></div>
-        ${repFila('= Utilidad bruta', r.utilidadBruta, '#1d4ed8', true)}
-        <div style="font-size:12.5px;color:#64748b;margin:2px 0 8px">Margen sobre ventas: <b>${margenPct.toFixed(1)}%</b></div>
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:14px">
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#2A1A10">Utilidad por margen (rentabilidad)</h4>
+        ${repFila('Ventas del periodo', r.ventas, '#2A1A10')}
+        ${repFila('− Costo de lo vendido', -r.costoVenta, '#7D6858')}
+        <div style="border-top:2px solid #EADFD0;margin:6px 0"></div>
+        ${repFila('= Utilidad bruta', r.utilidadBruta, '#33200F', true)}
+        <div style="font-size:12.5px;color:#7D6858;margin:2px 0 8px">Margen sobre ventas: <b>${margenPct.toFixed(1)}%</b></div>
         ${repFila('− Gastos operativos', -r.gastos, '#dc2626')}
-        <div style="border-top:3px double #cbd5e1;margin:8px 0"></div>
+        <div style="border-top:3px double #DCCFBE;margin:8px 0"></div>
         ${repFila('= UTILIDAD NETA', r.utilidadNeta, colNeta, true, true)}
-        <div style="font-size:12.5px;color:#64748b;margin-top:4px">Margen neto: <b>${netaPct.toFixed(1)}%</b></div>
+        <div style="font-size:12.5px;color:#7D6858;margin-top:4px">Margen neto: <b>${netaPct.toFixed(1)}%</b></div>
       </div>
 
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">
-        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#0f172a">Flujo de caja (efectivo del periodo)</h4>
-        ${repFila('Ventas de contado', r.contadoVentas, '#0f172a')}
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:14px">
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 10px;color:#2A1A10">Flujo de caja (efectivo del periodo)</h4>
+        ${repFila('Ventas de contado', r.contadoVentas, '#2A1A10')}
         ${r.recaudoVentas > 0 ? repFila('+ Recaudos de crédito', r.recaudoVentas, '#15803d') : ''}
-        ${repFila('− Compras de contado', -r.comprasContado, '#0369a1')}
+        ${repFila('− Compras de contado', -r.comprasContado, '#6B4528')}
         ${r.abonosDelPeriodo > 0 ? repFila('− Abonos a proveedores', -r.abonosDelPeriodo, '#a16207') : ''}
         ${repFila('− Gastos', -r.gastos, '#dc2626')}
-        <div style="border-top:3px double #cbd5e1;margin:8px 0"></div>
+        <div style="border-top:3px double #DCCFBE;margin:8px 0"></div>
         ${repFila('= FLUJO DE CAJA', r.flujoCaja, colCaja, true, true)}
         ${(r.cxcTotal > 0 || r.cxpTotal > 0) ? `
-          <div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:8px">
+          <div style="border-top:1px solid #EADFD0;margin-top:10px;padding-top:8px">
             ${r.cxcTotal > 0 ? repFila('+ Por cobrar (clientes)', r.cxcTotal, '#15803d') : ''}
             ${r.cxpTotal > 0 ? repFila('− Por pagar (proveedores)', -r.cxpTotal, '#a16207') : ''}
-            <div style="border-top:2px dashed #cbd5e1;margin:6px 0"></div>
+            <div style="border-top:2px dashed #DCCFBE;margin:6px 0"></div>
             ${repFila('= Flujo proyectado', r.flujoCajaProyectado, colProy, true)}
           </div>
         ` : ''}
@@ -539,8 +539,8 @@ function pintarReporteRango() {
 
 function tarjeta(label, valor, bgColor, fgColor) {
   return `
-    <div style="background:${bgColor};border:1px solid #e2e8f0;border-radius:12px;padding:16px">
-      <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${label}</div>
+    <div style="background:${bgColor};border:1px solid #EADFD0;border-radius:12px;padding:16px">
+      <div style="font-size:12.5px;color:#7D6858;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${label}</div>
       <div style="font-size:22px;font-weight:800;color:${fgColor};font-family:inherit;letter-spacing:-0.02em">${valor}</div>
     </div>
   `;
@@ -549,7 +549,7 @@ function tarjeta(label, valor, bgColor, fgColor) {
 function repFila(label, valor, color, bold = false, big = false) {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;${bold ? 'font-weight:700;' : ''}">
-      <span style="color:#475569;font-size:${big ? '14.5px' : '13.5px'}">${label}</span>
+      <span style="color:#5C4636;font-size:${big ? '14.5px' : '13.5px'}">${label}</span>
       <span style="color:${color};${bold ? 'font-weight:800;' : ''}font-family:inherit;font-size:${big ? '16px' : '13.5px'}">${money(valor)}</span>
     </div>
   `;
@@ -599,8 +599,8 @@ function pintarVentas14Dias() {
     const dia = fecha.slice(8, 10);
     return `
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px">
-        <div title="${money(total)}" style="width:100%;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:6px 6px 0 0;min-height:${total > 0 ? '6px' : '2px'};height:${h}%"></div>
-        <div style="font-size:10.5px;color:#94a3b8;font-family:inherit">${dia}</div>
+        <div title="${money(total)}" style="width:100%;background:linear-gradient(180deg,#4A2E1A,#EE7623);border-radius:6px 6px 0 0;min-height:${total > 0 ? '6px' : '2px'};height:${h}%"></div>
+        <div style="font-size:10.5px;color:#A8957F;font-family:inherit">${dia}</div>
       </div>
     `;
   }).join('');
@@ -617,11 +617,11 @@ function pintarMetodosPago() {
   }
   const entries = Object.entries(dist).sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:30px;color:#94a3b8;font-size:13.5px">Sin ventas aún</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:30px;color:#A8957F;font-size:13.5px">Sin ventas aún</div>`;
     return;
   }
   const total = entries.reduce((s, [, v]) => s + v, 0);
-  const colores = ['#2563eb', '#0284c7', '#15803d', '#a16207', '#dc2626', '#9333ea'];
+  const colores = ['#4A2E1A', '#6B4528', '#15803d', '#a16207', '#dc2626', '#D9620F'];
 
   box.innerHTML = entries.map(([met, val], i) => {
     const pct = (val / total) * 100;
@@ -629,10 +629,10 @@ function pintarMetodosPago() {
     return `
       <div style="margin-bottom:11px">
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
-          <span style="color:#0f172a;font-weight:600">${esc(met)}</span>
-          <span style="color:#64748b;font-family:inherit">${money(val)} · ${pct.toFixed(1)}%</span>
+          <span style="color:#2A1A10;font-weight:600">${esc(met)}</span>
+          <span style="color:#7D6858;font-family:inherit">${money(val)} · ${pct.toFixed(1)}%</span>
         </div>
-        <div style="height:9px;background:#f1f5f9;border-radius:5px;overflow:hidden">
+        <div style="height:9px;background:#F2EBE0;border-radius:5px;overflow:hidden">
           <div style="width:${pct}%;height:100%;background:${c};border-radius:5px"></div>
         </div>
       </div>
@@ -657,7 +657,7 @@ function pintarTopProductos() {
   const top = [...acum.values()].sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
 
   if (top.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:30px;color:#94a3b8;font-size:13.5px">Sin ventas aún</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:30px;color:#A8957F;font-size:13.5px">Sin ventas aún</div>`;
     return;
   }
 
@@ -667,11 +667,11 @@ function pintarTopProductos() {
     return `
       <div style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
-          <span style="color:#0f172a;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">${esc(it.nombre)}</span>
-          <span style="color:#64748b;font-family:inherit;flex-shrink:0">${fmt(it.cantidad)} uds · ${money(it.total)}</span>
+          <span style="color:#2A1A10;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">${esc(it.nombre)}</span>
+          <span style="color:#7D6858;font-family:inherit;flex-shrink:0">${fmt(it.cantidad)} uds · ${money(it.total)}</span>
         </div>
-        <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:4px"></div>
+        <div style="height:8px;background:#F2EBE0;border-radius:4px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#4A2E1A,#EE7623);border-radius:4px"></div>
         </div>
       </div>
     `;
@@ -693,21 +693,21 @@ function pintarTopClientes() {
   }
   const top = [...acum.values()].sort((a, b) => b.total - a.total).slice(0, 8);
   if (top.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:30px;color:#94a3b8;font-size:13.5px">Sin clientes aún</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:30px;color:#A8957F;font-size:13.5px">Sin clientes aún</div>`;
     return;
   }
 
   box.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:8px">
       ${top.map((c, i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#FBF7F1;border-radius:8px;border:1px solid #EADFD0">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-            <span style="width:24px;height:24px;border-radius:50%;background:#eff6ff;color:#2563eb;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${i + 1}</span>
-            <b style="font-size:13.5px;color:#0f172a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre)}</b>
+            <span style="width:24px;height:24px;border-radius:50%;background:#F8F1E8;color:#4A2E1A;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${i + 1}</span>
+            <b style="font-size:13.5px;color:#2A1A10;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre)}</b>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <b style="font-size:13.5px;color:#0f172a;font-family:inherit">${money(c.total)}</b>
-            <div style="font-size:11.5px;color:#64748b">${c.n} compra(s)</div>
+            <b style="font-size:13.5px;color:#2A1A10;font-family:inherit">${money(c.total)}</b>
+            <div style="font-size:11.5px;color:#7D6858">${c.n} compra(s)</div>
           </div>
         </div>
       `).join('')}
@@ -753,12 +753,12 @@ function htmlInformeFormal(r, cfg) {
 
   const filaTabla = (label, valor, opts = {}) => `
     <tr ${opts.bold ? 'style="font-weight:700"' : ''}>
-      <td style="padding:6px 0;color:${opts.color || '#0f172a'}">${label}</td>
-      <td style="padding:6px 0;text-align:right;color:${opts.color || '#0f172a'};font-family:'Courier New',monospace;white-space:nowrap;${opts.big ? 'font-size:15px;' : ''}">${typeof valor === 'string' ? valor : money(valor)}</td>
+      <td style="padding:6px 0;color:${opts.color || '#2A1A10'}">${label}</td>
+      <td style="padding:6px 0;text-align:right;color:${opts.color || '#2A1A10'};font-family:'Courier New',monospace;white-space:nowrap;${opts.big ? 'font-size:15px;' : ''}">${typeof valor === 'string' ? valor : money(valor)}</td>
     </tr>
   `;
 
-  const titulo = (txt, color = '#0f172a') => `
+  const titulo = (txt, color = '#2A1A10') => `
     <h2 style="font-size:14px;font-weight:800;color:${color};margin:14px 0 6px;border-bottom:2px solid ${color};padding-bottom:4px;letter-spacing:.02em">${esc(txt)}</h2>
   `;
 
@@ -808,71 +808,71 @@ function htmlInformeFormal(r, cfg) {
   const topProductos = [...acumProd.values()].sort((a, b) => b.total - a.total).slice(0, 5);
 
   return `
-    <div style="font-family:'Helvetica','Arial',sans-serif;color:#0f172a;font-size:11.5px;line-height:1.45">
+    <div style="font-family:'Helvetica','Arial',sans-serif;color:#2A1A10;font-size:11.5px;line-height:1.45">
       <!-- ENCABEZADO -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #0f172a;padding-bottom:10px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #2A1A10;padding-bottom:10px;margin-bottom:14px">
         <div>
           <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em">${esc(neg.nombre || 'PosPunto')}</div>
-          ${neg.nit ? `<div style="font-size:11px;color:#475569;margin-top:1px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
-          ${neg.direccion ? `<div style="font-size:11px;color:#475569">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
-          ${neg.telefono ? `<div style="font-size:11px;color:#475569">Tel: ${esc(neg.telefono)}</div>` : ''}
+          ${neg.nit ? `<div style="font-size:11px;color:#5C4636;margin-top:1px">NIT/CC: ${esc(neg.nit)}</div>` : ''}
+          ${neg.direccion ? `<div style="font-size:11px;color:#5C4636">${esc(neg.direccion)}${neg.ciudad ? ' · ' + esc(neg.ciudad) : ''}</div>` : ''}
+          ${neg.telefono ? `<div style="font-size:11px;color:#5C4636">Tel: ${esc(neg.telefono)}</div>` : ''}
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Informe Financiero</div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px">Generado: ${esc(fechaGen)}</div>
+          <div style="font-size:11px;color:#7D6858;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Informe Financiero</div>
+          <div style="font-size:11px;color:#A8957F;margin-top:2px">Generado: ${esc(fechaGen)}</div>
         </div>
       </div>
 
       <!-- PERIODO -->
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-        <div style="font-weight:700;color:#1d4ed8">Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
-        <div style="font-size:11px;color:#475569">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="font-weight:700;color:#33200F">Periodo: ${fechaBonita(r.desde)} al ${fechaBonita(r.hasta)}</div>
+        <div style="font-size:11px;color:#5C4636">${r.nFac} venta(s) · ${r.nCompras} compra(s) · ${r.nGastos} gasto(s)</div>
       </div>
 
       <!-- RESUMEN EJECUTIVO -->
       <div style="display:grid;gap:8px;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Ventas</div>
-          <div style="font-size:14px;font-weight:800;color:#1d4ed8;font-family:'Courier New',monospace">${money(r.ventas)}</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Ventas</div>
+          <div style="font-size:14px;font-weight:800;color:#33200F;font-family:'Courier New',monospace">${money(r.ventas)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Compras</div>
-          <div style="font-size:14px;font-weight:800;color:#0369a1;font-family:'Courier New',monospace">${money(r.compras)}</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Compras</div>
+          <div style="font-size:14px;font-weight:800;color:#6B4528;font-family:'Courier New',monospace">${money(r.compras)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Gastos</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Gastos</div>
           <div style="font-size:14px;font-weight:800;color:#dc2626;font-family:'Courier New',monospace">${money(r.gastos)}</div>
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px">
-          <div style="font-size:9.5px;color:#64748b;font-weight:700;text-transform:uppercase">Utilidad Neta</div>
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:6px;padding:8px 10px">
+          <div style="font-size:9.5px;color:#7D6858;font-weight:700;text-transform:uppercase">Utilidad Neta</div>
           <div style="font-size:14px;font-weight:800;color:${colNeta};font-family:'Courier New',monospace">${money(r.utilidadNeta)}</div>
         </div>
       </div>
 
       <!-- ESTADO DE RESULTADOS -->
-      ${titulo('Utilidad por margen (rentabilidad)', '#1d4ed8')}
+      ${titulo('Utilidad por margen (rentabilidad)', '#33200F')}
       <table style="width:100%;border-collapse:collapse">
         ${filaTabla('Ventas del periodo', r.ventas)}
-        ${filaTabla('(−) Costo de lo vendido', -r.costoVenta, { color: '#475569' })}
-        <tr><td colspan="2" style="border-top:1px solid #e2e8f0;padding:0"></td></tr>
-        ${filaTabla('= Utilidad bruta', r.utilidadBruta, { bold: true, color: '#1d4ed8' })}
+        ${filaTabla('(−) Costo de lo vendido', -r.costoVenta, { color: '#5C4636' })}
+        <tr><td colspan="2" style="border-top:1px solid #EADFD0;padding:0"></td></tr>
+        ${filaTabla('= Utilidad bruta', r.utilidadBruta, { bold: true, color: '#33200F' })}
         ${filaTabla('(−) Gastos operativos', -r.gastos, { color: '#dc2626' })}
-        <tr><td colspan="2" style="border-top:2px solid #0f172a;padding:0"></td></tr>
+        <tr><td colspan="2" style="border-top:2px solid #2A1A10;padding:0"></td></tr>
         ${filaTabla('= UTILIDAD NETA', r.utilidadNeta, { bold: true, color: colNeta, big: true })}
       </table>
-      <div style="font-size:10.5px;color:#64748b;margin-top:4px;font-style:italic">
+      <div style="font-size:10.5px;color:#7D6858;margin-top:4px;font-style:italic">
         Margen bruto: <b>${margenPct.toFixed(1)}%</b> · Margen neto: <b>${netaPct.toFixed(1)}%</b>
       </div>
 
       <!-- FLUJO DE CAJA -->
-      ${titulo('Flujo de caja (efectivo del periodo)', '#0369a1')}
+      ${titulo('Flujo de caja (efectivo del periodo)', '#6B4528')}
       <table style="width:100%;border-collapse:collapse">
         ${filaTabla('Ventas de contado', r.contadoVentas, { color: '#15803d' })}
         ${r.recaudoVentas > 0 ? filaTabla('(+) Recaudos de crédito', r.recaudoVentas, { color: '#15803d' }) : ''}
-        ${filaTabla('(−) Compras de contado', -r.comprasContado, { color: '#0369a1' })}
+        ${filaTabla('(−) Compras de contado', -r.comprasContado, { color: '#6B4528' })}
         ${r.abonosDelPeriodo > 0 ? filaTabla(`(−) Abonos a proveedores (${r.nAbonos})`, -r.abonosDelPeriodo, { color: '#a16207' }) : ''}
         ${filaTabla('(−) Gastos pagados', -r.gastos, { color: '#dc2626' })}
-        <tr><td colspan="2" style="border-top:2px solid #0f172a;padding:0"></td></tr>
+        <tr><td colspan="2" style="border-top:2px solid #2A1A10;padding:0"></td></tr>
         ${filaTabla('= FLUJO DE CAJA', r.flujoCaja, { bold: true, color: colCaja, big: true })}
         ${r.cxcTotal > 0 ? filaTabla('Por cobrar a clientes (snapshot)', r.cxcTotal, { color: '#15803d' }) : ''}
       </table>
@@ -880,7 +880,7 @@ function htmlInformeFormal(r, cfg) {
       <!-- CUENTAS POR PAGAR -->
       ${r.cxpTotal > 0 ? `
         ${titulo('Cuentas por pagar a proveedores', '#a16207')}
-        <div style="font-size:10.5px;color:#64748b;margin-bottom:6px;font-style:italic">
+        <div style="font-size:10.5px;color:#7D6858;margin-bottom:6px;font-style:italic">
           Foto actual de la deuda · ${r.nFacturasPorPagar} factura(s) pendiente(s)
         </div>
         <table style="width:100%;border-collapse:collapse">
@@ -909,8 +909,8 @@ function htmlInformeFormal(r, cfg) {
 
       <!-- INVENTARIO -->
       ${r.invValorCosto > 0 ? `
-        ${titulo('Valor del inventario actual', '#8b5cf6')}
-        <div style="font-size:10.5px;color:#64748b;margin-bottom:6px;font-style:italic">
+        ${titulo('Valor del inventario actual', '#D9620F')}
+        <div style="font-size:10.5px;color:#7D6858;margin-bottom:6px;font-style:italic">
           Foto actual de tu mercancía en bodega
         </div>
         <table style="width:100%;border-collapse:collapse">
@@ -918,7 +918,7 @@ function htmlInformeFormal(r, cfg) {
           ${filaTabla('Valor a precio de venta', r.invValorVenta)}
           ${filaTabla('Utilidad potencial', invUtilPotencial, { color: '#15803d', bold: true })}
         </table>
-        <div style="font-size:10.5px;color:#64748b;margin-top:4px;font-style:italic">
+        <div style="font-size:10.5px;color:#7D6858;margin-top:4px;font-style:italic">
           Margen: <b>${invMargenPct.toFixed(1)}%</b> sobre costo · ${fmt(r.invUnidades)} unidades en ${r.invSKUs} producto(s)
           ${r.invBajoStock > 0 ? ` · ⚠ ${r.invBajoStock} con stock bajo` : ''}
           ${r.invSinStock > 0 ? ` · 🚫 ${r.invSinStock} agotados` : ''}
@@ -939,7 +939,7 @@ function htmlInformeFormal(r, cfg) {
         ${titulo('Gastos por categoría', '#dc2626')}
         <table style="width:100%;border-collapse:collapse">
           ${cats.map(([k, v]) => filaTabla(esc(k), v)).join('')}
-          <tr><td colspan="2" style="border-top:1px solid #e2e8f0;padding:0"></td></tr>
+          <tr><td colspan="2" style="border-top:1px solid #EADFD0;padding:0"></td></tr>
           ${filaTabla('Total gastos', r.gastos, { bold: true })}
         </table>
       ` : ''}
@@ -949,7 +949,7 @@ function htmlInformeFormal(r, cfg) {
         ${titulo('Top 5 productos más vendidos del periodo', '#15803d')}
         <table style="width:100%;border-collapse:collapse;font-size:11px">
           <thead>
-            <tr style="border-bottom:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
+            <tr style="border-bottom:1px solid #DCCFBE;color:#7D6858;font-size:10px;font-weight:700;text-transform:uppercase;text-align:left">
               <th style="padding:5px 0">#</th>
               <th style="padding:5px 0">Producto</th>
               <th style="padding:5px 0;text-align:right">Unidades</th>
@@ -958,8 +958,8 @@ function htmlInformeFormal(r, cfg) {
           </thead>
           <tbody>
             ${topProductos.map((it, i) => `
-              <tr style="border-bottom:1px solid #f1f5f9">
-                <td style="padding:5px 0;color:#94a3b8">${i + 1}</td>
+              <tr style="border-bottom:1px solid #F2EBE0">
+                <td style="padding:5px 0;color:#A8957F">${i + 1}</td>
                 <td style="padding:5px 0">${esc(it.nombre)}</td>
                 <td style="padding:5px 0;text-align:right;font-family:'Courier New',monospace">${fmt(it.cantidad)}</td>
                 <td style="padding:5px 0;text-align:right;font-family:'Courier New',monospace;font-weight:700">${money(it.total)}</td>
@@ -970,7 +970,7 @@ function htmlInformeFormal(r, cfg) {
       ` : ''}
 
       <!-- PIE -->
-      <div style="border-top:1px solid #cbd5e1;margin-top:20px;padding-top:8px;font-size:9.5px;color:#94a3b8;font-style:italic;text-align:center">
+      <div style="border-top:1px solid #DCCFBE;margin-top:20px;padding-top:8px;font-size:9.5px;color:#A8957F;font-style:italic;text-align:center">
         Reporte generado automáticamente por PosPunto · ${esc(fechaGen)}
       </div>
     </div>

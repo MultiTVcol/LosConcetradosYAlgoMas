@@ -20,6 +20,7 @@ import { config, isFeatureEnabled, getBranding } from '../services/config.js';
 import * as Auth from '../services/auth.js';
 import * as Realtime from '../services/realtime.js';
 import { Router } from '../core/index.js';
+import { marca, patron } from './marca.js';
 
 // ============================================================
 //  DEFINICIÓN DE LOS MÓDULOS DEL POS
@@ -67,15 +68,16 @@ const GRUPOS = [
 
 const MODULO_POR_RUTA = MODULOS.reduce((m, x) => { m[x.ruta] = x; return m; }, {});
 
-/* Paleta del sidebar oscuro (corporativo, estilo Linear/Stripe) */
+/* Paleta del sidebar: café bulto con la opción activa en naranja */
 const SB = {
-  bg:        '#111827',  // gray-900
-  hover:     '#1F2937',  // gray-800
-  active:    '#2563EB',  // primary
-  text:      '#D1D5DB',  // gray-300
-  textDim:   '#9CA3AF',  // gray-400
-  section:   '#6B7280',  // gray-500
-  border:    'rgba(255,255,255,.07)',
+  bg:         'linear-gradient(180deg,#33200F,#24160D)',
+  hover:      'rgba(255,255,255,.07)',
+  active:     '#EE7623',
+  activeText: '#24160D',
+  text:       '#E3D3C2',
+  textDim:    '#B79C84',
+  section:    '#A88A70',
+  border:     'rgba(255,255,255,.08)',
 };
 
 // ============================================================
@@ -126,9 +128,9 @@ export function montarShell(contenedor) {
     grid-template-columns: 248px 1fr;
     height: 100vh;
     width: 100vw;
-    background: #eff3fb;
-    font-family: Inter, system-ui, sans-serif;
-    color: #111827;
+    background: #FAF6EF;
+    font-family: var(--font-ui);
+    color: #2A1A10;
     overflow: hidden;
   `;
 
@@ -141,65 +143,25 @@ export function montarShell(contenedor) {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   `;
+  sidebar.insertAdjacentHTML('afterbegin', patron('#fff', 0.06));
 
-  // ---- Header: logo + identidad del producto ----
+  // ---- Header: logo + identidad de la tienda ----
   const header = document.createElement('div');
   header.style.cssText = `
-    padding: 20px 18px 18px;
+    padding: 18px 16px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     border-bottom: 1px solid ${SB.border};
+    position: relative;
+    z-index: 1;
   `;
-
-  const logo = document.createElement('div');
-  logo.style.cssText = `
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-    background: ${SB.active};
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 19px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px -2px rgba(37,99,235,.45);
-  `;
-  logo.textContent = (branding.appName || 'P').charAt(0).toUpperCase();
-  header.appendChild(logo);
 
   const tituloBox = document.createElement('div');
   tituloBox.style.cssText = `flex: 1; min-width: 0;`;
-
-  const tituloEl = document.createElement('div');
-  tituloEl.textContent = `${branding.appName || 'PosPunto'} ERP`;
-  tituloEl.style.cssText = `
-    font-weight: 700;
-    font-size: 15px;
-    line-height: 1.2;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  `;
-  tituloBox.appendChild(tituloEl);
-
-  const subEl = document.createElement('div');
-  subEl.textContent = 'Gestión Empresarial';
-  subEl.style.cssText = `
-    font-size: 11.5px;
-    color: ${SB.textDim};
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  `;
-  tituloBox.appendChild(subEl);
-
+  tituloBox.innerHTML = marca({ size: 42, titulo: 16, sub: 19 });
   header.appendChild(tituloBox);
 
   // Badge de estado realtime (punto verde/gris)
@@ -243,6 +205,8 @@ export function montarShell(contenedor) {
     flex-direction: column;
     gap: 2px;
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
   `;
 
   _enlaces.clear();
@@ -261,9 +225,9 @@ export function montarShell(contenedor) {
       sec.textContent = grupo.titulo;
       sec.style.cssText = `
         padding: 14px 12px 6px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: .06em;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .14em;
         text-transform: uppercase;
         color: ${SB.section};
       `;
@@ -335,6 +299,8 @@ export function montarShell(contenedor) {
   footer.style.cssText = `
     padding: 12px;
     border-top: 1px solid ${SB.border};
+    position: relative;
+    z-index: 1;
   `;
   const u = Auth.usuarioActual();
   const inicial = u?.nombre ? u.nombre.trim().charAt(0).toUpperCase() : '?';
@@ -345,7 +311,7 @@ export function montarShell(contenedor) {
   footer.innerHTML = `
     ${u ? `
       <div style="display:flex;align-items:center;gap:10px;padding:10px;background:${SB.hover};border-radius:11px">
-        <div style="width:36px;height:36px;border-radius:9px;background:${SB.active};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">${inicialSegura}</div>
+        <div style="width:36px;height:36px;border-radius:10px;background:${SB.active};color:${SB.activeText};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">${inicialSegura}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:13px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nombreSeguro}</div>
           <div style="font-size:11px;color:${SB.textDim};font-weight:500;text-transform:uppercase;letter-spacing:.04em">${esAdminUsr ? 'Administrador' : 'Cajero'}</div>
@@ -379,7 +345,7 @@ export function montarShell(contenedor) {
   main.style.cssText = `
     overflow-y: auto;
     padding: 0;
-    background: #eff3fb;
+    background: #FAF6EF;
   `;
 
   contenedor.appendChild(sidebar);
@@ -432,6 +398,7 @@ export function marcarActivo(ruta) {
     btn.classList.remove('activo');
     btn.style.background = 'transparent';
     btn.style.color = SB.text;
+    btn.style.fontWeight = '500';
     btn.style.boxShadow = 'none';
   });
 
@@ -440,8 +407,9 @@ export function marcarActivo(ruta) {
   if (btn) {
     btn.classList.add('activo');
     btn.style.background = SB.active;
-    btn.style.color = '#ffffff';
-    btn.style.boxShadow = '0 4px 12px -3px rgba(37,99,235,.55)';
+    btn.style.color = SB.activeText;
+    btn.style.fontWeight = '700';
+    btn.style.boxShadow = '0 6px 14px -6px rgba(238,118,35,.85)';
   }
 }
 

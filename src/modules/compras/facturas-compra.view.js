@@ -32,7 +32,7 @@ export async function render(contenedor) {
   _filtro = { q: '', tipo: '', modo: 'mes', desde: '', hasta: '' };
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
-  contenedor.innerHTML = `<div style="padding:28px 32px;color:#64748b;font-size:14px">Cargando facturas de compra…</div>`;
+  contenedor.innerHTML = `<div style="padding:28px 32px;color:#7D6858;font-size:14px">Cargando facturas de compra…</div>`;
   try { _compras = await Repo.listar(); } catch (e) { _compras = []; }
 
   pintar();
@@ -63,8 +63,8 @@ function htmlKpis() {
   const porPagar = creditos.reduce((s, c) => s + num(c.saldo), 0);
   const vencidas = creditos.filter((c) => c.vence && c.vence < todayISO()).length;
   return kpiGrid([
-    { label: 'Facturas de compra', valor: fmt(n), sub: 'Registradas', icono: 'file-text', color: '#2563eb' },
-    { label: 'Comprado este mes', valor: money(delMes), sub: 'Mes en curso', icono: 'shopping-cart', color: '#0369a1' },
+    { label: 'Facturas de compra', valor: fmt(n), sub: 'Registradas', icono: 'file-text', color: '#4A2E1A' },
+    { label: 'Comprado este mes', valor: money(delMes), sub: 'Mes en curso', icono: 'shopping-cart', color: '#6B4528' },
     { label: 'Por pagar', valor: money(porPagar), sub: `${fmt(creditos.length)} a crédito`, icono: 'wallet', color: porPagar > 0 ? '#d97706' : '#16a34a' },
     { label: 'Vencidas', valor: fmt(vencidas), sub: 'Crédito vencido', icono: 'alert-triangle', color: vencidas > 0 ? '#dc2626' : '#16a34a' },
   ]);
@@ -75,7 +75,7 @@ function htmlLayout() {
     <button id="fc-cxp-nueva" style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;background:white;border:1px solid #fde68a;color:#a16207;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit" title="Registrar una deuda existente sin tocar inventario (migración)">
       <i data-lucide="file-plus" style="width:16px;height:16px;stroke-width:2"></i> Cuenta por pagar
     </button>
-    <button id="fc-nueva" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
+    <button id="fc-nueva" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4A2E1A;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
       <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i> Nueva compra
     </button>
   `;
@@ -133,7 +133,7 @@ async function abrirCuentaPorPagar() {
         <div>
           <div class="ui-label" style="margin-bottom:4px">Monto total adeudado *</div>
           <input id="cxp-total" data-miles type="text" inputmode="numeric" placeholder="0"
-            style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
+            style="width:100%;padding:12px 14px;border:1.5px solid #DCCFBE;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
         </div>
         <div>
           <div class="ui-label" style="margin-bottom:4px">Abono inicial (opcional)</div>
@@ -145,14 +145,14 @@ async function abrirCuentaPorPagar() {
           <div class="ui-label" style="margin-bottom:4px">Vencimiento</div>
           <input id="cxp-vence" class="ui-input" type="date" value="${venceDef}" />
         </div>
-        <div id="cxp-saldo" style="font-size:13px;color:#64748b;padding-bottom:10px">Saldo: <b style="color:#a16207">$0</b></div>
+        <div id="cxp-saldo" style="font-size:13px;color:#7D6858;padding-bottom:10px">Saldo: <b style="color:#a16207">$0</b></div>
       </div>
       <div>
         <div class="ui-label" style="margin-bottom:4px">Nota</div>
         <input id="cxp-nota" class="ui-input" type="text" placeholder="Ej: saldo migrado del sistema anterior" autocomplete="off" />
       </div>
       <div style="display:flex;gap:10px;margin-top:4px">
-        <button id="cxp-cancel" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cancelar</button>
+        <button id="cxp-cancel" style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#4A3628">Cancelar</button>
         <button id="cxp-save" style="flex:1.3;padding:11px;border:0;background:#a16207;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar cuenta por pagar</button>
       </div>
     </div>
@@ -215,10 +215,10 @@ function pintarCxp() {
 
   box.innerHTML = `
     <div class="ui-table-card" style="border-left:4px solid #d97706;margin-bottom:18px">
-      <div style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #f3f4f6">
+      <div style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #F2EBE0">
         <div>
-          <h3 style="font-size:15px;font-weight:700;margin:0;color:#111827">Cuentas por pagar a proveedores</h3>
-          <div style="font-size:12.5px;color:#6b7280;margin-top:2px">${fmt(creditos.length)} a crédito · deuda total <b style="color:#a16207">${money(totalDeuda)}</b></div>
+          <h3 style="font-size:15px;font-weight:700;margin:0;color:#2A1A10">Cuentas por pagar a proveedores</h3>
+          <div style="font-size:12.5px;color:#7D6858;margin-top:2px">${fmt(creditos.length)} a crédito · deuda total <b style="color:#a16207">${money(totalDeuda)}</b></div>
         </div>
       </div>
       <div style="overflow-x:auto">
@@ -235,10 +235,10 @@ function pintarCxp() {
               const vencido = c.vence && c.vence < todayISO();
               return `
                 <tr data-id="${esc(c.id)}">
-                  <td style="font-family:inherit;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
-                  <td style="font-weight:600;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</td>
-                  <td style="color:#6b7280">${esc(c.ref || '—')}</td>
-                  <td>${c.vence ? badge(esc(c.vence), vencido ? 'danger' : 'info') : '<span style="color:#d1d5db">—</span>'}</td>
+                  <td style="font-family:inherit;font-size:12.5px;color:#7D6858">${esc((c.fecha || '').slice(0, 10))}</td>
+                  <td style="font-weight:600;color:#2A1A10">${esc(c.proveedor || 'Sin proveedor')}</td>
+                  <td style="color:#7D6858">${esc(c.ref || '—')}</td>
+                  <td>${c.vence ? badge(esc(c.vence), vencido ? 'danger' : 'info') : '<span style="color:#DCCFBE">—</span>'}</td>
                   <td style="text-align:right;font-family:inherit">${money(c.total)}</td>
                   <td style="text-align:right;color:#a16207;font-weight:700;font-family:inherit">${money(c.saldo)}</td>
                   <td style="text-align:right">${menuButton(c.id)}</td>
@@ -270,9 +270,9 @@ function pintarHistorial() {
 
   if (_compras.length === 0) {
     box.innerHTML = `
-      <div class="ui-table-card" style="padding:48px 24px;text-align:center;color:#94a3b8">
-        <i data-lucide="receipt-text" style="width:40px;height:40px;color:#cbd5e1;stroke-width:1.5"></i>
-        <div style="margin-top:10px;font-weight:600;color:#475569">Aún no hay facturas de compra</div>
+      <div class="ui-table-card" style="padding:48px 24px;text-align:center;color:#A8957F">
+        <i data-lucide="receipt-text" style="width:40px;height:40px;color:#DCCFBE;stroke-width:1.5"></i>
+        <div style="margin-top:10px;font-weight:600;color:#5C4636">Aún no hay facturas de compra</div>
         <div style="font-size:13px;margin-top:2px">Registra tu primera compra a un proveedor.</div>
       </div>`;
     refrescarIconos(box);
@@ -281,15 +281,15 @@ function pintarHistorial() {
 
   const presetBtn = (modo, label) => `
     <button class="fc-preset" data-modo="${modo}"
-      style="padding:7px 13px;border:1px solid ${_filtro.modo === modo ? '#2563eb' : '#d1d5db'};background:${_filtro.modo === modo ? '#2563eb' : '#fff'};color:${_filtro.modo === modo ? '#fff' : '#374151'};border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${label}</button>`;
+      style="padding:7px 13px;border:1px solid ${_filtro.modo === modo ? '#4A2E1A' : '#DCCFBE'};background:${_filtro.modo === modo ? '#4A2E1A' : '#fff'};color:${_filtro.modo === modo ? '#fff' : '#4A3628'};border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${label}</button>`;
 
   box.innerHTML = `
     <div class="ui-table-card">
-      <div style="padding:16px 18px;border-bottom:1px solid #f3f4f6;display:flex;flex-direction:column;gap:12px">
+      <div style="padding:16px 18px;border-bottom:1px solid #F2EBE0;display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
           <div>
-            <h3 style="font-size:15px;font-weight:700;margin:0;color:#111827">Historial de compras</h3>
-            <div id="fc-hist-sub" style="font-size:12.5px;color:#6b7280;margin-top:2px"></div>
+            <h3 style="font-size:15px;font-weight:700;margin:0;color:#2A1A10">Historial de compras</h3>
+            <div id="fc-hist-sub" style="font-size:12.5px;color:#7D6858;margin-top:2px"></div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input id="fc-q" class="ui-input" type="text" placeholder="Buscar proveedor o factura…" value="${esc(_filtro.q)}" style="min-width:200px;width:auto" />
@@ -305,9 +305,9 @@ function pintarHistorial() {
           ${presetBtn('todas', 'Todas')}
           ${presetBtn('custom', 'Rango…')}
           ${_filtro.modo === 'custom' ? `
-            <span style="color:#94a3b8;font-size:12.5px">Desde</span>
+            <span style="color:#A8957F;font-size:12.5px">Desde</span>
             <input id="fc-desde" class="ui-input" type="date" value="${esc(_filtro.desde)}" style="width:auto" />
-            <span style="color:#94a3b8;font-size:12.5px">Hasta</span>
+            <span style="color:#A8957F;font-size:12.5px">Hasta</span>
             <input id="fc-hasta" class="ui-input" type="date" value="${esc(_filtro.hasta)}" style="width:auto" />
           ` : ''}
         </div>
@@ -368,7 +368,7 @@ function renderFilas() {
   }
 
   if (lista.length === 0) {
-    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#94a3b8;font-size:13.5px">No hay compras en ${_filtro.modo === 'mes' ? 'este mes' : _filtro.modo === 'custom' ? 'el rango elegido' : 'el filtro'}.</div>`;
+    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#A8957F;font-size:13.5px">No hay compras en ${_filtro.modo === 'mes' ? 'este mes' : _filtro.modo === 'custom' ? 'el rango elegido' : 'el filtro'}.</div>`;
     return;
   }
 
@@ -388,9 +388,9 @@ function renderFilas() {
             : pagada ? badge('Pagada', 'success') : badge('Crédito', 'warn');
           return `
             <tr data-id="${esc(c.id)}">
-              <td style="font-family:inherit;font-size:12.5px;color:#6b7280">${esc((c.fecha || '').slice(0, 10))}</td>
-              <td style="font-weight:600;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</td>
-              <td style="color:#6b7280">${esc(c.ref || '—')}</td>
+              <td style="font-family:inherit;font-size:12.5px;color:#7D6858">${esc((c.fecha || '').slice(0, 10))}</td>
+              <td style="font-weight:600;color:#2A1A10">${esc(c.proveedor || 'Sin proveedor')}</td>
+              <td style="color:#7D6858">${esc(c.ref || '—')}</td>
               <td>${estado}</td>
               <td style="text-align:right;font-weight:700;font-family:inherit">${money(c.total)}</td>
               <td style="text-align:right">${menuButton(c.id)}</td>
@@ -427,15 +427,15 @@ function abrirAbono(compraId) {
   const totalAbonado = abonos.reduce((s, a) => s + num(a.monto), 0);
 
   const contenido = `
-    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:4px">
-        <span>Compra</span><b style="color:#111827">${esc(c.proveedor || '—')} · ${esc(c.ref || 'Sin ref')}</b>
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:12px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858;margin-bottom:4px">
+        <span>Compra</span><b style="color:#2A1A10">${esc(c.proveedor || '—')} · ${esc(c.ref || 'Sin ref')}</b>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:4px">
-        <span>Total compra</span><b style="color:#111827;font-family:inherit">${money(c.total)}</b>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858;margin-bottom:4px">
+        <span>Total compra</span><b style="color:#2A1A10;font-family:inherit">${money(c.total)}</b>
       </div>
       ${totalAbonado > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#15803d;margin-bottom:4px"><span>Total abonado (${abonos.length})</span><b style="font-family:inherit">${money(totalAbonado)}</b></div>` : ''}
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858">
         <span>Saldo pendiente</span><b style="color:#a16207;font-family:inherit">${money(c.saldo)}</b>
       </div>
     </div>
@@ -443,7 +443,7 @@ function abrirAbono(compraId) {
     <div>
       <div class="ui-label" style="margin-bottom:4px">Monto del abono *</div>
       <input id="fc-abono-monto" data-miles type="text" inputmode="numeric" placeholder="0"
-        style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
+        style="width:100%;padding:14px;border:1px solid #DCCFBE;border-radius:12px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
     </div>
     <div style="margin-top:12px;display:grid;gap:10px;grid-template-columns:1fr 1fr">
       <div>
@@ -458,8 +458,8 @@ function abrirAbono(compraId) {
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:18px">
-      <button id="fc-abono-cancel" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cancelar</button>
-      <button id="fc-abono-save" style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>
+      <button id="fc-abono-cancel" style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#4A3628">Cancelar</button>
+      <button id="fc-abono-save" style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>
     </div>
   `;
 
@@ -507,23 +507,23 @@ function verDetalle(compraId) {
   const vencido = esCredito && c.vence && c.vence < todayISO() && saldo > 0.5;
 
   const contenido = `
-    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap">
         <div>
-          <div style="font-weight:700;font-size:15px;color:#111827">${esc(c.proveedor || 'Sin proveedor')}</div>
-          <div style="color:#6b7280;font-size:12.5px;margin-top:2px;font-family:inherit">Factura: ${esc(c.ref || '—')} · ${esc((c.fecha || '').slice(0, 10))}</div>
+          <div style="font-weight:700;font-size:15px;color:#2A1A10">${esc(c.proveedor || 'Sin proveedor')}</div>
+          <div style="color:#7D6858;font-size:12.5px;margin-top:2px;font-family:inherit">Factura: ${esc(c.ref || '—')} · ${esc((c.fecha || '').slice(0, 10))}</div>
         </div>
         ${!esCredito ? badge('Contado', 'success') : pagada ? badge('Pagada', 'success') : badge('Crédito', 'warn')}
       </div>
       <div style="display:grid;gap:6px;grid-template-columns:1fr 1fr;font-size:13px">
-        <div style="color:#6b7280">Total compra</div>
-        <div style="text-align:right;font-weight:700;color:#111827;font-family:inherit">${money(c.total)}</div>
+        <div style="color:#7D6858">Total compra</div>
+        <div style="text-align:right;font-weight:700;color:#2A1A10;font-family:inherit">${money(c.total)}</div>
         ${esCredito ? `
-          <div style="color:#6b7280">Total abonado (${abonos.length})</div>
+          <div style="color:#7D6858">Total abonado (${abonos.length})</div>
           <div style="text-align:right;font-weight:700;color:#15803d;font-family:inherit">${money(totalAbonado)}</div>
-          <div style="color:#6b7280">Saldo pendiente</div>
+          <div style="color:#7D6858">Saldo pendiente</div>
           <div style="text-align:right;font-weight:800;color:${pagada ? '#15803d' : '#a16207'};font-family:inherit">${money(saldo)}</div>
-          ${c.vence ? `<div style="color:#6b7280">Vence</div><div style="text-align:right;font-weight:700;color:${vencido ? '#dc2626' : '#475569'}">${esc(c.vence)}${vencido ? ' · vencida' : ''}</div>` : ''}
+          ${c.vence ? `<div style="color:#7D6858">Vence</div><div style="text-align:right;font-weight:700;color:${vencido ? '#dc2626' : '#5C4636'}">${esc(c.vence)}${vencido ? ' · vencida' : ''}</div>` : ''}
         ` : ''}
       </div>
     </div>
@@ -554,8 +554,8 @@ function verDetalle(compraId) {
           <tbody>
             ${[...abonos].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '')).map((a, i) => `
               <tr>
-                <td style="color:#94a3b8">${i + 1}</td>
-                <td style="font-family:inherit;color:#475569">${esc((a.fecha || '').slice(0, 10))}</td>
+                <td style="color:#A8957F">${i + 1}</td>
+                <td style="font-family:inherit;color:#5C4636">${esc((a.fecha || '').slice(0, 10))}</td>
                 <td>${badge(esc(a.metodo || 'Efectivo'), 'info')}</td>
                 <td style="text-align:right;font-family:inherit;font-weight:700;color:#15803d">${money(a.monto)}</td>
               </tr>`).join('')}
@@ -564,11 +564,11 @@ function verDetalle(compraId) {
       </div>
     ` : ''}
 
-    ${c.nota ? `<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;margin-bottom:14px"><div style="font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px">Nota</div><div style="font-size:13px;color:#111827">${esc(c.nota)}</div></div>` : ''}
+    ${c.nota ? `<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:9px;padding:10px 12px;margin-bottom:14px"><div style="font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px">Nota</div><div style="font-size:13px;color:#2A1A10">${esc(c.nota)}</div></div>` : ''}
 
     <div style="display:flex;gap:10px;margin-top:6px">
-      ${esCredito && !pagada ? `<button id="fc-det-abonar" style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>` : ''}
-      <button id="fc-det-cerrar" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cerrar</button>
+      ${esCredito && !pagada ? `<button id="fc-det-abonar" style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>` : ''}
+      <button id="fc-det-cerrar" style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#4A3628">Cerrar</button>
     </div>
   `;
 

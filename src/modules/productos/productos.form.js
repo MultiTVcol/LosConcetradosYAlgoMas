@@ -85,9 +85,9 @@ function construirFormulario(datos) {
 
       <div id="prod-errores" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;color:#991b1b;font-size:13px"></div>
 
-      <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #e2e8f0;padding-top:14px;margin-top:4px">
-        <button id="prod-cancelar" type="button" style="padding:10px 18px;background:white;border:1px solid #cbd5e1;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#475569">Cancelar</button>
-        <button id="prod-guardar" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
+      <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #EADFD0;padding-top:14px;margin-top:4px">
+        <button id="prod-cancelar" type="button" style="padding:10px 18px;background:white;border:1px solid #DCCFBE;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#5C4636">Cancelar</button>
+        <button id="prod-guardar" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
           <i data-lucide="check" style="width:16px;height:16px;stroke-width:2.25"></i>
           Guardar producto
         </button>
@@ -111,10 +111,10 @@ function campoBarras(valor) {
           value="${esc(String(valor != null ? valor : ''))}"
           placeholder="Escanea o escribe…" autocomplete="off" style="flex:1;min-width:0" />
         <button id="prod-barras-scan" type="button" title="Leer con la pistola"
-          style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
+          style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">
           <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2"></i> Escanear</button>
       </div>
-      <div id="prod-barras-hint" style="display:none;font-size:12px;color:#1d4ed8;font-weight:600;margin-top:1px;align-items:center;gap:6px">
+      <div id="prod-barras-hint" style="display:none;font-size:12px;color:#33200F;font-weight:600;margin-top:1px;align-items:center;gap:6px">
         <i data-lucide="radio" style="width:13px;height:13px;stroke-width:2.25"></i> Esperando lectura… escanea el producto ahora.
       </div>
     </label>
@@ -190,9 +190,9 @@ function configurarEventos(formEl, datosIniciales, modal, opciones) {
     }
     if (costo <= 0) {
       utBox.style.display = 'flex';
-      utBox.style.background = '#f1f5f9';
-      utBox.style.border = '1px solid #e2e8f0';
-      utBox.style.color = '#475569';
+      utBox.style.background = '#F2EBE0';
+      utBox.style.border = '1px solid #EADFD0';
+      utBox.style.color = '#5C4636';
       utBox.innerHTML = `<span>Ingresa el <b>costo</b> para ver la utilidad y el margen.</span>`;
       return;
     }

@@ -79,7 +79,7 @@ function resaltar(texto, query) {
   const antes = t.slice(0, idx);
   const match = t.slice(idx, idx + q.length);
   const despues = t.slice(idx + q.length);
-  return `${antes}<mark style="background:#fef08a;color:#0f172a;padding:0 2px;border-radius:3px">${match}</mark>${despues}`;
+  return `${antes}<mark style="background:#fef08a;color:#2A1A10;padding:0 2px;border-radius:3px">${match}</mark>${despues}`;
 }
 
 // ============================================================
@@ -126,14 +126,14 @@ export function crear(opciones) {
   dropdown.style.cssText = `
     position: absolute;
     background: white;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #EADFD0;
     border-radius: 10px;
     box-shadow: 0 12px 24px -8px rgba(0,0,0,.15), 0 4px 8px -4px rgba(0,0,0,.08);
     max-height: 320px;
     overflow-y: auto;
     z-index: 10500;
     display: none;
-    font-family: Inter, system-ui, sans-serif;
+    font-family: var(--font-ui);
     font-size: 14px;
     min-width: 240px;
   `;
@@ -170,7 +170,7 @@ export function crear(opciones) {
 
     if (resultadosVisibles.length === 0 && query.length >= minCaracteres) {
       dropdown.innerHTML = `
-        <div style="padding:14px 16px;color:#94a3b8;text-align:center;font-size:13px">
+        <div style="padding:14px 16px;color:#A8957F;text-align:center;font-size:13px">
           ${placeholder}
         </div>
       `;
@@ -197,7 +197,7 @@ export function crear(opciones) {
           style="
             padding: 10px 14px;
             cursor: pointer;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #F2EBE0;
             transition: background .1s;
           "
         >${contenido}</div>
@@ -221,7 +221,7 @@ export function crear(opciones) {
   function actualizarActivo() {
     dropdown.querySelectorAll('.ac-item').forEach((el, idx) => {
       if (idx === indiceActivo) {
-        el.style.background = '#eff6ff';
+        el.style.background = '#F8F1E8';
       } else {
         el.style.background = 'white';
       }

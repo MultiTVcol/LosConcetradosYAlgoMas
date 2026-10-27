@@ -93,35 +93,35 @@ function construirFormulario(datos) {
       ${htmlDatosFiscales(datos)}
 
       <!-- Sección Precios Especiales -->
-      <div style="background:#f8fafc;border:2px dashed #2563eb;border-radius:12px;padding:14px;margin-top:4px">
+      <div style="background:#FBF7F1;border:2px dashed #4A2E1A;border-radius:12px;padding:14px;margin-top:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
-            <div style="font-weight:800;font-size:15px;color:#0f172a">Precios especiales</div>
-            <div style="color:#64748b;font-size:12.5px;margin-top:3px">
+            <div style="font-weight:800;font-size:15px;color:#2A1A10">Precios especiales</div>
+            <div style="color:#7D6858;font-size:12.5px;margin-top:3px">
               Opcional · Solo los productos que listes aquí tendrán precio especial. El resto usa el precio estándar.
             </div>
           </div>
           <button
             id="cli-btn-pe"
             type="button"
-            style="padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
+            style="padding:10px 14px;background:#4A2E1A;color:white;border:0;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)"
           >Configurar precios especiales</button>
         </div>
-        <div id="cli-pe-resumen" style="margin-top:10px;font-size:13px;color:#64748b"></div>
+        <div id="cli-pe-resumen" style="margin-top:10px;font-size:13px;color:#7D6858"></div>
       </div>
 
       <div id="cli-errores" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;color:#991b1b;font-size:13px"></div>
 
-      <div style="display:flex;gap:10px;border-top:1px solid #e2e8f0;padding-top:14px;margin-top:4px">
+      <div style="display:flex;gap:10px;border-top:1px solid #EADFD0;padding-top:14px;margin-top:4px">
         <button
           id="cli-cancelar"
           type="button"
-          style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
+          style="flex:1;padding:11px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636"
         >Cancelar</button>
         <button
           id="cli-guardar"
           type="button"
-          style="flex:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
+          style="flex:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)"
         >Guardar</button>
       </div>
     </div>
@@ -150,8 +150,8 @@ function htmlDatosFiscales(datos) {
   const f = (datos.data && datos.data.fiscal) || {};
   const opt = (arr, val) => arr.map(([v, t]) => `<option value="${v}" ${val === v ? 'selected' : ''}>${esc(t)}</option>`).join('');
   return `
-    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:2px">
-      <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Datos para factura electrónica (opcional)</div>
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:12px;padding:14px;margin-top:2px">
+      <div style="font-size:12px;font-weight:700;color:#5C4636;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Datos para factura electrónica (opcional)</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <label class="ui-field" style="gap:5px">
           <span class="ui-label">Tipo de documento</span>
@@ -214,7 +214,7 @@ function pintarResumenPreciosEspeciales(formEl) {
   if (ids.length === 0) {
     el.innerHTML = 'Sin precios especiales asignados. Este cliente comprará al precio estándar.';
   } else {
-    el.innerHTML = `<b style="color:#1d4ed8">${fmt(ids.length)} producto(s)</b> con precio especial asignado.`;
+    el.innerHTML = `<b style="color:#33200F">${fmt(ids.length)} producto(s)</b> con precio especial asignado.`;
   }
 }
 
@@ -296,21 +296,21 @@ async function abrirPreciosEspeciales(datosCliente, esEdicion, opciones) {
   try { productos = await ProductosRepo.listar(); } catch (e) { productos = []; }
 
   const contenido = `
-    <div style="color:#64748b;font-size:13px;margin-bottom:12px">
+    <div style="color:#7D6858;font-size:13px;margin-bottom:12px">
       Busca el producto y escribe el precio especial. Deja en blanco para quitarlo.
     </div>
 
     <!-- Buscador unificado estilo Ventas/Compras -->
-    <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:12px;padding:12px;margin-bottom:8px">
+    <div style="background:#FBF7F1;border:2px dashed #D9B98C;border-radius:12px;padding:12px;margin-bottom:8px">
       <input id="pe-buscar" type="text" placeholder="Buscar por código, barras, nombre o categoría..." autocomplete="off"
-        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit" />
-      <div style="color:#64748b;font-size:11.5px;margin-top:6px">los códigos salen primero</div>
+        style="width:100%;padding:12px 14px;border:1px solid #DCCFBE;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit" />
+      <div style="color:#7D6858;font-size:11.5px;margin-top:6px">los códigos salen primero</div>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px">
-      <div style="font-weight:700;font-size:13.5px;color:#0f172a" id="pe-title">Productos</div>
+      <div style="font-weight:700;font-size:13.5px;color:#2A1A10" id="pe-title">Productos</div>
       <button id="pe-toggle-asignados"
-        style="padding:6px 12px;border:1px solid #e2e8f0;background:white;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:#475569;font-family:inherit">
+        style="padding:6px 12px;border:1px solid #EADFD0;background:white;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:#5C4636;font-family:inherit">
         ${_peSoloAsignados ? 'Mostrar todos' : 'Mostrar solo asignados'}
       </button>
     </div>
@@ -319,7 +319,7 @@ async function abrirPreciosEspeciales(datosCliente, esEdicion, opciones) {
 
     <div style="display:flex;gap:10px;margin-top:18px">
       <button id="pe-cancelar"
-        style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cerrar sin aplicar</button>
+        style="flex:1;padding:11px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cerrar sin aplicar</button>
       <button id="pe-aplicar"
         style="flex:1.2;padding:11px;background:#15803d;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">Aplicar al cliente</button>
     </div>
@@ -389,7 +389,7 @@ function pintarListaPE(box, productos, query, body, titleEl) {
   }
 
   if (lista.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:24px;color:#94a3b8;font-size:13.5px">Sin resultados</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:24px;color:#A8957F;font-size:13.5px">Sin resultados</div>`;
     return;
   }
 
@@ -398,10 +398,10 @@ function pintarListaPE(box, productos, query, body, titleEl) {
     const pe = _peEdit[p.id];
     const tiene = pe != null && pe !== '' && Number(pe) > 0;
     return `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${tiene ? '#eff6ff' : '#f8fafc'};border:1px solid ${tiene ? '#bfdbfe' : '#e2e8f0'};border-radius:9px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${tiene ? '#F8F1E8' : '#FBF7F1'};border:1px solid ${tiene ? '#E3CDB4' : '#EADFD0'};border-radius:9px">
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:13.5px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
-          <div style="color:#64748b;font-size:11.5px">${esc(p.codigo || '—')} · Estándar: <b style="color:#0f172a">${money(std)}</b></div>
+          <div style="font-weight:700;font-size:13.5px;color:#2A1A10;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
+          <div style="color:#7D6858;font-size:11.5px">${esc(p.codigo || '—')} · Estándar: <b style="color:#2A1A10">${money(std)}</b></div>
         </div>
         <input
           class="pe-input"
@@ -411,7 +411,7 @@ function pintarListaPE(box, productos, query, body, titleEl) {
           inputmode="numeric"
           placeholder="${fmt(std)}"
           value="${tiene ? pe : ''}"
-          style="width:120px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;font-family:inherit;text-align:right;outline:none;font-weight:700"
+          style="width:120px;padding:8px 10px;border:1px solid #DCCFBE;border-radius:7px;font-size:14px;font-family:inherit;text-align:right;outline:none;font-weight:700"
         />
         <button class="pe-quitar" data-id="${esc(p.id)}" title="Quitar precio especial"
           style="width:32px;height:32px;border:1px solid #fecaca;background:#fef2f2;border-radius:7px;cursor:pointer;color:#dc2626;display:flex;align-items:center;justify-content:center;font-size:14px">🗑️</button>

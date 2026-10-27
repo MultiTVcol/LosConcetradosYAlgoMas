@@ -38,10 +38,14 @@ import * as ConfigRepo from '../config/config.repo.js';
 import { html as facturaHTML } from '../factura/factura.html.js';
 import { bindMilesInputs } from '../../core/inputs.js';
 import * as Realtime from '../../services/realtime.js';
+import { estiloAnimal } from '../../app/marca.js';
 
 // ============================================================
 //  ESTADO DEL MÓDULO
 // ============================================================
+
+let _masVendidos = [];          // ids de producto, del más al menos vendido (30 días)
+let _filtroCatalogo = 'top';    // 'top' | nombre del grupo (Perros, Gatos…)
 
 let _contenedor = null;
 let _productos = [];
@@ -109,6 +113,9 @@ export async function render(contenedor) {
     _mostrarUtilidad = false;
   }
 
+  _filtroCatalogo = 'top';
+  await cargarMasVendidos();
+
   contenedor.innerHTML = htmlLayout();
   refrescarIconos(contenedor);
   adjuntarEventos(contenedor);
@@ -119,6 +126,7 @@ export async function render(contenedor) {
     try {
       _productos = await ProductosRepo.listar();
       _clientes = await ClientesRepo.listar();
+      renderizarCatalogo();
     } catch (err) { console.warn('Realtime ventas:', err); }
   };
   _offRealtime = Realtime.escucharVarias(['productos', 'clientes'], refrescarCatalogo);
@@ -156,6 +164,7 @@ function renderizarCarrito() {
 
   refrescarIconos(_contenedor);
   adjuntarEventosCarrito(_contenedor);
+  renderizarCatalogo();   // actualiza los "×n" de las tarjetas
 }
 
 function renderizarPaso1() {
@@ -231,7 +240,7 @@ function cerrarDropdown() {
 
 function htmlCargando() {
   return `
-    <div style="padding:48px;text-align:center;color:#94a3b8;font-size:14px">
+    <div style="padding:48px;text-align:center;color:#A8957F;font-size:14px">
       Cargando punto de venta…
     </div>
   `;
@@ -243,7 +252,7 @@ function htmlLayout() {
     <style>
       .ac-list {
         position:absolute; top:calc(100% + 6px); left:0; right:0;
-        background:white; border:1.5px solid #e2e8f0;
+        background:white; border:1.5px solid #EADFD0;
         border-radius:14px; max-height:60vh; overflow:auto; z-index:60;
         box-shadow:0 14px 36px rgba(0,0,0,.18);
         display:none;
@@ -252,41 +261,41 @@ function htmlLayout() {
       .ac-item {
         display:flex; gap:12px; align-items:center; justify-content:space-between;
         padding:12px 14px; cursor:pointer;
-        border-bottom:1px solid #f1f5f9;
+        border-bottom:1px solid #F2EBE0;
         transition:background .12s, border-color .12s;
       }
       .ac-item:last-child { border-bottom:none; }
-      .ac-item:hover, .ac-item.active { background:#eff6ff; }
-      .ac-item.active { outline:2px solid #2563eb; outline-offset:-2px; }
+      .ac-item:hover, .ac-item.active { background:#F8F1E8; }
+      .ac-item.active { outline:2px solid #4A2E1A; outline-offset:-2px; }
       .ac-item mark {
         background:rgba(74,222,128,.40); color:inherit;
         padding:0 2px; border-radius:3px; font-weight:800;
       }
-      .ac-item .ac-nom { font-weight:700; font-size:16px; line-height:1.25; color:#0f172a; }
+      .ac-item .ac-nom { font-weight:700; font-size:16px; line-height:1.25; color:#2A1A10; }
       .ac-item .ac-cod {
         font-family:inherit;
         font-weight:800; font-size:13.5px;
       }
       .ac-item .ac-meta {
-        font-size:12.5px; color:#64748b; margin-top:4px;
+        font-size:12.5px; color:#7D6858; margin-top:4px;
         display:flex; flex-wrap:wrap; gap:4px 8px; align-items:center;
       }
       .ac-item .ac-right { text-align:right; white-space:nowrap; flex-shrink:0; }
-      .ac-item .ac-precio { font-weight:800; color:#2563eb; font-size:17px; font-family:inherit; }
+      .ac-item .ac-precio { font-weight:800; color:#4A2E1A; font-size:17px; font-family:inherit; }
       .ac-item .ac-badge { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; margin-top:4px; font-family:inherit; }
       .ac-item .badge-ok { background:#dcfce7; color:#166534; }
       .ac-item .badge-danger { background:#fef2f2; color:#991b1b; }
-      .ac-empty { padding:18px; text-align:center; color:#94a3b8; font-size:14px; }
-      .ac-hint { margin-top:8px; font-size:12px; color:#94a3b8; }
+      .ac-empty { padding:18px; text-align:center; color:#A8957F; font-size:14px; }
+      .ac-hint { margin-top:8px; font-size:12px; color:#A8957F; }
       .ac-hint kbd {
-        background:#f1f5f9; border:1px solid #e2e8f0;
+        background:#F2EBE0; border:1px solid #EADFD0;
         border-radius:5px; padding:1px 6px; font-family:inherit;
-        font-size:11px; font-weight:700; color:#475569;
+        font-size:11px; font-weight:700; color:#5C4636;
       }
       .paso-badge {
         display:inline-flex; align-items:center; justify-content:center;
         width:26px; height:26px; border-radius:50%;
-        background:#2563eb; color:white; font-weight:700; font-size:13px;
+        background:#4A2E1A; color:white; font-weight:700; font-size:13px;
         font-family:inherit;
       }
       /* Selector de cliente */
@@ -295,20 +304,20 @@ function htmlLayout() {
         padding:10px 12px; cursor:pointer; border-radius:10px;
         border:1px solid transparent; transition:background .12s, border-color .12s;
       }
-      .sc-item:hover, .sc-item.active { background:#eff6ff; border-color:#bfdbfe; }
-      .sc-item.active { outline:2px solid #2563eb; outline-offset:-2px; }
+      .sc-item:hover, .sc-item.active { background:#F8F1E8; border-color:#E3CDB4; }
+      .sc-item.active { outline:2px solid #4A2E1A; outline-offset:-2px; }
       .sc-item mark { background:rgba(74,222,128,.40); color:inherit; padding:0 2px; border-radius:3px; font-weight:800; }
       .sc-avatar {
         width:38px; height:38px; border-radius:50%; flex-shrink:0;
-        background:linear-gradient(135deg,#eff6ff,#ffffff); color:#2563eb;
+        background:linear-gradient(135deg,#F8F1E8,#ffffff); color:#4A2E1A;
         display:flex; align-items:center; justify-content:center;
-        font-weight:800; font-size:15px; border:1.5px solid #bfdbfe;
+        font-weight:800; font-size:15px; border:1.5px solid #E3CDB4;
       }
       .sc-input {
-        width:100%; padding:11px 14px; border:1.5px solid #cbd5e1; border-radius:10px;
+        width:100%; padding:11px 14px; border:1.5px solid #DCCFBE; border-radius:10px;
         font-size:15px; outline:none; font-family:inherit; background:white; box-sizing:border-box;
       }
-      .sc-input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37, 99, 235,.15); }
+      .sc-input:focus { border-color:#4A2E1A; box-shadow:0 0 0 3px rgba(74, 46, 26,.15); }
     </style>
     <div style="display:grid;grid-template-columns:1fr 420px;height:100vh;gap:0">
       ${htmlPanelIzquierdo()}
@@ -323,31 +332,172 @@ function htmlLayout() {
 
 function htmlPanelIzquierdo() {
   return `
-    <div style="padding:24px 32px;overflow-y:auto;background:#fafafa">
+    <div style="padding:24px 32px;overflow-y:auto;background:#FAF6EF">
       ${htmlHeaderVentas()}
       ${htmlPaso1Cliente()}
       ${htmlPaso2BuscarProducto()}
+      ${htmlCatalogo()}
     </div>
   `;
+}
+
+// ============================================================
+//  CATÁLOGO RÁPIDO — más vendidos y botones por animal
+// ============================================================
+
+/** Calcula los más vendidos de los últimos 30 días (ids en orden). */
+async function cargarMasVendidos() {
+  try {
+    const hoy = new Date();
+    const desde = new Date(hoy); desde.setDate(hoy.getDate() - 30);
+    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ventas = await Repo.listarRango(iso(desde), iso(hoy));
+    const cuenta = new Map();
+    for (const v of ventas) {
+      if (v.estado === 'anulada') continue;
+      for (const it of v.items || []) {
+        if (it.producto_id) cuenta.set(it.producto_id, (cuenta.get(it.producto_id) || 0) + (Number(it.cantidad) || 0));
+      }
+    }
+    _masVendidos = [...cuenta.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id);
+  } catch (err) {
+    console.warn('No se pudieron calcular los más vendidos:', err);
+    _masVendidos = [];
+  }
+}
+
+function productosVendibles() {
+  return _productos.filter((p) => p.activo !== false);
+}
+
+function gruposCatalogo() {
+  const grupos = new Map();
+  for (const p of productosVendibles()) {
+    const g = estiloAnimal(p.categoria, p.nombre);
+    if (!grupos.has(g.grupo)) grupos.set(g.grupo, { ...g, n: 0 });
+    grupos.get(g.grupo).n++;
+  }
+  return [...grupos.values()].sort((a, b) => b.n - a.n);
+}
+
+function productosDelFiltro() {
+  const vendibles = productosVendibles();
+  if (_filtroCatalogo === 'top') {
+    const porId = new Map(vendibles.map((p) => [p.id, p]));
+    const top = _masVendidos.map((id) => porId.get(id)).filter(Boolean);
+    // Completa con productos con existencias si aún hay pocas ventas
+    if (top.length < 12) {
+      for (const p of vendibles) {
+        if (top.length >= 12) break;
+        if (!top.includes(p) && Number(p.stock) > 0) top.push(p);
+      }
+    }
+    return top.slice(0, 12);
+  }
+  return vendibles
+    .filter((p) => estiloAnimal(p.categoria, p.nombre).grupo === _filtroCatalogo)
+    .sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)))
+    .slice(0, 48);
+}
+
+function htmlCatalogo() {
+  if (_productos.length === 0) return '';
+  const grupos = gruposCatalogo();
+  const chip = (clave, texto, icono, color) => {
+    const on = _filtroCatalogo === clave;
+    return `<button class="cat-chip" data-filtro="${esc(clave)}"
+      style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap;padding:8px 14px;border-radius:999px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;border:1px solid ${on ? '#4A2E1A' : '#EADFD0'};background:${on ? '#4A2E1A' : '#fff'};color:${on ? '#fff' : '#5C4636'}">
+      <i data-lucide="${icono}" style="width:15px;height:15px;color:${on ? '#fff' : color}"></i>${esc(texto)}</button>`;
+  };
+  return `
+    <div id="venta-catalogo" style="margin-bottom:14px">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">
+        ${chip('top', 'Más vendidos', 'star', '#EE7623')}
+        ${grupos.map((g) => chip(g.grupo, g.grupo, g.icono, g.color)).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px">
+        ${productosDelFiltro().map(htmlTarjetaProducto).join('') || '<div style="color:#A8957F;font-size:13.5px;padding:12px">Sin productos en este grupo</div>'}
+      </div>
+    </div>
+  `;
+}
+
+function htmlTarjetaProducto(p) {
+  const g = estiloAnimal(p.categoria, p.nombre);
+  const stock = Number(p.stock) || 0;
+  const agotado = stock <= 0;
+  const bajo = !agotado && stock <= Number(p.stock_min || 0);
+  const enCarrito = _carrito.filter((it) => it.producto_id === p.id).reduce((s, it) => s + (Number(it.cantidad) || 0), 0);
+  const estado = agotado
+    ? '<span style="background:#FDECEA;color:#D92D20">Agotado</span>'
+    : `<span style="background:${bajo ? '#FBF1DC' : '#E5F4EA'};color:${bajo ? '#B7791F' : '#2E8B57'}">${fmt(stock)}</span>`;
+  return `
+    <button class="cat-prod" data-id="${esc(p.id)}" title="${esc(p.nombre)}"
+      style="text-align:left;font-family:inherit;cursor:pointer;background:#fff;border:1px solid #EADFD0;border-radius:16px;padding:9px;display:flex;gap:10px;align-items:center;min-width:0;box-shadow:0 1px 2px rgba(42,26,16,.04);opacity:${agotado ? '.55' : '1'};transition:border-color .12s,box-shadow .12s"
+      onmouseover="this.style.borderColor='#EE7623';this.style.boxShadow='0 6px 16px -8px rgba(238,118,35,.6)'" onmouseout="this.style.borderColor='#EADFD0';this.style.boxShadow='0 1px 2px rgba(42,26,16,.04)'">
+      <span style="width:58px;height:58px;border-radius:12px;background:${g.color}1f;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i data-lucide="${g.icono}" style="width:28px;height:28px;color:${g.color}"></i>
+      </span>
+      <span style="min-width:0;flex:1;display:block">
+        <b style="display:block;font-size:14px;line-height:1.2;color:#2A1A10;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.nombre)}</b>
+        <span style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#8C7766;margin-top:2px;white-space:nowrap;overflow:hidden">
+          ${esc(p.categoria || g.grupo)}
+          <span style="display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;${''}">${estado}</span>
+        </span>
+        <span style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:3px">
+          <span style="font-weight:800;font-size:15.5px;color:${agotado ? '#8C7766' : '#4A2E1A'};font-variant-numeric:tabular-nums">${agotado ? 'Sin stock' : money(p.precio)}</span>
+          ${enCarrito ? `<span style="font-size:11px;font-weight:800;color:#24160D;background:#EE7623;border-radius:8px;padding:2px 7px">×${fmt(enCarrito)}</span>` : ''}
+        </span>
+      </span>
+    </button>
+  `;
+}
+
+function renderizarCatalogo() {
+  const cont = _contenedor?.querySelector('#venta-catalogo');
+  if (!cont) return;
+  cont.outerHTML = htmlCatalogo();
+  refrescarIconos(_contenedor);
+  adjuntarEventosCatalogo(_contenedor);
+}
+
+function adjuntarEventosCatalogo(contenedor) {
+  const cat = contenedor.querySelector('#venta-catalogo');
+  if (!cat) return;
+  cat.addEventListener('click', (e) => {
+    const chip = e.target.closest('.cat-chip');
+    if (chip) {
+      _filtroCatalogo = chip.dataset.filtro;
+      renderizarCatalogo();
+      return;
+    }
+    const tarjeta = e.target.closest('.cat-prod');
+    if (tarjeta) {
+      const producto = _productos.find((p) => p.id === tarjeta.dataset.id);
+      if (producto) abrirModalCantidad(producto);
+    }
+  });
 }
 
 function htmlHeaderVentas() {
   return `
     <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
-      <div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-          <i data-lucide="shopping-cart" style="width:28px;height:28px;color:#2563eb;stroke-width:1.75"></i>
-          <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.025em;margin:0;color:#0f172a">
-            Punto de Venta
-          </h1>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:48px;height:48px;border-radius:14px;background:#FDE9DA;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="shopping-cart" style="width:26px;height:26px;color:#D9620F;stroke-width:2"></i>
         </div>
-        <div style="color:#64748b;font-size:13.5px">
-          Seguí los 3 pasos para registrar una venta
+        <div>
+          <h1 style="font-size:28px;margin:0;color:#2A1A10;line-height:1.05">
+            Punto de venta
+          </h1>
+          <div style="color:#8C7766;font-size:13.5px;margin-top:3px">
+            Escanea, busca o toca un producto para agregarlo
+          </div>
         </div>
       </div>
       <button id="venta-btn-personalizar-ticket"
         title="Personaliza tu ticket POS 80mm"
-        style="padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
+        style="padding:10px 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px;flex-shrink:0">
         Personaliza tu ticket
       </button>
     </div>
@@ -360,26 +510,26 @@ function htmlPaso1Cliente() {
     const inicial = String(_cliente.nombre || '?').trim().charAt(0).toUpperCase() || '?';
     const subline = [_cliente.documento, _cliente.telefono].filter(Boolean).join(' · ');
     return `
-      <div id="paso1-cliente-wrap" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:14px">
+      <div id="paso1-cliente-wrap" style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:16px;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
           <span class="paso-badge">1</span>
-          <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Cliente</h3>
+          <h3 style="font-size:16px;font-weight:600;margin:0;color:#2A1A10">Cliente</h3>
         </div>
 
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F8F1E8;border:1px solid #E3CDB4;border-radius:10px">
           <div class="sc-avatar" style="width:42px;height:42px;font-size:17px">${esc(inicial)}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:14.5px;color:#0f172a;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            <div style="font-weight:700;font-size:14.5px;color:#2A1A10;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
               ${esc(_cliente.nombre)}
             </div>
             ${subline ? `
-              <div style="font-size:12px;color:#64748b;margin-top:2px">${esc(subline)}</div>
+              <div style="font-size:12px;color:#7D6858;margin-top:2px">${esc(subline)}</div>
             ` : ''}
           </div>
           <button
             id="venta-btn-cambiar-cliente"
             title="Cambiar cliente"
-            style="background:white;border:1px solid #bfdbfe;border-radius:8px;padding:6px 10px;cursor:pointer;color:#2563eb;font-size:12px;font-weight:600;font-family:inherit"
+            style="background:white;border:1px solid #E3CDB4;border-radius:8px;padding:6px 10px;cursor:pointer;color:#4A2E1A;font-size:12px;font-weight:600;font-family:inherit"
           >Cambiar</button>
           <button
             id="venta-btn-quitar-cliente"
@@ -394,21 +544,21 @@ function htmlPaso1Cliente() {
   }
 
   return `
-    <div id="paso1-cliente-wrap" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:14px">
+    <div id="paso1-cliente-wrap" style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:16px;margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <span class="paso-badge">1</span>
-        <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Cliente</h3>
+        <h3 style="font-size:16px;font-weight:600;margin:0;color:#2A1A10">Cliente</h3>
       </div>
 
       <button
         id="venta-btn-cliente"
-        style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;color:#475569;text-align:left;width:100%"
+        style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;color:#5C4636;text-align:left;width:100%"
       >
         <span style="display:flex;align-items:center;gap:10px">
           <i data-lucide="user" style="width:18px;height:18px"></i>
           <span>Sin cliente (cliente ocasional)</span>
         </span>
-        <i data-lucide="chevron-down" style="width:16px;height:16px;color:#94a3b8"></i>
+        <i data-lucide="chevron-down" style="width:16px;height:16px;color:#A8957F"></i>
       </button>
     </div>
   `;
@@ -417,10 +567,10 @@ function htmlPaso1Cliente() {
 function htmlPaso2BuscarProducto() {
   if (_productos.length === 0) {
     return `
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:14px">
+      <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:16px;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
           <span class="paso-badge">2</span>
-          <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Buscar producto</h3>
+          <h3 style="font-size:16px;font-weight:600;margin:0;color:#2A1A10">Buscar producto</h3>
         </div>
         <div style="background:#fef3c7;border:1px dashed #d97706;border-radius:10px;padding:20px;text-align:center">
           <i data-lucide="alert-circle" style="width:32px;height:32px;color:#d97706;stroke-width:1.5;display:inline-block;margin-bottom:8px"></i>
@@ -436,34 +586,35 @@ function htmlPaso2BuscarProducto() {
   }
 
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:14px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:16px;margin-bottom:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
         <div style="display:flex;align-items:center;gap:10px">
           <span class="paso-badge">2</span>
-          <h3 style="font-size:16px;font-weight:600;margin:0;color:#0f172a">Buscar o escanear producto</h3>
+          <h3 style="font-size:16px;font-weight:600;margin:0;color:#2A1A10">Buscar o escanear producto</h3>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;color:#64748b;font-size:12.5px;font-weight:600">
+        <div style="display:flex;align-items:center;gap:10px;color:#7D6858;font-size:12.5px;font-weight:600">
           <span style="display:inline-flex;align-items:center;gap:6px">
-            <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#2563eb"></i> Pistola lista
+            <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#4A2E1A"></i> Pistola lista
           </span>
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:999px;padding:3px 10px;font-size:11.5px">
-            Pulsa <kbd style="background:white;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700;font-size:12px;color:#0f172a">F2</kbd> para buscar
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F8F1E8;border:1px solid #E3CDB4;color:#33200F;border-radius:999px;padding:3px 10px;font-size:11.5px">
+            Pulsa <kbd style="background:white;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700;font-size:12px;color:#2A1A10">F2</kbd> para buscar
           </span>
         </div>
       </div>
 
       <div style="position:relative">
-        <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:14px;padding:14px">
-          <div style="display:flex;gap:8px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #EE7623;border-radius:14px;padding:4px 14px;box-shadow:0 0 0 4px rgba(238,118,35,.13)">
+            <i data-lucide="scan-barcode" style="width:22px;height:22px;color:#D9620F;flex-shrink:0"></i>
             <input
               id="venta-buscar"
               type="text"
-              placeholder="Escanea con la pistola o escribe (código, nombre, categoría)…"
+              placeholder="Escanea o escribe: «chunky», «maíz», «arena»…"
               autocomplete="off"
               role="combobox"
               aria-autocomplete="list"
               aria-controls="prodSearchList"
-              style="flex:1;padding:14px 16px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;outline:none;font-family:inherit;background:white;color:#0f172a;box-sizing:border-box"
+              style="flex:1;padding:12px 2px;border:0;font-size:16px;outline:none;font-family:inherit;background:transparent;color:#2A1A10;box-sizing:border-box;min-width:0"
             />
           </div>
           <div class="ac-hint">
@@ -521,7 +672,7 @@ function hl(s, q) {
 
 function htmlPanelDerecho(totales) {
   return `
-    <div style="background:white;border-left:1px solid #e2e8f0;display:flex;flex-direction:column;height:100vh">
+    <div style="background:white;border-left:1px solid #EADFD0;display:flex;flex-direction:column;height:100vh">
       ${htmlHeaderCarrito()}
       ${_carrito.length === 0 ? htmlListaVacia() : htmlListaItems()}
       ${htmlTotales(totales)}
@@ -534,20 +685,20 @@ function htmlHeaderCarrito() {
   const hayItems = _carrito.length > 0;
   const cliente = _cliente ? _cliente.nombre : 'Cliente General';
   return `
-    <div style="padding:20px 24px 12px;border-bottom:1px solid #f1f5f9">
+    <div style="padding:20px 24px 12px;border-bottom:1px solid #F2EBE0">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div style="display:flex;align-items:center;gap:10px">
           <span class="paso-badge">3</span>
-          <span style="font-size:16px;font-weight:600;color:#0f172a">Borrador de la factura</span>
+          <span style="font-size:16px;font-weight:600;color:#2A1A10">Borrador de la factura</span>
         </div>
         <button id="venta-btn-vaciar"
           ${!hayItems ? 'disabled' : ''}
-          style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:white;border:1px solid #e2e8f0;border-radius:8px;cursor:${hayItems ? 'pointer' : 'not-allowed'};font-size:12.5px;font-weight:600;color:${hayItems ? '#475569' : '#cbd5e1'};font-family:inherit">
+          style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:white;border:1px solid #EADFD0;border-radius:8px;cursor:${hayItems ? 'pointer' : 'not-allowed'};font-size:12.5px;font-weight:600;color:${hayItems ? '#5C4636' : '#DCCFBE'};font-family:inherit">
           <i data-lucide="trash-2" style="width:13px;height:13px"></i> Vaciar
         </button>
       </div>
-      <div id="venta-subtitulo" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;font-size:13px;color:#64748b">
-        Factura para <b style="color:#0f172a">${esc(cliente)}</b> · <span id="venta-contador">${_carrito.length} ítem${_carrito.length === 1 ? '' : 's'}</span>
+      <div id="venta-subtitulo" style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:8px 12px;font-size:13px;color:#7D6858">
+        Factura para <b style="color:#2A1A10">${esc(cliente)}</b> · <span id="venta-contador">${_carrito.length} ítem${_carrito.length === 1 ? '' : 's'}</span>
       </div>
     </div>
   `;
@@ -556,12 +707,12 @@ function htmlHeaderCarrito() {
 function htmlListaVacia() {
   return `
     <div id="venta-lista-carrito" style="flex:1;overflow-y:auto;padding:24px;display:flex;align-items:center;justify-content:center">
-      <div style="text-align:center;color:#94a3b8">
-        <div style="width:64px;height:64px;margin:0 auto 12px;border-radius:16px;background:#f8fafc;display:flex;align-items:center;justify-content:center">
-          <i data-lucide="shopping-bag" style="width:32px;height:32px;color:#cbd5e1;stroke-width:1.5"></i>
+      <div style="text-align:center;color:#A8957F">
+        <div style="width:64px;height:64px;margin:0 auto 12px;border-radius:16px;background:#FBF7F1;display:flex;align-items:center;justify-content:center">
+          <i data-lucide="shopping-bag" style="width:32px;height:32px;color:#DCCFBE;stroke-width:1.5"></i>
         </div>
-        <div style="font-size:14px;color:#64748b;font-weight:500;margin-bottom:4px">Carrito vacío</div>
-        <div style="font-size:12.5px;color:#94a3b8;line-height:1.5;max-width:240px">
+        <div style="font-size:14px;color:#7D6858;font-weight:500;margin-bottom:4px">Carrito vacío</div>
+        <div style="font-size:12.5px;color:#A8957F;line-height:1.5;max-width:240px">
           Buscá un producto a la izquierda para agregarlo al borrador
         </div>
       </div>
@@ -574,7 +725,7 @@ function htmlListaItems() {
     <div id="venta-lista-carrito" style="flex:1;overflow-y:auto;padding:6px 14px 12px">
       <table style="width:100%;border-collapse:collapse;font-size:13.5px">
         <thead>
-          <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:left">
+          <tr style="border-bottom:1px solid #EADFD0;color:#7D6858;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:left">
             <th style="padding:8px 6px;width:42px">Cant</th>
             <th style="padding:8px 6px">Producto</th>
             <th style="padding:8px 6px;text-align:right">Vr/Unit</th>
@@ -594,11 +745,11 @@ function htmlFilaCarrito(item, idx) {
   const subtotal = Repo.calcularSubtotalItem(item);
   const tieneDesc = Number(item.descuento) > 0;
   return `
-    <tr data-idx="${idx}" style="border-bottom:1px solid #f1f5f9">
+    <tr data-idx="${idx}" style="border-bottom:1px solid #F2EBE0">
       <td style="padding:10px 6px;vertical-align:top">
-        <b style="color:#0f172a;font-family:inherit">${item.cantidad}</b>
+        <b style="color:#2A1A10;font-family:inherit">${item.cantidad}</b>
       </td>
-      <td style="padding:10px 6px;vertical-align:top;color:#0f172a">
+      <td style="padding:10px 6px;vertical-align:top;color:#2A1A10">
         <div style="font-weight:600">${esc(item.nombre)}</div>
         ${tieneDesc ? `<div style="color:#dc2626;font-size:11.5px;margin-top:2px">desc. ${money(item.descuento)} c/u</div>` : ''}
       </td>
@@ -632,13 +783,13 @@ function htmlTotales(t) {
   const bgUtil = utilidad >= 0 ? '#dcfce7' : '#fef2f2';
   const sinCosto = t.costoTotal === 0 && _carrito.length > 0;
   return `
-    <div id="venta-totales" style="padding:14px 24px;border-top:2px dashed #cbd5e1;background:#fafafa">
-      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;margin-bottom:6px">
+    <div id="venta-totales" style="padding:14px 24px;border-top:2px dashed #DCCFBE;background:#FBF7F1">
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5C4636;margin-bottom:6px">
         <span>Subtotal</span>
-        <b style="font-family:inherit;color:#0f172a">${money(t.subtotal)}</b>
+        <b style="font-family:inherit;color:#2A1A10">${money(t.subtotal)}</b>
       </div>
       ${t.impuesto > 0 ? `
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#7D6858;margin-bottom:6px">
           <span>Impuesto</span>
           <b style="font-family:inherit">${money(t.impuesto)}</b>
         </div>
@@ -657,15 +808,15 @@ function htmlTotales(t) {
             </div>
             ${sinCosto
               ? `<div style="font-size:11px;color:#a16207;margin-top:1px">Define el costo de los productos para un cálculo real</div>`
-              : `<div style="font-size:11px;color:#64748b;margin-top:1px">Margen: <b>${margenPct.toFixed(1)}%</b> · Costo: ${money(t.costoTotal)}</div>`
+              : `<div style="font-size:11px;color:#7D6858;margin-top:1px">Margen: <b>${margenPct.toFixed(1)}%</b> · Costo: ${money(t.costoTotal)}</div>`
             }
           </div>
           <b style="font-family:inherit;color:${colorUtil};font-size:16px">${money(utilidad)}</b>
         </div>
       ` : ''}
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px">
-        <span style="font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">TOTAL</span>
-        <span style="font-size:26px;font-weight:800;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">
+        <span style="font-size:22px;font-weight:800;color:#2A1A10;letter-spacing:-0.02em">TOTAL</span>
+        <span style="font-size:26px;font-weight:800;color:#33200F;font-family:inherit;letter-spacing:-0.02em">
           ${money(t.total)}
         </span>
       </div>
@@ -676,15 +827,17 @@ function htmlTotales(t) {
 function htmlBotonCobrar(t) {
   const habilitado = _carrito.length > 0;
   return `
-    <div id="venta-btn-cobrar-wrap" style="padding:16px 24px 20px;background:white">
+    <div id="venta-btn-cobrar-wrap" style="padding:12px 20px 18px;background:white">
       <button
         id="venta-btn-cobrar"
         ${!habilitado ? 'disabled' : ''}
-        style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;background:${habilitado ? '#15803d' : '#cbd5e1'};color:white;border:0;border-radius:12px;cursor:${habilitado ? 'pointer' : 'not-allowed'};font-size:15px;font-weight:600;font-family:inherit;${habilitado ? 'box-shadow:0 4px 12px -2px rgba(21,128,61,.35)' : ''};"
+        style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:${habilitado ? '#EE7623' : '#F3E8DC'};color:${habilitado ? '#24160D' : '#A8957F'};border:0;border-radius:16px;cursor:${habilitado ? 'pointer' : 'not-allowed'};font-family:inherit;text-align:left;${habilitado ? 'box-shadow:0 12px 24px -12px rgba(217,98,15,.9)' : ''}"
       >
-        <i data-lucide="dollar-sign" style="width:18px;height:18px;stroke-width:2.25"></i>
-        COBRAR
-        <span style="margin-left:6px;font-size:11px;font-weight:700;opacity:${habilitado ? '.85' : '.5'};background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:5px;padding:1px 6px;font-family:inherit;letter-spacing:.02em">F9</span>
+        <span>
+          <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.12em">COBRAR · F9</span>
+          <span style="display:block;font-family:var(--font-marca);font-weight:600;font-size:34px;line-height:1.05">${money(t.total)}</span>
+        </span>
+        <i data-lucide="circle-arrow-right" style="width:38px;height:38px;stroke-width:1.75;flex-shrink:0"></i>
       </button>
     </div>
   `;
@@ -791,6 +944,7 @@ function adjuntarEventos(contenedor) {
 
   adjuntarEventosPaso2(contenedor);
   adjuntarEventosCarrito(contenedor);
+  adjuntarEventosCatalogo(contenedor);
 
   // Personaliza tu ticket POS 80mm
   const btnPlt = contenedor.querySelector('#venta-btn-personalizar-ticket');
@@ -1015,53 +1169,53 @@ function abrirModalLinea(producto, linea) {
 
   const html = `
     <div>
-      <div style="font-weight:700;font-size:17px;color:#0f172a">${esc(base.nombre)}</div>
-      <div style="color:#64748b;font-size:12.5px;margin-top:2px;margin-bottom:${tienePE ? '8' : '14'}px;font-family:inherit">
-        ${esc(base.codigo || '')}${stockReal != null ? ` · Stock: <b style="color:#0f172a">${fmt(stockReal)}</b>` : ''}
+      <div style="font-weight:700;font-size:17px;color:#2A1A10">${esc(base.nombre)}</div>
+      <div style="color:#7D6858;font-size:12.5px;margin-top:2px;margin-bottom:${tienePE ? '8' : '14'}px;font-family:inherit">
+        ${esc(base.codigo || '')}${stockReal != null ? ` · Stock: <b style="color:#2A1A10">${fmt(stockReal)}</b>` : ''}
       </div>
       ${tienePE ? `
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 10px;margin-bottom:14px;font-size:12.5px;color:#1d4ed8;font-weight:600">
-          Precio especial para <b>${esc(_cliente?.nombre || '')}</b> · Estándar: <span style="text-decoration:line-through;color:#94a3b8">${money(precioStd)}</span>
+        <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:8px;padding:7px 10px;margin-bottom:14px;font-size:12.5px;color:#33200F;font-weight:600">
+          Precio especial para <b>${esc(_cliente?.nombre || '')}</b> · Estándar: <span style="text-decoration:line-through;color:#A8957F">${money(precioStd)}</span>
         </div>
       ` : ''}
 
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Cantidad *</div>
+      <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Cantidad *</div>
       <div style="display:flex;align-items:center;gap:8px">
         <button id="mc-menos" type="button"
-          style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">−</button>
+          style="width:48px;height:48px;border:1px solid #EADFD0;background:#FBF7F1;border-radius:10px;cursor:pointer;color:#5C4636;font-size:22px;font-weight:700">−</button>
         <input id="mc-cant" data-miles type="text" inputmode="numeric" value="${cantIni}"
-          style="flex:1;padding:11px;border:1.5px solid #2563eb;border-radius:10px;font-size:24px;font-weight:800;font-family:inherit;color:#0f172a;outline:none;text-align:center;box-sizing:border-box" />
+          style="flex:1;padding:11px;border:1.5px solid #4A2E1A;border-radius:10px;font-size:24px;font-weight:800;font-family:inherit;color:#2A1A10;outline:none;text-align:center;box-sizing:border-box" />
         <button id="mc-mas" type="button"
-          style="width:48px;height:48px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;cursor:pointer;color:#475569;font-size:22px;font-weight:700">+</button>
+          style="width:48px;height:48px;border:1px solid #EADFD0;background:#FBF7F1;border-radius:10px;cursor:pointer;color:#5C4636;font-size:22px;font-weight:700">+</button>
       </div>
 
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
         ${QUICK_QTYS.map((n) => `
           <button class="mc-chip" type="button" data-q="${n}"
-            style="padding:6px 14px;border:1px solid #e2e8f0;background:white;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:600;color:#475569;font-family:inherit">${n}</button>
+            style="padding:6px 14px;border:1px solid #EADFD0;background:white;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:600;color:#5C4636;font-family:inherit">${n}</button>
         `).join('')}
       </div>
 
       <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:14px">
         <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Precio unitario</div>
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Precio unitario</div>
           <input id="mc-precio" data-miles type="text" inputmode="numeric" value="${precioIni}"
-            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
+            style="width:100%;padding:11px 12px;border:1px solid #DCCFBE;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
         </div>
         <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Descuento c/u</div>
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Descuento c/u</div>
           <input id="mc-desc" data-miles type="text" inputmode="numeric" value="${descIni || ''}" placeholder="0"
-            style="width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
+            style="width:100%;padding:11px 12px;border:1px solid #DCCFBE;border-radius:9px;font-size:17px;font-weight:600;font-family:inherit;outline:none;box-sizing:border-box" />
         </div>
       </div>
 
-      <div id="mc-sub" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;text-align:center;font-size:18px;font-weight:800;color:#0f172a;margin-top:14px"></div>
+      <div id="mc-sub" style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:14px;text-align:center;font-size:18px;font-weight:800;color:#2A1A10;margin-top:14px"></div>
 
       <div style="display:flex;gap:10px;margin-top:16px">
         <button id="mc-cancelar" type="button"
-          style="flex:1;padding:12px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+          style="flex:1;padding:12px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
         <button id="mc-aceptar" type="button"
-          style="flex:1.4;padding:12px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${textoBoton}</button>
+          style="flex:1.4;padding:12px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">${textoBoton}</button>
       </div>
     </div>
   `;
@@ -1093,9 +1247,9 @@ function abrirModalLinea(producto, linea) {
     const d = num(inpDesc.value);
     if (c > 0) {
       const total = Math.max(0, p - d) * c;
-      subBox.innerHTML = `Subtotal: <span style="color:#1d4ed8;font-family:inherit">${money(total)}</span>`;
+      subBox.innerHTML = `Subtotal: <span style="color:#33200F;font-family:inherit">${money(total)}</span>`;
     } else {
-      subBox.innerHTML = `<span style="color:#94a3b8;font-size:14px;font-weight:500">Escribe la cantidad para continuar</span>`;
+      subBox.innerHTML = `<span style="color:#A8957F;font-size:14px;font-weight:500">Escribe la cantidad para continuar</span>`;
     }
   };
 
@@ -1220,14 +1374,14 @@ function htmlSelectorCliente() {
     <div style="padding:4px">
       <!-- Header -->
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <div style="width:42px;height:42px;border-radius:10px;background:#F8F1E8;color:#4A2E1A;display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <i data-lucide="users" style="width:22px;height:22px;stroke-width:1.75"></i>
         </div>
         <div>
-          <h3 style="font-size:18px;font-weight:800;margin:0 0 2px;color:#0f172a;letter-spacing:-0.01em">
+          <h3 style="font-size:18px;font-weight:800;margin:0 0 2px;color:#2A1A10;letter-spacing:-0.01em">
             Seleccionar cliente
           </h3>
-          <div style="font-size:12.5px;color:#64748b">Buscá por nombre, documento, teléfono o email</div>
+          <div style="font-size:12.5px;color:#7D6858">Buscá por nombre, documento, teléfono o email</div>
         </div>
       </div>
 
@@ -1244,24 +1398,24 @@ function htmlSelectorCliente() {
       <button
         id="sc-sin"
         type="button"
-        style="display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;cursor:pointer;font-family:inherit;color:#475569;text-align:left;font-size:13.5px"
+        style="display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:10px 12px;background:#FBF7F1;border:1px dashed #DCCFBE;border-radius:10px;cursor:pointer;font-family:inherit;color:#5C4636;text-align:left;font-size:13.5px"
       >
-        <i data-lucide="user-x" style="width:18px;height:18px;color:#94a3b8"></i>
+        <i data-lucide="user-x" style="width:18px;height:18px;color:#A8957F"></i>
         <span><strong>Sin cliente</strong> · venta ocasional</span>
       </button>
 
       <!-- Lista de clientes -->
-      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin:14px 0 6px">
+      <div style="font-size:11px;color:#A8957F;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin:14px 0 6px">
         ${_clientes.length} cliente${_clientes.length === 1 ? '' : 's'} en la base
       </div>
       <div id="sc-lista" style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin:0 -2px;padding:0 2px"></div>
 
       <!-- Footer: crear nuevo + cancelar -->
-      <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #e2e8f0">
+      <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #EADFD0">
         <button
           id="sc-nuevo"
           type="button"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px rgba(37, 99, 235,.4)"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px rgba(74, 46, 26,.4)"
         >
           <i data-lucide="user-plus" style="width:16px;height:16px;stroke-width:2.25"></i>
           Crear nuevo cliente
@@ -1269,7 +1423,7 @@ function htmlSelectorCliente() {
         <button
           id="sc-cancelar"
           type="button"
-          style="padding:10px 16px;background:white;border:1px solid #cbd5e1;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;font-family:inherit;color:#475569"
+          style="padding:10px 16px;background:white;border:1px solid #DCCFBE;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;font-family:inherit;color:#5C4636"
         >Cancelar</button>
       </div>
     </div>
@@ -1289,7 +1443,7 @@ function montarVistaSelectorCliente(wrapper, modal) {
     const cli = filtrarClientes(query);
     if (cli.length === 0) {
       lista.innerHTML = `
-        <div style="padding:18px;text-align:center;color:#94a3b8;font-size:13.5px">
+        <div style="padding:18px;text-align:center;color:#A8957F;font-size:13.5px">
           ${query ? 'Sin coincidencias 🐾' : 'Todavía no hay clientes cargados'}
         </div>
       `;
@@ -1374,16 +1528,16 @@ function htmlSelectorClienteItem(c, active, query) {
     <div class="sc-item ${active ? 'active' : ''}" data-id="${esc(c.id)}" role="option">
       <div class="sc-avatar">${esc(inicial)}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:14px;color:#0f172a;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        <div style="font-weight:700;font-size:14px;color:#2A1A10;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
           ${hl(c.nombre, q)}
         </div>
         ${partes.length > 0 ? `
-          <div style="font-size:12px;color:#64748b;margin-top:2px;display:flex;gap:6px;flex-wrap:wrap">
-            ${partes.map(p => `<span>${p}</span>`).join('<span style="color:#cbd5e1">·</span>')}
+          <div style="font-size:12px;color:#7D6858;margin-top:2px;display:flex;gap:6px;flex-wrap:wrap">
+            ${partes.map(p => `<span>${p}</span>`).join('<span style="color:#DCCFBE">·</span>')}
           </div>
         ` : ''}
       </div>
-      <i data-lucide="chevron-right" style="width:16px;height:16px;color:#cbd5e1;flex-shrink:0"></i>
+      <i data-lucide="chevron-right" style="width:16px;height:16px;color:#DCCFBE;flex-shrink:0"></i>
     </div>
   `;
 }
@@ -1401,7 +1555,7 @@ function htmlFormNuevoCliente(nombrePrellenado) {
           id="fc-back"
           type="button"
           title="Volver al selector"
-          style="background:#f1f5f9;border:0;border-radius:8px;width:32px;height:32px;cursor:pointer;color:#475569;display:flex;align-items:center;justify-content:center;flex-shrink:0"
+          style="background:#F2EBE0;border:0;border-radius:8px;width:32px;height:32px;cursor:pointer;color:#5C4636;display:flex;align-items:center;justify-content:center;flex-shrink:0"
         >
           <i data-lucide="arrow-left" style="width:16px;height:16px"></i>
         </button>
@@ -1409,35 +1563,35 @@ function htmlFormNuevoCliente(nombrePrellenado) {
           <i data-lucide="user-plus" style="width:22px;height:22px;stroke-width:1.75"></i>
         </div>
         <div>
-          <h3 style="font-size:18px;font-weight:800;margin:0 0 2px;color:#0f172a;letter-spacing:-0.01em">
+          <h3 style="font-size:18px;font-weight:800;margin:0 0 2px;color:#2A1A10;letter-spacing:-0.01em">
             Nuevo cliente
           </h3>
-          <div style="font-size:12.5px;color:#64748b">Lo creamos y lo seleccionamos al toque</div>
+          <div style="font-size:12.5px;color:#7D6858">Lo creamos y lo seleccionamos al toque</div>
         </div>
       </div>
 
       <!-- Form -->
       <div style="display:flex;flex-direction:column;gap:10px">
         <div>
-          <label style="display:block;font-size:12px;color:#475569;font-weight:600;margin-bottom:4px">Nombre *</label>
+          <label style="display:block;font-size:12px;color:#5C4636;font-weight:600;margin-bottom:4px">Nombre *</label>
           <input id="fc-nombre" type="text" class="sc-input" value="${esc(nombrePrellenado)}" placeholder="Ej: Juan Pérez" />
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
-            <label style="display:block;font-size:12px;color:#475569;font-weight:600;margin-bottom:4px">Documento</label>
+            <label style="display:block;font-size:12px;color:#5C4636;font-weight:600;margin-bottom:4px">Documento</label>
             <input id="fc-documento" type="text" class="sc-input" placeholder="CC / NIT" />
           </div>
           <div>
-            <label style="display:block;font-size:12px;color:#475569;font-weight:600;margin-bottom:4px">Teléfono</label>
+            <label style="display:block;font-size:12px;color:#5C4636;font-weight:600;margin-bottom:4px">Teléfono</label>
             <input id="fc-telefono" type="text" class="sc-input" placeholder="+57 …" />
           </div>
         </div>
         <div>
-          <label style="display:block;font-size:12px;color:#475569;font-weight:600;margin-bottom:4px">Email</label>
+          <label style="display:block;font-size:12px;color:#5C4636;font-weight:600;margin-bottom:4px">Email</label>
           <input id="fc-email" type="email" class="sc-input" placeholder="ejemplo@email.com" />
         </div>
         <div>
-          <label style="display:block;font-size:12px;color:#475569;font-weight:600;margin-bottom:4px">Dirección</label>
+          <label style="display:block;font-size:12px;color:#5C4636;font-weight:600;margin-bottom:4px">Dirección</label>
           <input id="fc-direccion" type="text" class="sc-input" placeholder="Opcional" />
         </div>
       </div>
@@ -1445,11 +1599,11 @@ function htmlFormNuevoCliente(nombrePrellenado) {
       <div id="fc-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;color:#991b1b;font-size:13px;margin-top:12px"></div>
 
       <!-- Footer -->
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid #e2e8f0">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid #EADFD0">
         <button
           id="fc-cancelar"
           type="button"
-          style="padding:10px 16px;background:white;border:1px solid #cbd5e1;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;font-family:inherit;color:#475569"
+          style="padding:10px 16px;background:white;border:1px solid #DCCFBE;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;font-family:inherit;color:#5C4636"
         >Cancelar</button>
         <button
           id="fc-guardar"
@@ -1662,7 +1816,7 @@ const BANCOS_TRANSFERENCIA = [
     nombre: 'Daviplata',
     key: 'D',
     color: '#E32219',
-    logo: '<svg viewBox="0 0 130 30" xmlns="http://www.w3.org/2000/svg" style="height:24px;display:block" aria-label="Daviplata"><text x="0" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#E32219" letter-spacing="-1.5">DAVI</text><text x="64" y="24" font-family="Inter,sans-serif" font-weight="700" font-size="24" fill="#0f172a" letter-spacing="-0.5">plata</text></svg>',
+    logo: '<svg viewBox="0 0 130 30" xmlns="http://www.w3.org/2000/svg" style="height:24px;display:block" aria-label="Daviplata"><text x="0" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#E32219" letter-spacing="-1.5">DAVI</text><text x="64" y="24" font-family="Inter,sans-serif" font-weight="700" font-size="24" fill="#2A1A10" letter-spacing="-0.5">plata</text></svg>',
   },
   {
     id: 'nequi',
@@ -1712,14 +1866,14 @@ function abrirModalCobro() {
 
       <!-- COLUMNA IZQUIERDA: total + métodos de pago -->
       <div>
-        <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
-        <div style="background:#eff6ff;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
-          <div style="font-size:28px;font-weight:800;color:#1d4ed8;letter-spacing:-0.025em">
+        <div style="font-size:13px;color:#7D6858;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
+        <div style="background:#F8F1E8;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#33200F;letter-spacing:-0.025em">
             ${money(totales.total)}
           </div>
         </div>
 
-        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">
+        <div style="font-size:12px;color:#A8957F;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">
           Método de pago
         </div>
         <div id="cobro-chips" style="display:flex;flex-direction:column;gap:7px">
@@ -1727,23 +1881,23 @@ function abrirModalCobro() {
             <button
               class="pm-chip"
               data-pm="${m.id}"
-              style="padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;text-align:left;display:flex;align-items:center;gap:9px"
-            ><kbd class="pm-key" style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#475569">${m.key}</kbd><span>${m.label}</span></button>
+              style="padding:10px 12px;border:1.5px solid #EADFD0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#5C4636;text-align:left;display:flex;align-items:center;gap:9px"
+            ><kbd class="pm-key" style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#F2EBE0;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#5C4636">${m.key}</kbd><span>${m.label}</span></button>
           `).join('')}
         </div>
       </div>
 
       <!-- COLUMNA DERECHA: detalle del pago -->
-      <div style="border-left:1px solid #e2e8f0;padding-left:24px;min-width:0;display:flex;flex-direction:column">
+      <div style="border-left:1px solid #EADFD0;padding-left:24px;min-width:0;display:flex;flex-direction:column">
         <div id="cobro-area" style="flex:1"></div>
       </div>
     </div>
 
     <!-- BOTONES (ancho completo, abajo) -->
-    <div style="display:flex;gap:10px;margin-top:20px;border-top:1px solid #e2e8f0;padding-top:16px">
+    <div style="display:flex;gap:10px;margin-top:20px;border-top:1px solid #EADFD0;padding-top:16px">
       <button
         id="cobro-btn-cancelar"
-        style="flex:1;padding:13px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
+        style="flex:1;padding:13px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636"
       >Cancelar</button>
       <button
         id="cobro-btn-confirmar"
@@ -1840,9 +1994,9 @@ function seleccionarBancoTransf(banco) {
   body.querySelectorAll('.tb-chip').forEach(btn => {
     const def = BANCOS_TRANSFERENCIA.find(b => b.id === btn.dataset.tb);
     const activo = btn.dataset.tb === banco;
-    btn.style.borderColor = activo && def ? def.color : '#e2e8f0';
+    btn.style.borderColor = activo && def ? def.color : '#EADFD0';
     btn.style.boxShadow = activo && def ? `0 0 0 3px ${def.color}22` : 'none';
-    btn.style.background = activo ? '#fafbff' : 'white';
+    btn.style.background = activo ? '#FDFAF5' : 'white';
   });
   const label = body.querySelector('#cobro-trans-banco');
   if (label) {
@@ -1871,9 +2025,9 @@ function seleccionarMetodoPago(metodo) {
   // Marcar visualmente el chip activo
   body.querySelectorAll('.pm-chip').forEach((btn) => {
     const activo = btn.dataset.pm === metodo;
-    btn.style.background = activo ? '#2563eb' : 'white';
-    btn.style.color = activo ? 'white' : '#475569';
-    btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
+    btn.style.background = activo ? '#4A2E1A' : 'white';
+    btn.style.color = activo ? 'white' : '#5C4636';
+    btn.style.borderColor = activo ? '#4A2E1A' : '#EADFD0';
   });
 
   const area = body.querySelector('#cobro-area');
@@ -1887,19 +2041,19 @@ function seleccionarMetodoPago(metodo) {
     area.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:12px">
         ${hayCliente
-          ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 13px;font-size:13px;color:#1d4ed8"><b>${esc(_cliente.nombre)}</b> queda debiendo esta venta.</div>`
+          ? `<div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:10px;padding:11px 13px;font-size:13px;color:#33200F"><b>${esc(_cliente.nombre)}</b> queda debiendo esta venta.</div>`
           : `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:11px 13px;font-size:13px;color:#991b1b">Para vender a crédito primero <b>selecciona un cliente</b> (no "Cliente ocasional").</div>`}
         <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
           <input id="cobro-cred-abono" data-miles type="text" inputmode="numeric" placeholder="0"
-            style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
+            style="width:100%;padding:12px 14px;border:1.5px solid #DCCFBE;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
         </div>
         <div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha de vencimiento</div>
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha de vencimiento</div>
           <input id="cobro-cred-vence" type="date" value="${venceDef}"
-            style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+            style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
         </div>
-        <div id="cobro-cred-saldo" style="font-size:13px;color:#64748b">Quedará a crédito: <b style="color:#a16207">${money(totales.total)}</b></div>
+        <div id="cobro-cred-saldo" style="font-size:13px;color:#7D6858">Quedará a crédito: <b style="color:#a16207">${money(totales.total)}</b></div>
       </div>
     `;
     bindMilesInputs(area);
@@ -1918,8 +2072,8 @@ function seleccionarMetodoPago(metodo) {
       <div style="display:flex;flex-direction:column;gap:8px">
         ${LINEAS_MIXTO.map((m) => `
           <div style="display:flex;align-items:center;gap:10px">
-            <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#475569;flex-shrink:0">${m.key}</kbd>
-            <span style="flex:1;display:flex;align-items:center;font-weight:600;font-size:13.5px;color:#475569">${m.logo ? m.logo : m.label}</span>
+            <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#F2EBE0;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#5C4636;flex-shrink:0">${m.key}</kbd>
+            <span style="flex:1;display:flex;align-items:center;font-weight:600;font-size:13.5px;color:#5C4636">${m.logo ? m.logo : m.label}</span>
             <input
               class="cobro-mixto-input"
               data-key="${m.id}"
@@ -1928,11 +2082,11 @@ function seleccionarMetodoPago(metodo) {
               inputmode="numeric"
               placeholder="0"
               value="${_payments[m.id] || ''}"
-              style="width:140px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14.5px;font-weight:600;text-align:right;outline:none;font-family:inherit"
+              style="width:140px;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14.5px;font-weight:600;text-align:right;outline:none;font-family:inherit"
             />
           </div>
         `).join('')}
-        <div id="cobro-mixto-info" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:4px"></div>
+        <div id="cobro-mixto-info" style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:4px"></div>
       </div>
     `;
 
@@ -1952,22 +2106,22 @@ function seleccionarMetodoPago(metodo) {
 
     if (metodo === 'efectivo') {
       area.innerHTML = `
-        <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:8px">¿Con cuánto paga el cliente?</div>
+        <div style="font-size:13.5px;color:#5C4636;font-weight:600;margin-bottom:8px">¿Con cuánto paga el cliente?</div>
         <input
           id="cobro-recibido"
           data-miles
           type="text"
           inputmode="numeric"
           placeholder="Ej: 50.000"
-          style="width:100%;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:19px;outline:none;box-sizing:border-box;font-weight:700;font-family:inherit"
+          style="width:100%;padding:14px 16px;border:1.5px solid #DCCFBE;border-radius:10px;font-size:19px;outline:none;box-sizing:border-box;font-weight:700;font-family:inherit"
         />
         <button
           id="cobro-btn-exacto"
-          style="width:100%;margin-top:10px;padding:13px;border:2px solid #2563eb;background:#eff6ff;color:#1d4ed8;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
+          style="width:100%;margin-top:10px;padding:13px;border:2px solid #4A2E1A;background:#F8F1E8;color:#33200F;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit"
         >Exacto · ${money(totales.total)}</button>
         <div
           id="cobro-cambio-box"
-          style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:15px;text-align:center;font-size:14px;margin-top:12px"
+          style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:15px;text-align:center;font-size:14px;margin-top:12px"
         ><b>Cambio:</b> ${money(0)}</div>
       `;
 
@@ -1981,22 +2135,22 @@ function seleccionarMetodoPago(metodo) {
       setTimeout(() => inpRec.focus(), 60);
     } else if (metodo === 'transferencia') {
       area.innerHTML = `
-        <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:10px">¿Por dónde recibes el pago?</div>
+        <div style="font-size:13.5px;color:#5C4636;font-weight:600;margin-bottom:10px">¿Por dónde recibes el pago?</div>
         <div id="cobro-bancos" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
           ${BANCOS_TRANSFERENCIA.map(b => `
             <button
               class="tb-chip"
               data-tb="${b.id}"
-              style="padding:14px 16px;border:2px solid #e2e8f0;background:white;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:14px;font-family:inherit;transition:all .12s ease"
-            ><kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;font-family:inherit;font-weight:700;font-size:13px;color:#475569">${b.key}</kbd>
+              style="padding:14px 16px;border:2px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:14px;font-family:inherit;transition:all .12s ease"
+            ><kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#F2EBE0;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:6px;font-family:inherit;font-weight:700;font-size:13px;color:#5C4636">${b.key}</kbd>
               <span style="flex:1;text-align:left">${b.logo}</span>
             </button>
           `).join('')}
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;font-size:14px;color:#475569">
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:16px;text-align:center;font-size:14px;color:#5C4636">
           Transferencia por <b id="cobro-trans-banco">${esc(BANCOS_TRANSFERENCIA.find(b=>b.id===_transferenciaBanco)?.nombre||'')}</b>
           por <b>${money(totales.total)}</b><br>
-          <span style="color:#94a3b8;font-size:13px">Confirmá cuando recibas el pago.</span>
+          <span style="color:#A8957F;font-size:13px">Confirmá cuando recibas el pago.</span>
         </div>
       `;
       area.querySelectorAll('.tb-chip').forEach(btn => {
@@ -2005,10 +2159,10 @@ function seleccionarMetodoPago(metodo) {
       seleccionarBancoTransf(_transferenciaBanco);
     } else {
       area.innerHTML = `
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;text-align:center;font-size:14px;color:#475569">
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:18px;text-align:center;font-size:14px;color:#5C4636">
           Pago por <b>${metodo === 'qr' ? 'código QR' : METODOS_LABEL[metodo]}</b>
           por <b>${money(totales.total)}</b><br>
-          <span style="color:#94a3b8;font-size:13px">Confirmá cuando recibas el pago.</span>
+          <span style="color:#A8957F;font-size:13px">Confirmá cuando recibas el pago.</span>
         </div>
       `;
       // QR (u otro sin input): foco al Confirmar para que ENTER cierre la venta.
@@ -2199,6 +2353,7 @@ async function _confirmarVentaInterno() {
   } catch (err) {
     console.warn('No se pudo refrescar productos:', err);
   }
+  await cargarMasVendidos();
 
   _carrito = [];
   _cliente = null;

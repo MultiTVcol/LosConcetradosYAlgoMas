@@ -36,15 +36,15 @@
   font-weight: 700;
   letter-spacing: .05em;
   text-transform: uppercase;
-  color: #475569;
-  background: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
+  color: #5C4636;
+  background: #F2EBE0;
+  border-bottom: 1px solid #EADFD0;
   white-space: nowrap;
 }
 .ui-table tbody td {
   padding: 14px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #374151;
+  border-bottom: 1px solid #F2EBE0;
+  color: #4A3628;
   vertical-align: middle;
   font-variant-numeric: tabular-nums; /* dígitos alineados sin fuente monoespaciada */
 }
@@ -52,7 +52,7 @@
   transition: background .12s ease;
 }
 .ui-table tbody tr:hover {
-  background: #f9fafb;
+  background: #FBF7F1;
 }
 .ui-table tbody tr:last-child td {
   border-bottom: 0;
@@ -61,7 +61,7 @@
 /* Contenedor de tabla (card) */
 .ui-table-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #EADFD0;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -83,8 +83,8 @@
 .ui-badge--success { background: #dcfce7; color: #166534; }
 .ui-badge--warn    { background: #fef3c7; color: #92400e; }
 .ui-badge--danger  { background: #fee2e2; color: #991b1b; }
-.ui-badge--info    { background: #dbeafe; color: #1d4ed8; }
-.ui-badge--neutral { background: #f3f4f6; color: #374151; }
+.ui-badge--info    { background: #F3E8DC; color: #33200F; }
+.ui-badge--neutral { background: #F2EBE0; color: #4A3628; }
 
 /* ============================================================
    AVATAR CON INICIALES
@@ -117,7 +117,7 @@
 }
 .ui-label {
   font-size: 13px;
-  color: #374151;
+  color: #4A3628;
   font-weight: 500;
 }
 .ui-label .req { color: #dc2626; }
@@ -125,20 +125,20 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #DCCFBE;
   border-radius: 12px;
   font-size: 14px;
   font-family: inherit;
   background: #fff;
-  color: #111827;
+  color: #2A1A10;
   outline: none;
   transition: border-color .12s ease, box-shadow .12s ease;
 }
-.ui-input::placeholder { color: #9ca3af; }
-.ui-input:hover { border-color: #9ca3af; }
+.ui-input::placeholder { color: #A8957F; }
+.ui-input:hover { border-color: #A8957F; }
 .ui-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+  border-color: #4A2E1A;
+  box-shadow: 0 0 0 3px rgba(74, 46, 26, .15);
 }
 textarea.ui-input { resize: vertical; }
 
@@ -151,7 +151,7 @@ textarea.ui-input { resize: vertical; }
   gap: 12px;
   flex-wrap: wrap;
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #EADFD0;
   border-radius: 16px;
   padding: 14px 16px;
   margin-bottom: 18px;
@@ -173,11 +173,11 @@ textarea.ui-input { resize: vertical; }
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
-  color: #6b7280;
+  color: #7D6858;
   transition: background .12s ease, color .12s ease, border-color .12s ease;
 }
 .ui-menu-btn:hover {
-  background: #f3f4f6;
-  border-color: #e5e7eb;
-  color: #111827;
+  background: #F2EBE0;
+  border-color: #EADFD0;
+  color: #2A1A10;
 }

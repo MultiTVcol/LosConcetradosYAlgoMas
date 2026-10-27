@@ -117,7 +117,7 @@ function pintarLista() {
 
   box.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <b style="font-size:15px;color:#0f172a">${fmt(visibles.length)} gasto${visibles.length === 1 ? '' : 's'}</b>
+      <b style="font-size:15px;color:#2A1A10">${fmt(visibles.length)} gasto${visibles.length === 1 ? '' : 's'}</b>
       <span style="background:#fef2f2;color:#dc2626;font-size:13.5px;font-weight:700;padding:7px 13px;border-radius:8px">
         Total: ${money(total)}
       </span>
@@ -125,7 +125,7 @@ function pintarLista() {
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         <thead>
-          <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:600;text-align:left">
+          <tr style="border-bottom:1px solid #EADFD0;color:#7D6858;font-weight:600;text-align:left">
             <th style="padding:10px 12px">Fecha</th>
             <th style="padding:10px 12px">Concepto</th>
             <th style="padding:10px 12px">Categoría</th>
@@ -147,17 +147,17 @@ function pintarLista() {
 function filaGasto(g) {
   const esProd = g.categoria === 'Productos' && Array.isArray(g.items) && g.items.length;
   const detalleProd = esProd
-    ? `<br><span style="color:#94a3b8;font-size:11.5px">${g.items.map((it) => `${esc(it.nombre)} ×${fmt(it.cantidad)} <span style="opacity:.7">(${esc(it.motivo || '—')})</span>`).join(' · ')}</span>`
+    ? `<br><span style="color:#A8957F;font-size:11.5px">${g.items.map((it) => `${esc(it.nombre)} ×${fmt(it.cantidad)} <span style="opacity:.7">(${esc(it.motivo || '—')})</span>`).join(' · ')}</span>`
     : '';
 
   return `
-    <tr style="border-bottom:1px solid #f1f5f9" data-gasto-id="${esc(g.id)}">
-      <td style="padding:12px;color:#475569;font-family:inherit;font-size:13px">
+    <tr style="border-bottom:1px solid #F2EBE0" data-gasto-id="${esc(g.id)}">
+      <td style="padding:12px;color:#5C4636;font-family:inherit;font-size:13px">
         ${esc((g.fecha || '').slice(0, 10))}
       </td>
-      <td style="padding:12px;color:#0f172a">
+      <td style="padding:12px;color:#2A1A10">
         <b>${esc(g.concepto || '—')}</b>
-        ${g.nota ? `<br><span style="color:#64748b;font-size:12.5px">${esc(g.nota)}</span>` : ''}
+        ${g.nota ? `<br><span style="color:#7D6858;font-size:12.5px">${esc(g.nota)}</span>` : ''}
         ${detalleProd}
       </td>
       <td style="padding:12px">
@@ -243,14 +243,14 @@ async function abrirFormGasto(id) {
   const contenido = `
     <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
       <div>
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha *</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha *</div>
         <input id="g-fecha" type="date" value="${esc(datos.fecha || todayISO())}"
-          style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
       <div>
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Categoría</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Categoría</div>
         <select id="g-cat"
-          style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+          style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
           ${Repo.CATEGORIAS.map((c) => `<option value="${esc(c)}" ${datos.categoria === c ? 'selected' : ''}>${Repo.ICONOS[c] || '📌'} ${c}</option>`).join('')}
         </select>
       </div>
@@ -258,19 +258,19 @@ async function abrirFormGasto(id) {
 
     <div id="g-normal" style="display:grid;gap:12px;margin-top:14px;grid-template-columns:1fr 1fr">
       <div style="grid-column:1/-1">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Concepto *</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Concepto *</div>
         <input id="g-concepto" type="text" value="${esc(datos.concepto || '')}" placeholder="Ej: Energía eléctrica, Sueldo Ana, Arriendo local..."
-          style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
       <div style="grid-column:1/-1">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Monto *</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Monto *</div>
         <input id="g-monto" data-miles type="text" inputmode="numeric" value="${datos.monto || ''}" placeholder="Ej: 120.000"
-          style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:12px 14px;border:1px solid #DCCFBE;border-radius:8px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
       <div style="grid-column:1/-1">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota (opcional)</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota (opcional)</div>
         <input id="g-nota" type="text" value="${esc(datos.nota || '')}" placeholder="Detalle o referencia"
-          style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
     </div>
 
@@ -281,30 +281,30 @@ async function abrirFormGasto(id) {
       </div>
 
       <div style="margin-top:12px">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Buscar producto</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Buscar producto</div>
         <input id="g-buscar-prod" type="text" placeholder="Nombre, código o barras..." autocomplete="off"
-          style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
         <div id="g-resultados" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto;margin-top:8px"></div>
       </div>
 
       <div style="margin-top:14px">
-        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:#0f172a">Productos a dar de baja</div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:#2A1A10">Productos a dar de baja</div>
         <div id="g-items" style="display:flex;flex-direction:column;gap:8px"></div>
-        <div id="g-total" style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:10px"></div>
+        <div id="g-total" style="border-top:1px solid #EADFD0;padding-top:10px;margin-top:10px"></div>
       </div>
 
       <div style="margin-top:12px">
-        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota (opcional)</div>
+        <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota (opcional)</div>
         <input id="g-nota-p" type="text" value="${esc(datos.nota || '')}" placeholder="Detalle o referencia"
-          style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
     </div>
 
     <div style="display:flex;gap:10px;margin-top:18px">
       <button id="g-btn-cancelar"
-        style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:12px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
       <button id="g-btn-guardar"
-        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">Guardar</button>
+        style="flex:1;padding:12px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">Guardar</button>
     </div>
   `;
 
@@ -375,7 +375,7 @@ function renderResultadosProductos(query) {
   }
 
   if (list.length === 0) {
-    box.innerHTML = `<div style="text-align:center;padding:14px;color:#94a3b8;font-size:13px">Sin resultados</div>`;
+    box.innerHTML = `<div style="text-align:center;padding:14px;color:#A8957F;font-size:13px">Sin resultados</div>`;
     return;
   }
 
@@ -383,12 +383,12 @@ function renderResultadosProductos(query) {
     const yaEn = _bajaItems.find((x) => x.producto_id === p.id);
     return `
       <button class="g-add-prod" data-id="${esc(p.id)}" ${yaEn ? 'disabled' : ''}
-        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;background:${yaEn ? '#f8fafc' : 'white'};border-radius:8px;cursor:${yaEn ? 'default' : 'pointer'};font-family:inherit;text-align:left;${yaEn ? 'opacity:.55' : ''}">
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid #EADFD0;background:${yaEn ? '#FBF7F1' : 'white'};border-radius:8px;cursor:${yaEn ? 'default' : 'pointer'};font-family:inherit;text-align:left;${yaEn ? 'opacity:.55' : ''}">
         <div style="min-width:0;flex:1">
-          <b style="font-size:13px;color:#0f172a;display:block">${esc(p.nombre)}</b>
-          <span style="color:#64748b;font-size:11.5px">${esc(p.codigo || '')} · Stock: ${fmt(p.stock || 0)} · Costo: ${money(p.costo || 0)}</span>
+          <b style="font-size:13px;color:#2A1A10;display:block">${esc(p.nombre)}</b>
+          <span style="color:#7D6858;font-size:11.5px">${esc(p.codigo || '')} · Stock: ${fmt(p.stock || 0)} · Costo: ${money(p.costo || 0)}</span>
         </div>
-        <span style="background:${yaEn ? '#e0e7ff' : '#dcfce7'};color:${yaEn ? '#1d4ed8' : '#166534'};font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">${yaEn ? 'Ya agregado' : '＋ Añadir'}</span>
+        <span style="background:${yaEn ? '#F3E8DC' : '#dcfce7'};color:${yaEn ? '#33200F' : '#166534'};font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">${yaEn ? 'Ya agregado' : '＋ Añadir'}</span>
       </button>
     `;
   }).join('');
@@ -450,7 +450,7 @@ function pintarBajaItems() {
 
   if (_bajaItems.length === 0) {
     box.innerHTML = `
-      <div style="text-align:center;padding:18px 12px;color:#64748b;background:#f8fafc;border-radius:10px;border:1px dashed #cbd5e1">
+      <div style="text-align:center;padding:18px 12px;color:#7D6858;background:#FBF7F1;border-radius:10px;border:1px dashed #DCCFBE">
         <div style="font-size:32px;opacity:.5">📦</div>
         <div style="margin-top:4px;font-size:13px">Aún no has agregado productos</div>
       </div>
@@ -464,29 +464,29 @@ function pintarBajaItems() {
     const stock = p ? Number(p.stock) : 0;
     const subtotal = (Number(it.cantidad) || 0) * (Number(it.costo) || 0);
     return `
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px">
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:10px 12px">
         <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px">
           <div style="min-width:0;flex:1">
-            <b style="font-size:13px;color:#0f172a">${esc(it.nombre)}</b>
-            <div style="color:#64748b;font-size:11.5px">${esc(it.codigo || '')} · Stock: ${fmt(stock)} · Costo: ${money(it.costo)}</div>
+            <b style="font-size:13px;color:#2A1A10">${esc(it.nombre)}</b>
+            <div style="color:#7D6858;font-size:11.5px">${esc(it.codigo || '')} · Stock: ${fmt(stock)} · Costo: ${money(it.costo)}</div>
           </div>
           <button class="g-quitar" data-id="${esc(it.producto_id)}" style="background:none;border:0;color:#dc2626;font-size:16px;cursor:pointer;padding:4px 8px">✕</button>
         </div>
         <div style="display:grid;gap:8px;grid-template-columns:1fr 1.3fr 1fr;align-items:end">
           <div>
-            <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Cantidad</div>
+            <div style="font-size:10px;color:#7D6858;font-weight:700;text-transform:uppercase;margin-bottom:3px">Cantidad</div>
             <input class="g-cant" data-id="${esc(it.producto_id)}" type="number" min="1" max="${stock}" value="${it.cantidad}"
-              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:7px 9px;border:1px solid #DCCFBE;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Motivo</div>
+            <div style="font-size:10px;color:#7D6858;font-weight:700;text-transform:uppercase;margin-bottom:3px">Motivo</div>
             <select class="g-motivo" data-id="${esc(it.producto_id)}"
-              style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
+              style="width:100%;padding:7px 9px;border:1px solid #DCCFBE;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;background:white">
               ${Repo.MOTIVOS_BAJA.map((m) => `<option ${it.motivo === m ? 'selected' : ''}>${m}</option>`).join('')}
             </select>
           </div>
           <div style="text-align:right">
-            <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:3px">Subtotal</div>
+            <div style="font-size:10px;color:#7D6858;font-weight:700;text-transform:uppercase;margin-bottom:3px">Subtotal</div>
             <div style="font-weight:700;color:#dc2626;font-size:14px;font-family:inherit">${money(subtotal)}</div>
           </div>
         </div>
@@ -508,7 +508,7 @@ function pintarBajaItems() {
     const totalU = _bajaItems.reduce((s, it) => s + (Number(it.cantidad) || 0), 0);
     tot.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px">
-        <span style="color:#64748b">${fmt(_bajaItems.length)} producto(s) · ${fmt(totalU)} unidad(es)</span>
+        <span style="color:#7D6858">${fmt(_bajaItems.length)} producto(s) · ${fmt(totalU)} unidad(es)</span>
         <b style="color:#dc2626;font-size:18px;font-family:inherit">Gasto total: ${money(total)}</b>
       </div>
     `;
@@ -633,7 +633,7 @@ async function borrarGasto(id) {
 // ============================================================
 
 function htmlCargando() {
-  return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando gastos…</div>`;
+  return `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando gastos…</div>`;
 }
 
 function htmlKPIs(k) {
@@ -643,15 +643,15 @@ function htmlKPIs(k) {
       <div style="font-size:24px;font-weight:800;font-family:inherit;letter-spacing:-0.02em">${money(k.mesTotal)}</div>
       <div style="font-weight:600;margin-top:6px;font-size:12.5px;opacity:.9">${k.mesN} registro${k.mesN === 1 ? '' : 's'}</div>
     </div>
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
-      <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Gastos del año</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px 20px">
+      <div style="font-size:12.5px;color:#7D6858;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Gastos del año</div>
       <div style="font-size:22px;font-weight:700;color:#a16207;font-family:inherit;letter-spacing:-0.02em">${money(k.anioTotal)}</div>
-      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b">${k.anioN} registro${k.anioN === 1 ? '' : 's'}</div>
+      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#7D6858">${k.anioN} registro${k.anioN === 1 ? '' : 's'}</div>
     </div>
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px">
-      <div style="font-size:12.5px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Mayor categoría (mes)</div>
-      <div style="font-size:20px;font-weight:700;color:#2563eb">${Repo.ICONOS[k.topCat] || '📌'} ${esc(k.topCat)}</div>
-      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#64748b;font-family:inherit">${money(k.topVal)}</div>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px 20px">
+      <div style="font-size:12.5px;color:#7D6858;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Mayor categoría (mes)</div>
+      <div style="font-size:20px;font-weight:700;color:#4A2E1A">${Repo.ICONOS[k.topCat] || '📌'} ${esc(k.topCat)}</div>
+      <div style="font-weight:500;margin-top:6px;font-size:12.5px;color:#7D6858;font-family:inherit">${money(k.topVal)}</div>
     </div>
   `;
 }
@@ -661,50 +661,50 @@ function htmlLayout(k) {
     <div style="padding:32px 40px;max-width:1280px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
         <i data-lucide="wallet" style="width:30px;height:30px;color:#dc2626;stroke-width:1.75"></i>
-        <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.02em">Gastos</h1>
+        <h1 style="font-size:26px;font-weight:700;color:#2A1A10;margin:0;letter-spacing:-0.02em">Gastos</h1>
       </div>
 
       <div id="gasto-kpis" style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px">
         ${htmlKPIs(k)}
       </div>
 
-      <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:18px">
+      <div style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px;margin-bottom:18px">
         <div style="display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr auto;align-items:end">
           <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Buscar (concepto, categoría o nota)</div>
+            <div style="font-size:12px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Buscar (concepto, categoría o nota)</div>
             <input id="gasto-q" type="text" placeholder="Escribe aquí..." autocomplete="off"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Desde</div>
+            <div style="font-size:12px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Desde</div>
             <input id="gasto-desde" type="date"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Hasta</div>
+            <div style="font-size:12px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Hasta</div>
             <input id="gasto-hasta" type="date"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
             <button id="gasto-btn-nuevo"
-              style="white-space:nowrap;padding:11px 16px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">
+              style="white-space:nowrap;padding:11px 16px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">
               Registrar gasto
             </button>
           </div>
         </div>
       </div>
 
-      <div id="gasto-lista" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px"></div>
+      <div id="gasto-lista" style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px"></div>
     </div>
   `;
 }
 
 function htmlVacio() {
   return `
-    <div style="text-align:center;padding:48px 16px;color:#64748b">
+    <div style="text-align:center;padding:48px 16px;color:#7D6858">
       <div style="font-size:48px;margin-bottom:8px">💸</div>
-      <div style="font-size:15px;font-weight:600;color:#0f172a;margin-bottom:4px">No hay gastos registrados</div>
-      <div style="font-size:13.5px;color:#94a3b8">Registra servicios, nómina, arriendo y más para ver tu utilidad real.</div>
+      <div style="font-size:15px;font-weight:600;color:#2A1A10;margin-bottom:4px">No hay gastos registrados</div>
+      <div style="font-size:13.5px;color:#A8957F">Registra servicios, nómina, arriendo y más para ver tu utilidad real.</div>
     </div>
   `;
 }

@@ -149,10 +149,10 @@ function htmlKpis() {
     if (p.categoria) cats.add(p.categoria);
   }
   return kpiGrid([
-    { label: 'Productos activos', valor: fmt(_productos.length), sub: 'En el catálogo', icono: 'package', color: '#2563eb' },
+    { label: 'Productos activos', valor: fmt(_productos.length), sub: 'En el catálogo', icono: 'package', color: '#4A2E1A' },
     { label: 'Valor inventario', valor: money(valor), sub: 'Valorizado a costo', icono: 'wallet', color: '#16a34a' },
     { label: 'Stock bajo', valor: fmt(bajo), sub: 'Bajo el mínimo', icono: 'alert-triangle', color: bajo > 0 ? '#d97706' : '#16a34a' },
-    { label: 'Categorías', valor: fmt(cats.size), sub: 'Distintas', icono: 'tags', color: '#7c3aed' },
+    { label: 'Categorías', valor: fmt(cats.size), sub: 'Distintas', icono: 'tags', color: '#EE7623' },
   ]);
 }
 
@@ -181,14 +181,14 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
     <button
       id="btn-inventario"
       title="Imprimir inventario / hoja de auditoría"
-      style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:white;color:#33200F;border:1px solid #E3CDB4;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
     >
       <i data-lucide="clipboard-list" style="width:17px;height:17px;stroke-width:2"></i>
       Inventario
     </button>
     <button
       id="btn-nuevo-producto"
-      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4A2E1A;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
     >
       <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
       Nuevo producto
@@ -205,25 +205,25 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
 function htmlBuscador(filtro) {
   return `
     <div style="position:relative;margin-bottom:16px;max-width:480px">
-      <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#94a3b8;pointer-events:none"></i>
+      <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#A8957F;pointer-events:none"></i>
       <input
         id="prod-buscar"
         type="text"
         value="${esc(filtro || '')}"
         placeholder="Buscar por nombre, código o categoría..."
         autocomplete="off"
-        style="width:100%;padding:10px 38px 10px 38px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;color:#0f172a;box-sizing:border-box"
+        style="width:100%;padding:10px 38px 10px 38px;border:1px solid #DCCFBE;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;color:#2A1A10;box-sizing:border-box"
       />
       ${filtro ? `
         <button
           id="prod-limpiar-busqueda"
           title="Limpiar búsqueda (Esc)"
-          style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#f1f5f9;border:0;border-radius:6px;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center"
+          style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#F2EBE0;border:0;border-radius:6px;cursor:pointer;color:#7D6858;display:flex;align-items:center;justify-content:center"
         >
           <i data-lucide="x" style="width:14px;height:14px"></i>
         </button>
       ` : `
-        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:inherit;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#A8957F;font-family:inherit;background:#F2EBE0;padding:3px 6px;border-radius:5px">/</span>
       `}
     </div>
   `;
@@ -231,7 +231,7 @@ function htmlBuscador(filtro) {
 
 function htmlCargando() {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:48px;text-align:center;color:#94a3b8">
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:48px;text-align:center;color:#A8957F">
       <div style="font-size:14px">Cargando productos…</div>
     </div>
   `;
@@ -239,20 +239,20 @@ function htmlCargando() {
 
 function htmlVacio() {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:64px 24px;text-align:center">
-      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="package" style="width:36px;height:36px;color:#2563eb;stroke-width:1.5"></i>
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:64px 24px;text-align:center">
+      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#F8F1E8;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="package" style="width:36px;height:36px;color:#4A2E1A;stroke-width:1.5"></i>
       </div>
-      <h2 style="font-size:18px;font-weight:600;color:#0f172a;margin:0 0 8px;letter-spacing:-0.01em">
+      <h2 style="font-size:18px;font-weight:600;color:#2A1A10;margin:0 0 8px;letter-spacing:-0.01em">
         Tu catálogo está vacío
       </h2>
-      <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;max-width:380px;margin-left:auto;margin-right:auto">
+      <p style="color:#7D6858;font-size:14px;line-height:1.6;margin:0 0 24px;max-width:380px;margin-left:auto;margin-right:auto">
         Empezá agregando los productos que vendés en tu tienda.
         Podés escribirlos uno por uno o importar una lista más tarde.
       </p>
       <button
         id="btn-nuevo-producto-vacio"
-        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
       >
         <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
         Agregar primer producto
@@ -263,14 +263,14 @@ function htmlVacio() {
 
 function htmlSinResultados(filtro) {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:48px 24px;text-align:center">
-      <div style="width:60px;height:60px;margin:0 auto 16px;border-radius:14px;background:#f1f5f9;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="search-x" style="width:28px;height:28px;color:#64748b;stroke-width:1.5"></i>
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:48px 24px;text-align:center">
+      <div style="width:60px;height:60px;margin:0 auto 16px;border-radius:14px;background:#F2EBE0;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="search-x" style="width:28px;height:28px;color:#7D6858;stroke-width:1.5"></i>
       </div>
-      <div style="font-size:15px;font-weight:600;color:#0f172a;margin-bottom:4px">
+      <div style="font-size:15px;font-weight:600;color:#2A1A10;margin-bottom:4px">
         Sin resultados para "${esc(filtro)}"
       </div>
-      <div style="color:#64748b;font-size:13.5px">
+      <div style="color:#7D6858;font-size:13.5px">
         Probá con otro término o revisá la ortografía
       </div>
     </div>
@@ -308,15 +308,15 @@ function htmlFila(p) {
   const stockBajo = stock < 5;
   return `
     <tr data-id="${esc(p.id)}">
-      <td style="font-weight:600;color:#111827">${esc(p.nombre || '(sin nombre)')}</td>
-      <td style="color:#6b7280;font-family:inherit;font-size:13px">${esc(p.codigo || '—')}</td>
-      <td>${p.categoria ? badge(p.categoria, 'neutral') : '<span style="color:#d1d5db">—</span>'}</td>
-      <td style="text-align:right;color:#6b7280;font-family:inherit">${p.costo != null && p.costo !== '' ? money(p.costo) : '—'}</td>
-      <td style="text-align:right;color:#111827;font-weight:600;font-family:inherit">${money(p.precio)}</td>
+      <td style="font-weight:600;color:#2A1A10">${esc(p.nombre || '(sin nombre)')}</td>
+      <td style="color:#7D6858;font-family:inherit;font-size:13px">${esc(p.codigo || '—')}</td>
+      <td>${p.categoria ? badge(p.categoria, 'neutral') : '<span style="color:#DCCFBE">—</span>'}</td>
+      <td style="text-align:right;color:#7D6858;font-family:inherit">${p.costo != null && p.costo !== '' ? money(p.costo) : '—'}</td>
+      <td style="text-align:right;color:#2A1A10;font-weight:600;font-family:inherit">${money(p.precio)}</td>
       <td style="text-align:right;font-family:inherit">
         ${stockBajo
           ? badge(`${stock} · bajo`, 'danger')
-          : `<span style="color:#111827;font-weight:500">${stock}</span>`}
+          : `<span style="color:#2A1A10;font-weight:500">${stock}</span>`}
       </td>
       <td style="text-align:right;white-space:nowrap">
         ${menuButton(p.id)}
@@ -483,23 +483,23 @@ async function abrirModalInventario() {
 
   const opcion = (id, icono, titulo, sub, color) => `
     <button id="${id}"
-      style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:white;border:1.5px solid #e2e8f0;border-radius:11px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s ease;width:100%">
+      style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:white;border:1.5px solid #EADFD0;border-radius:11px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s ease;width:100%">
       <div style="width:42px;height:42px;border-radius:10px;background:${color}15;color:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">${icono}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:14.5px;color:#0f172a">${esc(titulo)}</div>
-        <div style="font-size:12.5px;color:#64748b;margin-top:3px;line-height:1.4">${esc(sub)}</div>
+        <div style="font-weight:700;font-size:14.5px;color:#2A1A10">${esc(titulo)}</div>
+        <div style="font-size:12.5px;color:#7D6858;margin-top:3px;line-height:1.4">${esc(sub)}</div>
       </div>
-      <i data-lucide="chevron-right" style="width:18px;height:18px;color:#94a3b8;flex-shrink:0;align-self:center"></i>
+      <i data-lucide="chevron-right" style="width:18px;height:18px;color:#A8957F;flex-shrink:0;align-self:center"></i>
     </button>
   `;
 
   const contenido = `
-    <div style="color:#64748b;font-size:13px;margin-bottom:14px">
+    <div style="color:#7D6858;font-size:13px;margin-bottom:14px">
       ${fmt(_productos.length)} productos en inventario · ${bajos.length} con stock bajo · ${agotados.length} agotados
     </div>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-      ${opcion('inv-opt-pos', '🧾', 'Imprimir inventario en POS 80mm', 'Listado compacto agrupado por categoría con valor a costo y venta. Ideal para revisión rápida en impresora térmica.', '#2563eb')}
+      ${opcion('inv-opt-pos', '🧾', 'Imprimir inventario en POS 80mm', 'Listado compacto agrupado por categoría con valor a costo y venta. Ideal para revisión rápida en impresora térmica.', '#4A2E1A')}
       ${opcion('inv-opt-pdf', '📄', 'Generar informe PDF (Carta)', 'Inventario completo con tabla por categoría, subtotales, totales y resumen financiero. Optimizado para guardar como PDF o imprimir en carta.', '#15803d')}
       ${opcion('inv-opt-audit', '📋', 'Hoja de auditoría para conteo físico', 'Hoja con columnas vacías para anotar el conteo real durante una auditoría de inventario. Incluye firmas y diferencia.', '#a16207')}
       ${bajos.length > 0 ? opcion('inv-opt-bajos', '⚠️', `Solo productos con stock bajo (${bajos.length})`, 'Imprime solo el listado de productos que están por debajo del stock mínimo. Útil para órdenes de compra.', '#dc2626') : ''}
@@ -507,7 +507,7 @@ async function abrirModalInventario() {
 
     <div style="display:flex;margin-top:18px">
       <button id="inv-cerrar"
-        style="flex:1;padding:11px;background:white;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:11px;background:white;border:1px solid #EADFD0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
     </div>
   `;
 
@@ -522,11 +522,11 @@ async function abrirModalInventario() {
   // Hover effect en las opciones
   m.body.querySelectorAll('button[id^="inv-opt"]').forEach((btn) => {
     btn.addEventListener('mouseenter', () => {
-      btn.style.borderColor = '#2563eb';
-      btn.style.background = '#f8fafc';
+      btn.style.borderColor = '#4A2E1A';
+      btn.style.background = '#FBF7F1';
     });
     btn.addEventListener('mouseleave', () => {
-      btn.style.borderColor = '#e2e8f0';
+      btn.style.borderColor = '#EADFD0';
       btn.style.background = 'white';
     });
   });

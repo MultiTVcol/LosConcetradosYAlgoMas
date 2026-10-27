@@ -113,7 +113,7 @@ function pintarLista() {
 
   cont.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <b style="font-size:15px;color:#0f172a">${fmt(visibles.length)} factura${visibles.length === 1 ? '' : 's'}</b>
+      <b style="font-size:15px;color:#2A1A10">${fmt(visibles.length)} factura${visibles.length === 1 ? '' : 's'}</b>
       <span style="background:#dcfce7;color:#166534;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:8px">
         Total: ${money(total)}
       </span>
@@ -157,16 +157,16 @@ function filaFactura(f) {
   return `
     <tr data-fac-id="${esc(f.id)}">
       <td>
-        <b style="color:#111827">${esc(f.numero || '—')}</b>
+        <b style="color:#2A1A10">${esc(f.numero || '—')}</b>
         ${ediciones > 0 ? badge('Editada', 'warn') : ''}
       </td>
-      <td style="color:#6b7280;font-family:inherit;font-size:13px">
+      <td style="color:#7D6858;font-family:inherit;font-size:13px">
         ${esc(fecha)}${hora ? ' ' + esc(hora) : ''}
       </td>
-      <td style="color:#111827">${esc(cliente)}</td>
+      <td style="color:#2A1A10">${esc(cliente)}</td>
       <td>${badge(metodo, 'info')}</td>
       <td>${estadoBadge}</td>
-      <td style="text-align:right;font-family:inherit;font-weight:700;color:#111827">
+      <td style="text-align:right;font-family:inherit;font-weight:700;color:#2A1A10">
         ${money(f.total)}
       </td>
       <td style="text-align:right">
@@ -278,16 +278,16 @@ async function verFactura(id) {
   const tieneEd = ediciones.length > 0;
 
   const contenido = `
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-weight:700;color:#0f172a;font-size:15px">${esc(f.cliente_nombre || 'Cliente ocasional')}</div>
-      <div style="color:#64748b;font-size:13px;margin-top:3px;font-family:inherit">
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-weight:700;color:#2A1A10;font-size:15px">${esc(f.cliente_nombre || 'Cliente ocasional')}</div>
+      <div style="color:#7D6858;font-size:13px;margin-top:3px;font-family:inherit">
         ${esc((f.fecha || '').slice(0, 10))} · ${esc(f.metodo_pago || '—')}
       </div>
     </div>
 
     <table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:14px">
       <thead>
-        <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:600;text-align:left">
+        <tr style="border-bottom:1px solid #EADFD0;color:#7D6858;font-weight:600;text-align:left">
           <th style="padding:8px 10px">Producto</th>
           <th style="padding:8px 10px;text-align:center">Cant</th>
           <th style="padding:8px 10px;text-align:right">Precio</th>
@@ -296,8 +296,8 @@ async function verFactura(id) {
       </thead>
       <tbody>
         ${f.items.map((i) => `
-          <tr style="border-bottom:1px solid #f1f5f9">
-            <td style="padding:8px 10px;color:#0f172a">${esc(i.nombre)}</td>
+          <tr style="border-bottom:1px solid #F2EBE0">
+            <td style="padding:8px 10px;color:#2A1A10">${esc(i.nombre)}</td>
             <td style="padding:8px 10px;text-align:center;font-family:inherit">${fmt(i.cantidad)}</td>
             <td style="padding:8px 10px;text-align:right;font-family:inherit">${money(i.precio)}</td>
             <td style="padding:8px 10px;text-align:right;font-family:inherit;font-weight:700">${money((i.precio - (i.descuento || 0)) * i.cantidad)}</td>
@@ -306,13 +306,13 @@ async function verFactura(id) {
       </tbody>
     </table>
 
-    <div style="border-top:2px dashed #cbd5e1;padding-top:10px;margin-bottom:6px">
-      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:4px">
+    <div style="border-top:2px dashed #DCCFBE;padding-top:10px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#7D6858;margin-bottom:4px">
         <span>Subtotal</span>
         <b style="font-family:inherit">${money(f.subtotal)}</b>
       </div>
       ${f.impuesto > 0 ? `
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#64748b;margin-bottom:4px">
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#7D6858;margin-bottom:4px">
           <span>Impuesto</span>
           <b style="font-family:inherit">${money(f.impuesto)}</b>
         </div>
@@ -323,9 +323,9 @@ async function verFactura(id) {
           <b style="font-family:inherit">-${money(f.descuento)}</b>
         </div>
       ` : ''}
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">
-        <b style="font-size:15px;color:#0f172a">TOTAL</b>
-        <b style="font-size:22px;color:#1d4ed8;font-family:inherit;letter-spacing:-0.02em">${money(f.total)}</b>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid #EADFD0">
+        <b style="font-size:15px;color:#2A1A10">TOTAL</b>
+        <b style="font-size:22px;color:#33200F;font-family:inherit;letter-spacing:-0.02em">${money(f.total)}</b>
       </div>
     </div>
 
@@ -335,7 +335,7 @@ async function verFactura(id) {
       <button
         id="fac-modal-imprimir"
         data-id="${esc(f.id)}"
-        style="padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
+        style="padding:12px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)"
       >🧾 Imprimir POS 80mm</button>
       <button
         id="fac-modal-borrar"
@@ -383,25 +383,25 @@ function htmlHistorialEdiciones(ediciones) {
           const fechaTxt = new Date(ed.fecha).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
           const diff = num(ed.totalNuevo) - num(ed.totalAnterior);
           const signo = diff > 0 ? '+' : '';
-          const color = diff > 0 ? '#15803d' : (diff < 0 ? '#dc2626' : '#64748b');
+          const color = diff > 0 ? '#15803d' : (diff < 0 ? '#dc2626' : '#7D6858');
           return `
-            <div style="background:white;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px">
+            <div style="background:white;border:1px solid #EADFD0;border-radius:8px;padding:10px 12px">
               <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">
                 <div>
                   <b style="font-size:13px;color:#92400e">Edición #${ix + 1}</b>
-                  <span style="font-size:12px;color:#64748b;margin-left:6px">${esc(fechaTxt)}</span>
+                  <span style="font-size:12px;color:#7D6858;margin-left:6px">${esc(fechaTxt)}</span>
                 </div>
                 <div style="font-size:12px">
-                  <span style="color:#64748b">Total:</span>
+                  <span style="color:#7D6858">Total:</span>
                   <b style="font-family:inherit">${money(ed.totalAnterior)} → ${money(ed.totalNuevo)}</b>
                   <span style="color:${color};font-weight:700;margin-left:4px">(${signo}${money(diff)})</span>
                 </div>
               </div>
               ${ed.motivo ? `
-                <div style="font-size:12.5px;color:#0f172a;margin-bottom:6px;padding:5px 9px;background:#f8fafc;border-radius:6px">
+                <div style="font-size:12.5px;color:#2A1A10;margin-bottom:6px;padding:5px 9px;background:#FBF7F1;border-radius:6px">
                   <b>Motivo:</b> ${esc(ed.motivo)}
                 </div>` : ''}
-              <ul style="margin:4px 0 0 18px;padding:0;font-size:12.5px;color:#475569">
+              <ul style="margin:4px 0 0 18px;padding:0;font-size:12.5px;color:#5C4636">
                 ${(ed.cambios || []).map((c) => `<li style="margin-bottom:2px">${esc(c)}</li>`).join('')}
               </ul>
             </div>
@@ -443,7 +443,7 @@ async function editarFactura(id) {
   }));
 
   const contenido = `
-    <div style="color:#64748b;font-size:13.5px;margin-bottom:14px">
+    <div style="color:#7D6858;font-size:13.5px;margin-bottom:14px">
       Quita o agrega productos y ajusta cantidades/precios. Todo afecta el inventario:
       lo que agregues o subas se descuenta; lo que quites o bajes se devuelve.
       Cada cambio queda registrado en el historial.
@@ -452,31 +452,31 @@ async function editarFactura(id) {
     <div id="fac-edit-items" style="display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow:auto;margin-bottom:12px"></div>
 
     <div style="position:relative;margin-bottom:14px">
-      <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Agregar producto</div>
+      <div style="font-size:12px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Agregar producto</div>
       <input id="fac-add-buscar" type="text" autocomplete="off" placeholder="Buscar por código, nombre o categoría…"
-        style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
+        style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
       />
-      <div id="fac-add-list" style="position:absolute;left:0;right:0;top:100%;z-index:20;background:white;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 12px 28px -8px rgba(15,23,42,.25);margin-top:4px;max-height:240px;overflow:auto;display:none"></div>
+      <div id="fac-add-list" style="position:absolute;left:0;right:0;top:100%;z-index:20;background:white;border:1px solid #EADFD0;border-radius:10px;box-shadow:0 12px 28px -8px rgba(42, 26, 16,.25);margin-top:4px;max-height:240px;overflow:auto;display:none"></div>
     </div>
 
-    <div id="fac-edit-total" style="display:flex;justify-content:space-between;align-items:center;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 14px;margin-bottom:14px">
-      <span style="font-size:12px;color:#1d4ed8;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total productos</span>
+    <div id="fac-edit-total" style="display:flex;justify-content:space-between;align-items:center;background:#F8F1E8;border:1px solid #E3CDB4;border-radius:10px;padding:11px 14px;margin-bottom:14px">
+      <span style="font-size:12px;color:#33200F;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total productos</span>
       <b id="fac-edit-total-val" style="font-size:16px;color:#1e3a8a">${money(0)}</b>
     </div>
 
     <div style="margin-bottom:14px">
-      <div style="font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Motivo de la edición (opcional)</div>
+      <div style="font-size:12px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Motivo de la edición (opcional)</div>
       <input id="fac-edit-motivo" type="text" placeholder="Ej: producto facturado por error, cambio de referencia..."
-        style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
+        style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit"
       />
     </div>
 
     <div style="display:flex;gap:10px">
       <button id="fac-edit-cancelar"
-        style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569"
+        style="flex:1;padding:12px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636"
       >Cancelar</button>
       <button id="fac-edit-guardar"
-        style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)"
+        style="flex:1;padding:12px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)"
       >Guardar cambios</button>
     </div>
   `;
@@ -512,14 +512,14 @@ async function editarFactura(id) {
 
   function pintarItems() {
     if (editItems.length === 0) {
-      cont.innerHTML = `<div style="text-align:center;color:#94a3b8;font-size:13.5px;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px">La venta no tiene productos. Agrega al menos uno.</div>`;
+      cont.innerHTML = `<div style="text-align:center;color:#A8957F;font-size:13.5px;padding:18px;background:#FBF7F1;border:1px dashed #DCCFBE;border-radius:10px">La venta no tiene productos. Agrega al menos uno.</div>`;
       actualizarTotal();
       return;
     }
     cont.innerHTML = editItems.map((i, ix) => `
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px">
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:10px 12px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
-          <b style="font-size:13.5px;color:#0f172a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.nombre)}</b>
+          <b style="font-size:13.5px;color:#2A1A10;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.nombre)}</b>
           <button class="fac-edit-quitar" data-ix="${ix}" title="Quitar producto"
             style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:8px;cursor:pointer">
             <i data-lucide="trash-2" style="width:15px;height:15px;stroke-width:2"></i>
@@ -527,24 +527,24 @@ async function editarFactura(id) {
         </div>
         <div style="display:flex;gap:8px">
           <div style="flex:1">
-            <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Cant</div>
+            <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Cant</div>
             <input class="fac-edit-input" data-ei="${ix}" data-ef="cantidad" type="number" inputmode="numeric" min="0"
               value="${i.cantidad}"
-              style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
+              style="width:100%;padding:9px 10px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
             />
           </div>
           <div style="flex:1.3">
-            <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Precio</div>
+            <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Precio</div>
             <input class="fac-edit-input" data-ei="${ix}" data-ef="precio" type="text" inputmode="numeric"
               value="${i.precio}"
-              style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
+              style="width:100%;padding:9px 10px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
             />
           </div>
           <div style="flex:1">
-            <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Desc</div>
+            <div style="font-size:11px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Desc</div>
             <input class="fac-edit-input" data-ei="${ix}" data-ef="descuento" type="text" inputmode="numeric"
               value="${i.descuento || 0}"
-              style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
+              style="width:100%;padding:9px 10px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box"
             />
           </div>
         </div>
@@ -604,16 +604,16 @@ async function editarFactura(id) {
     if (!q) { cerrarAddList(); return; }
     const res = ProductosRepo.filtrarConPrioridad(_prods, q).slice(0, 20);
     if (res.length === 0) {
-      addList.innerHTML = `<div style="padding:12px;color:#94a3b8;font-size:13px">Sin coincidencias</div>`;
+      addList.innerHTML = `<div style="padding:12px;color:#A8957F;font-size:13px">Sin coincidencias</div>`;
       addList.style.display = 'block';
       return;
     }
     addList.innerHTML = res.map((p) => `
       <div class="fac-add-item" data-id="${esc(p.id)}"
-        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid #f1f5f9">
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid #F2EBE0">
         <div style="min-width:0">
-          <div style="font-size:13.5px;color:#0f172a;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
-          <div style="font-size:11.5px;color:#64748b">${esc(p.codigo || '')}${p.categoria ? ' · ' + esc(p.categoria) : ''} · Stock: ${fmt(Number(p.stock) || 0)}</div>
+          <div style="font-size:13.5px;color:#2A1A10;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
+          <div style="font-size:11.5px;color:#7D6858">${esc(p.codigo || '')}${p.categoria ? ' · ' + esc(p.categoria) : ''} · Stock: ${fmt(Number(p.stock) || 0)}</div>
         </div>
         <b style="font-size:13.5px;color:#1e3a8a;flex-shrink:0">${money(p.precio)}</b>
       </div>
@@ -729,7 +729,7 @@ async function borrarFactura(id) {
 
 function htmlCargando() {
   return `
-    <div style="padding:40px 48px;color:#64748b;font-size:14px">
+    <div style="padding:40px 48px;color:#7D6858;font-size:14px">
       Cargando facturas…
     </div>
   `;
@@ -742,9 +742,9 @@ function htmlKpis() {
   const ticket = n > 0 ? ingresos / n : 0;
   const clientes = new Set(vigentes.map((f) => f.cliente_id || (f.cliente_nombre || '').toLowerCase()).filter(Boolean)).size;
   return kpiGrid([
-    { label: 'Facturas emitidas', valor: fmt(n), sub: 'Documentos vigentes', icono: 'receipt', color: '#2563eb' },
+    { label: 'Facturas emitidas', valor: fmt(n), sub: 'Documentos vigentes', icono: 'receipt', color: '#4A2E1A' },
     { label: 'Ingresos', valor: money(ingresos), sub: 'Total facturado', icono: 'trending-up', color: '#16a34a' },
-    { label: 'Ticket promedio', valor: money(ticket), sub: 'Por factura', icono: 'calculator', color: '#7c3aed' },
+    { label: 'Ticket promedio', valor: money(ticket), sub: 'Por factura', icono: 'calculator', color: '#EE7623' },
     { label: 'Clientes atendidos', valor: fmt(clientes), sub: 'Distintos', icono: 'users', color: '#d97706' },
   ]);
 }
@@ -774,27 +774,27 @@ function htmlLayout() {
           <input id="fac-hasta" class="ui-input" type="date" value="${esc(_rango.hasta)}" />
         </label>
         <button id="fac-todo" type="button"
-          style="padding:9px 16px;background:#fff;border:1px solid #d1d5db;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#374151;height:39px">
+          style="padding:9px 16px;background:#fff;border:1px solid #DCCFBE;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit;color:#4A3628;height:39px">
           ${(_rango.desde || _rango.hasta) ? 'Cargar todo' : 'Últimos 90 días'}
         </button>
       </div>
-      <div style="font-size:12px;color:#9ca3af;margin:-8px 2px 16px">
+      <div style="font-size:12px;color:#A8957F;margin:-8px 2px 16px">
         ${(_rango.desde || _rango.hasta)
           ? `Mostrando facturas del rango cargado. Para ver el histórico completo, usa <b>Cargar todo</b>.`
           : `Mostrando <b>todo el historial</b>. En tiendas con mucho volumen, acota por fechas para que cargue más rápido.`}
       </div>
 
-      <div id="fac-lista" style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:18px"></div>
+      <div id="fac-lista" style="background:white;border:1px solid #EADFD0;border-radius:12px;padding:18px"></div>
     </div>
   `;
 }
 
 function htmlVacio() {
   return `
-    <div style="text-align:center;padding:48px 16px;color:#64748b">
+    <div style="text-align:center;padding:48px 16px;color:#7D6858">
       <div style="font-size:48px;margin-bottom:8px">🧾</div>
-      <div style="font-size:15px;font-weight:600;color:#0f172a;margin-bottom:4px">No hay facturas que mostrar</div>
-      <div style="font-size:13.5px;color:#94a3b8">Cuando registres ventas aparecerán aquí.</div>
+      <div style="font-size:15px;font-weight:600;color:#2A1A10;margin-bottom:4px">No hay facturas que mostrar</div>
+      <div style="font-size:13.5px;color:#A8957F">Cuando registres ventas aparecerán aquí.</div>
     </div>
   `;
 }

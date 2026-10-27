@@ -31,7 +31,7 @@ export async function render(contenedor) {
   _filtro = { q: '', estado: '', modo: 'todas', desde: '', hasta: '' };
   if (_offRealtime) { _offRealtime(); _offRealtime = null; }
 
-  contenedor.innerHTML = `<div style="padding:28px 32px;color:#64748b;font-size:14px">Cargando cuentas por cobrar…</div>`;
+  contenedor.innerHTML = `<div style="padding:28px 32px;color:#7D6858;font-size:14px">Cargando cuentas por cobrar…</div>`;
   await cargar();
   pintar();
 
@@ -70,7 +70,7 @@ function htmlKpis() {
   }
   return kpiGrid([
     { label: 'Por cobrar', valor: money(porCobrar), sub: `${fmt(pendientes.length)} venta(s) a crédito`, icono: 'hand-coins', color: porCobrar > 0 ? '#d97706' : '#16a34a' },
-    { label: 'Créditos pendientes', valor: fmt(pendientes.length), sub: 'Con saldo', icono: 'file-text', color: '#2563eb' },
+    { label: 'Créditos pendientes', valor: fmt(pendientes.length), sub: 'Con saldo', icono: 'file-text', color: '#4A2E1A' },
     { label: 'Vencidas', valor: fmt(vencidas), sub: 'Pasaron del vencimiento', icono: 'alert-triangle', color: vencidas > 0 ? '#dc2626' : '#16a34a' },
     { label: 'Recaudado este mes', valor: money(recaudadoMes), sub: 'Abonos del mes', icono: 'trending-up', color: '#16a34a' },
   ]);
@@ -78,7 +78,7 @@ function htmlKpis() {
 
 function htmlLayout() {
   const acciones = `
-    <button id="cxc-nueva" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
+    <button id="cxc-nueva" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4A2E1A;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
       <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i> Nueva venta
     </button>
   `;
@@ -106,9 +106,9 @@ function pintarHistorial() {
 
   if (_ventas.length === 0) {
     box.innerHTML = `
-      <div class="ui-table-card" style="padding:48px 24px;text-align:center;color:#94a3b8">
-        <i data-lucide="hand-coins" style="width:40px;height:40px;color:#cbd5e1;stroke-width:1.5"></i>
-        <div style="margin-top:10px;font-weight:600;color:#475569">No hay ventas a crédito</div>
+      <div class="ui-table-card" style="padding:48px 24px;text-align:center;color:#A8957F">
+        <i data-lucide="hand-coins" style="width:40px;height:40px;color:#DCCFBE;stroke-width:1.5"></i>
+        <div style="margin-top:10px;font-weight:600;color:#5C4636">No hay ventas a crédito</div>
         <div style="font-size:13px;margin-top:2px">Al cobrar una venta, elige <b>Crédito</b> para que el cliente quede debiendo.</div>
       </div>`;
     refrescarIconos(box);
@@ -117,15 +117,15 @@ function pintarHistorial() {
 
   const presetBtn = (modo, label) => `
     <button class="cxc-preset" data-modo="${modo}"
-      style="padding:7px 13px;border:1px solid ${_filtro.modo === modo ? '#2563eb' : '#d1d5db'};background:${_filtro.modo === modo ? '#2563eb' : '#fff'};color:${_filtro.modo === modo ? '#fff' : '#374151'};border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${label}</button>`;
+      style="padding:7px 13px;border:1px solid ${_filtro.modo === modo ? '#4A2E1A' : '#DCCFBE'};background:${_filtro.modo === modo ? '#4A2E1A' : '#fff'};color:${_filtro.modo === modo ? '#fff' : '#4A3628'};border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">${label}</button>`;
 
   box.innerHTML = `
     <div class="ui-table-card">
-      <div style="padding:16px 18px;border-bottom:1px solid #f3f4f6;display:flex;flex-direction:column;gap:12px">
+      <div style="padding:16px 18px;border-bottom:1px solid #F2EBE0;display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
           <div>
-            <h3 style="font-size:15px;font-weight:700;margin:0;color:#111827">Ventas a crédito</h3>
-            <div id="cxc-sub" style="font-size:12.5px;color:#6b7280;margin-top:2px"></div>
+            <h3 style="font-size:15px;font-weight:700;margin:0;color:#2A1A10">Ventas a crédito</h3>
+            <div id="cxc-sub" style="font-size:12.5px;color:#7D6858;margin-top:2px"></div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input id="cxc-q" class="ui-input" type="text" placeholder="Buscar cliente o N° de factura…" value="${esc(_filtro.q)}" style="min-width:210px;width:auto" />
@@ -142,9 +142,9 @@ function pintarHistorial() {
           ${presetBtn('mes', 'Este mes')}
           ${presetBtn('custom', 'Rango…')}
           ${_filtro.modo === 'custom' ? `
-            <span style="color:#94a3b8;font-size:12.5px">Desde</span>
+            <span style="color:#A8957F;font-size:12.5px">Desde</span>
             <input id="cxc-desde" class="ui-input" type="date" value="${esc(_filtro.desde)}" style="width:auto" />
-            <span style="color:#94a3b8;font-size:12.5px">Hasta</span>
+            <span style="color:#A8957F;font-size:12.5px">Hasta</span>
             <input id="cxc-hasta" class="ui-input" type="date" value="${esc(_filtro.hasta)}" style="width:auto" />
           ` : ''}
         </div>
@@ -208,7 +208,7 @@ function renderFilas() {
   }
 
   if (lista.length === 0) {
-    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#94a3b8;font-size:13.5px">No hay ventas que coincidan${_filtro.modo === 'mes' ? ' este mes' : _filtro.modo === 'custom' ? ' en el rango' : ''}.</div>`;
+    cont.innerHTML = `<div style="text-align:center;padding:28px;color:#A8957F;font-size:13.5px">No hay ventas que coincidan${_filtro.modo === 'mes' ? ' este mes' : _filtro.modo === 'custom' ? ' en el rango' : ''}.</div>`;
     return;
   }
 
@@ -229,10 +229,10 @@ function renderFilas() {
           const estado = pagada ? badge('Pagada', 'success') : vencida ? badge('Vencida', 'danger') : badge('Al día', 'warn');
           return `
             <tr data-id="${esc(v.id)}">
-              <td><b style="color:#111827">${esc(v.numero || '—')}</b></td>
-              <td><div class="ui-cell-user">${avatar(v.cliente_nombre || '?')}<span style="font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.cliente_nombre || 'Cliente')}</span></div></td>
-              <td style="font-family:inherit;font-size:12.5px;color:#6b7280">${esc((v.fecha || '').slice(0, 10))}</td>
-              <td>${v.vence ? badge(esc(v.vence), vencida ? 'danger' : 'info') : '<span style="color:#d1d5db">—</span>'}</td>
+              <td><b style="color:#2A1A10">${esc(v.numero || '—')}</b></td>
+              <td><div class="ui-cell-user">${avatar(v.cliente_nombre || '?')}<span style="font-weight:600;color:#2A1A10;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.cliente_nombre || 'Cliente')}</span></div></td>
+              <td style="font-family:inherit;font-size:12.5px;color:#7D6858">${esc((v.fecha || '').slice(0, 10))}</td>
+              <td>${v.vence ? badge(esc(v.vence), vencida ? 'danger' : 'info') : '<span style="color:#DCCFBE">—</span>'}</td>
               <td style="text-align:right;font-family:inherit">${money(v.total)}</td>
               <td style="text-align:right;font-weight:700;color:${pagada ? '#16a34a' : '#a16207'};font-family:inherit">${money(saldo)}</td>
               <td>${estado}</td>
@@ -267,24 +267,24 @@ function abrirAbono(ventaId) {
   const totalAbonado = abonos.reduce((s, a) => s + num(a.monto), 0);
 
   const contenido = `
-    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:4px"><span>Cliente</span><b style="color:#111827">${esc(v.cliente_nombre || '—')} · ${esc(v.numero || '')}</b></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:4px"><span>Total venta</span><b style="color:#111827;font-family:inherit">${money(v.total)}</b></div>
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:12px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858;margin-bottom:4px"><span>Cliente</span><b style="color:#2A1A10">${esc(v.cliente_nombre || '—')} · ${esc(v.numero || '')}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858;margin-bottom:4px"><span>Total venta</span><b style="color:#2A1A10;font-family:inherit">${money(v.total)}</b></div>
       ${totalAbonado > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#15803d;margin-bottom:4px"><span>Total abonado (${abonos.length})</span><b style="font-family:inherit">${money(totalAbonado)}</b></div>` : ''}
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280"><span>Saldo pendiente</span><b style="color:#a16207;font-family:inherit">${money(v.saldo)}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#7D6858"><span>Saldo pendiente</span><b style="color:#a16207;font-family:inherit">${money(v.saldo)}</b></div>
     </div>
     <div>
       <div class="ui-label" style="margin-bottom:4px">Monto del abono *</div>
       <input id="cxc-abono-monto" data-miles type="text" inputmode="numeric" placeholder="0"
-        style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:right" />
+        style="width:100%;padding:14px;border:1px solid #DCCFBE;border-radius:12px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:right" />
     </div>
     <div style="margin-top:12px;display:grid;gap:10px;grid-template-columns:1fr 1fr">
       <div><div class="ui-label" style="margin-bottom:4px">Fecha</div><input id="cxc-abono-fecha" class="ui-input" type="date" value="${todayISO()}" /></div>
       <div><div class="ui-label" style="margin-bottom:4px">Método</div><select id="cxc-abono-metodo" class="ui-input">${METODOS.map((m) => `<option value="${esc(m)}">${m}</option>`).join('')}</select></div>
     </div>
     <div style="display:flex;gap:10px;margin-top:18px">
-      <button id="cxc-abono-cancel" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cancelar</button>
-      <button id="cxc-abono-save" style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>
+      <button id="cxc-abono-cancel" style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#4A3628">Cancelar</button>
+      <button id="cxc-abono-save" style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>
     </div>
   `;
 
@@ -329,22 +329,22 @@ function verDetalle(ventaId) {
   const vencida = !pagada && v.vence && v.vence < todayISO();
 
   const contenido = `
-    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap">
         <div>
-          <div style="font-weight:700;font-size:15px;color:#111827">${esc(v.cliente_nombre || 'Cliente')}</div>
-          <div style="color:#6b7280;font-size:12.5px;margin-top:2px;font-family:inherit">Factura: ${esc(v.numero || '—')} · ${esc((v.fecha || '').slice(0, 10))}</div>
+          <div style="font-weight:700;font-size:15px;color:#2A1A10">${esc(v.cliente_nombre || 'Cliente')}</div>
+          <div style="color:#7D6858;font-size:12.5px;margin-top:2px;font-family:inherit">Factura: ${esc(v.numero || '—')} · ${esc((v.fecha || '').slice(0, 10))}</div>
         </div>
         ${pagada ? badge('Pagada', 'success') : vencida ? badge('Vencida', 'danger') : badge('Al día', 'warn')}
       </div>
       <div style="display:grid;gap:6px;grid-template-columns:1fr 1fr;font-size:13px">
-        <div style="color:#6b7280">Total venta</div>
-        <div style="text-align:right;font-weight:700;color:#111827;font-family:inherit">${money(v.total)}</div>
-        <div style="color:#6b7280">Total abonado (${abonos.length})</div>
+        <div style="color:#7D6858">Total venta</div>
+        <div style="text-align:right;font-weight:700;color:#2A1A10;font-family:inherit">${money(v.total)}</div>
+        <div style="color:#7D6858">Total abonado (${abonos.length})</div>
         <div style="text-align:right;font-weight:700;color:#15803d;font-family:inherit">${money(totalAbonado)}</div>
-        <div style="color:#6b7280">Saldo pendiente</div>
+        <div style="color:#7D6858">Saldo pendiente</div>
         <div style="text-align:right;font-weight:800;color:${pagada ? '#15803d' : '#a16207'};font-family:inherit">${money(saldo)}</div>
-        ${v.vence ? `<div style="color:#6b7280">Vence</div><div style="text-align:right;font-weight:700;color:${vencida ? '#dc2626' : '#475569'}">${esc(v.vence)}${vencida ? ' · vencida' : ''}</div>` : ''}
+        ${v.vence ? `<div style="color:#7D6858">Vence</div><div style="text-align:right;font-weight:700;color:${vencida ? '#dc2626' : '#5C4636'}">${esc(v.vence)}${vencida ? ' · vencida' : ''}</div>` : ''}
       </div>
     </div>
 
@@ -374,8 +374,8 @@ function verDetalle(ventaId) {
           <tbody>
             ${[...abonos].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '')).map((a, i) => `
               <tr>
-                <td style="color:#94a3b8">${i + 1}</td>
-                <td style="font-family:inherit;color:#475569">${esc((a.fecha || '').slice(0, 10))}</td>
+                <td style="color:#A8957F">${i + 1}</td>
+                <td style="font-family:inherit;color:#5C4636">${esc((a.fecha || '').slice(0, 10))}</td>
                 <td>${badge(esc(a.metodo || 'Efectivo'), 'info')}</td>
                 <td style="text-align:right;font-family:inherit;font-weight:700;color:#15803d">${money(a.monto)}</td>
               </tr>`).join('')}
@@ -385,8 +385,8 @@ function verDetalle(ventaId) {
     ` : ''}
 
     <div style="display:flex;gap:10px;margin-top:6px">
-      ${!pagada ? `<button id="cxc-det-abonar" style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>` : ''}
-      <button id="cxc-det-cerrar" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#374151">Cerrar</button>
+      ${!pagada ? `<button id="cxc-det-abonar" style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Registrar abono</button>` : ''}
+      <button id="cxc-det-cerrar" style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#4A3628">Cerrar</button>
     </div>
   `;
 

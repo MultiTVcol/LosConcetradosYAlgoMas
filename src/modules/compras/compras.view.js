@@ -74,18 +74,18 @@ async function refrescarDatos() {
 // ============================================================
 
 function htmlCargando() {
-  return `<div style="padding:40px 48px;color:#64748b;font-size:14px">Cargando compras…</div>`;
+  return `<div style="padding:40px 48px;color:#7D6858;font-size:14px">Cargando compras…</div>`;
 }
 
 function htmlLayout() {
   const acciones = `
     <button id="comp-btn-facturas"
-      style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit">
+      style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit">
       <i data-lucide="receipt-text" style="width:16px;height:16px;stroke-width:2"></i> Facturas de compra</button>
     <button id="comp-btn-prov-list"
-      style="padding:10px 14px;border:1px solid #e2e8f0;background:white;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#374151">Proveedores</button>
+      style="padding:10px 14px;border:1px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#4A3628">Proveedores</button>
     <button id="comp-btn-prov-nuevo"
-      style="display:inline-flex;align-items:center;gap:7px;padding:10px 16px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
+      style="display:inline-flex;align-items:center;gap:7px;padding:10px 16px;background:#4A2E1A;color:white;border:0;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40">
       <i data-lucide="plus" style="width:16px;height:16px;stroke-width:2.25"></i> Proveedor</button>
   `;
   return `
@@ -93,10 +93,10 @@ function htmlLayout() {
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:14px;flex-wrap:wrap">
         <div>
           <div style="display:flex;align-items:center;gap:10px;margin:0 0 4px">
-            <i data-lucide="truck" style="width:28px;height:28px;color:#2563eb;stroke-width:1.8"></i>
-            <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.015em">Compras</h1>
+            <i data-lucide="truck" style="width:28px;height:28px;color:#4A2E1A;stroke-width:1.8"></i>
+            <h1 style="font-size:22px;font-weight:700;color:#2A1A10;margin:0;letter-spacing:-0.015em">Compras</h1>
           </div>
-          <div style="color:#64748b;font-size:12.5px">Seguí los 3 pasos para registrar una compra</div>
+          <div style="color:#7D6858;font-size:12.5px">Seguí los 3 pasos para registrar una compra</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">${acciones}</div>
       </div>
@@ -115,43 +115,43 @@ function htmlLayout() {
 function htmlPaso1Proveedor() {
   const prov = _proveedorSel;
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:14px 18px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:14px 18px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span class="paso-badge" style="background:#2563eb;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">1</span>
-        <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#0f172a">Proveedor</h3>
+        <span class="paso-badge" style="background:#4A2E1A;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">1</span>
+        <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#2A1A10">Proveedor</h3>
       </div>
       ${prov ? `
-        <div id="comp-prov-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer">
+        <div id="comp-prov-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;cursor:pointer">
           <div style="min-width:0;flex:1">
-            <div style="display:flex;align-items:center;gap:8px"><b style="font-size:14px;color:#0f172a">${esc(prov.nombre)}</b>${prov.nit ? `<span style="background:#e0e7ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px">${esc(prov.nit)}</span>` : ''}</div>
-            <div style="font-size:11.5px;color:#64748b;margin-top:2px">${[prov.telefono, prov.ciudad, prov.contacto].filter(Boolean).map(esc).join(' · ') || 'Sin datos adicionales'}</div>
+            <div style="display:flex;align-items:center;gap:8px"><b style="font-size:14px;color:#2A1A10">${esc(prov.nombre)}</b>${prov.nit ? `<span style="background:#F3E8DC;color:#33200F;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px">${esc(prov.nit)}</span>` : ''}</div>
+            <div style="font-size:11.5px;color:#7D6858;margin-top:2px">${[prov.telefono, prov.ciudad, prov.contacto].filter(Boolean).map(esc).join(' · ') || 'Sin datos adicionales'}</div>
           </div>
           <button id="comp-prov-cambiar"
-            style="padding:6px 12px;border:1px solid #e2e8f0;background:white;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:inherit;color:#475569">Cambiar</button>
+            style="padding:6px 12px;border:1px solid #EADFD0;background:white;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:inherit;color:#5C4636">Cambiar</button>
         </div>
       ` : `
-        <div id="comp-prov-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;cursor:pointer">
+        <div id="comp-prov-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#FBF7F1;border:1px dashed #DCCFBE;border-radius:10px;cursor:pointer">
           <div style="display:flex;align-items:center;gap:9px">
-            <i data-lucide="user-round-search" style="width:18px;height:18px;color:#94a3b8;stroke-width:2"></i>
+            <i data-lucide="user-round-search" style="width:18px;height:18px;color:#A8957F;stroke-width:2"></i>
             <div>
-              <div style="font-weight:600;font-size:13.5px;color:#0f172a">Sin proveedor asignado</div>
-              <div style="font-size:11.5px;color:#64748b;margin-top:2px">${_proveedores.length ? 'Click para seleccionar o crear uno' : 'Crea tu primer proveedor para empezar'}</div>
+              <div style="font-weight:600;font-size:13.5px;color:#2A1A10">Sin proveedor asignado</div>
+              <div style="font-size:11.5px;color:#7D6858;margin-top:2px">${_proveedores.length ? 'Click para seleccionar o crear uno' : 'Crea tu primer proveedor para empezar'}</div>
             </div>
           </div>
-          <button style="padding:7px 13px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">${_proveedores.length ? 'Seleccionar' : '+ Nuevo'}</button>
+          <button style="padding:7px 13px;background:#4A2E1A;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit">${_proveedores.length ? 'Seleccionar' : '+ Nuevo'}</button>
         </div>
       `}
 
       <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:10px">
         <label style="display:block">
-          <span style="font-size:10.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block">Fecha de compra</span>
+          <span style="font-size:10.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block">Fecha de compra</span>
           <input id="comp-fecha" type="date" value="${todayISO()}"
-            style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+            style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
         </label>
         <label style="display:block">
-          <span style="font-size:10.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block">N° factura / remisión</span>
+          <span style="font-size:10.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block">N° factura / remisión</span>
           <input id="comp-ref" type="text" placeholder="Ej: FC-1024" autocomplete="off"
-            style="width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+            style="width:100%;padding:9px 11px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
         </label>
       </div>
     </div>
@@ -160,31 +160,31 @@ function htmlPaso1Proveedor() {
 
 function htmlPaso2BuscarProducto() {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:14px 18px">
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;padding:14px 18px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <span class="paso-badge" style="background:#2563eb;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">2</span>
-          <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#0f172a">Buscar o escanear producto</h3>
+          <span class="paso-badge" style="background:#4A2E1A;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">2</span>
+          <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#2A1A10">Buscar o escanear producto</h3>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;color:#64748b;font-size:12.5px;font-weight:600">
+        <div style="display:flex;align-items:center;gap:10px;color:#7D6858;font-size:12.5px;font-weight:600">
           <span style="display:inline-flex;align-items:center;gap:6px">
-            <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#2563eb"></i> Pistola lista
+            <i data-lucide="scan-barcode" style="width:16px;height:16px;stroke-width:2;color:#4A2E1A"></i> Pistola lista
           </span>
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:999px;padding:3px 10px;font-size:11.5px">
-            Pulsa <kbd style="background:white;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700;font-size:12px;color:#0f172a">F2</kbd> para buscar
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F8F1E8;border:1px solid #E3CDB4;color:#33200F;border-radius:999px;padding:3px 10px;font-size:11.5px">
+            Pulsa <kbd style="background:white;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700;font-size:12px;color:#2A1A10">F2</kbd> para buscar
           </span>
         </div>
       </div>
 
       <div style="position:relative">
-        <div style="background:#f8fafc;border:2px dashed #60a5fa;border-radius:12px;padding:12px">
+        <div style="background:#FBF7F1;border:2px dashed #D9B98C;border-radius:12px;padding:12px">
           <input id="comp-buscar" type="text" placeholder="Escanea con la pistola o escribe (código, nombre, categoría)…" autocomplete="off"
-            style="width:100%;padding:13px 15px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit;background:white" />
-          <div style="color:#94a3b8;font-size:11.5px;margin-top:6px">
-            <kbd style="background:#fff;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">↑</kbd>
-            <kbd style="background:#fff;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">↓</kbd> navegar ·
-            <kbd style="background:#fff;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">Enter</kbd> agregar ·
-            <kbd style="background:#fff;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">Esc</kbd> cerrar · escanea para agregar al instante
+            style="width:100%;padding:13px 15px;border:1px solid #DCCFBE;border-radius:9px;font-size:15px;outline:none;box-sizing:border-box;font-family:inherit;background:white" />
+          <div style="color:#A8957F;font-size:11.5px;margin-top:6px">
+            <kbd style="background:#fff;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">↑</kbd>
+            <kbd style="background:#fff;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">↓</kbd> navegar ·
+            <kbd style="background:#fff;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">Enter</kbd> agregar ·
+            <kbd style="background:#fff;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px">Esc</kbd> cerrar · escanea para agregar al instante
           </div>
         </div>
         <div id="comp-resultados" style="margin-top:4px;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto"></div>
@@ -195,15 +195,15 @@ function htmlPaso2BuscarProducto() {
 
 function htmlPanelBorrador() {
   return `
-    <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;display:flex;flex-direction:column;min-height:520px;overflow:hidden">
-      <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px">
-        <span class="paso-badge" style="background:#2563eb;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">3</span>
-        <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#0f172a">Borrador de la compra</h3>
+    <div style="background:white;border:1px solid #EADFD0;border-radius:14px;display:flex;flex-direction:column;min-height:520px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #F2EBE0;display:flex;align-items:center;gap:10px">
+        <span class="paso-badge" style="background:#4A2E1A;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">3</span>
+        <h3 style="font-size:15.5px;font-weight:600;margin:0;color:#2A1A10">Borrador de la compra</h3>
       </div>
 
       <div id="comp-items" style="flex:1;padding:6px 14px;display:flex;flex-direction:column;gap:6px;overflow:auto;min-height:200px"></div>
 
-      <div style="padding:14px 18px;border-top:1px solid #f1f5f9;background:#fafbff">
+      <div style="padding:14px 18px;border-top:1px solid #F2EBE0;background:#FDFAF5">
         <div id="comp-total" style="margin-bottom:10px"></div>
         <button id="comp-btn-registrar"
           style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;background:#15803d;color:white;border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">
@@ -348,13 +348,13 @@ function pintarResultadosBusqueda() {
     const activo = i === _indiceActivo;
     return `
       <button class="comp-res" data-id="${esc(p.id)}"
-        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#2563eb' : '#e2e8f0'};background:${activo ? '#eff6ff' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${activo ? '#4A2E1A' : '#EADFD0'};background:${activo ? '#F8F1E8' : 'white'};border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
         <div style="min-width:0;flex:1">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-family:inherit;font-weight:800;font-size:13px;background:#f1f5f9;color:#0f172a;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
-            <b style="font-size:13.5px;color:#0f172a">${_hl(p.nombre, q)}</b>
+            <span style="font-family:inherit;font-weight:800;font-size:13px;background:#F2EBE0;color:#2A1A10;padding:2px 7px;border-radius:5px">${_hl(p.codigo || '—', q)}</span>
+            <b style="font-size:13.5px;color:#2A1A10">${_hl(p.nombre, q)}</b>
           </div>
-          <div style="color:#64748b;font-size:11.5px;margin-top:3px">Stock: ${fmt(p.stock || 0)} · Último costo: ${money(p.costo || 0)}${p.categoria ? ' · ' + esc(p.categoria) : ''}</div>
+          <div style="color:#7D6858;font-size:11.5px;margin-top:3px">Stock: ${fmt(p.stock || 0)} · Último costo: ${money(p.costo || 0)}${p.categoria ? ' · ' + esc(p.categoria) : ''}</div>
         </div>
         <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:4px 9px;border-radius:6px;flex-shrink:0">＋ Añadir</span>
       </button>
@@ -376,9 +376,9 @@ function pintarItemsCompra() {
 
   if (_items.length === 0) {
     box.innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 14px;color:#94a3b8;min-height:200px">
-        <i data-lucide="package" style="width:38px;height:38px;color:#cbd5e1;stroke-width:1.5"></i>
-        <div style="margin-top:10px;font-weight:600;font-size:13.5px;color:#64748b">Borrador vacío</div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 14px;color:#A8957F;min-height:200px">
+        <i data-lucide="package" style="width:38px;height:38px;color:#DCCFBE;stroke-width:1.5"></i>
+        <div style="margin-top:10px;font-weight:600;font-size:13.5px;color:#7D6858">Borrador vacío</div>
         <div style="margin-top:4px;font-size:12.5px">Busca un producto a la izquierda para agregarlo</div>
       </div>
     `;
@@ -389,7 +389,7 @@ function pintarItemsCompra() {
 
   // Encabezado de tabla
   const head = `
-    <div style="display:grid;grid-template-columns:48px 1fr 90px 100px 64px;gap:8px;align-items:center;padding:6px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;border-bottom:1px solid #f1f5f9;margin-bottom:2px">
+    <div style="display:grid;grid-template-columns:48px 1fr 90px 100px 64px;gap:8px;align-items:center;padding:6px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#A8957F;border-bottom:1px solid #F2EBE0;margin-bottom:2px">
       <span>Cant</span>
       <span>Producto</span>
       <span style="text-align:right">VR/UNIT</span>
@@ -401,11 +401,11 @@ function pintarItemsCompra() {
   const filas = _items.map((it, ix) => {
     const sub = num(it.cantidad) * num(it.costo);
     return `
-      <div class="comp-it-row" data-ix="${ix}" style="display:grid;grid-template-columns:48px 1fr 90px 100px 64px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s">
-        <b style="font-size:14px;color:#0f172a">${fmt(it.cantidad)}</b>
-        <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;color:#0f172a">${esc(it.nombre)}</div>
-        <div style="text-align:right;color:#475569;font-size:12.5px">${money(it.costo)}</div>
-        <b style="text-align:right;font-size:13.5px;color:#0f172a">${money(sub)}</b>
+      <div class="comp-it-row" data-ix="${ix}" style="display:grid;grid-template-columns:48px 1fr 90px 100px 64px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #F2EBE0;cursor:pointer;transition:background .1s">
+        <b style="font-size:14px;color:#2A1A10">${fmt(it.cantidad)}</b>
+        <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;color:#2A1A10">${esc(it.nombre)}</div>
+        <div style="text-align:right;color:#5C4636;font-size:12.5px">${money(it.costo)}</div>
+        <b style="text-align:right;font-size:13.5px;color:#2A1A10">${money(sub)}</b>
         <div style="display:flex;gap:4px;justify-content:flex-end">
           <button class="comp-it-edit" data-ix="${ix}" title="Editar" style="background:#fef3c7;border:1px solid #fde68a;color:#92400e;width:26px;height:26px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
             <i data-lucide="pencil" style="width:13px;height:13px;stroke-width:2.25"></i>
@@ -422,7 +422,7 @@ function pintarItemsCompra() {
 
   // Hover de fila
   box.querySelectorAll('.comp-it-row').forEach((row) => {
-    row.onmouseenter = () => { row.style.background = '#f8fafc'; };
+    row.onmouseenter = () => { row.style.background = '#FBF7F1'; };
     row.onmouseleave = () => { row.style.background = 'transparent'; };
     // Click en la fila (no en botones) abre el modal para editar
     row.addEventListener('click', (e) => {
@@ -453,15 +453,15 @@ function pintarItemsCompra() {
   const totalU = _items.reduce((s, it) => s + num(it.cantidad), 0);
   if (tot) {
     tot.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#64748b;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#7D6858;margin-bottom:6px">
         <span>Subtotal</span>
-        <span style="color:#0f172a;font-weight:600">${money(total)}</span>
+        <span style="color:#2A1A10;font-weight:600">${money(total)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:8px">
-        <span style="font-size:18px;font-weight:800;color:#0f172a;letter-spacing:-0.02em">TOTAL</span>
-        <span style="font-size:22px;font-weight:800;color:#1d4ed8;letter-spacing:-0.02em">${money(total)}</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #EADFD0;padding-top:8px">
+        <span style="font-size:18px;font-weight:800;color:#2A1A10;letter-spacing:-0.02em">TOTAL</span>
+        <span style="font-size:22px;font-weight:800;color:#33200F;letter-spacing:-0.02em">${money(total)}</span>
       </div>
-      <div style="font-size:11.5px;color:#94a3b8;text-align:right;margin-top:4px">${fmt(_items.length)} producto(s) · ${fmt(totalU)} unidad(es)</div>
+      <div style="font-size:11.5px;color:#A8957F;text-align:right;margin-top:4px">${fmt(_items.length)} producto(s) · ${fmt(totalU)} unidad(es)</div>
     `;
   }
 }
@@ -498,26 +498,26 @@ function abrirModalCantidadCompra(prodId) {
 
   const contenido = `
     <div style="text-align:left">
-      <div style="font-weight:700;font-size:16px;color:#0f172a">${esc(p.nombre)}</div>
-      <div style="color:#64748b;font-size:12.5px;margin-bottom:14px">${esc(p.codigo || '')} · Stock actual: <b>${fmt(p.stock || 0)}</b> · Último costo: <b>${money(p.costo || 0)}</b>${yaEn ? ' · <span style="color:#a16207">Ya está en el pedido (se reemplaza)</span>' : ''}</div>
+      <div style="font-weight:700;font-size:16px;color:#2A1A10">${esc(p.nombre)}</div>
+      <div style="color:#7D6858;font-size:12.5px;margin-bottom:14px">${esc(p.codigo || '')} · Stock actual: <b>${fmt(p.stock || 0)}</b> · Último costo: <b>${money(p.costo || 0)}</b>${yaEn ? ' · <span style="color:#a16207">Ya está en el pedido (se reemplaza)</span>' : ''}</div>
 
-      <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Cantidad a comprar *</div>
+      <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Cantidad a comprar *</div>
       <input id="comp-mc-cant" data-miles type="text" inputmode="numeric" value="${cant}" placeholder="0"
-        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center" />
+        style="width:100%;padding:12px 14px;border:1px solid #DCCFBE;border-radius:9px;font-size:22px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box;text-align:center" />
 
-      <div style="margin-top:14px;font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Costo unitario (lo que pagas al proveedor) *</div>
+      <div style="margin-top:14px;font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Costo unitario (lo que pagas al proveedor) *</div>
       <input id="comp-mc-costo" data-miles type="text" inputmode="numeric" value="${costo}" placeholder="0"
-        style="width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:9px;font-size:18px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
+        style="width:100%;padding:12px 14px;border:1px solid #DCCFBE;border-radius:9px;font-size:18px;font-weight:700;font-family:inherit;outline:none;box-sizing:border-box" />
 
-      <div id="comp-mc-sub" style="margin-top:12px;text-align:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:11px;font-size:14px">
-        Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:inherit">${money(cant * costo)}</b>
+      <div id="comp-mc-sub" style="margin-top:12px;text-align:center;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:11px;font-size:14px">
+        Subtotal: <b style="font-size:18px;color:#33200F;font-family:inherit">${money(cant * costo)}</b>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:18px">
         <button id="comp-mc-cancelar"
-          style="flex:1;padding:12px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+          style="flex:1;padding:12px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
         <button id="comp-mc-aceptar"
-          style="flex:1;padding:12px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(37, 99, 235,.35)">${yaEn ? 'Reemplazar' : '＋ Agregar'}</button>
+          style="flex:1;padding:12px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(74, 46, 26,.35)">${yaEn ? 'Reemplazar' : '＋ Agregar'}</button>
       </div>
     </div>
   `;
@@ -534,7 +534,7 @@ function abrirModalCantidadCompra(prodId) {
   const recalc = () => {
     const c = num(inpC.value);
     const k = num(inpK.value);
-    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#1d4ed8;font-family:inherit">${money(c * k)}</b>`;
+    sub.innerHTML = `Subtotal: <b style="font-size:18px;color:#33200F;font-family:inherit">${money(c * k)}</b>`;
   };
   inpC.addEventListener('input', recalc);
   inpK.addEventListener('input', recalc);
@@ -674,14 +674,14 @@ function abrirSelectorProveedor() {
   const contenido = `
     <div style="margin-bottom:12px">
       <input id="prov-sel-q" type="text" placeholder="Buscar proveedor..." autocomplete="off"
-        style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+        style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
     </div>
     <div id="prov-sel-list" style="display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto"></div>
     <div style="display:flex;gap:10px;margin-top:18px">
       <button id="prov-sel-cancel"
-        style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
       <button id="prov-sel-nuevo"
-        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">+ Crear proveedor</button>
+        style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">+ Crear proveedor</button>
     </div>
   `;
   const m = Modal.abrir({ titulo: 'Seleccionar proveedor', contenido, ancho: 'md' });
@@ -689,17 +689,17 @@ function abrirSelectorProveedor() {
   const pintar = (lista) => {
     const box = m.body.querySelector('#prov-sel-list');
     if (lista.length === 0) {
-      box.innerHTML = `<div style="text-align:center;padding:24px;color:#64748b;font-size:13.5px">No hay proveedores que coincidan.</div>`;
+      box.innerHTML = `<div style="text-align:center;padding:24px;color:#7D6858;font-size:13.5px">No hay proveedores que coincidan.</div>`;
       return;
     }
     box.innerHTML = lista.map((p) => `
       <button class="prov-sel-item" data-id="${esc(p.id)}"
-        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 13px;border:1px solid #e2e8f0;background:white;border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
+        style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 13px;border:1px solid #EADFD0;background:white;border-radius:9px;cursor:pointer;font-family:inherit;text-align:left">
         <div style="min-width:0;flex:1">
-          <b style="font-size:13.5px;color:#0f172a">${esc(p.nombre)}</b>
-          <div style="font-size:11.5px;color:#64748b">${[p.nit, p.telefono, p.ciudad].filter(Boolean).map(esc).join(' · ') || 'Sin datos'}</div>
+          <b style="font-size:13.5px;color:#2A1A10">${esc(p.nombre)}</b>
+          <div style="font-size:11.5px;color:#7D6858">${[p.nit, p.telefono, p.ciudad].filter(Boolean).map(esc).join(' · ') || 'Sin datos'}</div>
         </div>
-        <i data-lucide="chevron-right" style="width:14px;height:14px;color:#94a3b8"></i>
+        <i data-lucide="chevron-right" style="width:14px;height:14px;color:#A8957F"></i>
       </button>
     `).join('');
     refrescarIconos(m.body);
@@ -776,20 +776,20 @@ function htmlBarraFiltroFechas(estado, idPrefix = 'flt') {
     ['mesPasado', 'Mes pasado'], ['anio', 'Este año'], ['todo', 'Todo'],
   ];
   return `
-    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 11px;margin-bottom:12px">
-      <span style="font-size:10.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Periodo</span>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:9px 11px;margin-bottom:12px">
+      <span style="font-size:10.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Periodo</span>
       ${presets.map(([k, label]) => `
         <button class="${idPrefix}-preset" data-preset="${k}"
-          style="padding:6px 11px;border:1px solid ${estado.preset === k ? '#2563eb' : '#e2e8f0'};background:${estado.preset === k ? '#2563eb' : 'white'};color:${estado.preset === k ? 'white' : '#475569'};border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">
+          style="padding:6px 11px;border:1px solid ${estado.preset === k ? '#4A2E1A' : '#EADFD0'};background:${estado.preset === k ? '#4A2E1A' : 'white'};color:${estado.preset === k ? 'white' : '#5C4636'};border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">
           ${label}
         </button>
       `).join('')}
       <span style="display:inline-flex;align-items:center;gap:4px;margin-left:6px">
         <input id="${idPrefix}-desde" type="date" value="${esc(estado.desde || '')}"
-          style="padding:6px 9px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;outline:none;font-family:inherit" />
-        <span style="color:#94a3b8;font-size:11px">→</span>
+          style="padding:6px 9px;border:1px solid #DCCFBE;border-radius:7px;font-size:12px;outline:none;font-family:inherit" />
+        <span style="color:#A8957F;font-size:11px">→</span>
         <input id="${idPrefix}-hasta" type="date" value="${esc(estado.hasta || '')}"
-          style="padding:6px 9px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;outline:none;font-family:inherit" />
+          style="padding:6px 9px;border:1px solid #DCCFBE;border-radius:7px;font-size:12px;outline:none;font-family:inherit" />
       </span>
     </div>
   `;
@@ -851,9 +851,9 @@ function abrirGestionProveedores() {
 
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 13px">
-        <div style="font-size:10.5px;color:#1d4ed8;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Proveedores</div>
-        <div style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px">${fmt(_proveedores.length)}</div>
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:10px;padding:11px 13px">
+        <div style="font-size:10.5px;color:#33200F;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Proveedores</div>
+        <div style="font-size:20px;font-weight:800;color:#2A1A10;margin-top:2px">${fmt(_proveedores.length)}</div>
       </div>
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:11px 13px">
         <div style="font-size:10.5px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Por pagar</div>
@@ -863,27 +863,27 @@ function abrirGestionProveedores() {
         <div style="font-size:10.5px;color:#166534;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Compras del periodo</div>
         <div id="prov-gest-kpi-periodo" style="font-size:20px;font-weight:800;color:#166534;margin-top:2px">${money(totalPeriodo)}</div>
       </div>
-      <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;padding:11px 13px">
-        <div style="font-size:10.5px;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Total del periodo</div>
-        <div id="prov-gest-kpi-total" style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px">${money(totalGeneral)}</div>
+      <div style="background:#F2EBE0;border:1px solid #EADFD0;border-radius:10px;padding:11px 13px">
+        <div style="font-size:10.5px;color:#5C4636;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Total del periodo</div>
+        <div id="prov-gest-kpi-total" style="font-size:20px;font-weight:800;color:#2A1A10;margin-top:2px">${money(totalGeneral)}</div>
       </div>
     </div>
 
     <!-- Barra: buscador + nuevo -->
     <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center">
       <input id="prov-gest-q" type="text" placeholder="Buscar por nombre, NIT, contacto, ciudad…" autocomplete="off"
-        style="flex:1;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
+        style="flex:1;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit" />
       <button id="prov-gest-nuevo"
-        style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">
+        style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;background:#4A2E1A;color:white;border:0;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">
         <i data-lucide="plus" style="width:15px;height:15px;stroke-width:2.25"></i> Nuevo proveedor
       </button>
     </div>
 
     <!-- Tabla -->
-    <div style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;max-height:48vh;overflow-y:auto">
+    <div style="border:1px solid #EADFD0;border-radius:12px;overflow:hidden;max-height:48vh;overflow-y:auto">
       <table id="prov-gest-tbl" style="width:100%;border-collapse:collapse;font-size:13.5px">
         <thead>
-          <tr style="background:#f1f5f9;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">
+          <tr style="background:#F2EBE0;color:#5C4636;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">
             <th style="padding:10px 12px;text-align:left">Proveedor</th>
             <th style="padding:10px 12px;text-align:left">Contacto</th>
             <th style="padding:10px 12px;text-align:right;white-space:nowrap">Compras del periodo</th>
@@ -896,7 +896,7 @@ function abrirGestionProveedores() {
     </div>
 
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px">
-      <button id="prov-gest-cerrar" style="padding:11px 22px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cerrar</button>
+      <button id="prov-gest-cerrar" style="padding:11px 22px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cerrar</button>
     </div>
   `;
 
@@ -936,35 +936,35 @@ function abrirGestionProveedores() {
       : filas;
     const body = m.body.querySelector('#prov-gest-body');
     if (visibles.length === 0) {
-      body.innerHTML = `<tr><td colspan="5" style="padding:30px;text-align:center;color:#94a3b8;font-size:13.5px">${_proveedores.length === 0 ? 'No hay proveedores. Crea el primero.' : 'Sin coincidencias.'}</td></tr>`;
+      body.innerHTML = `<tr><td colspan="5" style="padding:30px;text-align:center;color:#A8957F;font-size:13.5px">${_proveedores.length === 0 ? 'No hay proveedores. Crea el primero.' : 'Sin coincidencias.'}</td></tr>`;
       refrescarIconos(m.body);
       return;
     }
     body.innerHTML = visibles.map((r) => {
       const p = r.proveedor;
-      const contacto = [p.telefono, p.email].filter(Boolean).map(esc).join(' · ') || '<span style="color:#cbd5e1">—</span>';
+      const contacto = [p.telefono, p.email].filter(Boolean).map(esc).join(' · ') || '<span style="color:#DCCFBE">—</span>';
       const sub = [p.nit, p.ciudad].filter(Boolean).map(esc).join(' · ');
       return `
-        <tr data-id="${esc(p.id)}" style="border-bottom:1px solid #f1f5f9">
+        <tr data-id="${esc(p.id)}" style="border-bottom:1px solid #F2EBE0">
           <td style="padding:11px 12px">
-            <div style="font-weight:600;color:#0f172a">${esc(p.nombre)}</div>
-            ${sub ? `<div style="font-size:12px;color:#64748b">${sub}</div>` : ''}
+            <div style="font-weight:600;color:#2A1A10">${esc(p.nombre)}</div>
+            ${sub ? `<div style="font-size:12px;color:#7D6858">${sub}</div>` : ''}
           </td>
-          <td style="padding:11px 12px;color:#475569;font-size:12.5px">
+          <td style="padding:11px 12px;color:#5C4636;font-size:12.5px">
             ${contacto}
-            ${p.contacto ? `<div style="font-size:11.5px;color:#94a3b8">${esc(p.contacto)}</div>` : ''}
+            ${p.contacto ? `<div style="font-size:11.5px;color:#A8957F">${esc(p.contacto)}</div>` : ''}
           </td>
           <td style="padding:11px 12px;text-align:right">
-            <div style="font-weight:700;color:#0f172a;font-family:inherit">${money(r.total)}</div>
-            <div style="font-size:11.5px;color:#64748b">${fmt(r.count)} compra(s)</div>
+            <div style="font-weight:700;color:#2A1A10;font-family:inherit">${money(r.total)}</div>
+            <div style="font-size:11.5px;color:#7D6858">${fmt(r.count)} compra(s)</div>
           </td>
           <td style="padding:11px 12px;text-align:right">
             ${r.saldo > 0
               ? `<span style="background:#fef3c7;color:#92400e;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px">${money(r.saldo)}</span>`
-              : `<span style="color:#cbd5e1;font-size:12px">—</span>`}
+              : `<span style="color:#DCCFBE;font-size:12px">—</span>`}
           </td>
           <td style="padding:11px 12px;text-align:right;white-space:nowrap">
-            <button class="prov-gest-ver" data-id="${esc(p.id)}" title="Ver compras" style="width:30px;height:30px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-right:3px">
+            <button class="prov-gest-ver" data-id="${esc(p.id)}" title="Ver compras" style="width:30px;height:30px;border:1px solid #E3CDB4;background:#F8F1E8;color:#33200F;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-right:3px">
               <i data-lucide="eye" style="width:14px;height:14px;stroke-width:2"></i>
             </button>
             <button class="prov-gest-edit" data-id="${esc(p.id)}" title="Editar" style="width:30px;height:30px;border:1px solid #fde68a;background:#fef3c7;color:#92400e;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-right:3px">
@@ -1066,7 +1066,7 @@ function abrirInformeProveedor(provId) {
 
   const buildFilasHTML = () => {
     if (comprasFiltradas.length === 0) {
-      return `<tr><td colspan="5" style="padding:24px;text-align:center;color:#94a3b8;font-size:13.5px">${todasSus.length === 0 ? 'Sin compras registradas a este proveedor.' : 'Sin compras en el rango seleccionado.'}</td></tr>`;
+      return `<tr><td colspan="5" style="padding:24px;text-align:center;color:#A8957F;font-size:13.5px">${todasSus.length === 0 ? 'Sin compras registradas a este proveedor.' : 'Sin compras en el rango seleccionado.'}</td></tr>`;
     }
     return comprasFiltradas.map((c) => {
       const pagada = c.tipoPago === 'credito' ? (Number(c.saldo) || 0) <= 0.5 : true;
@@ -1074,11 +1074,11 @@ function abrirInformeProveedor(provId) {
         ? (pagada ? '<span style="background:#dcfce7;color:#166534;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:6px">Pagada</span>' : `<span style="background:#fef3c7;color:#92400e;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:6px">Saldo ${money(c.saldo)}</span>`)
         : '<span style="background:#dcfce7;color:#166534;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:6px">Contado</span>';
       return `
-        <tr style="border-bottom:1px solid #f1f5f9">
-          <td style="padding:9px 12px;color:#475569">${fechaFmt(c.fecha)}</td>
-          <td style="padding:9px 12px;color:#0f172a">${esc(c.ref || '—')}</td>
-          <td style="padding:9px 12px;color:#475569;font-size:12.5px">${esc(c.metodoPago || '—')}</td>
-          <td style="padding:9px 12px;text-align:right;font-weight:700;color:#0f172a">${money(c.total)}</td>
+        <tr style="border-bottom:1px solid #F2EBE0">
+          <td style="padding:9px 12px;color:#5C4636">${fechaFmt(c.fecha)}</td>
+          <td style="padding:9px 12px;color:#2A1A10">${esc(c.ref || '—')}</td>
+          <td style="padding:9px 12px;color:#5C4636;font-size:12.5px">${esc(c.metodoPago || '—')}</td>
+          <td style="padding:9px 12px;text-align:right;font-weight:700;color:#2A1A10">${money(c.total)}</td>
           <td style="padding:9px 12px;text-align:right">${estado}</td>
         </tr>
       `;
@@ -1089,31 +1089,31 @@ function abrirInformeProveedor(provId) {
 
   const contenido = `
     <div style="margin-bottom:12px">
-      <div style="font-weight:700;font-size:16px;color:#0f172a">${esc(p.nombre)}</div>
-      <div style="font-size:12.5px;color:#64748b">${[p.nit, p.telefono, p.ciudad, p.contacto].filter(Boolean).map(esc).join(' · ') || 'Sin datos'}</div>
+      <div style="font-weight:700;font-size:16px;color:#2A1A10">${esc(p.nombre)}</div>
+      <div style="font-size:12.5px;color:#7D6858">${[p.nit, p.telefono, p.ciudad, p.contacto].filter(Boolean).map(esc).join(' · ') || 'Sin datos'}</div>
     </div>
 
     ${htmlBarraFiltroFechas(filtro, 'inf-prov-flt')}
 
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 13px">
-        <div style="font-size:10.5px;color:#1d4ed8;font-weight:700;text-transform:uppercase">Compras</div>
-        <div id="inf-prov-kpi-cant" style="font-size:19px;font-weight:800;color:#0f172a;margin-top:2px">${fmt(comprasFiltradas.length)}</div>
+      <div style="background:#F8F1E8;border:1px solid #E3CDB4;border-radius:10px;padding:11px 13px">
+        <div style="font-size:10.5px;color:#33200F;font-weight:700;text-transform:uppercase">Compras</div>
+        <div id="inf-prov-kpi-cant" style="font-size:19px;font-weight:800;color:#2A1A10;margin-top:2px">${fmt(comprasFiltradas.length)}</div>
       </div>
       <div style="background:#dcfce7;border:1px solid #86efac;border-radius:10px;padding:11px 13px">
         <div style="font-size:10.5px;color:#166534;font-weight:700;text-transform:uppercase">Total comprado</div>
         <div id="inf-prov-kpi-total" style="font-size:19px;font-weight:800;color:#166534;margin-top:2px">${money(total)}</div>
       </div>
-      <div id="inf-prov-kpi-pagar-box" style="background:${saldoPend > 0 ? '#fef3c7' : '#f1f5f9'};border:1px solid ${saldoPend > 0 ? '#fde68a' : '#e2e8f0'};border-radius:10px;padding:11px 13px">
-        <div style="font-size:10.5px;color:${saldoPend > 0 ? '#92400e' : '#475569'};font-weight:700;text-transform:uppercase">Por pagar</div>
-        <div id="inf-prov-kpi-pagar" style="font-size:19px;font-weight:800;color:${saldoPend > 0 ? '#92400e' : '#0f172a'};margin-top:2px">${money(saldoPend)}</div>
+      <div id="inf-prov-kpi-pagar-box" style="background:${saldoPend > 0 ? '#fef3c7' : '#F2EBE0'};border:1px solid ${saldoPend > 0 ? '#fde68a' : '#EADFD0'};border-radius:10px;padding:11px 13px">
+        <div style="font-size:10.5px;color:${saldoPend > 0 ? '#92400e' : '#5C4636'};font-weight:700;text-transform:uppercase">Por pagar</div>
+        <div id="inf-prov-kpi-pagar" style="font-size:19px;font-weight:800;color:${saldoPend > 0 ? '#92400e' : '#2A1A10'};margin-top:2px">${money(saldoPend)}</div>
       </div>
     </div>
 
-    <div style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;max-height:45vh;overflow-y:auto">
+    <div style="border:1px solid #EADFD0;border-radius:12px;overflow:hidden;max-height:45vh;overflow-y:auto">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
-          <tr style="background:#f1f5f9;color:#475569;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">
+          <tr style="background:#F2EBE0;color:#5C4636;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">
             <th style="padding:9px 12px;text-align:left">Fecha</th>
             <th style="padding:9px 12px;text-align:left">N° / Ref</th>
             <th style="padding:9px 12px;text-align:left">Método</th>
@@ -1126,7 +1126,7 @@ function abrirInformeProveedor(provId) {
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-top:14px">
-      <button id="inf-prov-cerrar" style="padding:11px 22px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cerrar</button>
+      <button id="inf-prov-cerrar" style="padding:11px 22px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cerrar</button>
     </div>
   `;
 
@@ -1151,8 +1151,8 @@ function abrirInformeProveedor(provId) {
     if (kTotal) kTotal.textContent = money(total);
     if (kPagar) kPagar.textContent = money(saldoPend);
     if (kPagarBox) {
-      kPagarBox.style.background = saldoPend > 0 ? '#fef3c7' : '#f1f5f9';
-      kPagarBox.style.borderColor = saldoPend > 0 ? '#fde68a' : '#e2e8f0';
+      kPagarBox.style.background = saldoPend > 0 ? '#fef3c7' : '#F2EBE0';
+      kPagarBox.style.borderColor = saldoPend > 0 ? '#fde68a' : '#EADFD0';
     }
     // Refrescar tabla
     const tbody = mi.body.querySelector('#inf-prov-body');
@@ -1180,22 +1180,22 @@ function abrirFormProveedor(prov = null) {
     <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
       ${campos.map(([k, label, type]) => `
         <div ${k === 'direccion' || k === 'email' ? 'style="grid-column:1/-1"' : ''}>
-          <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${label}</div>
+          <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">${label}</div>
           <input id="prov-${k}" type="${type}" value="${esc(datos[k] || '')}"
-            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+            style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
         </div>
       `).join('')}
       <div style="grid-column:1/-1">
-        <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
+        <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Nota</div>
         <input id="prov-nota" type="text" value="${esc(datos.nota || '')}"
-          style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+          style="width:100%;padding:10px 12px;border:1px solid #DCCFBE;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:18px">
       <button id="prov-cancel"
-        style="flex:1;padding:11px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:11px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
       <button id="prov-save"
-        style="flex:1;padding:11px;border:0;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar</button>
+        style="flex:1;padding:11px;border:0;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">Guardar</button>
     </div>
   `;
 
@@ -1273,7 +1273,7 @@ const TECLA_METODO_COMPRA = METODOS_COMPRA.reduce((acc, m) => (acc[m.key.toLower
 // Bancos para "Transferencia" (mismos logos y atajos que Ventas)
 const BANCOS_COMPRA = [
   { id: 'daviplata', nombre: 'Daviplata', key: 'D', color: '#E32219',
-    logo: '<svg viewBox="0 0 130 30" xmlns="http://www.w3.org/2000/svg" style="height:22px;display:block" aria-label="Daviplata"><text x="0" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#E32219" letter-spacing="-1.5">DAVI</text><text x="64" y="24" font-family="Inter,sans-serif" font-weight="700" font-size="24" fill="#0f172a" letter-spacing="-0.5">plata</text></svg>',
+    logo: '<svg viewBox="0 0 130 30" xmlns="http://www.w3.org/2000/svg" style="height:22px;display:block" aria-label="Daviplata"><text x="0" y="24" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#E32219" letter-spacing="-1.5">DAVI</text><text x="64" y="24" font-family="Inter,sans-serif" font-weight="700" font-size="24" fill="#2A1A10" letter-spacing="-0.5">plata</text></svg>',
   },
   { id: 'nequi', nombre: 'Nequi', key: 'N', color: '#FF1F8F',
     logo: '<svg viewBox="0 0 90 30" xmlns="http://www.w3.org/2000/svg" style="height:22px;display:block" aria-label="Nequi"><rect x="2" y="3" width="9" height="9" fill="#FF1F8F"/><text x="13" y="25" font-family="Inter,sans-serif" font-weight="900" font-size="26" fill="#2A0A4A" letter-spacing="-1">Nequi</text></svg>',
@@ -1289,38 +1289,38 @@ function abrirRegistroPago() {
 
       <!-- COLUMNA IZQUIERDA: total + tipo de pago + métodos -->
       <div>
-        <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
-        <div style="background:#eff6ff;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
-          <div style="font-size:26px;font-weight:800;color:#1d4ed8;letter-spacing:-0.025em">${money(total)}</div>
+        <div style="font-size:13px;color:#7D6858;font-weight:600;margin-bottom:6px;text-align:center">Total a pagar</div>
+        <div style="background:#F8F1E8;border-radius:12px;padding:20px 12px;margin-bottom:16px;text-align:center">
+          <div style="font-size:26px;font-weight:800;color:#33200F;letter-spacing:-0.025em">${money(total)}</div>
         </div>
 
-        <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">Tipo</div>
+        <div style="font-size:12px;color:#A8957F;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">Tipo</div>
         <div style="display:flex;gap:7px;margin-bottom:14px">
-          <button id="comp-pago-contado" style="flex:1;padding:10px;border:1.5px solid #2563eb;background:#2563eb;color:white;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Contado</button>
-          <button id="comp-pago-credito" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;background:white;color:#475569;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Crédito</button>
+          <button id="comp-pago-contado" style="flex:1;padding:10px;border:1.5px solid #4A2E1A;background:#4A2E1A;color:white;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Contado</button>
+          <button id="comp-pago-credito" style="flex:1;padding:10px;border:1.5px solid #EADFD0;background:white;color:#5C4636;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit">Crédito</button>
         </div>
 
         <div id="comp-metodo-wrap">
-          <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">Método de pago</div>
+          <div style="font-size:12px;color:#A8957F;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px">Método de pago</div>
           <div id="comp-chips" style="display:flex;flex-direction:column;gap:7px">
             ${METODOS_COMPRA.map(m => `
               <button class="comp-pm-chip" data-pm="${m.id}"
-                style="padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#475569;text-align:left;display:flex;align-items:center;gap:9px"
-              ><kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#475569">${m.key}</kbd><span>${m.label}</span></button>
+                style="padding:10px 12px;border:1.5px solid #EADFD0;border-radius:10px;background:white;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;color:#5C4636;text-align:left;display:flex;align-items:center;gap:9px"
+              ><kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:#F2EBE0;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:5px;font-family:inherit;font-weight:700;font-size:11.5px;color:#5C4636">${m.key}</kbd><span>${m.label}</span></button>
             `).join('')}
           </div>
         </div>
       </div>
 
       <!-- COLUMNA DERECHA: detalle según selección -->
-      <div style="border-left:1px solid #e2e8f0;padding-left:24px;min-width:0;display:flex;flex-direction:column">
+      <div style="border-left:1px solid #EADFD0;padding-left:24px;min-width:0;display:flex;flex-direction:column">
         <div id="comp-pago-area" style="flex:1"></div>
       </div>
     </div>
 
-    <div style="display:flex;gap:10px;margin-top:20px;border-top:1px solid #e2e8f0;padding-top:16px">
+    <div style="display:flex;gap:10px;margin-top:20px;border-top:1px solid #EADFD0;padding-top:16px">
       <button id="comp-pago-cancel"
-        style="flex:1;padding:13px;border:1px solid #e2e8f0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#475569">Cancelar</button>
+        style="flex:1;padding:13px;border:1px solid #EADFD0;background:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;color:#5C4636">Cancelar</button>
       <button id="comp-pago-confirmar"
         style="flex:1.4;padding:13px;border:0;background:#15803d;color:white;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;box-shadow:0 4px 12px -2px rgba(21,128,61,.35)">Confirmar</button>
     </div>
@@ -1347,15 +1347,15 @@ function abrirRegistroPago() {
   const marcarChipMetodo = () => {
     m.body.querySelectorAll('.comp-pm-chip').forEach((btn) => {
       const activo = btn.dataset.pm === metodoPago;
-      btn.style.background = activo ? '#2563eb' : 'white';
-      btn.style.color = activo ? 'white' : '#475569';
-      btn.style.borderColor = activo ? '#2563eb' : '#e2e8f0';
+      btn.style.background = activo ? '#4A2E1A' : 'white';
+      btn.style.color = activo ? 'white' : '#5C4636';
+      btn.style.borderColor = activo ? '#4A2E1A' : '#EADFD0';
       // El kbd interno también cambia de tono
       const kbd = btn.querySelector('kbd');
       if (kbd) {
-        kbd.style.background = activo ? 'rgba(255,255,255,.18)' : '#f1f5f9';
-        kbd.style.color = activo ? 'white' : '#475569';
-        kbd.style.borderColor = activo ? 'rgba(255,255,255,.4)' : '#cbd5e1';
+        kbd.style.background = activo ? 'rgba(255,255,255,.18)' : '#F2EBE0';
+        kbd.style.color = activo ? 'white' : '#5C4636';
+        kbd.style.borderColor = activo ? 'rgba(255,255,255,.4)' : '#DCCFBE';
       }
     });
   };
@@ -1365,9 +1365,9 @@ function abrirRegistroPago() {
     m.body.querySelectorAll('.comp-tb-chip').forEach((btn) => {
       const def = BANCOS_COMPRA.find(x => x.id === btn.dataset.tb);
       const activo = btn.dataset.tb === b;
-      btn.style.borderColor = activo && def ? def.color : '#e2e8f0';
+      btn.style.borderColor = activo && def ? def.color : '#EADFD0';
       btn.style.boxShadow = activo && def ? `0 0 0 3px ${def.color}22` : 'none';
-      btn.style.background = activo ? '#fafbff' : 'white';
+      btn.style.background = activo ? '#FDFAF5' : 'white';
     });
     const lbl = m.body.querySelector('#comp-trans-banco');
     if (lbl) {
@@ -1392,14 +1392,14 @@ function abrirRegistroPago() {
             Quedará pendiente con <b>${esc(_proveedorSel?.nombre || 'el proveedor')}</b> como cuenta por pagar.
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha de vencimiento</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fecha de vencimiento</div>
             <input id="comp-vence" type="date" value="${venceDef}"
-              style="width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
+              style="width:100%;padding:11px 13px;border:1px solid #DCCFBE;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit" />
           </div>
           <div>
-            <div style="font-size:11.5px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
+            <div style="font-size:11.5px;color:#7D6858;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abono inicial (opcional)</div>
             <input id="comp-abono-ini" data-miles type="text" inputmode="numeric" placeholder="0"
-              style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
+              style="width:100%;padding:12px 14px;border:1.5px solid #DCCFBE;border-radius:10px;font-size:18px;font-weight:700;outline:none;box-sizing:border-box;font-family:inherit;text-align:right" />
           </div>
         </div>
       `;
@@ -1412,17 +1412,17 @@ function abrirRegistroPago() {
     if (wrapMetodo) wrapMetodo.style.display = '';
     if (metodoPago === 'transferencia') {
       area.innerHTML = `
-        <div style="font-size:13.5px;color:#475569;font-weight:600;margin-bottom:10px">¿Por dónde pagas?</div>
+        <div style="font-size:13.5px;color:#5C4636;font-weight:600;margin-bottom:10px">¿Por dónde pagas?</div>
         <div id="comp-bancos" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
           ${BANCOS_COMPRA.map(b => `
             <button class="comp-tb-chip" data-tb="${b.id}"
-              style="padding:14px 16px;border:2px solid #e2e8f0;background:white;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:14px;font-family:inherit;transition:all .12s ease">
-              <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;font-family:inherit;font-weight:700;font-size:13px;color:#475569">${b.key}</kbd>
+              style="padding:14px 16px;border:2px solid #EADFD0;background:white;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:14px;font-family:inherit;transition:all .12s ease">
+              <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#F2EBE0;border:1px solid #DCCFBE;border-bottom-width:2px;border-radius:6px;font-family:inherit;font-weight:700;font-size:13px;color:#5C4636">${b.key}</kbd>
               <span style="flex:1;text-align:left">${b.logo}</span>
             </button>
           `).join('')}
         </div>
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;font-size:14px;color:#475569">
+        <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:16px;text-align:center;font-size:14px;color:#5C4636">
           Transferencia por <b id="comp-trans-banco">${esc(BANCOS_COMPRA.find(b=>b.id===bancoTransf)?.nombre||'')}</b>
           por <b>${money(total)}</b>
         </div>
@@ -1436,10 +1436,10 @@ function abrirRegistroPago() {
 
     // efectivo o qr
     area.innerHTML = `
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;text-align:center;font-size:14px;color:#475569">
+      <div style="background:#FBF7F1;border:1px solid #EADFD0;border-radius:10px;padding:18px;text-align:center;font-size:14px;color:#5C4636">
         Pago en <b>${metodoPago === 'qr' ? 'código QR' : 'Efectivo'}</b>
         por <b>${money(total)}</b><br>
-        <span style="color:#94a3b8;font-size:13px">Confirma cuando hayas entregado el pago al proveedor.</span>
+        <span style="color:#A8957F;font-size:13px">Confirma cuando hayas entregado el pago al proveedor.</span>
       </div>
     `;
     setTimeout(() => enfocarConfirmar(), 0);
@@ -1455,9 +1455,9 @@ function abrirRegistroPago() {
     const c = m.body.querySelector('#comp-pago-contado');
     const cr = m.body.querySelector('#comp-pago-credito');
     const setOn = (btn, on) => {
-      btn.style.background = on ? '#2563eb' : 'white';
-      btn.style.color = on ? 'white' : '#475569';
-      btn.style.borderColor = on ? '#2563eb' : '#e2e8f0';
+      btn.style.background = on ? '#4A2E1A' : 'white';
+      btn.style.color = on ? 'white' : '#5C4636';
+      btn.style.borderColor = on ? '#4A2E1A' : '#EADFD0';
     };
     setOn(c, tipoPago === 'contado');
     setOn(cr, tipoPago === 'credito');

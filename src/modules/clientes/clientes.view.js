@@ -136,7 +136,7 @@ function htmlHeader(totalGeneral, totalVisible, filtro) {
   const acciones = `
     <button
       id="btn-nuevo-cliente"
-      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2563eb;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#4A2E1A;color:white;border:0;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;box-shadow:0 4px 8px -2px #2563eb40"
     >
       <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
       Nuevo cliente
@@ -156,9 +156,9 @@ function htmlKpis() {
   const conEmail = _clientes.filter((c) => c.email).length;
   const conPrecios = _clientes.filter((c) => c.preciosEspeciales && Object.keys(c.preciosEspeciales).length > 0).length;
   return kpiGrid([
-    { label: 'Clientes registrados', valor: fmt(total), sub: 'En la base', icono: 'users', color: '#2563eb' },
+    { label: 'Clientes registrados', valor: fmt(total), sub: 'En la base', icono: 'users', color: '#4A2E1A' },
     { label: 'Con teléfono', valor: fmt(conTel), sub: 'Contactables', icono: 'phone', color: '#16a34a' },
-    { label: 'Con correo', valor: fmt(conEmail), sub: 'Email registrado', icono: 'mail', color: '#7c3aed' },
+    { label: 'Con correo', valor: fmt(conEmail), sub: 'Email registrado', icono: 'mail', color: '#EE7623' },
     { label: 'Precios especiales', valor: fmt(conPrecios), sub: 'Tarifa personalizada', icono: 'badge-percent', color: '#d97706' },
   ]);
 }
@@ -166,25 +166,25 @@ function htmlKpis() {
 function htmlBuscador(filtro) {
   return `
     <div style="position:relative;margin-bottom:16px;max-width:480px">
-      <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#94a3b8;pointer-events:none"></i>
+      <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#A8957F;pointer-events:none"></i>
       <input
         id="cli-buscar"
         type="text"
         value="${esc(filtro || '')}"
         placeholder="Buscar por nombre, teléfono, email o documento..."
         autocomplete="off"
-        style="width:100%;padding:10px 38px 10px 38px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;color:#0f172a;box-sizing:border-box"
+        style="width:100%;padding:10px 38px 10px 38px;border:1px solid #DCCFBE;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;color:#2A1A10;box-sizing:border-box"
       />
       ${filtro ? `
         <button
           id="cli-limpiar-busqueda"
           title="Limpiar búsqueda (Esc)"
-          style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#f1f5f9;border:0;border-radius:6px;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center"
+          style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#F2EBE0;border:0;border-radius:6px;cursor:pointer;color:#7D6858;display:flex;align-items:center;justify-content:center"
         >
           <i data-lucide="x" style="width:14px;height:14px"></i>
         </button>
       ` : `
-        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#94a3b8;font-family:inherit;background:#f1f5f9;padding:3px 6px;border-radius:5px">/</span>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#A8957F;font-family:inherit;background:#F2EBE0;padding:3px 6px;border-radius:5px">/</span>
       `}
     </div>
   `;
@@ -192,7 +192,7 @@ function htmlBuscador(filtro) {
 
 function htmlCargando() {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:48px;text-align:center;color:#94a3b8">
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:48px;text-align:center;color:#A8957F">
       <div style="font-size:14px">Cargando clientes…</div>
     </div>
   `;
@@ -200,20 +200,20 @@ function htmlCargando() {
 
 function htmlVacio() {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:64px 24px;text-align:center">
-      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="users" style="width:36px;height:36px;color:#2563eb;stroke-width:1.5"></i>
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:64px 24px;text-align:center">
+      <div style="width:72px;height:72px;margin:0 auto 18px;border-radius:18px;background:#F8F1E8;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="users" style="width:36px;height:36px;color:#4A2E1A;stroke-width:1.5"></i>
       </div>
-      <h2 style="font-size:18px;font-weight:600;color:#0f172a;margin:0 0 8px;letter-spacing:-0.01em">
+      <h2 style="font-size:18px;font-weight:600;color:#2A1A10;margin:0 0 8px;letter-spacing:-0.01em">
         No hay clientes registrados
       </h2>
-      <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;max-width:380px;margin-left:auto;margin-right:auto">
+      <p style="color:#7D6858;font-size:14px;line-height:1.6;margin:0 0 24px;max-width:380px;margin-left:auto;margin-right:auto">
         Registrá a tus clientes para llevar un historial de ventas
         y mantenerlos informados.
       </p>
       <button
         id="btn-nuevo-cliente-vacio"
-        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563eb;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
+        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#4A2E1A;color:white;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit"
       >
         <i data-lucide="plus" style="width:18px;height:18px;stroke-width:2.25"></i>
         Agregar primer cliente
@@ -224,14 +224,14 @@ function htmlVacio() {
 
 function htmlSinResultados(filtro) {
   return `
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:48px 24px;text-align:center">
-      <div style="width:60px;height:60px;margin:0 auto 16px;border-radius:14px;background:#f1f5f9;display:flex;align-items:center;justify-content:center">
-        <i data-lucide="search-x" style="width:28px;height:28px;color:#64748b;stroke-width:1.5"></i>
+    <div style="background:#fff;border:1px solid #EADFD0;border-radius:12px;padding:48px 24px;text-align:center">
+      <div style="width:60px;height:60px;margin:0 auto 16px;border-radius:14px;background:#F2EBE0;display:flex;align-items:center;justify-content:center">
+        <i data-lucide="search-x" style="width:28px;height:28px;color:#7D6858;stroke-width:1.5"></i>
       </div>
-      <div style="font-size:15px;font-weight:600;color:#0f172a;margin-bottom:4px">
+      <div style="font-size:15px;font-weight:600;color:#2A1A10;margin-bottom:4px">
         Sin resultados para "${esc(filtro)}"
       </div>
-      <div style="color:#64748b;font-size:13.5px">
+      <div style="color:#7D6858;font-size:13.5px">
         Probá con otro término o revisá la ortografía
       </div>
     </div>
@@ -270,14 +270,14 @@ function htmlFila(c) {
       <td>
         <div class="ui-cell-user">
           ${avatar(c.nombre)}
-          <span style="font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre || '(sin nombre)')}</span>
+          <span style="font-weight:600;color:#2A1A10;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.nombre || '(sin nombre)')}</span>
         </div>
       </td>
       <td>${esc(c.negocio || '—')}</td>
       <td style="font-family:inherit;font-size:13px">${esc(c.telefono || '—')}</td>
       <td>${esc(c.ciudad || '—')}</td>
       <td style="text-align:center">
-        ${nPE > 0 ? badge(`💎 ${nPE}`, 'info') : '<span style="color:#d1d5db">—</span>'}
+        ${nPE > 0 ? badge(`💎 ${nPE}`, 'info') : '<span style="color:#DCCFBE">—</span>'}
       </td>
       <td style="text-align:right;white-space:nowrap">
         ${menuButton(c.id)}

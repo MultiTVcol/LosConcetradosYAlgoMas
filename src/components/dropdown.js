@@ -145,7 +145,7 @@ export function crear(config) {
     dropdown.style.cssText = `
       position: fixed;
       background: white;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #EADFD0;
       border-radius: 10px;
       box-shadow: 0 12px 24px -8px rgba(0,0,0,.15), 0 4px 8px -4px rgba(0,0,0,.08);
       min-width: ${anchoMinimo}px;
@@ -153,7 +153,7 @@ export function crear(config) {
       overflow-y: auto;
       z-index: 9997;
       padding: 6px;
-      font-family: Inter, system-ui, sans-serif;
+      font-family: var(--font-ui);
       font-size: 14px;
       opacity: 0;
       transform: translateY(-4px);
@@ -166,7 +166,7 @@ export function crear(config) {
         const sep = document.createElement('div');
         sep.style.cssText = `
           height: 1px;
-          background: #e2e8f0;
+          background: #EADFD0;
           margin: 6px 4px;
         `;
         dropdown.appendChild(sep);
@@ -183,7 +183,7 @@ export function crear(config) {
         border-radius: 7px;
         cursor: ${disabled ? 'not-allowed' : 'pointer'};
         opacity: ${disabled ? '0.5' : '1'};
-        color: ${opcion.color || '#0f172a'};
+        color: ${opcion.color || '#2A1A10'};
         transition: background .1s;
         user-select: none;
         font-size: 14px;
@@ -206,7 +206,7 @@ export function crear(config) {
       // Hover
       if (!disabled) {
         item.addEventListener('mouseenter', () => {
-          item.style.background = '#f1f5f9';
+          item.style.background = '#F2EBE0';
         });
         item.addEventListener('mouseleave', () => {
           item.style.background = 'transparent';

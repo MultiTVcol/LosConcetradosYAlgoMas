@@ -178,7 +178,7 @@ export function abrir(opciones = {}) {
   backdrop.style.cssText = `
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(42, 26, 16, 0.55);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -201,7 +201,7 @@ export function abrir(opciones = {}) {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    font-family: Inter, system-ui, sans-serif;
+    font-family: var(--font-ui);
     transform: scale(.95) translateY(10px);
     transition: transform .2s ease;
     overflow: hidden;
@@ -216,7 +216,7 @@ export function abrir(opciones = {}) {
       align-items: center;
       justify-content: space-between;
       padding: 18px 24px 14px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #EADFD0;
     `;
 
     // Título
@@ -224,7 +224,7 @@ export function abrir(opciones = {}) {
     tituloEl.style.cssText = `
       font-size: 17px;
       font-weight: 600;
-      color: #0f172a;
+      color: #2A1A10;
       letter-spacing: -0.01em;
     `;
     tituloEl.textContent = opciones.titulo || '';
@@ -238,7 +238,7 @@ export function abrir(opciones = {}) {
         background: transparent;
         border: 0;
         font-size: 24px;
-        color: #64748b;
+        color: #7D6858;
         cursor: pointer;
         padding: 0;
         width: 32px;
@@ -250,12 +250,12 @@ export function abrir(opciones = {}) {
         line-height: 1;
       `;
       btnCerrar.onmouseenter = () => {
-        btnCerrar.style.background = '#f1f5f9';
-        btnCerrar.style.color = '#0f172a';
+        btnCerrar.style.background = '#F2EBE0';
+        btnCerrar.style.color = '#2A1A10';
       };
       btnCerrar.onmouseleave = () => {
         btnCerrar.style.background = 'transparent';
-        btnCerrar.style.color = '#64748b';
+        btnCerrar.style.color = '#7D6858';
       };
       btnCerrar.onclick = () => controller.cerrar();
       header.appendChild(btnCerrar);
