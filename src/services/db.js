@@ -34,7 +34,7 @@ const DB_NAME = 'pospunto';
  * cambiar índices), hay que subir este número para que IndexedDB
  * sepa que tiene que aplicar la migración.
  */
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 
 /**
  * Lista de stores (tablas) que tendrá la BD.
@@ -50,6 +50,7 @@ const STORES = [
   'cierres',
   'usuarios',
   'ajustes_inventario',  // conteos físicos: ajustes de stock por sobrante/faltante
+  'asientos',  // contabilidad: asientos (causaciones) de partida doble
   'kvs',  // key-value store: configs, preferencias, contadores
 ];
 
@@ -62,6 +63,7 @@ const STORES = [
  */
 const INDICES = {
   ventas: [{ nombre: 'fecha', keyPath: 'fecha' }],
+  asientos: [{ nombre: 'doc_id', keyPath: 'doc_id' }],
 };
 
 /**

@@ -49,7 +49,8 @@ const MODULOS = [
   { ruta: 'gastos',    etiqueta: 'Gastos',          icono: 'wallet',           feature: 'gastos' },
   { ruta: 'cierre',    etiqueta: 'Cierre de Caja',  icono: 'shield-check',     feature: 'cierreCaja' },
   { ruta: 'reportes',  etiqueta: 'Reportes',        icono: 'bar-chart-3',      feature: 'reportes' },
-  { ruta: 'config',    etiqueta: 'Configuración',   icono: 'settings',         feature: 'configuracion', soloAdmin: true },
+  { ruta: 'contabilidad', etiqueta: 'Contabilidad', icono: 'book-open-check',  feature: 'contabilidad',  soloAdmin: true },
+  { ruta: 'config',   etiqueta: 'Configuración',   icono: 'settings',         feature: 'configuracion', soloAdmin: true },
   { ruta: 'usuarios',  etiqueta: 'Usuarios',        icono: 'user-cog',         feature: 'dashboard',     soloAdmin: true },
 ];
 
@@ -62,7 +63,7 @@ const GRUPOS = [
   { titulo: null,         rutas: ['dashboard'] },
   { titulo: 'Ventas',     rutas: ['ventas', 'facturas', 'cuentas-cobrar', 'clientes'] },
   { titulo: 'Inventario', rutas: ['productos', 'inventario', 'compras', 'facturas-compra'] },
-  { titulo: 'Finanzas',   rutas: ['gastos', 'cierre', 'reportes'] },
+  { titulo: 'Finanzas',   rutas: ['gastos', 'cierre', 'reportes', 'contabilidad'] },
   { titulo: 'Sistema',    rutas: ['usuarios', 'config'] },
 ];
 

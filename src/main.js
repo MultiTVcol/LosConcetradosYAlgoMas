@@ -3,6 +3,7 @@ import * as Core from './core/index.js';
 import * as Services from './services/index.js';
 import * as Components from './components/index.js';
 import * as Auth from './services/auth.js';
+import { isFeatureEnabled } from './services/config.js';
 import * as Realtime from './services/realtime.js';
 import * as UsuariosRepo from './modules/usuarios/usuarios.repo.js';
 import { mostrarLogin } from './app/login.js';
@@ -151,6 +152,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (err) { console.warn('Sincronización inicial falló:', err); }
 
+  // CONTABILIDAD: empezar a causar lo que registre esta terminal. Solo
+  // actúa si el interruptor está encendido en Contabilidad; nunca frena
+  // una venta (corre después de guardar, en segundo plano).
+  if (isFeatureEnabled('contabilidad')) {
+    try {
+      const Contab = await import('./modules/contabilidad/contabilidad.service.js');
+      await Contab.iniciar();
+    } catch (err) { console.warn('No se pudo iniciar la contabilidad:', err); }
+  }
+
   montarShell(app);
 
   // Registrar rutas
@@ -219,6 +230,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Cierre de Caja: módulo real
   Core.Router.registrar('cierre', async () => {
     const mod = await import('./modules/cierre/cierre.js');
+    await mod.montar();
+  });
+  // Contabilidad: módulo real (solo admin)
+  Core.Router.registrar('contabilidad', async () => {
+    const mod = await import('./modules/contabilidad/contabilidad.js');
     await mod.montar();
   });
   // Configuración: módulo real

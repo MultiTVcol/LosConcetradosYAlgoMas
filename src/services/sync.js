@@ -94,6 +94,28 @@ function sincronizacionActiva() {
 }
 
 /**
+ * Modo PRUEBA (npm run dev -- --mode lectura): baja los datos de la nube
+ * pero NUNCA escribe en ella ni encola pendientes. Sirve para probar
+ * cambios en local con los datos reales sin tocar la tienda en vivo.
+ */
+const SOLO_LECTURA = import.meta.env?.VITE_NUBE_SOLO_LECTURA === '1';
+if (SOLO_LECTURA) console.warn('🧪 Modo prueba: la nube es SOLO LECTURA (nada de lo que hagas aquí se sube).');
+
+export function esSoloLectura() {
+  return SOLO_LECTURA;
+}
+
+/** ¿Se puede escribir en la nube? (sync activa y fuera del modo prueba) */
+function escrituraNubeActiva() {
+  return sincronizacionActiva() && !SOLO_LECTURA;
+}
+
+/** ¿Hay que encolar lo que no se pudo subir? (nunca en modo prueba) */
+function debeEncolar() {
+  return !SOLO_LECTURA && isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured();
+}
+
+/**
  * Notifica a los listeners sobre un evento de sync.
  *
  * @param {Object} evento - { tipo, tabla, item, error }
@@ -166,7 +188,7 @@ export async function guardar(tabla, item) {
   }
 
   // 2) Intentar subir a la nube SI la sync está activa
-  if (sincronizacionActiva()) {
+  if (escrituraNubeActiva()) {
     try {
       emit({ tipo: 'nube-intentando', tabla, item });
       await Supa.upsert(tabla, item);
@@ -179,7 +201,7 @@ export async function guardar(tabla, item) {
       persistirPendientes();
       emit({ tipo: 'nube-error', tabla, item, error: err });
     }
-  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+  } else if (debeEncolar()) {
     // La nube está configurada pero no disponible ahora (offline o SDK
     // cargando): encolar para subir cuando vuelva la conexión.
     _pendientes.push({ tipo: 'upsert', tabla, item, intentos: 0 });
@@ -205,12 +227,13 @@ export async function borrar(tabla, id) {
   try {
     await db.remove(tabla, id);
     resultado.local = true;
+    emit({ tipo: 'local-borrado', tabla, id });
   } catch (err) {
     console.error(`❌ Error borrando ${tabla}/${id} en local:`, err);
     throw err;
   }
 
-  if (sincronizacionActiva()) {
+  if (escrituraNubeActiva()) {
     try {
       const ok = await Supa.remove(tabla, id);
       if (!ok) throw new Error('remove devolvió false');
@@ -220,7 +243,7 @@ export async function borrar(tabla, id) {
       _pendientes.push({ tipo: 'delete', tabla, id, intentos: 1 });
       persistirPendientes();
     }
-  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+  } else if (debeEncolar()) {
     _pendientes.push({ tipo: 'delete', tabla, id, intentos: 0 });
     persistirPendientes();
   }
@@ -274,7 +297,7 @@ export async function descargar(tabla) {
  *   console.log(`✅ ${r.exitos} subidos, ❌ ${r.fallos} aún pendientes`);
  */
 export async function flushPendientes() {
-  if (!sincronizacionActiva()) {
+  if (!escrituraNubeActiva()) {
     return { exitos: 0, fallos: _pendientes.length };
   }
   if (_pendientes.length === 0) {
@@ -417,7 +440,7 @@ export async function ajustarStock(productoId, delta, opts = {}) {
   }
 
   // 2) Aplicar el delta ATÓMICO en la nube
-  if (sincronizacionActiva()) {
+  if (escrituraNubeActiva()) {
     try {
       const stockNube = await rpcAjustarStock(productoId, d, costo);
       if (stockNube == null && prodLocal) {
@@ -449,7 +472,7 @@ export async function ajustarStock(productoId, delta, opts = {}) {
         persistirPendientes();
       }
     }
-  } else if (isFeatureEnabled('sincronizacionNube') && isSupabaseConfigured()) {
+  } else if (debeEncolar()) {
     // Offline: encolar el delta — al volver internet se aplica atómico.
     // (Los deltas se acumulan sin pisarse: el orden no importa en sumas.)
     _pendientes.push({ tipo: 'stock', tabla: 'productos', id: productoId, delta: d, costo, intentos: 0 });
@@ -785,7 +808,7 @@ export async function vaciarTabla(tabla) {
   }
 
   // 2) Borrar todo en la nube si está activa (DELETE WHERE tenant_id = X)
-  if (sincronizacionActiva()) {
+  if (escrituraNubeActiva()) {
     try {
       const client = Supa.getClient();
       const tenantId = config.supabase.tenantId || 'default';

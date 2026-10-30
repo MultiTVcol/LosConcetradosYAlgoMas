@@ -76,6 +76,9 @@ export const config = {
     impresionTermica: true,
     sincronizacionNube: true,        // ✅ Activado: Supabase conectado
     facturacionElectronica: false,   // Para más adelante
+    // Contabilidad (Fase 1): visible en local; en la tienda solo cuando
+    // se defina VITE_CONTABILIDAD=1 en Vercel (o se cambie a true aquí).
+    contabilidad: !!import.meta.env?.DEV || import.meta.env?.VITE_CONTABILIDAD === '1',
   },
 
   // ============================================================
