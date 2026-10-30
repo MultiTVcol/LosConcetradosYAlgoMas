@@ -127,8 +127,11 @@ export async function iniciar() {
   _iniciado = true;
   Sync.onChange(alEvento);
   try {
+    if (!Sync.estaActiva() || (await verificarTablaNube()) !== 'ok') return;
+    // Terceros y documentos se usan aunque la contabilidad esté apagada
+    await Promise.allSettled(['terceros', 'documentos'].map((t) => Sync.descargar(t)));
     const cfg = await Motor.config();
-    if (cfg.activa && Sync.estaActiva() && (await verificarTablaNube()) === 'ok') {
+    if (cfg.activa) {
       await Sync.descargar(Motor.TABLA);
       // En vivo: si otra caja contabiliza algo, esta terminal lo sabe y no
       // duplica al editar ese documento. (Si aun así pasara, "Revisar y
@@ -170,6 +173,17 @@ export async function contabilizarTodo(opts = {}) {
   });
   avisar();
   return r;
+}
+
+/**
+ * Lanza un error si falta correr el SQL de contabilidad: sin las tablas,
+ * lo que se guarde quedaría eternamente pendiente de subir.
+ */
+export async function exigirTablas() {
+  if (Sync.esSoloLectura()) return;
+  if ((await verificarTablaNube()) === 'falta') {
+    throw new Error('Falta correr supabase-contabilidad.sql en Supabase (tablas asientos, terceros y documentos)');
+  }
 }
 
 /**

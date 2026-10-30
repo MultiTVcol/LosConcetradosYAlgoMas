@@ -32,7 +32,7 @@ export const TABLA = 'asientos';
 const KEY_CONFIG = 'config_contable';
 
 /** Tablas de PosPunto que generan contabilidad. */
-export const TABLAS_FUENTE = ['ventas', 'compras', 'gastos', 'ajustes_inventario'];
+export const TABLAS_FUENTE = ['ventas', 'compras', 'gastos', 'ajustes_inventario', 'documentos'];
 
 // ============================================================
 //  CONFIGURACIÓN (kvs 'config_contable', compartida entre terminales)
@@ -46,6 +46,7 @@ export const CUENTAS_DEFAULT = {
   inventario:      '143505',
   ivaGenerado:     '240802',
   ingresos:        '413505',  // venta de mercancías
+  devoluciones:    '417505',  // notas crédito (devoluciones y descuentos en ventas)
   costo:           '613505',
   sobrantes:       '429505',
   faltantes:       '539520',
@@ -374,11 +375,82 @@ function reglasAjuste(a, C) {
   }];
 }
 
+/**
+ * Documentos comerciales (módulo Documentos). Los abonos de recibos y
+ * egresos a ventas/compras ya se causan desde la venta o la compra; aquí
+ * solo va lo propio del documento ("otros conceptos", notas, traslados).
+ * Cotizaciones, remisiones y órdenes de compra no mueven contabilidad.
+ */
+function reglasDocumento(d, C) {
+  if (d.estado === 'anulado') return [];
+  const x = d.data || {};
+  const fecha = fecha10(d.fecha);
+  const ter = { tercero_id: d.tercero_id || null, tercero_nombre: d.tercero_nombre || '' };
+  const asiento = (lineas, descripcion) => [{
+    origen_tipo: d.tipo, origen_id: d.id, numero: d.numero || '', fecha, descripcion, lineas: limpiar(lineas),
+  }];
+  const conceptos = (x.conceptos || []).filter((c) => num(c.valor) > 0);
+  const totalConceptos = round(conceptos.reduce((s, c) => s + num(c.valor), 0), 2);
+
+  switch (d.tipo) {
+    case 'recibo_caja':
+      if (!totalConceptos) return [];
+      return asiento([
+        L(cuentaMedio(etiquetaMedio(x.medio), C), { debito: totalConceptos, detalle: 'Recibo de caja' }),
+        ...conceptos.map((c) => L(c.cuenta, { credito: c.valor, ...ter, detalle: c.detalle || 'Recibo de caja' })),
+      ], `Recibo de caja ${d.numero} — ${d.tercero_nombre}`);
+    case 'egreso':
+      if (!totalConceptos) return [];
+      return asiento([
+        ...conceptos.map((c) => L(c.cuenta, { debito: c.valor, ...ter, detalle: c.detalle || 'Egreso' })),
+        L(cuentaMedio(etiquetaMedio(x.medio), C), { credito: totalConceptos, detalle: 'Comprobante de egreso' }),
+      ], `Egreso ${d.numero} — ${d.tercero_nombre}`);
+    case 'nota_credito': {
+      const total = round(num(d.total), 2);
+      const iva = round(num(x.impuesto), 2);
+      const costo = round(num(x.costo), 2);
+      return asiento([
+        L(C.devoluciones, { debito: round(total - iva, 2), detalle: x.motivo || 'Devolución en ventas' }),
+        L(C.ivaGenerado, { debito: iva, detalle: 'IVA de la nota crédito' }),
+        x.afecta === 'cartera'
+          ? L(C.clientes, { credito: total, ...ter, detalle: `Nota crédito a la venta ${x.venta_numero || ''}` })
+          : L(cuentaMedio(etiquetaMedio(x.medio), C), { credito: total, detalle: 'Reintegro al cliente' }),
+        L(C.inventario, { debito: costo, detalle: 'Mercancía devuelta' }),
+        L(C.costo, { credito: costo, detalle: 'Reverso del costo de ventas' }),
+      ], `Nota crédito ${d.numero} a la venta ${x.venta_numero || ''} — ${d.tercero_nombre}`);
+    }
+    case 'nota_debito': {
+      const total = round(num(d.total), 2);
+      const iva = round(num(x.impuesto), 2);
+      return asiento([
+        L(C.clientes, { debito: total, ...ter, detalle: `Nota débito a la venta ${x.venta_numero || ''}` }),
+        L(x.cuenta_ingreso || C.ingresos, { credito: round(total - iva, 2), detalle: x.motivo || 'Mayor valor' }),
+        L(C.ivaGenerado, { credito: iva, detalle: 'IVA de la nota débito' }),
+      ], `Nota débito ${d.numero} a la venta ${x.venta_numero || ''} — ${d.tercero_nombre}`);
+    }
+    case 'traslado': {
+      const valor = round(num(d.total), 2);
+      return asiento([
+        L(x.destino, { debito: valor, detalle: 'Entrada por traslado' }),
+        L(x.origen, { credito: valor, detalle: 'Salida por traslado' }),
+      ], `Traslado ${d.numero}${x.nota ? ` — ${x.nota}` : ''}`);
+    }
+    default:
+      return [];
+  }
+}
+
+/** Clave de medio de pago ('nequi', 'efectivo'…) → texto que entiende cuentaMedio. */
+function etiquetaMedio(medio) {
+  return ETIQUETAS_MEDIOS[medio] || medio || 'Efectivo';
+}
+
 const REGLAS = {
   ventas: reglasVenta,
   compras: reglasCompra,
   gastos: reglasGasto,
   ajustes_inventario: reglasAjuste,
+  documentos: reglasDocumento,
 };
 
 /** Asientos que debería tener un documento (sin guardar nada). */

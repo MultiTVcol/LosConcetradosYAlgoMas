@@ -17,6 +17,7 @@ const CAMPOS = [
   ['inventario', 'Inventario de mercancías'],
   ['ingresos', 'Ingresos por ventas'],
   ['ivaGenerado', 'IVA generado en ventas'],
+  ['devoluciones', 'Devoluciones en ventas (notas crédito)'],
   ['costo', 'Costo de ventas'],
   ['sobrantes', 'Sobrantes de inventario'],
   ['faltantes', 'Faltantes de inventario'],

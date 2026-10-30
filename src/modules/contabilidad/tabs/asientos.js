@@ -20,6 +20,8 @@ export const ORIGENES = {
   gasto: 'Gasto', baja: 'Baja de productos', ajuste_inventario: 'Ajuste de inventario',
   apertura: 'Saldos iniciales', reversion: 'Reversión', manual: 'Comprobante manual',
   cierre: 'Cierre de año', depreciacion: 'Depreciación', activo_compra: 'Compra de activo',
+  recibo_caja: 'Recibo de caja', egreso: 'Comprobante de egreso', nota_credito: 'Nota crédito',
+  nota_debito: 'Nota débito', traslado: 'Traslado de fondos',
 };
 
 const ANULABLES = new Set(['manual', 'apertura', 'cierre', 'depreciacion', 'activo_compra']);

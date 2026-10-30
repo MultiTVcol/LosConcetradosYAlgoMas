@@ -232,6 +232,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mod = await import('./modules/cierre/cierre.js');
     await mod.montar();
   });
+  // Documentos y Terceros (contabilidad, solo admin)
+  Core.Router.registrar('documentos', async () => {
+    const mod = await import('./modules/documentos/documentos.js');
+    await mod.montar();
+  });
+  Core.Router.registrar('terceros', async () => {
+    const mod = await import('./modules/terceros/terceros.js');
+    await mod.montar();
+  });
   // Contabilidad: módulo real (solo admin)
   Core.Router.registrar('contabilidad', async () => {
     const mod = await import('./modules/contabilidad/contabilidad.js');
