@@ -117,8 +117,8 @@ export async function guardarConfig(cambios) {
 // ============================================================
 
 /** Crea una línea de asiento normalizada. */
-function L(cuenta, { debito = 0, credito = 0, tercero_id = null, tercero_nombre = '', detalle = '' } = {}) {
-  return {
+function L(cuenta, { debito = 0, credito = 0, tercero_id = null, tercero_nombre = '', detalle = '', activo_id = null } = {}) {
+  const linea = {
     cuenta: String(cuenta),
     tercero_id: tercero_id || null,
     tercero_nombre: String(tercero_nombre || ''),
@@ -126,6 +126,8 @@ function L(cuenta, { debito = 0, credito = 0, tercero_id = null, tercero_nombre 
     debito: round(num(debito), 2),
     credito: round(num(credito), 2),
   };
+  if (activo_id) linea.activo_id = activo_id;
+  return linea;
 }
 
 /** Quita líneas en cero (no aportan nada al asiento). */
@@ -424,20 +426,35 @@ export async function validarLineas(lineas) {
 //  NÚCLEO: construir, guardar y reversar asientos
 // ============================================================
 
-/** Arma el asiento completo (validado) sin guardarlo. */
-async function construir(d, { doc_tabla, doc_id, version = 0, usuario = '' }) {
+/**
+ * Arma el asiento completo (validado) sin guardarlo.
+ *
+ * Si el documento cae en un periodo CERRADO (ej: se editó hoy una venta
+ * de un mes ya cerrado), el asiento se registra en la fecha de hoy con
+ * una nota. La firma se calcula con la fecha ORIGINAL del documento,
+ * así la próxima revisión lo reconoce y no lo vuelve a crear.
+ * Los comprobantes manuales no se corren: se rechazan (estricto).
+ */
+async function construir(d, { doc_tabla, doc_id, version = 0, usuario = '', estricto = false }) {
   const { totalDebito, totalCredito } = await validarLineas(d.lineas);
   const firma = firmaDe(d.fecha, d.lineas);
+  let fecha = d.fecha;
+  let descripcion = String(d.descripcion || '').trim();
+  if (await periodoCerrado(fecha)) {
+    if (estricto) throw new Error(`El periodo ${fecha.slice(0, 7)} está cerrado: no admite asientos`);
+    fecha = await fechaAbierta();
+    descripcion += ` (fecha original ${d.fecha}, periodo cerrado)`;
+  }
   return {
     id: `as_${hash(`${d.origen_id}#${firma}#${version}`)}_${hash(d.origen_id)}`,
     numero: d.numero || '',
-    fecha: d.fecha,
-    periodo: d.fecha.slice(0, 7),
+    fecha,
+    periodo: fecha.slice(0, 7),
     origen_tipo: d.origen_tipo,
     origen_id: d.origen_id,
     doc_tabla,
     doc_id,
-    descripcion: String(d.descripcion || '').trim(),
+    descripcion,
     lineas: d.lineas,
     total_debito: totalDebito,
     total_credito: totalCredito,
@@ -451,14 +468,15 @@ async function construir(d, { doc_tabla, doc_id, version = 0, usuario = '' }) {
 }
 
 /** Asiento inverso (débito ↔ crédito) de uno existente, fechado hoy. */
-function inversoDe(original, motivo, usuario = '') {
+async function inversoDe(original, motivo, usuario = '') {
   const lineas = (original.lineas || []).map((l) =>
     L(l.cuenta, {
       debito: l.credito, credito: l.debito,
       tercero_id: l.tercero_id, tercero_nombre: l.tercero_nombre,
-      detalle: `Reversión: ${l.detalle || ''}`,
+      detalle: `Reversión: ${l.detalle || ''}`, activo_id: l.activo_id,
     }));
-  const fecha = todayISO() < original.fecha ? original.fecha : todayISO();
+  let fecha = todayISO() < original.fecha ? original.fecha : todayISO();
+  if (await periodoCerrado(fecha)) fecha = await fechaAbierta();
   return {
     id: `rv_${original.id}`,
     numero: `RV ${original.numero || ''}`.trim(),
@@ -495,29 +513,29 @@ async function asientosDelDocumento(docId) {
  * devuelve la lista de asientos nuevos/actualizados (sin guardar).
  * `existentes` son los asientos que ya tiene el documento.
  */
-async function planDocumento({ deseados, existentes, doc_tabla, doc_id, motivo, usuario }) {
+async function planDocumento({ deseados, existentes, doc_tabla, doc_id, motivo, usuario, estricto = false }) {
   const guardar = [];
   const vigentes = existentes.filter((a) => a.estado === 'activo' && a.origen_tipo !== 'reversion');
   const usados = new Set();
 
   for (const d of deseados) {
     const firma = firmaDe(d.fecha, d.lineas);
-    const actual = vigentes.find((a) => a.origen_id === d.origen_id);
+    const actual = vigentes.find((a) => a.origen_id === d.origen_id && !usados.has(a.id));
     if (actual && actual.firma === firma) { usados.add(actual.id); continue; }
     if (actual) {
       usados.add(actual.id);
-      const inv = inversoDe(actual, motivo, usuario);
+      const inv = await inversoDe(actual, motivo, usuario);
       guardar.push(inv, { ...actual, estado: 'reversado', reversado_por: inv.id });
     }
     // version = cuántos asientos ya tuvo este origen (evita chocar ids)
     const version = existentes.filter((a) => a.origen_id === d.origen_id && a.origen_tipo !== 'reversion').length;
-    guardar.push(await construir(d, { doc_tabla, doc_id, version, usuario }));
+    guardar.push(await construir(d, { doc_tabla, doc_id, version, usuario, estricto }));
   }
 
-  // Lo que estaba contabilizado y ya no aplica → se reversa
+  // Lo que estaba contabilizado y ya no aplica (o quedó duplicado) → se reversa
   for (const a of vigentes) {
     if (usados.has(a.id)) continue;
-    const inv = inversoDe(a, motivo, usuario);
+    const inv = await inversoDe(a, motivo, usuario);
     guardar.push(inv, { ...a, estado: 'reversado', reversado_por: inv.id });
   }
   return guardar;
@@ -581,6 +599,10 @@ export async function contabilizarTodo({ onProgress = () => {}, usuario = '' } =
       const deseados = asientosDeseados(tabla, doc, cfg);
       const existentes = porDoc.get(doc.id) || [];
       if (deseados.length === 0 && existentes.length === 0) continue;
+      // Meses cerrados quedan congelados en la revisión general: si el
+      // documento ya tiene asientos y todo cae en periodo cerrado, no se toca.
+      const cerrados = await Promise.all(deseados.map((d) => periodoCerrado(d.fecha)));
+      if (deseados.length && cerrados.every(Boolean) && existentes.some((a) => a.estado === 'activo')) continue;
       pendientes.push(...(await planDocumento({ deseados, existentes, doc_tabla: tabla, doc_id: doc.id, motivo: 'revisión general', usuario })));
     } catch (e) {
       errores.push({ tabla, id: doc.id, numero: doc.numero || doc.ref || '', error: e.message || String(e) });
@@ -641,7 +663,7 @@ export async function guardarApertura({ fecha, lineas, usuario = '' }) {
     lineas: ls,
   };
   const existentes = await asientosDelDocumento(APERTURA_ID);
-  const guardar = await planDocumento({ deseados: [deseado], existentes, doc_tabla: 'apertura', doc_id: APERTURA_ID, motivo: 'saldos iniciales corregidos', usuario });
+  const guardar = await planDocumento({ deseados: [deseado], existentes, doc_tabla: 'apertura', doc_id: APERTURA_ID, motivo: 'saldos iniciales corregidos', usuario, estricto: true });
   for (const a of guardar) await Sync.guardar(TABLA, a);
   return guardar.length;
 }
@@ -721,4 +743,429 @@ export async function saldo(prefijo, { hasta = '9999' } = {}) {
     }
   }
   return s;
+}
+
+// ============================================================
+//  PERIODOS (cierre de mes)
+// ============================================================
+//
+// Un periodo es un mes 'YYYY-MM'. Sin registro = abierto. Los cerrados
+// viven en kvs 'periodos_contables' (compartido entre terminales).
+
+const KEY_PERIODOS = 'periodos_contables';
+
+export async function periodos() {
+  try {
+    const row = await db.get('kvs', KEY_PERIODOS);
+    return row?.datos && typeof row.datos === 'object' ? row.datos : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+export async function periodoCerrado(fecha) {
+  const p = (await periodos())[String(fecha || '').slice(0, 7)];
+  return p?.estado === 'cerrado';
+}
+
+/** Hoy, si su periodo está abierto. Si el mes actual está cerrado, falla. */
+async function fechaAbierta() {
+  const hoy = todayISO();
+  if (await periodoCerrado(hoy)) throw new Error(`El mes actual (${hoy.slice(0, 7)}) está cerrado: reábrelo para registrar`);
+  return hoy;
+}
+
+export async function cerrarPeriodo(periodo, usuario = '') {
+  if (!/^\d{4}-\d{2}$/.test(periodo)) throw new Error('Periodo inválido (formato AAAA-MM)');
+  const todos = await periodos();
+  todos[periodo] = { estado: 'cerrado', por: usuario, fecha: nowISO() };
+  await Sync.guardar('kvs', { id: KEY_PERIODOS, valor: null, datos: todos });
+}
+
+export async function reabrirPeriodo(periodo, usuario = '') {
+  const todos = await periodos();
+  if (todos[periodo]?.estado !== 'cerrado') throw new Error('El periodo no está cerrado');
+  todos[periodo] = { estado: 'abierto', por: usuario, fecha: nowISO() };
+  await Sync.guardar('kvs', { id: KEY_PERIODOS, valor: null, datos: todos });
+}
+
+// ============================================================
+//  COMPROBANTES MANUALES (ajustes del contador)
+// ============================================================
+
+/** Siguiente número CC-0001, CC-0002… (máximo + 1, nunca se repite). */
+async function siguienteComprobante() {
+  let max = 0;
+  for (const a of await db.getAll(TABLA)) {
+    if (a.origen_tipo !== 'manual') continue;
+    const m = String(a.numero || '').match(/CC-(\d+)/);
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return `CC-${String(max + 1).padStart(4, '0')}`;
+}
+
+/**
+ * Registra un comprobante contable manual. Las líneas se validan igual
+ * que las automáticas (partida doble, cuentas, terceros, periodo).
+ */
+export async function guardarComprobante({ fecha, descripcion, lineas, usuario = '' }) {
+  if (!fecha) throw new Error('Indica la fecha del comprobante');
+  if (!String(descripcion || '').trim()) throw new Error('Escribe una descripción');
+  const ls = limpiar((lineas || []).map((l) => L(l.cuenta, l)));
+  const docId = `man_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  const numero = await siguienteComprobante();
+  const asiento = await construir(
+    { origen_tipo: 'manual', origen_id: docId, numero, fecha, descripcion, lineas: ls },
+    { doc_tabla: 'manual', doc_id: docId, usuario, estricto: true },
+  );
+  await Sync.guardar(TABLA, asiento);
+  return asiento;
+}
+
+/**
+ * Anula un asiento que no viene de un documento del POS (manual, saldos
+ * iniciales, cierre de año, depreciación, compra de activo): se reversa.
+ * Los asientos de ventas, compras o gastos se corrigen editando el
+ * documento, no aquí.
+ */
+export async function anularAsiento(asientoId, motivo = '', usuario = '') {
+  const a = await db.get(TABLA, asientoId);
+  if (!a) throw new Error('Asiento no encontrado');
+  if (TABLAS_FUENTE.includes(a.doc_tabla)) throw new Error('Este asiento viene de un documento del POS: corrige o borra el documento');
+  if (a.estado !== 'activo' || a.origen_tipo === 'reversion') throw new Error('El asiento ya está reversado');
+  const inv = await inversoDe(a, motivo || 'anulado', usuario);
+  await Sync.guardar(TABLA, inv);
+  await Sync.guardar(TABLA, { ...a, estado: 'reversado', reversado_por: inv.id });
+  return inv;
+}
+
+// ============================================================
+//  CIERRE DEL EJERCICIO (cierre de año)
+// ============================================================
+
+const esResultado = (cuenta) => ['4', '5', '6', '7'].includes(String(cuenta).charAt(0));
+
+/**
+ * Cancela las cuentas de resultado (clases 4, 5, 6 y 7) contra la
+ * utilidad (360505) o pérdida (361005) del ejercicio, al 31 de diciembre.
+ */
+export async function cerrarEjercicio({ anio, usuario = '' }) {
+  const yyyy = String(anio);
+  const docId = `cierre_${yyyy}`;
+  const previos = await asientosDelDocumento(docId);
+  if (previos.some((a) => a.estado === 'activo' && a.origen_tipo === 'cierre')) {
+    throw new Error(`El año ${yyyy} ya tiene cierre. Anúlalo primero si necesitas rehacerlo.`);
+  }
+  const corte = `${yyyy}-12-31`;
+  const saldos = new Map();  // cuenta → saldo en términos débito (+)
+  for (const a of await db.getAll(TABLA)) {
+    if (a.fecha > corte) continue;
+    for (const l of a.lineas || []) {
+      if (!esResultado(l.cuenta)) continue;
+      saldos.set(l.cuenta, round((saldos.get(l.cuenta) || 0) + num(l.debito) - num(l.credito), 2));
+    }
+  }
+  const lineas = [];
+  let utilidad = 0;
+  for (const [cuenta, s] of [...saldos.entries()].sort()) {
+    if (Math.abs(s) < 0.005) continue;
+    lineas.push(L(cuenta, s > 0 ? { credito: s, detalle: 'Cierre del ejercicio' } : { debito: -s, detalle: 'Cierre del ejercicio' }));
+    utilidad = round(utilidad - s, 2);
+  }
+  if (lineas.length === 0) throw new Error(`No hay cuentas de resultado con saldo en ${yyyy}`);
+  lineas.push(utilidad >= 0
+    ? L('360505', { credito: utilidad, detalle: 'Utilidad del ejercicio' })
+    : L('361005', { debito: -utilidad, detalle: 'Pérdida del ejercicio' }));
+
+  const version = previos.filter((a) => a.origen_tipo === 'cierre').length;
+  const asiento = await construir(
+    { origen_tipo: 'cierre', origen_id: docId, numero: `CI ${yyyy}`, fecha: corte, descripcion: `Cierre del ejercicio ${yyyy}`, lineas: limpiar(lineas) },
+    { doc_tabla: 'cierre', doc_id: docId, version, usuario, estricto: true },
+  );
+  await Sync.guardar(TABLA, asiento);
+  return { asiento, utilidad };
+}
+
+// ============================================================
+//  LIBROS: mayor y auxiliar por tercero
+// ============================================================
+
+/**
+ * Libro mayor / auxiliar de una cuenta (o prefijo, ej: '1305'), con
+ * saldo corrido en la naturaleza de la cuenta. Opcional: un tercero.
+ */
+export async function libroMayor(cuenta, { desde = '0000', hasta = '9999', tercero_id = null } = {}) {
+  const pref = String(cuenta);
+  const info = await PUC.obtener(pref);
+  const nat = info?.naturaleza || (['1', '5', '6', '7'].includes(pref.charAt(0)) ? 'D' : 'C');
+  const delta = (l) => (nat === 'D' ? num(l.debito) - num(l.credito) : num(l.credito) - num(l.debito));
+
+  const todos = (await db.getAll(TABLA)).sort((a, b) => (a.fecha + a.creado).localeCompare(b.fecha + b.creado));
+  let saldoInicial = 0, debitos = 0, creditos = 0;
+  const movimientos = [];
+  for (const a of todos) {
+    if (a.fecha > hasta) continue;
+    for (const l of a.lineas || []) {
+      if (!String(l.cuenta).startsWith(pref)) continue;
+      if (tercero_id && l.tercero_id !== tercero_id) continue;
+      if (a.fecha < desde) { saldoInicial = round(saldoInicial + delta(l), 2); continue; }
+      debitos = round(debitos + num(l.debito), 2);
+      creditos = round(creditos + num(l.credito), 2);
+      movimientos.push({
+        fecha: a.fecha, numero: a.numero, descripcion: a.descripcion, cuenta: l.cuenta,
+        tercero_nombre: l.tercero_nombre, detalle: l.detalle,
+        debito: num(l.debito), credito: num(l.credito), asiento_id: a.id,
+      });
+    }
+  }
+  let corrido = saldoInicial;
+  for (const m of movimientos) {
+    corrido = round(corrido + (nat === 'D' ? m.debito - m.credito : m.credito - m.debito), 2);
+    m.saldo = corrido;
+  }
+  return { cuenta: pref, nombre: info?.nombre || '', naturaleza: nat, saldoInicial, movimientos, debitos, creditos, saldoFinal: corrido };
+}
+
+/** Saldos por tercero de una cuenta o prefijo (cartera, proveedores…). */
+export async function saldosPorTercero(cuenta, { hasta = '9999' } = {}) {
+  const pref = String(cuenta);
+  const nat = (await PUC.obtener(pref))?.naturaleza || 'D';
+  const mapa = new Map();
+  for (const a of await db.getAll(TABLA)) {
+    if (a.fecha > hasta) continue;
+    for (const l of a.lineas || []) {
+      if (!String(l.cuenta).startsWith(pref)) continue;
+      const k = l.tercero_id || '(sin tercero)';
+      const prev = mapa.get(k) || { tercero_id: l.tercero_id, tercero_nombre: l.tercero_nombre || '(sin tercero)', saldo: 0 };
+      prev.saldo = round(prev.saldo + (nat === 'D' ? num(l.debito) - num(l.credito) : num(l.credito) - num(l.debito)), 2);
+      if (l.tercero_nombre) prev.tercero_nombre = l.tercero_nombre;
+      mapa.set(k, prev);
+    }
+  }
+  return [...mapa.values()].filter((x) => Math.abs(x.saldo) >= 0.005).sort((a, b) => b.saldo - a.saldo);
+}
+
+// ============================================================
+//  ESTADOS FINANCIEROS
+// ============================================================
+
+/**
+ * Agrupa saldos por subcuenta en un árbol clase → grupo → cuenta →
+ * subcuenta, con los nombres del PUC. Los valores ya vienen en la
+ * naturaleza del bloque (positivo = normal).
+ */
+async function arbol(saldos, prefijos) {
+  const puc = new Map((await PUC.listar()).map((c) => [c.codigo, c]));
+  const nodos = new Map();
+  for (const [cuenta, valor] of saldos) {
+    if (!prefijos.some((p) => cuenta.startsWith(p)) || Math.abs(valor) < 0.005) continue;
+    const niveles = [1, 2, 4, 6, 8].filter((n) => n <= cuenta.length).map((n) => cuenta.slice(0, n));
+    for (const cod of niveles) {
+      const prev = nodos.get(cod) || { codigo: cod, nombre: puc.get(cod)?.nombre || '(sin nombre)', nivel: cod.length, valor: 0 };
+      prev.valor = round(prev.valor + valor, 2);
+      nodos.set(cod, prev);
+    }
+  }
+  return [...nodos.values()].filter((n) => Math.abs(n.valor) >= 0.005).sort((a, b) => a.codigo.localeCompare(b.codigo));
+}
+
+/**
+ * Estado de resultados de un rango. No cuenta el asiento de cierre de
+ * año (si no, todo daría cero después de cerrar).
+ */
+export async function estadoResultados({ desde = '0000', hasta = '9999' } = {}) {
+  const saldos = new Map();
+  for (const a of await db.getAll(TABLA)) {
+    if (a.fecha < desde || a.fecha > hasta) continue;
+    if (String(a.doc_id || '').startsWith('cierre_')) continue;
+    for (const l of a.lineas || []) {
+      if (!esResultado(l.cuenta)) continue;
+      // Ingresos en positivo; gastos y costos en positivo también
+      const deb = num(l.debito) - num(l.credito);
+      saldos.set(l.cuenta, round((saldos.get(l.cuenta) || 0) + (l.cuenta.charAt(0) === '4' ? -deb : deb), 2));
+    }
+  }
+  const ingresos = await arbol(saldos, ['4']);
+  const costos = await arbol(saldos, ['6', '7']);
+  const gastos = await arbol(saldos, ['5']);
+  const suma = (lista, codigos) => round(lista.filter((n) => codigos.includes(n.codigo)).reduce((s, n) => s + n.valor, 0), 2);
+  const tIng = suma(ingresos, ['4']);
+  const tCos = suma(costos, ['6', '7']);
+  const tGas = suma(gastos, ['5']);
+  const ingOper = suma(ingresos, ['41']);
+  const gasOper = suma(gastos, ['51', '52']);
+  return {
+    ingresos, costos, gastos,
+    totalIngresos: tIng, totalCostos: tCos, totalGastos: tGas,
+    utilidadBruta: round(ingOper - tCos, 2),
+    utilidadOperacional: round(ingOper - tCos - gasOper, 2),
+    utilidad: round(tIng - tCos - tGas, 2),
+  };
+}
+
+/**
+ * Balance general a una fecha. El resultado del ejercicio es lo que
+ * aún no se ha cerrado de las clases 4 a 7, así la ecuación
+ * Activo = Pasivo + Patrimonio SIEMPRE cuadra.
+ */
+export async function balanceGeneral({ hasta = todayISO() } = {}) {
+  const saldos = new Map();
+  for (const a of await db.getAll(TABLA)) {
+    if (a.fecha > hasta) continue;
+    for (const l of a.lineas || []) {
+      saldos.set(l.cuenta, round((saldos.get(l.cuenta) || 0) + num(l.debito) - num(l.credito), 2));
+    }
+  }
+  const credito = new Map([...saldos].map(([c, v]) => [c, -v]));
+  const activos = await arbol(saldos, ['1']);
+  const pasivos = await arbol(credito, ['2']);
+  const patrimonio = await arbol(credito, ['3']);
+  const sumaClase = (lista, c) => round(lista.filter((n) => n.codigo === c).reduce((s, n) => s + n.valor, 0), 2);
+  const resultado = round([...credito].filter(([c]) => esResultado(c)).reduce((s, [, v]) => s + v, 0), 2);
+  const totalActivo = sumaClase(activos, '1');
+  const totalPasivo = sumaClase(pasivos, '2');
+  const totalPatrimonio = round(sumaClase(patrimonio, '3') + resultado, 2);
+  return {
+    activos, pasivos, patrimonio, resultado,
+    totalActivo, totalPasivo, totalPatrimonio,
+    diferencia: round(totalActivo - totalPasivo - totalPatrimonio, 2),
+  };
+}
+
+// ============================================================
+//  ACTIVOS FIJOS Y DEPRECIACIÓN (línea recta)
+// ============================================================
+
+const KEY_ACTIVOS = 'activos_fijos';
+
+/** Cuentas sugeridas de depreciación según la cuenta del activo. */
+export const DEPRECIACION_SUGERIDA = {
+  '1516': { acumulada: '159205', gasto: '516005', vida: 240 },
+  '1520': { acumulada: '159210', gasto: '516010', vida: 120 },
+  '1524': { acumulada: '159215', gasto: '516015', vida: 120 },
+  '1528': { acumulada: '159220', gasto: '516020', vida: 60 },
+  '1540': { acumulada: '159235', gasto: '516035', vida: 60 },
+};
+
+export async function activosFijos() {
+  try {
+    const row = await db.get('kvs', KEY_ACTIVOS);
+    return Array.isArray(row?.datos) ? row.datos : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+async function guardarActivos(lista) {
+  await Sync.guardar('kvs', { id: KEY_ACTIVOS, valor: null, datos: lista });
+}
+
+/** Cuota mensual de depreciación de un activo. */
+export function cuotaMensual(af) {
+  const vida = Math.max(1, Math.round(num(af.vida_meses)));
+  return round((num(af.costo) - num(af.residual)) / vida, 2);
+}
+
+/** Depreciación acumulada contabilizada por activo (asientos vigentes y sus reversiones). */
+export async function depreciacionAcumulada() {
+  const mapa = new Map();
+  for (const a of await db.getAll(TABLA)) {
+    if (!String(a.doc_id || '').startsWith('dep_')) continue;
+    for (const l of a.lineas || []) {
+      if (!l.activo_id || String(l.cuenta).charAt(0) !== '1') continue;
+      mapa.set(l.activo_id, round((mapa.get(l.activo_id) || 0) + num(l.credito) - num(l.debito), 2));
+    }
+  }
+  return mapa;
+}
+
+/**
+ * Crea o edita un activo fijo. Si trae `contrapartida`, registra el
+ * asiento de la compra (débito al activo contra caja, banco o
+ * proveedores), que se rehace si el activo cambia.
+ */
+export async function guardarActivo(datos, { usuario = '' } = {}) {
+  const nombre = String(datos.nombre || '').trim();
+  if (!nombre) throw new Error('El activo necesita un nombre');
+  if (num(datos.costo) <= 0) throw new Error('El costo debe ser mayor a cero');
+  if (num(datos.vida_meses) < 1) throw new Error('La vida útil debe ser de al menos 1 mes');
+  if (num(datos.residual) >= num(datos.costo)) throw new Error('El valor residual debe ser menor al costo');
+  if (!datos.fecha_compra) throw new Error('Indica la fecha de compra');
+  for (const k of ['cuenta_activo', 'cuenta_acumulada', 'cuenta_gasto']) await PUC.validarParaMovimiento(datos[k]);
+
+  const id = datos.id || `af_${Date.now().toString(36)}`;
+  const af = {
+    id, nombre,
+    cuenta_activo: datos.cuenta_activo, cuenta_acumulada: datos.cuenta_acumulada, cuenta_gasto: datos.cuenta_gasto,
+    fecha_compra: datos.fecha_compra,
+    costo: round(num(datos.costo), 2),
+    residual: round(num(datos.residual), 2),
+    vida_meses: Math.round(num(datos.vida_meses)),
+    contrapartida: datos.contrapartida || '',
+    tercero_id: datos.tercero_id || null,
+    tercero_nombre: datos.tercero_nombre || '',
+    baja: datos.baja || null,
+  };
+
+  const docId = `afc_${id}`;
+  const deseados = af.contrapartida ? [{
+    origen_tipo: 'activo_compra', origen_id: docId, numero: `AF ${refCorta(id)}`, fecha: af.fecha_compra,
+    descripcion: `Compra de activo fijo — ${nombre}`,
+    lineas: [
+      L(af.cuenta_activo, { debito: af.costo, detalle: nombre }),
+      L(af.contrapartida, { credito: af.costo, detalle: `Pago de ${nombre}`, tercero_id: af.tercero_id, tercero_nombre: af.tercero_nombre }),
+    ],
+  }] : [];
+  const guardar = await planDocumento({ deseados, existentes: await asientosDelDocumento(docId), doc_tabla: 'activo', doc_id: docId, motivo: 'activo modificado', usuario });
+  for (const a of guardar) await Sync.guardar(TABLA, a);
+
+  await guardarActivos([...(await activosFijos()).filter((x) => x.id !== id), af]);
+  return af;
+}
+
+export async function eliminarActivo(id, { usuario = '' } = {}) {
+  const docId = `afc_${id}`;
+  const guardar = await planDocumento({ deseados: [], existentes: await asientosDelDocumento(docId), doc_tabla: 'activo', doc_id: docId, motivo: 'activo eliminado', usuario });
+  for (const a of guardar) await Sync.guardar(TABLA, a);
+  await guardarActivos((await activosFijos()).filter((x) => x.id !== id));
+}
+
+/** Meses entre el mes de compra y un periodo (1 = mes siguiente a la compra). */
+function mesesEntre(fechaCompra, periodo) {
+  const [ya, ma] = fechaCompra.slice(0, 7).split('-').map(Number);
+  const [yp, mp] = periodo.split('-').map(Number);
+  return (yp - ya) * 12 + (mp - ma);
+}
+
+/** Último día de un periodo 'YYYY-MM'. */
+function finDeMes(periodo) {
+  const [y, m] = periodo.split('-').map(Number);
+  return `${periodo}-${String(new Date(y, m, 0).getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Asiento de depreciación de un mes: una cuota por activo que aún tiene
+ * vida útil (empieza el mes siguiente a la compra). Volver a correrlo
+ * es seguro: si nada cambió no escribe; si cambió, reversa y rehace.
+ */
+export async function depreciarMes(periodo, { usuario = '' } = {}) {
+  if (!/^\d{4}-\d{2}$/.test(periodo)) throw new Error('Periodo inválido (formato AAAA-MM)');
+  const lineas = [];
+  for (const af of await activosFijos()) {
+    if (af.baja && af.baja.slice(0, 7) < periodo) continue;
+    const n = mesesEntre(af.fecha_compra, periodo);
+    if (n < 1 || n > af.vida_meses) continue;
+    const cuota = cuotaMensual(af);
+    if (cuota <= 0) continue;
+    lineas.push(L(af.cuenta_gasto, { debito: cuota, detalle: `Depreciación ${af.nombre} (${n}/${af.vida_meses})`, activo_id: af.id }));
+    lineas.push(L(af.cuenta_acumulada, { credito: cuota, detalle: `Depreciación ${af.nombre}`, activo_id: af.id }));
+  }
+  const docId = `dep_${periodo}`;
+  const deseados = lineas.length ? [{
+    origen_tipo: 'depreciacion', origen_id: docId, numero: `DP ${periodo}`, fecha: finDeMes(periodo),
+    descripcion: `Depreciación de activos fijos ${periodo}`, lineas,
+  }] : [];
+  const guardar = await planDocumento({ deseados, existentes: await asientosDelDocumento(docId), doc_tabla: 'depreciacion', doc_id: docId, motivo: 'depreciación recalculada', usuario, estricto: true });
+  for (const a of guardar) await Sync.guardar(TABLA, a);
+  return { escritos: guardar.length, activos: lineas.length / 2 };
 }
